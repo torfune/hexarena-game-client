@@ -1,2 +1,1 @@
-# hexagor-browser
-Hexagor.io browser client
+hexagor.io browser client
