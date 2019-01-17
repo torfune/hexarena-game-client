@@ -5,7 +5,7 @@ class App extends React.Component {
   componentDidMount = () => {
     const elem = document.getElementById('draw-shapes')
 
-    const params = { width: 285, height: 200, type: 'WebGLRenderer' } 
+    const params = { width: 285, height: 200, type: 'WebGLRenderer' }
     const two = new Two(params).appendTo(elem)
 
     const circle = two.makeCircle(72, 100, 50)
@@ -23,7 +23,7 @@ class App extends React.Component {
   }
 
   render() {
-    return <div id='draw-shapes'></div>
+    return <div id="draw-shapes" />
   }
 }
 
