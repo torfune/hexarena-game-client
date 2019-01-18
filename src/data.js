@@ -40,3 +40,8 @@ export const tiles = [
   // { x: 3, z: 4 },
   // { x: 4, z: 4 },
 ]
+
+export const playerInfo = {
+  tilesCount: 256,
+  name: 'torfune',
+}
