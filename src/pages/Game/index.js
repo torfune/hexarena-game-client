@@ -1,6 +1,7 @@
 import React from 'react'
 
 import Leaderboard from './components/Leaderboard'
+import PlayerInfo from './components/PlayerInfo'
 import Two from '../../Two'
 import { tiles } from '../../data'
 
@@ -39,6 +40,7 @@ class Game extends React.Component {
       <div>
         <div id="draw-shapes" />
         <Leaderboard />
+        <PlayerInfo />
       </div>
     )
   }
