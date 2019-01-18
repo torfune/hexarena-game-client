@@ -1,19 +1,8 @@
 import React from 'react'
 
+import Leaderboard from './components/Leaderboard'
 import Two from '../../Two'
-
-const tiles = [
-  { x: 0, z: 0 },
-  { x: 1, z: 0 },
-  { x: 2, z: 0 },
-  { x: 3, z: 0 },
-  { x: 4, z: 0 },
-  { x: 0, z: 1 },
-  { x: 1, z: 1 },
-  { x: 2, z: 1 },
-  { x: 3, z: 1 },
-  { x: 4, z: 1 },
-]
+import { tiles } from '../../data'
 
 class Game extends React.Component {
   componentDidMount = () => {
@@ -38,16 +27,20 @@ class Game extends React.Component {
 
       const hexagon = two.makePolygon(pixel.x, pixel.y, radius, 6)
 
-      hexagon.fill = '#ccc'
-      hexagon.stroke = '#222'
-      hexagon.linewidth = 4
+      hexagon.fill = '#eee'
+      hexagon.stroke = '#ccc'
       hexagon.rotation = Math.PI / 2
     }
 
     two.update()
   }
   render() {
-    return <div id="draw-shapes" />
+    return (
+      <div>
+        <div id="draw-shapes" />
+        <Leaderboard />
+      </div>
+    )
   }
 }
 
