@@ -8,6 +8,8 @@ import ScoreBoard from './components/Scoreboard'
 import AdSpace from './components/AdSpace'
 import NameInput from './components/NameInput'
 
+import { Link } from '@reach/router'
+
 const Container = styled.div`
   margin: 32px;
   display: flex;
@@ -31,13 +33,14 @@ const AnchorContainer = styled.div`
 
 const Anchor = styled.a`
   margin: 16px 8px 0 8px;
-  text-decoration: none;
   font-weight: bold;
   color: #e74c3c;
+  text-decoration: none;
 `
 
 const Text = styled.p`
   margin: 16px 0 0 0;
+  color: #333;
 `
 
 const HomePage = () => (
@@ -52,10 +55,17 @@ const HomePage = () => (
         <LoginButton type="Google" />
       </LoginButtonsContainer>
       <AnchorContainer>
-        <Anchor href="/">marketplace</Anchor>
+        <Link to="/marketplace" style={{ textDecoration: 'none' }}>
+          <Anchor>marketplace</Anchor>
+        </Link>
         <Anchor href="https://www.reddit.com/r/Hexagorio/">reddit</Anchor>
+        <Link to="/blog" style={{ textDecoration: 'none' }}>
+          <Anchor>blog</Anchor>
+        </Link>
       </AnchorContainer>
-      <Text>Created by Matej Strnad & Katarina Cvetkovicova</Text>
+      <Link to="/contact" style={{ textDecoration: 'none' }}>
+        <Text>Created by Matej Strnad & Katarina Cvetkovicova</Text>
+      </Link>
     </InputAndButtonsContainer>
     <ScoreBoard />
   </Container>
