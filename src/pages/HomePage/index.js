@@ -31,6 +31,13 @@ const AnchorContainer = styled.div`
   padding: 16px;
 `
 
+const StyledLink = styled(Link)`
+  margin: 16px 8px 0 8px;
+  font-weight: bold;
+  color: #e74c3c;
+  text-decoration: none;
+`
+
 const Anchor = styled.a`
   margin: 16px 8px 0 8px;
   font-weight: bold;
@@ -55,13 +62,9 @@ const HomePage = () => (
         <LoginButton type="Google" />
       </LoginButtonsContainer>
       <AnchorContainer>
-        <Link to="/marketplace" style={{ textDecoration: 'none' }}>
-          <Anchor>marketplace</Anchor>
-        </Link>
+        <StyledLink to="/marketplace">marketplace</StyledLink>
         <Anchor href="https://www.reddit.com/r/Hexagorio/">reddit</Anchor>
-        <Link to="/blog" style={{ textDecoration: 'none' }}>
-          <Anchor>blog</Anchor>
-        </Link>
+        <StyledLink to="/blog">blog</StyledLink>
       </AnchorContainer>
       <Link to="/contact" style={{ textDecoration: 'none' }}>
         <Text>Created by Matej Strnad & Katarina Cvetkovicova</Text>
