@@ -1,21 +1,20 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import PlayButton from './components/PlayButton'
-import RegionSelector from './components/RegionSelector'
-import LoginButton from './components/LoginButton'
-import ScoreBoard from './components/Scoreboard'
-import AdSpace from './components/AdSpace'
-import NameInput from './components/NameInput'
+import Logo from './components/Logo'
+import PlaySection from './components/PlaySection'
+
+// import RegionSelector from './components/RegionSelector'
+// import LoginButton from './components/LoginButton'
+// import ScoreBoard from './components/Scoreboard'
+// import AdSpace from './components/AdSpace'
+// import NameInput from './components/NameInput'
 
 import { Link } from '@reach/router'
 
 const Container = styled.div`
-  margin: 32px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 48px;
+  width: 900px;
+  margin: 0 auto;
 `
 
 const InputAndButtonsContainer = styled.div`
@@ -52,7 +51,9 @@ const Text = styled.p`
 
 const HomePage = () => (
   <Container>
-    <AdSpace />
+    <Logo />
+    <PlaySection />
+    {/* <AdSpace />
     <InputAndButtonsContainer>
       <NameInput />
       <PlayButton />
@@ -70,7 +71,7 @@ const HomePage = () => (
         <Text>Created by Matej Strnad & Katarina Cvetkovicova</Text>
       </Link>
     </InputAndButtonsContainer>
-    <ScoreBoard />
+    <ScoreBoard /> */}
   </Container>
 )
 
