@@ -11,8 +11,8 @@ class Game {
     this.radius = tileRadius
 
     this.two = new Two({
-      width: 1000,
-      height: 800,
+      width: window.innerWidth,
+      height: window.innerHeight,
       type: 'WebGLRenderer',
     }).appendTo(rootElement)
 

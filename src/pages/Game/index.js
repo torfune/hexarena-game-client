@@ -1,8 +1,15 @@
 import React from 'react'
+import styled from 'styled-components'
 
 import { startGame, cancelAlliance } from '../../game'
 import Leaderboard from './components/Leaderboard'
 import PlayerInfo from './components/PlayerInfo'
+
+const GameContainer = styled.div`
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+`
 
 class Game extends React.Component {
   state = {
@@ -23,7 +30,7 @@ class Game extends React.Component {
   render() {
     return (
       <div>
-        <div id="game" />
+        <GameContainer id="game" />
         <Leaderboard leaders={this.state.leaders} />
         <PlayerInfo />
       </div>
