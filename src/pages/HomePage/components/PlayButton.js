@@ -1,6 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import { Link } from '@reach/router'
+
 const StyledButton = styled.button`
   margin-top: 16px;
   width: 72px;
@@ -13,6 +15,10 @@ const StyledButton = styled.button`
   padding: 4px;
 `
 
-const PlayButton = () => <StyledButton>Play</StyledButton>
+const PlayButton = () => (
+  <Link to="/game">
+    <StyledButton>Play</StyledButton>
+  </Link>
+)
 
 export default PlayButton
