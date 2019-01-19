@@ -1,8 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { leaders } from '../../../data'
-
 const Container = styled.div`
   background: #fff;
   bottom: 16px;
@@ -30,11 +28,11 @@ const Leader = styled.div`
   }
 `
 
-const Leaderboard = () => (
+const Leaderboard = ({ leaders }) => (
   <Container>
     <Header>Leaderboard</Header>
     {leaders.map(l => (
-      <Leader>
+      <Leader key={l.name}>
         <p>{l.name}</p>
         <p>{l.points}</p>
       </Leader>
