@@ -4,6 +4,8 @@ const getItemById = (arr, id) => {
       return arr[i]
     }
   }
+
+  return null
 }
 
 export default getItemById

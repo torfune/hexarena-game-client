@@ -4,6 +4,8 @@ const getTileByXZ = (tiles, x, z) => {
       return tiles[i]
     }
   }
+
+  return null
 }
 
 export default getTileByXZ

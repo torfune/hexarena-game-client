@@ -6,6 +6,7 @@ import Player from './Player'
 import getTileByXZ from '../utils/getTileByXZ'
 import getItemById from '../utils/getItemById'
 import { leaders } from '../data'
+import getTileUnderCursor from '../utils/getTileUnderCursor'
 
 const tileRadius = 30
 class Game {
@@ -52,6 +53,24 @@ class Game {
   }
   handleMouseMove = ({ clientX, clientY }) => {
     const { cameraDrag } = this
+
+    const cursor = { x: clientX, y: clientY }
+    const tile = getTileUnderCursor(
+      this.tiles,
+      this.camera,
+      cursor,
+      this.radius
+    )
+
+    if (tile) {
+      for (let i = 0; i < this.tiles.length; i++) {
+        this.tiles[i].image.opacity = 1
+      }
+
+      tile.image.opacity = 0
+
+      this.two.update()
+    }
 
     if (!cameraDrag) return
 
