@@ -164,6 +164,14 @@ class Game {
   cancelAlliance = playerId => {
     console.log(`Canceling alliance with ${playerId}`)
   }
+  clear = () => {
+    document.removeEventListener('mousewheel', this.handleWheelMove)
+    document.removeEventListener('mousemove', this.handleMouseMove)
+    document.removeEventListener('mousedown', this.handleMouseDown)
+    document.removeEventListener('mouseup', this.handleMouseUp)
+
+    this.socket.close()
+  }
 }
 
 export default Game

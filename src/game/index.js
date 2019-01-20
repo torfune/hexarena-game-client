@@ -13,4 +13,9 @@ const startGame = (rootElement, setters) => {
   window.game = game
 }
 
-export { startGame, cancelAlliance }
+const clearGame = () => {
+  game.clear()
+  game = null
+}
+
+export { startGame, clearGame, cancelAlliance }

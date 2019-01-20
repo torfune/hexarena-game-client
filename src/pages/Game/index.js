@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { startGame, cancelAlliance } from '../../game'
+import { startGame, clearGame, cancelAlliance } from '../../game'
 import Leaderboard from './components/Leaderboard'
 import PlayerInfo from './components/PlayerInfo'
 import ErrorMessage from './components/ErrorMessage'
@@ -26,6 +26,9 @@ class Game extends React.Component {
     })
 
     cancelAlliance(42)
+  }
+  componentWillUnmount = () => {
+    clearGame()
   }
   handleLeadersChange = leaders => {
     this.setState({ leaders })
