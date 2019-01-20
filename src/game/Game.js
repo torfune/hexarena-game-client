@@ -11,12 +11,15 @@ class Game {
     this.setLeaders = setters.setLeaders
     this.showConnectionError = setters.showConnectionError
 
+    this.radius = tileRadius
+    this.tiles = []
+    this.camera = { x: 0, y: 0 }
+    this.cameraDrag = null
+
     this.socket = io('http://localhost:8000')
       .on('players', this.handlePlayersMessage)
       .on('tiles', this.handleTilesMessage)
       .on('connect_error', this.handleErrorMessage)
-
-    this.radius = tileRadius
 
     this.two = new Two({
       width: window.innerWidth,
@@ -24,14 +27,43 @@ class Game {
       type: 'WebGLRenderer',
     }).appendTo(rootElement)
 
-    this.tiles = []
+    document.addEventListener('mousewheel', this.handleWheelMove)
+    document.addEventListener('mousemove', this.handleMouseMove)
+    document.addEventListener('mousedown', this.handleMouseDown)
+    document.addEventListener('mouseup', this.handleMouseUp)
 
+    // temp
     this.setLeaders(leaders)
-
-    document.addEventListener('mousewheel', this.handleWheelChange)
   }
-  handleWheelChange = e => {
-    const zoomDirection = e.deltaY < 0 ? -1 : 1
+  handleMouseDown = ({ clientX, clientY }) => {
+    this.cameraDrag = {
+      originalX: this.camera.x,
+      originalY: this.camera.y,
+      cursorX: clientX,
+      cursorY: clientY,
+    }
+  }
+  handleMouseUp = () => {
+    this.cameraDrag = null
+  }
+  handleMouseMove = ({ clientX, clientY }) => {
+    const { cameraDrag } = this
+
+    if (!cameraDrag) return
+
+    this.camera = {
+      x: cameraDrag.originalX - (cameraDrag.cursorX - clientX),
+      y: cameraDrag.originalY - (cameraDrag.cursorY - clientY),
+    }
+
+    for (let i = 0; i < this.tiles.length; i++) {
+      this.tiles[i].updateCamera(this.camera)
+    }
+
+    this.two.update()
+  }
+  handleWheelMove = ({ deltaY }) => {
+    const zoomDirection = deltaY < 0 ? -1 : 1
 
     this.radius += zoomDirection * 2
 
@@ -60,7 +92,7 @@ class Game {
 
     for (let i = 0; i < tiles.length; i++) {
       const { x, z } = tiles[i]
-      this.tiles.push(new Tile(this.two, x, z, this.radius))
+      this.tiles.push(new Tile(this.two, x, z, this.radius, this.camera))
     }
 
     this.two.update()
