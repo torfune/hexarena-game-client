@@ -24,14 +24,13 @@ const Container = styled.div`
     margin: 0;
     font-size: 20px;
     color: #444;
-    /* align-self: flex-end; */
   }
 `
 
 const Logo = () => (
   <Container>
     <h1>
-      Hexagor<span>.</span>io <span>-</span> rework
+      Hexagor<span>.</span>io
     </h1>
     <h2>Strategy MMO browser game</h2>
   </Container>

@@ -2,6 +2,9 @@ import io from 'socket.io-client'
 
 import Two from '../Two'
 import Tile from './Tile'
+import Player from './Player'
+import getTileByXZ from '../utils/getTileByXZ'
+import getItemById from '../utils/getItemById'
 import { leaders } from '../data'
 
 const tileRadius = 30
@@ -13,12 +16,13 @@ class Game {
 
     this.radius = tileRadius
     this.tiles = []
+    this.players = []
     this.camera = { x: 0, y: 0 }
     this.cameraDrag = null
 
     this.socket = io('http://localhost:8000')
-      .on('players', this.handlePlayersMessage)
-      .on('tiles', this.handleTilesMessage)
+      .on('player', this.handlePlayerMessage)
+      .on('tile', this.handleTileMessage)
       .on('connect_error', this.handleErrorMessage)
 
     this.two = new Two({
@@ -77,22 +81,63 @@ class Game {
     this.showConnectionError()
     this.socket.close()
   }
-  handlePlayersMessage = data => {
-    const players = data.split('><')
-    for (const player of players) {
-      console.log(player)
+  handlePlayerMessage = data => {
+    const { players } = this
+
+    const arr = data.includes('><') ? data.split('><') : [data]
+
+    for (let i = 0; i < arr.length; i++) {
+      const [id, name, pattern, alliance] = arr[i].split('|')
+
+      const player = getItemById(players, id)
+
+      if (player) {
+        console.log(`Player ${id} already exists.`)
+        continue
+      }
+
+      players.push(new Player({ id, name, pattern, alliance }))
     }
   }
-  handleTilesMessage = data => {
-    const rows = data.split('><')
-    const tiles = rows.map(r => {
-      const [x, z, water, mountain, forest, castle, ownerId] = r.split('|')
-      return { x, z, water, mountain, forest, castle, ownerId }
-    })
+  handleTileMessage = data => {
+    const { players, tiles, two, radius, camera } = this
 
-    for (let i = 0; i < tiles.length; i++) {
-      const { x, z } = tiles[i]
-      this.tiles.push(new Tile(this.two, x, z, this.radius, this.camera))
+    const arr = data.includes('><') ? data.split('><') : [data]
+
+    for (let i = 0; i < arr.length; i++) {
+      let [x, z, water, mountain, forest, castle, ownerId] = arr[i].split('|')
+
+      x = Number(x)
+      z = Number(z)
+      water = water === 'true'
+      mountain = mountain === 'true'
+      forest = forest === 'true'
+      castle = castle === 'true'
+      ownerId = ownerId === 'null' ? null : ownerId
+
+      const tile = getTileByXZ(tiles, x, z)
+
+      if (tile) {
+        console.log(`Tile [${x}|${z}] already exists.`)
+        continue
+      }
+
+      const owner = ownerId ? getItemById(players, ownerId) : null
+
+      tiles.push(
+        new Tile({
+          x,
+          z,
+          two,
+          radius,
+          camera,
+          owner,
+          castle,
+          forest,
+          mountain,
+          water,
+        })
+      )
     }
 
     this.two.update()
