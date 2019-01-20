@@ -31,7 +31,7 @@ const Container = styled.div`
 const Logo = () => (
   <Container>
     <h1>
-      Hexagor<span>.</span>io
+      Hexagor<span>.</span>io <span>-</span> rework
     </h1>
     <h2>Strategy MMO browser game</h2>
   </Container>

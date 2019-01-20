@@ -1,0 +1,40 @@
+version: 2
+jobs:
+  deploy:
+    working_directory: ~/hexagor-fe
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          keys:
+            - yarn-packages-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Dependencies
+          command: yarn install --frozen-lockfile
+      - save_cache:
+          name: Save Yarn Package Cache
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+      - run:
+          name: Build
+          command: yarn build
+      - run:
+          name: Copy files
+          command: |
+            scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null build root@eu.hexagor.io:~/hexagor/hexagor-fe
+      - run:
+          name: Restart server
+          command: |
+            ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@eu.hexagor.io "pm2 restart hexagor-fe"
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - deploy:
+          filters:
+            branches:
+              only: develop
