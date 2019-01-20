@@ -7,6 +7,7 @@ import getTileByXZ from '../utils/getTileByXZ'
 import getItemById from '../utils/getItemById'
 import { leaders } from '../data'
 import getTileUnderCursor from '../utils/getTileUnderCursor'
+import { timingSafeEqual } from 'crypto'
 
 const tileRadius = 30
 class Game {
@@ -18,8 +19,10 @@ class Game {
     this.radius = tileRadius
     this.tiles = []
     this.players = []
+    this.animations = []
     this.camera = { x: 0, y: 0 }
     this.cameraDrag = null
+    this.loop = setInterval(this.update, 10)
 
     this.socket = io('http://localhost:8000')
       .on('player', this.handlePlayerMessage)
@@ -47,12 +50,6 @@ class Game {
       cursorX: clientX,
       cursorY: clientY,
     }
-  }
-  handleMouseUp = () => {
-    this.cameraDrag = null
-  }
-  handleMouseMove = ({ clientX, clientY }) => {
-    const { cameraDrag } = this
 
     const cursor = { x: clientX, y: clientY }
     const tile = getTileUnderCursor(
@@ -62,15 +59,15 @@ class Game {
       this.radius
     )
 
-    if (tile) {
-      for (let i = 0; i < this.tiles.length; i++) {
-        this.tiles[i].image.opacity = 1
-      }
+    if (!tile) return
 
-      tile.image.opacity = 0
-
-      this.two.update()
-    }
+    this.socket.emit('click', `${tile.x}|${tile.z}`)
+  }
+  handleMouseUp = () => {
+    this.cameraDrag = null
+  }
+  handleMouseMove = ({ clientX, clientY }) => {
+    const { cameraDrag } = this
 
     if (!cameraDrag) return
 
@@ -119,7 +116,7 @@ class Game {
     }
   }
   handleTileMessage = data => {
-    const { players, tiles, two, radius, camera } = this
+    const { players, tiles, two, radius, camera, animations } = this
 
     const arr = data.includes('><') ? data.split('><') : [data]
 
@@ -135,18 +132,25 @@ class Game {
       ownerId = ownerId === 'null' ? null : ownerId
 
       const tile = getTileByXZ(tiles, x, z)
+      const owner = ownerId ? getItemById(players, ownerId) : null
 
       if (tile) {
-        console.log(`Tile [${x}|${z}] already exists.`)
+        console.log(`Updating [${x}|${z}] tile.`)
+
+        if (tile.owner !== owner) {
+          tile.setOwner(owner)
+        }
+
+        this.two.update()
+
         continue
       }
-
-      const owner = ownerId ? getItemById(players, ownerId) : null
 
       tiles.push(
         new Tile({
           x,
           z,
+          animations,
           two,
           radius,
           camera,
@@ -171,6 +175,18 @@ class Game {
     document.removeEventListener('mouseup', this.handleMouseUp)
 
     this.socket.close()
+    clearInterval(this.loop)
+  }
+  update = () => {
+    for (let i = this.animations.length - 1; i >= 0; i--) {
+      this.animations[i].update()
+
+      if (this.animations[i].finished) {
+        this.animations.splice(i, 1)
+      }
+    }
+
+    this.two.update()
   }
 }
 
