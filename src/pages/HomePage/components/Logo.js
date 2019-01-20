@@ -1,13 +1,15 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import { GOOGLE_PRIMARY } from '../../../constants'
+
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   border-bottom: 1px solid #ddd;
   padding: 28px 16px;
-  color: #c23616;
+  color: ${GOOGLE_PRIMARY};
   font-size: 24px;
 
   h1 > span {

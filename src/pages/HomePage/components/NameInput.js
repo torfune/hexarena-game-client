@@ -1,14 +1,19 @@
 import styled from 'styled-components'
 
-const NameInput = styled.input`
-  width: 256px;
+const NameInput = styled.input.attrs({
+  placeholder: 'Guest 42',
+  maxLength: 12,
+})`
+  display: block;
   background: none;
   outline: none;
-  border: 1px solid #ddd;
-  border-radius: 24px;
-  font-size: 24px;
-  padding: 8px;
-  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  padding-left: 12px;
+  height: 34px;
+  box-sizing: border-box;
+  width: auto;
 `
 
 export default NameInput

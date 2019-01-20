@@ -10,7 +10,8 @@ import Marketplace from './pages/Marketplace'
 import { createGlobalStyle } from 'styled-components'
 
 export const GlobalStyle = createGlobalStyle`
-  body {
+  * {
+    outline: none;
     margin: 0;
     font-family: 'Montserrat';
   }

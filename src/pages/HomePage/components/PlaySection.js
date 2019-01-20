@@ -1,35 +1,46 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { Link } from '@reach/router'
+import PlayButton from './PlayButton'
+import LoginButton from './LoginButton'
+import NameInput from './NameInput'
+import Heading from './Heading'
 
 const Container = styled.div`
   margin-top: 64px;
   padding: 0 16px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
 `
 
-const StyledButton = styled.button`
-  margin-top: 16px;
-  width: 72px;
-  background: #f33;
-  border: 1px solid #fff;
-  border-radius: 8px;
-  background: #d63031;
-  font-size: 18px;
-  color: #fff;
-  padding: 4px;
+const LoginButtonsContainer = styled.div`
+  background: #fff;
+  display: flex;
 `
 
-const Header = styled.h3`
-  font-size: 24px;
+const InputAndButtonContainer = styled.div`
+  background: #fff;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 16px;
 `
 
 const PlaySection = () => (
   <Container>
-    <Header>Login &amp; Play</Header>
-    <Link to="/game">
-      <StyledButton>Play</StyledButton>
-    </Link>
+    <div>
+      <Heading>Login &amp; Play</Heading>
+      <LoginButtonsContainer>
+        <LoginButton type="google" />
+        <LoginButton type="facebook" />
+      </LoginButtonsContainer>
+    </div>
+    <div>
+      <Heading>Play as guest</Heading>
+      <InputAndButtonContainer>
+        <NameInput />
+        <PlayButton />
+      </InputAndButtonContainer>
+    </div>
   </Container>
 )
 
