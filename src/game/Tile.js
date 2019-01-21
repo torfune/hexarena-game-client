@@ -1,10 +1,10 @@
 import getPixelPosition from '../utils/getPixelPosition'
 import createHexagon from '../utils/createHexagon'
 import Animation from './Animation'
+import { TILE_RADIUS } from '../constants'
 
 class Tile {
   constructor({ two, x, z, radius, camera, owner, animations }) {
-    this.originalRadius = radius
     this.radius = radius
     this.two = two
     this.animations = animations
@@ -15,13 +15,14 @@ class Tile {
     this.image = {}
 
     const pixel = getPixelPosition(x, z, camera, radius)
+    const scale = radius / TILE_RADIUS
 
     this.image.background = createHexagon({
       two,
       fill: '#eee',
       stroke: '#ccc',
       pixel,
-      radius,
+      scale,
     })
 
     if (owner) {
@@ -30,16 +31,16 @@ class Tile {
         fill: owner.pattern,
         stroke: '#fff',
         pixel,
-        radius,
+        scale,
       })
     }
   }
   setRadius(radius) {
-    const { x, z, originalRadius, camera } = this
+    const { x, z, camera } = this
 
     this.radius = radius
 
-    const scale = radius / originalRadius
+    const scale = radius / TILE_RADIUS
     const pixel = getPixelPosition(x, z, camera, radius)
 
     if (this.image.background) {
@@ -73,6 +74,7 @@ class Tile {
     this.owner = owner
 
     if (owner && !this.image.pattern) {
+      const scale = radius / TILE_RADIUS
       const pixel = getPixelPosition(x, z, camera, radius)
 
       this.image.pattern = createHexagon({
@@ -80,7 +82,7 @@ class Tile {
         fill: owner.pattern,
         stroke: '#fff',
         pixel,
-        radius,
+        scale,
         opacity: 0,
       })
 
@@ -88,7 +90,7 @@ class Tile {
         new Animation({
           image: this.image.pattern,
           onUpdate: image => {
-            const newOpacity = image.opacity + 0.08
+            const newOpacity = image.opacity + 0.1
             if (newOpacity >= 1) return true
             image.opacity = newOpacity
           },

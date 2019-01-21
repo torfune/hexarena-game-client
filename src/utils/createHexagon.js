@@ -1,5 +1,7 @@
-const createHexagon = ({ two, fill, stroke, pixel, radius, opacity = 1 }) => {
-  const hexagon = two.makePolygon(0, 0, radius, 6)
+import { TILE_RADIUS } from '../constants'
+
+const createHexagon = ({ two, fill, stroke, pixel, scale, opacity = 1 }) => {
+  const hexagon = two.makePolygon(0, 0, TILE_RADIUS, 6)
 
   hexagon.fill = fill
   hexagon.stroke = stroke
@@ -7,6 +9,7 @@ const createHexagon = ({ two, fill, stroke, pixel, radius, opacity = 1 }) => {
   hexagon.translation.x = pixel.x
   hexagon.translation.y = pixel.y
   hexagon.opacity = opacity
+  hexagon.scale = scale
 
   return hexagon
 }

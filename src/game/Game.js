@@ -5,24 +5,24 @@ import Tile from './Tile'
 import Player from './Player'
 import getTileByXZ from '../utils/getTileByXZ'
 import getItemById from '../utils/getItemById'
-import { leaders } from '../data'
 import getTileUnderCursor from '../utils/getTileUnderCursor'
-import { timingSafeEqual } from 'crypto'
-
-const tileRadius = 30
+import { leaders } from '../data'
+import { TILE_RADIUS } from '../constants'
 class Game {
   constructor(rootElement, setters) {
     // React API set methods
     this.setLeaders = setters.setLeaders
     this.showConnectionError = setters.showConnectionError
 
-    this.radius = tileRadius
+    this.radius = TILE_RADIUS
     this.tiles = []
     this.players = []
     this.animations = []
     this.camera = { x: 0, y: 0 }
     this.cameraDrag = null
-    this.loop = setInterval(this.update, 10)
+    this.loop = setInterval(this.update, 16)
+
+    this.lastMouseMove = null
 
     this.socket = io('http://localhost:8000')
       .on('player', this.handlePlayerMessage)
@@ -68,6 +68,13 @@ class Game {
   }
   handleMouseMove = ({ clientX, clientY }) => {
     const { cameraDrag } = this
+
+    const now = Date.now()
+    if (this.lastMouseMove) {
+      const delta = now - this.lastMouseMove
+      console.log(delta)
+    }
+    this.lastMouseMove = now
 
     if (!cameraDrag) return
 
@@ -178,15 +185,17 @@ class Game {
     clearInterval(this.loop)
   }
   update = () => {
-    for (let i = this.animations.length - 1; i >= 0; i--) {
-      this.animations[i].update()
+    if (this.animations.length) {
+      for (let i = this.animations.length - 1; i >= 0; i--) {
+        this.animations[i].update()
 
-      if (this.animations[i].finished) {
-        this.animations.splice(i, 1)
+        if (this.animations[i].finished) {
+          this.animations.splice(i, 1)
+        }
       }
-    }
 
-    this.two.update()
+      this.two.update()
+    }
   }
 }
 
