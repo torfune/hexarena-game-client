@@ -69,13 +69,6 @@ class Game {
   handleMouseMove = ({ clientX, clientY }) => {
     const { cameraDrag } = this
 
-    const now = Date.now()
-    if (this.lastMouseMove) {
-      const delta = now - this.lastMouseMove
-      console.log(delta)
-    }
-    this.lastMouseMove = now
-
     if (!cameraDrag) return
 
     this.camera = {
