@@ -3,11 +3,12 @@ import io from 'socket.io-client'
 import Two from '../Two'
 import Tile from './Tile'
 import Player from './Player'
+import Action from './Action'
 import getTileByXZ from '../utils/getTileByXZ'
 import getItemById from '../utils/getItemById'
 import getTileUnderCursor from '../utils/getTileUnderCursor'
 import { leaders } from '../data'
-import { TILE_RADIUS } from '../constants'
+import { TILE_RADIUS, ZOOM_SPEED } from '../constants'
 class Game {
   constructor(rootElement, setters) {
     // React API set methods
@@ -15,18 +16,20 @@ class Game {
     this.showConnectionError = setters.showConnectionError
 
     this.radius = TILE_RADIUS
+    this.targetRadius = TILE_RADIUS
     this.tiles = []
     this.players = []
     this.animations = []
+    this.cursor = { x: 0, y: 0 }
     this.camera = { x: 0, y: 0 }
     this.cameraDrag = null
-    this.loop = setInterval(this.update, 16)
 
     this.lastMouseMove = null
 
     this.socket = io('http://localhost:8000')
       .on('player', this.handlePlayerMessage)
       .on('tile', this.handleTileMessage)
+      .on('action', this.handleActionMessage)
       .on('connect_error', this.handleErrorMessage)
 
     this.two = new Two({
@@ -34,6 +37,8 @@ class Game {
       height: window.innerHeight,
       type: 'WebGLRenderer',
     }).appendTo(rootElement)
+
+    this.two.bind('update', this.update.bind(this)).play()
 
     document.addEventListener('mousewheel', this.handleWheelMove)
     document.addEventListener('mousemove', this.handleMouseMove)
@@ -67,31 +72,12 @@ class Game {
     this.cameraDrag = null
   }
   handleMouseMove = ({ clientX, clientY }) => {
-    const { cameraDrag } = this
-
-    if (!cameraDrag) return
-
-    this.camera = {
-      x: cameraDrag.originalX - (cameraDrag.cursorX - clientX),
-      y: cameraDrag.originalY - (cameraDrag.cursorY - clientY),
-    }
-
-    for (let i = 0; i < this.tiles.length; i++) {
-      this.tiles[i].updateCamera(this.camera)
-    }
-
-    this.two.update()
+    this.cursor.x = clientX
+    this.cursor.y = clientY
   }
   handleWheelMove = ({ deltaY }) => {
     const zoomDirection = deltaY < 0 ? -1 : 1
-
-    this.radius += zoomDirection * 2
-
-    for (let i = 0; i < this.tiles.length; i++) {
-      this.tiles[i].setRadius(this.radius)
-    }
-
-    this.two.update()
+    this.targetRadius += zoomDirection * ZOOM_SPEED
   }
   handleErrorMessage = () => {
     this.showConnectionError()
@@ -141,8 +127,6 @@ class Game {
           tile.setOwner(owner)
         }
 
-        this.two.update()
-
         continue
       }
 
@@ -162,8 +146,44 @@ class Game {
         })
       )
     }
+  }
+  handleActionMessage = data => {
+    const split = data.split('|')
+    let [
+      x,
+      z,
+      duration,
+      finishedAt,
+      canceledAt,
+      ownerId,
+      counterPlayerId,
+    ] = split
 
-    this.two.update()
+    x = Number(x)
+    z = Number(z)
+    duration = Number(duration)
+    finishedAt = Number(finishedAt)
+    canceledAt = Number(canceledAt)
+
+    const tile = getTileByXZ(this.tiles, x, z)
+
+    if (!tile) return
+
+    if (tile.action) {
+      tile.action.finishedAt = finishedAt
+      tile.action.canceledAt = canceledAt
+      tile.action.duration = duration
+    } else {
+      tile.action = new Action({
+        tile,
+        two: this.two,
+        duration,
+        finishedAt,
+        canceledAt,
+        ownerId,
+        counterPlayerId,
+      })
+    }
   }
   cancelAlliance = playerId => {
     console.log(`Canceling alliance with ${playerId}`)
@@ -177,17 +197,46 @@ class Game {
     this.socket.close()
     clearInterval(this.loop)
   }
-  update = () => {
-    if (this.animations.length) {
-      for (let i = this.animations.length - 1; i >= 0; i--) {
-        this.animations[i].update()
+  update = frameCount => {
+    const { animations, cameraDrag, cursor, tiles } = this
 
-        if (this.animations[i].finished) {
-          this.animations.splice(i, 1)
+    // update animations
+    if (animations.length) {
+      for (let i = animations.length - 1; i >= 0; i--) {
+        animations[i].update()
+
+        if (animations[i].finished) {
+          animations.splice(i, 1)
         }
       }
+    }
 
-      this.two.update()
+    // update camera
+    if (cameraDrag) {
+      this.camera = {
+        x: cameraDrag.originalX - (cameraDrag.cursorX - cursor.x),
+        y: cameraDrag.originalY - (cameraDrag.cursorY - cursor.y),
+      }
+
+      for (let i = 0; i < tiles.length; i++) {
+        tiles[i].updateCamera(this.camera)
+      }
+    }
+
+    // update zoom
+    if (this.radius !== this.targetRadius) {
+      this.radius = this.targetRadius
+
+      for (let i = 0; i < tiles.length; i++) {
+        tiles[i].setRadius(this.targetRadius)
+      }
+    }
+
+    // update actions
+    for (let i = 0; i < tiles.length; i++) {
+      if (tiles[i].action) {
+        tiles[i].action.update()
+      }
     }
   }
 }

@@ -20,7 +20,6 @@ class Tile {
     this.image.background = createHexagon({
       two,
       fill: '#eee',
-      stroke: '#ccc',
       pixel,
       scale,
     })
@@ -29,7 +28,6 @@ class Tile {
       this.image.pattern = createHexagon({
         two,
         fill: owner.pattern,
-        stroke: '#fff',
         pixel,
         scale,
       })
@@ -80,7 +78,6 @@ class Tile {
       this.image.pattern = createHexagon({
         two,
         fill: owner.pattern,
-        stroke: '#fff',
         pixel,
         scale,
         opacity: 0,

@@ -10,6 +10,7 @@ const GameContainer = styled.div`
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  /* background: #666; */
 `
 
 class Game extends React.Component {
