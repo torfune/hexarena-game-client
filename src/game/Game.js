@@ -7,6 +7,7 @@ import Action from './Action'
 import getTileByXZ from '../utils/getTileByXZ'
 import getItemById from '../utils/getItemById'
 import getTileUnderCursor from '../utils/getTileUnderCursor'
+import getPixelPosition from '../utils/getPixelPosition'
 import { leaders } from '../data'
 import { TILE_RADIUS, ZOOM_SPEED } from '../constants'
 class Game {
@@ -102,7 +103,7 @@ class Game {
     }
   }
   handleTileMessage = data => {
-    const { players, tiles, two, radius, camera, animations } = this
+    const { players, tiles, two, radius, animations } = this
 
     const arr = data.includes('><') ? data.split('><') : [data]
 
@@ -121,8 +122,6 @@ class Game {
       const owner = ownerId ? getItemById(players, ownerId) : null
 
       if (tile) {
-        console.log(`Updating [${x}|${z}] tile.`)
-
         if (tile.owner !== owner) {
           tile.setOwner(owner)
         }
@@ -137,7 +136,7 @@ class Game {
           animations,
           two,
           radius,
-          camera,
+          camera: this.camera,
           owner,
           castle,
           forest,
@@ -145,6 +144,10 @@ class Game {
           water,
         })
       )
+
+      if (tiles.length === 1) {
+        this.setCameraToTile(tiles[0])
+      }
     }
   }
   handleActionMessage = data => {
@@ -197,7 +200,7 @@ class Game {
     this.socket.close()
     clearInterval(this.loop)
   }
-  update = frameCount => {
+  update = () => {
     const { animations, cameraDrag, cursor, tiles } = this
 
     // update animations
@@ -237,6 +240,17 @@ class Game {
       if (tiles[i].action) {
         tiles[i].action.update()
       }
+    }
+  }
+  setCameraToTile = tile => {
+    const pixel = getPixelPosition(tile.x, tile.z, this.camera, this.radius)
+    const screenCenter = { x: window.innerWidth / 2, y: window.innerHeight / 2 }
+
+    this.camera.x = screenCenter.x - pixel.x
+    this.camera.y = screenCenter.y - pixel.y
+
+    for (let i = 0; i < this.tiles.length; i++) {
+      this.tiles[i].updateCamera(this.camera)
     }
   }
 }
