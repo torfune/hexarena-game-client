@@ -4,10 +4,10 @@ import loadImages from './functions/loadImages'
 let game = null
 let cancelAlliance = null
 
-const startGame = (rootElement, setters) => {
+const startGame = (rootElement, reactMethods) => {
   if (game) return
 
-  game = new Game(rootElement, setters)
+  game = new Game(rootElement, reactMethods)
   cancelAlliance = game.cancelAlliance
 
   // only for debug purposes

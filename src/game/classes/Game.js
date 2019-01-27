@@ -1,15 +1,14 @@
 import io from 'socket.io-client'
-import * as PIXI from 'pixi.js'
 
 import Tile from './Tile'
 import Player from './Player'
 import Action from './Action'
+import createGameLoop from '../functions/createGameLoop'
+import createPixiApp from '../functions/createPixiApp'
 import getTileByXZ from '../functions/getTileByXZ'
 import getItemById from '../functions/getItemById'
 import getTileUnderCursor from '../functions/getTileUnderCursor'
 import getPixelPosition from '../functions/getPixelPosition'
-import hex from '../functions/hex'
-import { leaders } from '../../data'
 import {
   ZOOM_SPEED,
   MAX_SCALE,
@@ -18,11 +17,8 @@ import {
 } from '../../constants'
 
 class Game {
-  constructor(rootElement, setters) {
-    // React API set methods
-    this.setLeaders = setters.setLeaders
-    this.showConnectionError = setters.showConnectionError
-
+  constructor(rootElement, reactMethods) {
+    this.react = { ...reactMethods }
     this.scale = DEFAULT_SCALE
     this.targetScale = this.scale
     this.tiles = []
@@ -31,7 +27,6 @@ class Game {
     this.cursor = { x: 0, y: 0 }
     this.camera = { x: 0, y: 0 }
     this.cameraDrag = null
-
     this.lastMouseMove = null
 
     this.socket = io('http://localhost:8000')
@@ -40,25 +35,13 @@ class Game {
       .on('action', this.handleActionMessage)
       .on('connect_error', this.handleErrorMessage)
 
-    this.pixi = new PIXI.Application({ resolution: window.devicePixelRatio })
-
-    this.pixi.renderer.backgroundColor = hex('#fff')
-    this.pixi.renderer.autoResize = true
-    this.pixi.renderer.resize(window.innerWidth, window.innerHeight)
-
-    rootElement.appendChild(this.pixi.view)
-
-    this.loop = PIXI.ticker.shared
-    this.loop.autoStart = true
-    this.loop.add(this.update, this)
+    this.pixi = createPixiApp(rootElement)
+    this.loop = createGameLoop(this.update, this)
 
     document.addEventListener('mousewheel', this.handleWheelMove)
     document.addEventListener('mousemove', this.handleMouseMove)
     document.addEventListener('mousedown', this.handleMouseDown)
     document.addEventListener('mouseup', this.handleMouseUp)
-
-    // temp
-    this.setLeaders(leaders)
   }
   handleMouseDown = ({ clientX, clientY }) => {
     this.cameraDrag = {
@@ -111,7 +94,7 @@ class Game {
     }
   }
   handleErrorMessage = () => {
-    this.showConnectionError()
+    this.react.showConnectionError()
     this.socket.close()
   }
   handlePlayerMessage = data => {
