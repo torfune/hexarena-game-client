@@ -46,7 +46,9 @@ class Game {
 
     rootElement.appendChild(this.pixi.view)
 
-    this.loop = setInterval(this.update, 10)
+    this.loop = PIXI.ticker.shared
+    this.loop.autoStart = true
+    this.loop.add(this.update, this)
 
     document.addEventListener('mousewheel', this.handleWheelMove)
     document.addEventListener('mousemove', this.handleMouseMove)
@@ -247,9 +249,8 @@ class Game {
         y: cameraDrag.originalY - (cameraDrag.cursorY - cursor.y),
       }
 
-      for (let i = 0; i < tiles.length; i++) {
-        tiles[i].updateCamera(this.camera)
-      }
+      this.pixi.stage.x = this.camera.x
+      this.pixi.stage.y = this.camera.y
     }
 
     // update zoom
@@ -269,15 +270,14 @@ class Game {
     }
   }
   setCameraToTile = tile => {
-    const pixel = getPixelPosition(tile.x, tile.z, this.camera, this.scale)
+    const pixel = getPixelPosition(tile.x, tile.z, this.scale)
     const screenCenter = { x: window.innerWidth / 2, y: window.innerHeight / 2 }
 
     this.camera.x = screenCenter.x - pixel.x
     this.camera.y = screenCenter.y - pixel.y
 
-    for (let i = 0; i < this.tiles.length; i++) {
-      this.tiles[i].updateCamera(this.camera)
-    }
+    this.pixi.stage.x = this.camera.x
+    this.pixi.stage.y = this.camera.y
   }
 }
 

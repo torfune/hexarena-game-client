@@ -14,7 +14,7 @@ class Tile {
     this.scale = scale
     this.image = {}
 
-    const position = getPixelPosition(x, z, camera, scale)
+    const position = getPixelPosition(x, z, scale)
 
     this.image.background = createImage('hexagon', {
       color: '#eee',
@@ -33,11 +33,11 @@ class Tile {
     }
   }
   setScale(scale) {
-    const { x, z, camera } = this
+    const { x, z } = this
 
     this.scale = scale
 
-    const position = getPixelPosition(x, z, camera, scale)
+    const position = getPixelPosition(x, z, scale)
 
     if (this.image.background) {
       this.image.background.scale.x = scale
@@ -53,32 +53,15 @@ class Tile {
       this.image.pattern.y = position.y
     }
   }
-  updateCamera(camera) {
-    const { x, z, scale } = this
-
-    this.camera = camera
-
-    const pixel = getPixelPosition(x, z, camera, scale)
-
-    if (this.image.background) {
-      this.image.background.x = pixel.x
-      this.image.background.y = pixel.y
-    }
-
-    if (this.image.pattern) {
-      this.image.pattern.x = pixel.x
-      this.image.pattern.y = pixel.y
-    }
-  }
   setOwner(owner) {
-    const { x, z, camera, scale, stage } = this
+    const { x, z, scale, stage } = this
 
     this.owner = owner
 
     if (owner && !this.image.pattern) {
       this.image.pattern = createImage('hexagon', {
         color: owner.pattern,
-        position: getPixelPosition(x, z, camera, scale),
+        position: getPixelPosition(x, z, scale),
         scale,
         stage,
         alpha: 0,

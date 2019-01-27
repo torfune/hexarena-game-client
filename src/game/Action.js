@@ -4,14 +4,14 @@ import Rectangle from './Rectangle'
 
 class Action {
   constructor({ tile, finishedAt, duration }) {
-    const { x, z, camera, stage, scale } = tile
+    const { x, z, stage, scale } = tile
 
     this.tile = tile
     this.finishedAt = finishedAt
     this.duration = duration
     this.stage = stage
 
-    const position = getPixelPosition(x, z, camera, scale)
+    const position = getPixelPosition(x, z, scale)
 
     this.background = new Rectangle(stage, {
       color: '#000',
@@ -49,9 +49,9 @@ class Action {
       return
     }
 
-    const { x, z, camera, scale } = this.tile
+    const { x, z, scale } = this.tile
 
-    const position = getPixelPosition(x, z, camera, scale)
+    const position = getPixelPosition(x, z, scale)
     const timeDelta = finishedAt - now
     const percentage = Math.round((1 - timeDelta / duration) * 100) / 100
     const width = 64 * percentage
