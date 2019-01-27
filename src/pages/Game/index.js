@@ -1,11 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { startGame, clearGame, cancelAlliance } from '../../game'
+import { startGame, clearGame, cancelAlliance, loadImages } from '../../game'
+
 import Leaderboard from './components/Leaderboard'
 import PlayerInfo from './components/PlayerInfo'
 import ErrorMessage from './components/ErrorMessage'
-import loadImages from '../../utils/loadImages'
 
 const GameContainer = styled.div`
   width: 100vw;

@@ -1,4 +1,5 @@
-import Game from './Game'
+import Game from './classes/Game'
+import loadImages from './functions/loadImages'
 
 let game = null
 let cancelAlliance = null
@@ -18,4 +19,4 @@ const clearGame = () => {
   game = null
 }
 
-export { startGame, clearGame, cancelAlliance }
+export { startGame, clearGame, cancelAlliance, loadImages }

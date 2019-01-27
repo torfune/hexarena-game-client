@@ -4,13 +4,18 @@ import * as PIXI from 'pixi.js'
 import Tile from './Tile'
 import Player from './Player'
 import Action from './Action'
-import getTileByXZ from '../utils/getTileByXZ'
-import getItemById from '../utils/getItemById'
-import getTileUnderCursor from '../utils/getTileUnderCursor'
-import getPixelPosition from '../utils/getPixelPosition'
-import hex from '../utils/hex'
-import { leaders } from '../data'
-import { ZOOM_SPEED, MAX_SCALE, MIN_SCALE, DEFAULT_SCALE } from '../constants'
+import getTileByXZ from '../functions/getTileByXZ'
+import getItemById from '../functions/getItemById'
+import getTileUnderCursor from '../functions/getTileUnderCursor'
+import getPixelPosition from '../functions/getPixelPosition'
+import hex from '../functions/hex'
+import { leaders } from '../../data'
+import {
+  ZOOM_SPEED,
+  MAX_SCALE,
+  MIN_SCALE,
+  DEFAULT_SCALE,
+} from '../../constants'
 
 class Game {
   constructor(rootElement, setters) {

@@ -1,4 +1,4 @@
-import getPixelPosition from '../utils/getPixelPosition'
+import getPixelPosition from '../functions/getPixelPosition'
 
 import Rectangle from './Rectangle'
 

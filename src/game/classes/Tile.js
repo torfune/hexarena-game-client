@@ -1,7 +1,7 @@
-import getPixelPosition from '../utils/getPixelPosition'
-import createImage from '../utils/createImage'
 import Animation from './Animation'
-import hex from '../utils/hex'
+import getPixelPosition from '../functions/getPixelPosition'
+import createImage from '../functions/createImage'
+import hex from '../functions/hex'
 
 class Tile {
   constructor({ x, z, stage, camera, owner, animations, scale }) {

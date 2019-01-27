@@ -1,4 +1,4 @@
-import { TILE_RADIUS } from '../constants'
+import { TILE_RADIUS } from '../../constants'
 
 const getPixelPosition = (x, z, scale) => ({
   x: TILE_RADIUS * scale * 2 * (Math.sqrt(3) * x + (Math.sqrt(3) / 2) * z),

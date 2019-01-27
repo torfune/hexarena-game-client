@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 
-import mountain from '../images/mountain.png'
-import hexagon from '../images/hexagon.png'
+import mountain from '../../images/mountain.png'
+import hexagon from '../../images/hexagon.png'
 
 const loadImages = () => {
   return new Promise(resolve => {

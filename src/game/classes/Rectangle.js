@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js'
 
-import hex from '../utils/hex'
+import hex from '../functions/hex'
 
 class Rectangle {
   constructor(stage, options) {
