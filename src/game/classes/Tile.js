@@ -4,7 +4,7 @@ import createImage from '../functions/createImage'
 import hex from '../functions/hex'
 
 class Tile {
-  constructor({ x, z, stage, camera, owner, animations, scale }) {
+  constructor({ x, z, stage, camera, owner, animations, scale, mountain }) {
     this.animations = animations
     this.x = x
     this.z = z
@@ -13,6 +13,7 @@ class Tile {
     this.stage = stage
     this.scale = scale
     this.image = {}
+    this.mountain = mountain
 
     const position = getPixelPosition(x, z, scale)
 
@@ -22,6 +23,15 @@ class Tile {
       scale,
       stage,
     })
+
+    if (mountain) {
+      this.image.mountain = createImage('mountain', {
+        color: '#eee',
+        position,
+        scale,
+        stage,
+      })
+    }
 
     if (owner) {
       this.image.pattern = createImage('hexagon', {
