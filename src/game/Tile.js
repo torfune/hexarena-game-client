@@ -1,99 +1,106 @@
 import getPixelPosition from '../utils/getPixelPosition'
-import createHexagon from '../utils/createHexagon'
+import createImage from '../utils/createImage'
 import Animation from './Animation'
-import { TILE_RADIUS } from '../constants'
+import hex from '../utils/hex'
 
 class Tile {
-  constructor({ two, x, z, radius, camera, owner, animations }) {
-    this.radius = radius
-    this.two = two
+  constructor({ x, z, stage, camera, owner, animations, scale }) {
     this.animations = animations
     this.x = x
     this.z = z
     this.camera = camera
     this.owner = owner
+    this.stage = stage
+    this.scale = scale
     this.image = {}
 
-    const pixel = getPixelPosition(x, z, camera, radius)
-    const scale = radius / TILE_RADIUS
+    const position = getPixelPosition(x, z, camera, scale)
 
-    this.image.background = createHexagon({
-      two,
-      fill: '#eee',
-      pixel,
+    this.image.background = createImage('hexagon', {
+      color: '#eee',
+      position,
       scale,
+      stage,
     })
 
     if (owner) {
-      this.image.pattern = createHexagon({
-        two,
-        fill: owner.pattern,
-        pixel,
+      this.image.pattern = createImage('hexagon', {
+        color: owner.pattern,
+        position,
         scale,
+        stage,
       })
     }
   }
-  setRadius(radius) {
+  setScale(scale) {
     const { x, z, camera } = this
 
-    this.radius = radius
+    this.scale = scale
 
-    const scale = radius / TILE_RADIUS
-    const pixel = getPixelPosition(x, z, camera, radius)
+    const position = getPixelPosition(x, z, camera, scale)
 
     if (this.image.background) {
-      this.image.background.scale = scale
-      this.image.background.translation.set(pixel.x, pixel.y)
+      this.image.background.scale.x = scale
+      this.image.background.scale.y = scale
+      this.image.background.x = position.x
+      this.image.background.y = position.y
     }
 
     if (this.image.pattern) {
-      this.image.pattern.scale = scale
-      this.image.pattern.translation.set(pixel.x, pixel.y)
+      this.image.pattern.scale.x = scale
+      this.image.pattern.scale.y = scale
+      this.image.pattern.x = position.x
+      this.image.pattern.y = position.y
     }
   }
   updateCamera(camera) {
-    const { x, z, radius } = this
+    const { x, z, scale } = this
 
     this.camera = camera
 
-    const pixel = getPixelPosition(x, z, camera, radius)
+    const pixel = getPixelPosition(x, z, camera, scale)
 
     if (this.image.background) {
-      this.image.background.translation.set(pixel.x, pixel.y)
+      this.image.background.x = pixel.x
+      this.image.background.y = pixel.y
     }
 
     if (this.image.pattern) {
-      this.image.pattern.translation.set(pixel.x, pixel.y)
+      this.image.pattern.x = pixel.x
+      this.image.pattern.y = pixel.y
     }
   }
   setOwner(owner) {
-    const { x, z, camera, radius, two } = this
+    const { x, z, camera, scale, stage } = this
 
     this.owner = owner
 
     if (owner && !this.image.pattern) {
-      const scale = radius / TILE_RADIUS
-      const pixel = getPixelPosition(x, z, camera, radius)
-
-      this.image.pattern = createHexagon({
-        two,
-        fill: owner.pattern,
-        pixel,
+      this.image.pattern = createImage('hexagon', {
+        color: owner.pattern,
+        position: getPixelPosition(x, z, camera, scale),
         scale,
-        opacity: 0,
+        stage,
+        alpha: 0,
       })
 
       this.animations.push(
         new Animation({
           image: this.image.pattern,
           onUpdate: image => {
-            const newOpacity = image.opacity + 0.1
-            if (newOpacity >= 1) return true
-            image.opacity = newOpacity
+            const newAlpha = image.alpha + 0.1
+            if (newAlpha >= 1) return true
+            image.alpha = newAlpha
           },
         })
       )
     }
+  }
+  addHighlight() {
+    this.image.background.tint = hex('#ddd')
+  }
+  clearHighlight() {
+    this.image.background.tint = hex('#eee')
   }
 }
 

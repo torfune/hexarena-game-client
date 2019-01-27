@@ -1,7 +1,8 @@
 import getTileByXZ from './getTileByXZ'
+import { TILE_RADIUS } from '../constants'
 
-const getTileUnderCursor = (tiles, camera, cursor, radius) => {
-  const size = radius * 2
+const getTileUnderCursor = (tiles, camera, cursor, scale) => {
+  const size = TILE_RADIUS * scale * 2
 
   const pixel = {
     x: cursor.x - camera.x,

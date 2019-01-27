@@ -5,12 +5,12 @@ import { startGame, clearGame, cancelAlliance } from '../../game'
 import Leaderboard from './components/Leaderboard'
 import PlayerInfo from './components/PlayerInfo'
 import ErrorMessage from './components/ErrorMessage'
+import loadImages from '../../utils/loadImages'
 
 const GameContainer = styled.div`
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  /* background: #666; */
 `
 
 class Game extends React.Component {
@@ -18,8 +18,10 @@ class Game extends React.Component {
     leaders: [],
     connectionError: false,
   }
-  componentDidMount = () => {
+  componentDidMount = async () => {
     const gameElement = document.getElementById('game')
+
+    await loadImages()
 
     startGame(gameElement, {
       setLeaders: this.handleLeadersChange,

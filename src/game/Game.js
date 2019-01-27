@@ -1,6 +1,6 @@
 import io from 'socket.io-client'
+import * as PIXI from 'pixi.js'
 
-import Two from '../Two'
 import Tile from './Tile'
 import Player from './Player'
 import Action from './Action'
@@ -8,16 +8,18 @@ import getTileByXZ from '../utils/getTileByXZ'
 import getItemById from '../utils/getItemById'
 import getTileUnderCursor from '../utils/getTileUnderCursor'
 import getPixelPosition from '../utils/getPixelPosition'
+import hex from '../utils/hex'
 import { leaders } from '../data'
-import { TILE_RADIUS, ZOOM_SPEED } from '../constants'
+import { ZOOM_SPEED, MAX_SCALE, MIN_SCALE, DEFAULT_SCALE } from '../constants'
+
 class Game {
   constructor(rootElement, setters) {
     // React API set methods
     this.setLeaders = setters.setLeaders
     this.showConnectionError = setters.showConnectionError
 
-    this.radius = TILE_RADIUS
-    this.targetRadius = TILE_RADIUS
+    this.scale = DEFAULT_SCALE
+    this.targetScale = this.scale
     this.tiles = []
     this.players = []
     this.animations = []
@@ -33,13 +35,18 @@ class Game {
       .on('action', this.handleActionMessage)
       .on('connect_error', this.handleErrorMessage)
 
-    this.two = new Two({
-      width: window.innerWidth,
-      height: window.innerHeight,
-      type: 'WebGLRenderer',
-    }).appendTo(rootElement)
+    this.pixi = new PIXI.Application({
+      antialias: true,
+      resolution: window.devicePixelRatio,
+    })
 
-    this.two.bind('update', this.update.bind(this)).play()
+    this.pixi.renderer.backgroundColor = hex('#fff')
+    this.pixi.renderer.autoResize = true
+    this.pixi.renderer.resize(window.innerWidth, window.innerHeight)
+
+    rootElement.appendChild(this.pixi.view)
+
+    this.loop = setInterval(this.update, 10)
 
     document.addEventListener('mousewheel', this.handleWheelMove)
     document.addEventListener('mousemove', this.handleMouseMove)
@@ -57,12 +64,11 @@ class Game {
       cursorY: clientY,
     }
 
-    const cursor = { x: clientX, y: clientY }
     const tile = getTileUnderCursor(
       this.tiles,
       this.camera,
-      cursor,
-      this.radius
+      this.cursor,
+      this.scale
     )
 
     if (!tile) return
@@ -75,10 +81,30 @@ class Game {
   handleMouseMove = ({ clientX, clientY }) => {
     this.cursor.x = clientX
     this.cursor.y = clientY
+
+    const tile = getTileUnderCursor(
+      this.tiles,
+      this.camera,
+      this.cursor,
+      this.scale
+    )
+
+    if (!tile) return
+
+    for (let i = 0; i < this.tiles.length; i++) {
+      this.tiles[i].clearHighlight()
+    }
+
+    tile.addHighlight()
   }
   handleWheelMove = ({ deltaY }) => {
-    const zoomDirection = deltaY < 0 ? -1 : 1
-    this.targetRadius += zoomDirection * ZOOM_SPEED
+    const zoomDirection = (deltaY < 0 ? -1 : 1) * -1
+
+    const newScale = this.scale + zoomDirection * ZOOM_SPEED
+
+    if (newScale >= MIN_SCALE && newScale <= MAX_SCALE) {
+      this.targetScale = newScale
+    }
   }
   handleErrorMessage = () => {
     this.showConnectionError()
@@ -103,7 +129,7 @@ class Game {
     }
   }
   handleTileMessage = data => {
-    const { players, tiles, two, radius, animations } = this
+    const { pixi, players, tiles, scale, animations } = this
 
     const arr = data.includes('><') ? data.split('><') : [data]
 
@@ -134,8 +160,8 @@ class Game {
           x,
           z,
           animations,
-          two,
-          radius,
+          stage: pixi.stage,
+          scale,
           camera: this.camera,
           owner,
           castle,
@@ -179,7 +205,7 @@ class Game {
     } else {
       tile.action = new Action({
         tile,
-        two: this.two,
+        stage: this.pixi.stage,
         duration,
         finishedAt,
         canceledAt,
@@ -227,11 +253,11 @@ class Game {
     }
 
     // update zoom
-    if (this.radius !== this.targetRadius) {
-      this.radius = this.targetRadius
+    if (this.scale !== this.targetScale) {
+      this.scale = this.targetScale
 
       for (let i = 0; i < tiles.length; i++) {
-        tiles[i].setRadius(this.targetRadius)
+        tiles[i].setScale(this.targetScale)
       }
     }
 
@@ -243,7 +269,7 @@ class Game {
     }
   }
   setCameraToTile = tile => {
-    const pixel = getPixelPosition(tile.x, tile.z, this.camera, this.radius)
+    const pixel = getPixelPosition(tile.x, tile.z, this.camera, this.scale)
     const screenCenter = { x: window.innerWidth / 2, y: window.innerHeight / 2 }
 
     this.camera.x = screenCenter.x - pixel.x

@@ -1,30 +1,37 @@
 import getPixelPosition from '../utils/getPixelPosition'
 
-import { TILE_RADIUS } from '../constants'
+import Rectangle from './Rectangle'
 
 class Action {
-  constructor({ tile, two, finishedAt, duration }) {
+  constructor({ tile, finishedAt, duration }) {
+    const { x, z, camera, stage, scale } = tile
+
     this.tile = tile
-    this.two = two
     this.finishedAt = finishedAt
     this.duration = duration
+    this.stage = stage
 
-    const { x, z, camera, radius } = tile
+    const position = getPixelPosition(x, z, camera, scale)
 
-    const pixel = getPixelPosition(x, z, camera, radius)
-    const scale = radius / TILE_RADIUS
+    this.background = new Rectangle(stage, {
+      color: '#000',
+      position,
+      width: 64,
+      height: 8,
+      scale,
+      borderRadius: 4,
+      alpha: 0.1,
+    })
 
-    this.background = this.two.makeRoundedRectangle(pixel.x, pixel.y, 64, 8, 4)
-    this.background.fill = '#000'
-    this.background.noStroke()
-    this.background.opacity = 0.1
-    this.background.scale = scale
-
-    this.fill = two.makeRoundedRectangle(pixel.x, pixel.y, 0, 8, 4)
-    this.fill.fill = '#000'
-    this.fill.noStroke()
-    this.fill.opacity = 0.5
-    this.fill.scale = scale
+    this.fill = new Rectangle(stage, {
+      color: '#000',
+      position,
+      width: 0,
+      height: 8,
+      scale,
+      borderRadius: 4,
+      alpha: 0.5,
+    })
 
     this.update()
   }
@@ -32,37 +39,33 @@ class Action {
     const { finishedAt, canceledAt, duration } = this
     const now = Date.now()
 
-    if (finishedAt && now >= finishedAt) {
+    if (
+      (finishedAt && now >= finishedAt) ||
+      (canceledAt && now >= canceledAt)
+    ) {
       this.tile.action = null
-      this.background.remove()
-      this.fill.remove()
+      this.stage.removeChild(this.background.graphics)
+      this.stage.removeChild(this.fill.graphics)
       return
     }
 
-    if (canceledAt && now >= canceledAt) {
-      this.tile.action = null
-      this.background.remove()
-      this.fill.remove()
-      return
-    }
+    const { x, z, camera, scale } = this.tile
 
-    const { x, z, camera, radius } = this.tile
-
-    const pixel = getPixelPosition(x, z, camera, radius)
-    const scale = radius / TILE_RADIUS
-
+    const position = getPixelPosition(x, z, camera, scale)
     const timeDelta = finishedAt - now
     const percentage = Math.round((1 - timeDelta / duration) * 100) / 100
     const width = 64 * percentage
 
-    this.fill.width = width
-    this.fill.translation.x = pixel.x - 32 * scale + (width * scale) / 2
-    this.fill.translation.y = pixel.y
-    this.fill.scale = scale
+    this.background.redraw({ position, scale })
 
-    this.background.translation.x = pixel.x
-    this.background.translation.y = pixel.y
-    this.background.scale = scale
+    this.fill.redraw({
+      width,
+      position: {
+        x: position.x - 32 * scale + (width * scale) / 2,
+        y: position.y,
+      },
+      scale,
+    })
   }
 }
 
