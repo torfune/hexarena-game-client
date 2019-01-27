@@ -35,10 +35,7 @@ class Game {
       .on('action', this.handleActionMessage)
       .on('connect_error', this.handleErrorMessage)
 
-    this.pixi = new PIXI.Application({
-      antialias: true,
-      resolution: window.devicePixelRatio,
-    })
+    this.pixi = new PIXI.Application({ resolution: window.devicePixelRatio })
 
     this.pixi.renderer.backgroundColor = hex('#fff')
     this.pixi.renderer.autoResize = true
