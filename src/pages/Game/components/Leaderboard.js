@@ -35,7 +35,7 @@ const Leaderboard = ({ leaders }) => (
     {leaders.map(l => (
       <Leader key={l.name}>
         <p>{l.name}</p>
-        <p>{l.points}</p>
+        <p>{l.tilesCount}</p>
       </Leader>
     ))}
   </Container>

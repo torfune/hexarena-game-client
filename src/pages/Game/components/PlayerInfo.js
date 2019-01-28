@@ -1,8 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { playerInfo } from '../../../data'
-
 const Container = styled.div`
   background: #fff;
   bottom: 16px;
@@ -22,10 +20,10 @@ const Header = styled.p`
   margin-bottom: 16px;
 `
 
-const PlayerInfo = () => (
+const PlayerInfo = ({ name, tilesCount }) => (
   <Container>
-    <Header>{playerInfo.name}</Header>
-    <p>{playerInfo.tilesCount}</p>
+    <Header>{name}</Header>
+    <p>{tilesCount}</p>
   </Container>
 )
 

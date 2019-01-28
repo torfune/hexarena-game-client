@@ -15,6 +15,7 @@ const GameContainer = styled.div`
 
 class Game extends React.Component {
   state = {
+    name: null,
     leaders: [],
     connectionError: false,
   }
@@ -25,6 +26,8 @@ class Game extends React.Component {
 
     startGame(gameElement, {
       setLeaders: this.handleLeadersChange,
+      setName: this.handleNameChange,
+      setTilesCount: this.handleTilesCountChange,
       showConnectionError: this.handleConnectionError,
     })
 
@@ -39,6 +42,12 @@ class Game extends React.Component {
   handleConnectionError = () => {
     this.setState({ connectionError: true })
   }
+  handleNameChange = name => {
+    this.setState({ name })
+  }
+  handleTilesCountChange = tilesCount => {
+    this.setState({ tilesCount })
+  }
   render() {
     if (this.state.connectionError) {
       return <ErrorMessage>Can't connect to the GameServer</ErrorMessage>
@@ -48,7 +57,7 @@ class Game extends React.Component {
       <div>
         <GameContainer id="game" />
         <Leaderboard leaders={this.state.leaders} />
-        <PlayerInfo />
+        <PlayerInfo name={this.state.name} tilesCount={this.state.tilesCount} />
       </div>
     )
   }

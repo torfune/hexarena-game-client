@@ -28,11 +28,14 @@ class Game {
     this.camera = { x: 0, y: 0 }
     this.cameraDrag = null
     this.lastMouseMove = null
+    this.playerId = null
 
     this.socket = io('http://localhost:8000')
       .on('player', this.handlePlayerMessage)
       .on('tile', this.handleTileMessage)
       .on('action', this.handleActionMessage)
+      .on('id', this.handleIdMessage)
+      .on('leaderboard', this.handleLeaderboardMessage)
       .on('connect_error', this.handleErrorMessage)
 
     this.pixi = createPixiApp(rootElement)
@@ -134,6 +137,10 @@ class Game {
       }
 
       players.push(new Player({ id, name, pattern, alliance }))
+
+      if (id === this.playerId) {
+        this.react.setName(name)
+      }
     }
   }
   handleTileMessage = data => {
@@ -183,6 +190,8 @@ class Game {
         this.setCameraToTile(tiles[0])
       }
     }
+
+    this.updatePlayerTilesCount()
   }
   handleActionMessage = data => {
     const split = data.split('|')
@@ -222,8 +231,14 @@ class Game {
       })
     }
   }
+  handleIdMessage = id => {
+    this.playerId = id
+  }
+  handleLeaderboardMessage = leaders => {
+    this.react.setLeaders(leaders)
+  }
   cancelAlliance = playerId => {
-    console.log(`Canceling alliance with ${playerId}`)
+    // todo: implement
   }
   clear = () => {
     document.removeEventListener('mousewheel', this.handleWheelMove)
@@ -284,6 +299,19 @@ class Game {
 
     this.pixi.stage.x = this.camera.x
     this.pixi.stage.y = this.camera.y
+  }
+  updatePlayerTilesCount = () => {
+    let tilesCount = 0
+
+    for (let i = 0; i < this.tiles.length; i++) {
+      const owner = this.tiles[i].owner
+
+      if (owner && owner.id === this.playerId) {
+        tilesCount++
+      }
+    }
+
+    this.react.setTilesCount(tilesCount)
   }
 }
 
