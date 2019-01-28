@@ -65,7 +65,11 @@ class Tile {
 
     this.owner = owner
 
-    if (owner && !this.image.pattern) {
+    if (owner) {
+      if (this.image.pattern) {
+        this.stage.removeChild(this.image.pattern)
+      }
+
       this.image.pattern = createImage('hexagon', {
         color: owner.pattern,
         position: getPixelPosition(x, z, scale),

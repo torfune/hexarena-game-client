@@ -54,13 +54,17 @@ class Game {
 
     if (!tile) return
 
-    if (key === '1') {
-      tile.showTestSprite('forest')
-    } else if (key === '2') {
-      tile.showTestSprite('mountain')
+    switch (key) {
+      case '1':
+        tile.showTestSprite('mountain')
+        break
+      case '2':
+        tile.showTestSprite('forest')
+        break
+      default:
     }
   }
-  handleMouseDown = ({ clientX, clientY, button }) => {
+  handleMouseDown = ({ clientX, clientY }) => {
     this.cameraDrag = {
       originalX: this.camera.x,
       originalY: this.camera.y,
@@ -77,26 +81,10 @@ class Game {
 
     if (!tile) return
 
-    // mouse wheel
-    if (button === 1) {
-      tile.showTestSprite('forest')
-      return
-    }
-
-    if (button === 3) {
-      tile.showTestSprite('forest')
-      return
-    }
-
     this.socket.emit('click', `${tile.x}|${tile.z}`)
   }
-  handleMouseUp = ({ key }) => {
+  handleMouseUp = () => {
     this.cameraDrag = null
-
-    // if (button === 3) {
-    //   tile.showTestSprite('forest')
-    //   return
-    // }
   }
   handleMouseMove = ({ clientX, clientY }) => {
     this.cursor.x = clientX
