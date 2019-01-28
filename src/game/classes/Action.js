@@ -8,17 +8,18 @@ import {
 
 class Action {
   constructor({ tile, finishedAt, duration }) {
-    const { x, z, stage, scale } = tile
+    const { x, z, stages, scale } = tile
 
     this.tile = tile
     this.finishedAt = finishedAt
     this.duration = duration
-    this.stage = stage
+    this.stages = stages
     this.isActive = true
 
     const position = getPixelPosition(x, z, scale)
 
-    this.background = new Rectangle(stage, {
+    this.background = new Rectangle({
+      stage: stages.actions,
       color: '#000',
       position,
       width: ACTION_WIDTH,
@@ -29,7 +30,8 @@ class Action {
       animationStep: 0.01,
     })
 
-    this.fill = new Rectangle(stage, {
+    this.fill = new Rectangle({
+      stage: stages.actions,
       color: '#000',
       position,
       width: 0,
@@ -51,8 +53,8 @@ class Action {
       this.fill.redraw({})
 
       if (this.background.alpha <= 0) {
-        this.stage.removeChild(this.background.graphics)
-        this.stage.removeChild(this.fill.graphics)
+        this.stages.actions.removeChild(this.background.graphics)
+        this.stages.actions.removeChild(this.fill.graphics)
         this.tile.action = null
       }
 

@@ -3,7 +3,7 @@ import * as PIXI from 'pixi.js'
 import hex from '../functions/hex'
 
 class Rectangle {
-  constructor(stage, options) {
+  constructor(options) {
     this.defaultOptions = options
 
     this.alpha = 0
@@ -11,7 +11,7 @@ class Rectangle {
     this.animationStep = options.animationStep || 1
 
     this.graphics = new PIXI.Graphics()
-    stage.addChild(this.graphics)
+    options.stage.addChild(this.graphics)
 
     this.redraw(options)
   }

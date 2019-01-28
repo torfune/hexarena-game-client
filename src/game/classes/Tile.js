@@ -4,13 +4,13 @@ import createImage from '../functions/createImage'
 import hex from '../functions/hex'
 
 class Tile {
-  constructor({ x, z, stage, camera, owner, animations, scale, mountain }) {
+  constructor({ x, z, stages, camera, owner, animations, scale, mountain }) {
     this.animations = animations
     this.x = x
     this.z = z
     this.camera = camera
     this.owner = owner
-    this.stage = stage
+    this.stages = stages
     this.scale = scale
     this.image = {}
     this.mountain = mountain
@@ -21,15 +21,14 @@ class Tile {
       color: '#eee',
       position,
       scale,
-      stage,
+      stage: stages.backgrounds,
     })
 
     if (mountain) {
       this.image.mountain = createImage('mountain', {
-        color: '#eee',
         position,
         scale,
-        stage,
+        stage: stages.mountains,
       })
     }
 
@@ -38,7 +37,7 @@ class Tile {
         color: owner.pattern,
         position,
         scale,
-        stage,
+        stage: stages.patterns,
       })
     }
   }
@@ -56,6 +55,13 @@ class Tile {
       this.image.background.y = position.y
     }
 
+    if (this.image.mountain) {
+      this.image.mountain.scale.x = scale
+      this.image.mountain.scale.y = scale
+      this.image.mountain.x = position.x
+      this.image.mountain.y = position.y
+    }
+
     if (this.image.pattern) {
       this.image.pattern.scale.x = scale
       this.image.pattern.scale.y = scale
@@ -71,7 +77,7 @@ class Tile {
     }
   }
   setOwner(owner) {
-    const { x, z, scale, stage } = this
+    const { x, z, scale, stages } = this
 
     this.owner = owner
 
@@ -80,7 +86,7 @@ class Tile {
         color: owner.pattern,
         position: getPixelPosition(x, z, scale),
         scale,
-        stage,
+        stage: stages.patterns,
         alpha: 0,
       })
 
