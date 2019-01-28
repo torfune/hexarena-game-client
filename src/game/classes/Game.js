@@ -1,3 +1,4 @@
+import * as PIXI from 'pixi.js'
 import io from 'socket.io-client'
 
 import Tile from './Tile'
@@ -40,6 +41,18 @@ class Game {
 
     this.pixi = createPixiApp(rootElement)
     this.loop = createGameLoop(this.update, this)
+
+    this.stages = {
+      actions: new PIXI.Container(),
+      mountains: new PIXI.Container(),
+      patterns: new PIXI.Container(),
+      backgrounds: new PIXI.Container(),
+    }
+
+    this.pixi.stage.addChild(this.stages.backgrounds)
+    this.pixi.stage.addChild(this.stages.patterns)
+    this.pixi.stage.addChild(this.stages.mountains)
+    this.pixi.stage.addChild(this.stages.actions)
 
     document.addEventListener('mousewheel', this.handleWheelMove)
     document.addEventListener('mousemove', this.handleMouseMove)
@@ -144,7 +157,7 @@ class Game {
     }
   }
   handleTileMessage = data => {
-    const { pixi, players, tiles, scale, animations } = this
+    const { players, tiles, scale, animations } = this
 
     const arr = data.includes('><') ? data.split('><') : [data]
 
@@ -175,7 +188,7 @@ class Game {
           x,
           z,
           animations,
-          stage: pixi.stage,
+          stages: this.stages,
           scale,
           camera: this.camera,
           owner,
@@ -222,7 +235,7 @@ class Game {
     } else {
       tile.action = new Action({
         tile,
-        stage: this.pixi.stage,
+        stages: this.stages,
         duration,
         finishedAt,
         canceledAt,
