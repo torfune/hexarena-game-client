@@ -42,8 +42,25 @@ class Game {
     document.addEventListener('mousemove', this.handleMouseMove)
     document.addEventListener('mousedown', this.handleMouseDown)
     document.addEventListener('mouseup', this.handleMouseUp)
+    document.addEventListener('keyup', this.handleKeyUp)
   }
-  handleMouseDown = ({ clientX, clientY }) => {
+  handleKeyUp = ({ key }) => {
+    const tile = getTileUnderCursor(
+      this.tiles,
+      this.camera,
+      this.cursor,
+      this.scale
+    )
+
+    if (!tile) return
+
+    if (key === '1') {
+      tile.showTestSprite('forest')
+    } else if (key === '2') {
+      tile.showTestSprite('mountain')
+    }
+  }
+  handleMouseDown = ({ clientX, clientY, button }) => {
     this.cameraDrag = {
       originalX: this.camera.x,
       originalY: this.camera.y,
@@ -60,10 +77,26 @@ class Game {
 
     if (!tile) return
 
+    // mouse wheel
+    if (button === 1) {
+      tile.showTestSprite('forest')
+      return
+    }
+
+    if (button === 3) {
+      tile.showTestSprite('forest')
+      return
+    }
+
     this.socket.emit('click', `${tile.x}|${tile.z}`)
   }
-  handleMouseUp = () => {
+  handleMouseUp = ({ key }) => {
     this.cameraDrag = null
+
+    // if (button === 3) {
+    //   tile.showTestSprite('forest')
+    //   return
+    // }
   }
   handleMouseMove = ({ clientX, clientY }) => {
     this.cursor.x = clientX

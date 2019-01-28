@@ -1,5 +1,5 @@
 // TILE
-export const TILE_RADIUS = 75
+export const TILE_RADIUS = 73
 
 // COLORS
 export const FACEBOOK_PRIMARY = '#3b5998'
@@ -12,6 +12,6 @@ export const MIN_SCALE = 0.2
 export const DEFAULT_SCALE = 0.5
 
 // ACTION
-export const ACTION_WIDTH = 256
-export const ACTION_HEIGHT = 32
-export const ACTION_BORDER_RADIUS = 0
+export const ACTION_WIDTH = 180
+export const ACTION_HEIGHT = 16
+export const ACTION_BORDER_RADIUS = ACTION_HEIGHT / 2

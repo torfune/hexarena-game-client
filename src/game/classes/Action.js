@@ -1,5 +1,4 @@
 import getPixelPosition from '../functions/getPixelPosition'
-
 import Rectangle from './Rectangle'
 import {
   ACTION_WIDTH,
@@ -15,6 +14,7 @@ class Action {
     this.finishedAt = finishedAt
     this.duration = duration
     this.stage = stage
+    this.isActive = true
 
     const position = getPixelPosition(x, z, scale)
 
@@ -25,7 +25,8 @@ class Action {
       height: ACTION_HEIGHT,
       scale,
       borderRadius: ACTION_BORDER_RADIUS,
-      alpha: 0.05,
+      alpha: 0.1,
+      animationStep: 0.01,
     })
 
     this.fill = new Rectangle(stage, {
@@ -35,7 +36,8 @@ class Action {
       height: ACTION_HEIGHT,
       scale,
       borderRadius: ACTION_BORDER_RADIUS,
-      alpha: 0.1,
+      animationStep: 0.03,
+      alpha: 0.3,
     })
 
     this.update()
@@ -44,13 +46,24 @@ class Action {
     const { finishedAt, canceledAt, duration } = this
     const now = Date.now()
 
+    if (!this.isActive) {
+      this.background.redraw({})
+      this.fill.redraw({})
+
+      if (this.background.alpha <= 0) {
+        this.stage.removeChild(this.background.graphics)
+        this.stage.removeChild(this.fill.graphics)
+        this.tile.action = null
+      }
+
+      return
+    }
+
     if (
       (finishedAt && now >= finishedAt) ||
       (canceledAt && now >= canceledAt)
     ) {
-      this.tile.action = null
-      this.stage.removeChild(this.background.graphics)
-      this.stage.removeChild(this.fill.graphics)
+      this.destroy()
       return
     }
 
@@ -62,7 +75,6 @@ class Action {
     const width = ACTION_WIDTH * percentage
 
     this.background.redraw({ position, scale })
-
     this.fill.redraw({
       width,
       position: {
@@ -71,6 +83,16 @@ class Action {
       },
       scale,
     })
+  }
+  destroy() {
+    this.isActive = false
+
+    this.background.targetAlpha = 0
+    this.background.animationStep *= -1
+
+    this.fill.targetAlpha = 0
+    this.fill.animationStep *= -1
+    this.fill.defaultOptions.width = this.fill.width
   }
 }
 

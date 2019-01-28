@@ -52,6 +52,13 @@ class Tile {
       this.image.pattern.x = position.x
       this.image.pattern.y = position.y
     }
+
+    if (this.image.testSprite) {
+      this.image.testSprite.scale.x = scale
+      this.image.testSprite.scale.y = scale
+      this.image.testSprite.x = position.x
+      this.image.testSprite.y = position.y
+    }
   }
   setOwner(owner) {
     const { x, z, scale, stage } = this
@@ -84,6 +91,15 @@ class Tile {
   }
   clearHighlight() {
     this.image.background.tint = hex('#eee')
+  }
+  showTestSprite(texture) {
+    const position = getPixelPosition(this.x, this.z, this.scale)
+
+    this.image.testSprite = createImage(texture, {
+      position,
+      scale: this.scale,
+      stage: this.stage,
+    })
   }
 }
 

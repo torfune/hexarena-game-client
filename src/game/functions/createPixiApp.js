@@ -9,6 +9,8 @@ const createPixiApp = rootElement => {
   pixi.renderer.autoResize = true
   pixi.renderer.resize(window.innerWidth, window.innerHeight)
 
+  PIXI.settings.ROUND_PIXELS = true
+
   rootElement.appendChild(pixi.view)
 
   return pixi
