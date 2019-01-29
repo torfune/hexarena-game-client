@@ -118,7 +118,7 @@ class Tile {
     this.image.testSprite = createImage(texture, {
       position,
       scale: this.scale,
-      stage: this.stage,
+      stage: this.stages.mountains,
     })
   }
 }

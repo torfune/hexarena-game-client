@@ -31,7 +31,7 @@ class Game {
     this.lastMouseMove = null
     this.playerId = null
 
-    this.socket = io('http://localhost:8000')
+    this.socket = io('http://dev.hexagor.io:8000')
       .on('player', this.handlePlayerMessage)
       .on('tile', this.handleTileMessage)
       .on('action', this.handleActionMessage)
@@ -76,6 +76,9 @@ class Game {
         break
       case '2':
         tile.showTestSprite('forest')
+        break
+      case '3':
+        tile.showTestSprite('castle')
         break
       default:
     }
