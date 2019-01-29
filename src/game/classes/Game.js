@@ -50,6 +50,7 @@ class Game {
     this.stages = {
       actions: new PIXI.Container(),
       mountains: new PIXI.Container(),
+      forests: new PIXI.Container(),
       patterns: new PIXI.Container(),
       backgrounds: new PIXI.Container(),
     }
@@ -57,6 +58,7 @@ class Game {
     this.pixi.stage.addChild(this.stages.backgrounds)
     this.pixi.stage.addChild(this.stages.patterns)
     this.pixi.stage.addChild(this.stages.mountains)
+    this.pixi.stage.addChild(this.stages.forests)
     this.pixi.stage.addChild(this.stages.actions)
 
     document.addEventListener('mousewheel', this.handleWheelMove)
