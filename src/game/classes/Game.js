@@ -42,6 +42,7 @@ class Game {
       .on('action', this.handleActionMessage)
       .on('id', this.handleIdMessage)
       .on('leaderboard', this.handleLeaderboardMessage)
+      .on('time', this.handleTimeMessage)
       .on('connect_error', this.handleErrorMessage)
 
     this.pixi = createPixiApp(rootElement)
@@ -251,6 +252,7 @@ class Game {
         canceledAt,
         ownerId,
         counterPlayerId,
+        timeDiff: this.timeDiff,
       })
     }
   }
@@ -259,6 +261,16 @@ class Game {
   }
   handleLeaderboardMessage = leaders => {
     this.react.setLeaders(leaders)
+  }
+  handleTimeMessage = serverTime => {
+    const browserTime = Date.now()
+    this.timeDiff = serverTime - browserTime
+
+    if (this.timeDiff < 0) {
+      this.timeDiff = 0
+    }
+
+    console.log(`Browser time difference: ${this.timeDiff}`)
   }
   cancelAlliance = playerId => {
     // todo: implement

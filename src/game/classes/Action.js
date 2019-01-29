@@ -7,13 +7,14 @@ import {
 } from '../../constants'
 
 class Action {
-  constructor({ tile, finishedAt, duration }) {
+  constructor({ tile, finishedAt, duration, timeDiff }) {
     const { x, z, stages, scale } = tile
 
     this.tile = tile
     this.finishedAt = finishedAt
     this.duration = duration
     this.stages = stages
+    this.timeDiff = timeDiff
     this.isActive = true
 
     const position = getPixelPosition(x, z, scale)
@@ -45,8 +46,8 @@ class Action {
     this.update()
   }
   update() {
-    const { finishedAt, canceledAt, duration } = this
-    const now = Date.now()
+    const { finishedAt, canceledAt, duration, timeDiff } = this
+    const now = Date.now() + timeDiff
 
     if (!this.isActive) {
       this.background.redraw({})
@@ -77,6 +78,9 @@ class Action {
     const width = ACTION_WIDTH * percentage
 
     this.background.redraw({ position, scale })
+
+    if (width < 0) return
+
     this.fill.redraw({
       width,
       position: {
