@@ -10,6 +10,7 @@ import getTileByXZ from '../functions/getTileByXZ'
 import getItemById from '../functions/getItemById'
 import getTileUnderCursor from '../functions/getTileUnderCursor'
 import getPixelPosition from '../functions/getPixelPosition'
+import { useRemoteGameserver } from '../../config'
 import {
   ZOOM_SPEED,
   MAX_SCALE,
@@ -31,7 +32,11 @@ class Game {
     this.lastMouseMove = null
     this.playerId = null
 
-    this.socket = io('http://dev.hexagor.io:8000')
+    const gsUrl = useRemoteGameserver
+      ? 'http://dev.hexagor.io:8000'
+      : 'http://localhost:8000'
+
+    this.socket = io(gsUrl)
       .on('player', this.handlePlayerMessage)
       .on('tile', this.handleTileMessage)
       .on('action', this.handleActionMessage)
