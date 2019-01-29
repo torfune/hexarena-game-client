@@ -83,7 +83,7 @@ class Tile {
 
     if (owner) {
       if (this.image.pattern) {
-        this.stage.removeChild(this.image.pattern)
+        this.stages.patterns.removeChild(this.image.pattern)
       }
 
       this.image.pattern = createImage('hexagon', {
