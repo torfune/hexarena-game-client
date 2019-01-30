@@ -40,9 +40,14 @@ class Tile {
     })
 
     if (capital) {
+      let capitalScale = scale - 0.2
+      if (capitalScale < 0.1) {
+        capitalScale = 0.1
+      }
+
       this.image.capital = createImage('capital', {
         position,
-        scale,
+        scale: capitalScale,
         stage: stages.capitals,
       })
     }
@@ -87,8 +92,13 @@ class Tile {
     }
 
     if (this.image.capital) {
-      this.image.capital.scale.x = scale
-      this.image.capital.scale.y = scale
+      let capitalScale = scale - 0.2
+      if (capitalScale < 0.1) {
+        capitalScale = 0.1
+      }
+
+      this.image.capital.scale.x = capitalScale
+      this.image.capital.scale.y = capitalScale
       this.image.capital.x = position.x
       this.image.capital.y = position.y
     }
