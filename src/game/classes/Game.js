@@ -50,6 +50,7 @@ class Game {
 
     this.stages = {
       actions: new PIXI.Container(),
+      capitals: new PIXI.Container(),
       mountains: new PIXI.Container(),
       forests: new PIXI.Container(),
       patterns: new PIXI.Container(),
@@ -60,6 +61,7 @@ class Game {
     this.pixi.stage.addChild(this.stages.patterns)
     this.pixi.stage.addChild(this.stages.mountains)
     this.pixi.stage.addChild(this.stages.forests)
+    this.pixi.stage.addChild(this.stages.capitals)
     this.pixi.stage.addChild(this.stages.actions)
 
     document.addEventListener('mousewheel', this.handleWheelMove)
@@ -175,7 +177,9 @@ class Game {
     const arr = data.includes('><') ? data.split('><') : [data]
 
     for (let i = 0; i < arr.length; i++) {
-      let [x, z, water, mountain, forest, castle, ownerId] = arr[i].split('|')
+      let [x, z, water, mountain, forest, castle, ownerId, capital] = arr[
+        i
+      ].split('|')
 
       x = Number(x)
       z = Number(z)
@@ -184,6 +188,7 @@ class Game {
       forest = forest === 'true'
       castle = castle === 'true'
       ownerId = ownerId === 'null' ? null : ownerId
+      capital = capital === 'true'
 
       const tile = getTileByXZ(tiles, x, z)
       const owner = ownerId ? getItemById(players, ownerId) : null
@@ -209,6 +214,7 @@ class Game {
           forest,
           mountain,
           water,
+          capital,
         })
       )
 
