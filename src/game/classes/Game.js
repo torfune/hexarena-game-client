@@ -10,7 +10,7 @@ import getTileByXZ from '../functions/getTileByXZ'
 import getItemById from '../functions/getItemById'
 import getTileUnderCursor from '../functions/getTileUnderCursor'
 import getPixelPosition from '../functions/getPixelPosition'
-import { useRemoteGameserver } from '../../config'
+import { useRemoteGameServer } from '../../custom-config'
 import {
   ZOOM_SPEED,
   MAX_SCALE,
@@ -32,7 +32,7 @@ class Game {
     this.lastMouseMove = null
     this.playerId = null
 
-    const gsUrl = useRemoteGameserver
+    const gsUrl = useRemoteGameServer
       ? 'http://dev.hexagor.io:8000'
       : 'http://localhost:8000'
 
