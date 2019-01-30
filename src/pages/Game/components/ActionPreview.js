@@ -17,6 +17,7 @@ const Container = styled.div.attrs(({ x, y }) => ({
   opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
   box-shadow: 1px 1px 16px rgba(0, 0, 0, 0.2);
   transition: opacity 0.1s;
+  transition-delay: ${({ isVisible }) => (isVisible ? '0.4s' : '0s')};
 `
 
 const Header = styled.div`
