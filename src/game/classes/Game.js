@@ -10,6 +10,7 @@ import getTileByXZ from '../functions/getTileByXZ'
 import getItemById from '../functions/getItemById'
 import getTileUnderCursor from '../functions/getTileUnderCursor'
 import getPixelPosition from '../functions/getPixelPosition'
+import getAttackDuration from '../functions/getAttackDuration'
 import { useRemoteGameServer } from '../../config'
 import {
   ZOOM_SPEED,
@@ -391,10 +392,12 @@ class Game {
           terrain = 'Forest'
         }
 
+        const durationMs = getAttackDuration(this.playerId, tile)
+
         actionPreview = {
           label: 'Attack',
           terrain,
-          duration: '0.5s',
+          duration: `${durationMs / 1000}s`,
         }
       }
     }

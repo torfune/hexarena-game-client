@@ -23,3 +23,11 @@ export const DEFAULT_SCALE = 0.5
 export const ACTION_WIDTH = 180
 export const ACTION_HEIGHT = 16
 export const ACTION_BORDER_RADIUS = ACTION_HEIGHT / 2
+
+// ATTACK / DEFEND - (DONT CHANGE THIS WITHOUT CHANGING ON GAMESERVER TOO!)
+export const DEFAULT_DEFEND_POWER = 11
+export const DEFAULT_ATTACK_POWER = 1
+export const POWER_PER_NEIGHBOR = 2
+export const MOUNTAIN_POWER = 24
+export const FOREST_POWER = 10
+export const MS_PER_POWER = 150
