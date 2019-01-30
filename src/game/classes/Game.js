@@ -225,6 +225,9 @@ class Game {
 
     this.updatePlayerTilesCount()
     this.updateNeighbors()
+    this.updateActionPreview(
+      getTileUnderCursor(this.tiles, this.camera, this.cursor, this.scale)
+    )
   }
   handleActionMessage = data => {
     const split = data.split('|')
