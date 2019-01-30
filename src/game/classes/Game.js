@@ -10,7 +10,7 @@ import getTileByXZ from '../functions/getTileByXZ'
 import getItemById from '../functions/getItemById'
 import getTileUnderCursor from '../functions/getTileUnderCursor'
 import getPixelPosition from '../functions/getPixelPosition'
-import { useRemoteGameServer } from '../../custom-config'
+import { useRemoteGameServer } from '../../config'
 import {
   ZOOM_SPEED,
   MAX_SCALE,
