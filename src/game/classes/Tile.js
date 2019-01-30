@@ -14,6 +14,7 @@ class Tile {
     scale,
     mountain,
     forest,
+    capital,
   }) {
     this.animations = animations
     this.x = x
@@ -25,6 +26,7 @@ class Tile {
     this.image = {}
     this.mountain = mountain
     this.forest = forest
+    this.capital = capital
 
     const position = getPixelPosition(x, z, scale)
 
@@ -34,6 +36,14 @@ class Tile {
       scale,
       stage: stages.backgrounds,
     })
+
+    if (capital) {
+      this.image.capital = createImage('capital', {
+        position,
+        scale,
+        stage: stages.capitals,
+      })
+    }
 
     if (mountain) {
       this.image.mountain = createImage('mountain', {
@@ -72,6 +82,13 @@ class Tile {
       this.image.background.scale.y = scale
       this.image.background.x = position.x
       this.image.background.y = position.y
+    }
+
+    if (this.image.capital) {
+      this.image.capital.scale.x = scale
+      this.image.capital.scale.y = scale
+      this.image.capital.x = position.x
+      this.image.capital.y = position.y
     }
 
     if (this.image.mountain) {
