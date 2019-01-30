@@ -5,12 +5,14 @@ import { startGame, clearGame, cancelAlliance, loadImages } from '../../game'
 
 import Leaderboard from './components/Leaderboard'
 import PlayerInfo from './components/PlayerInfo'
+import ActionPreview from './components/ActionPreview'
 import ErrorMessage from './components/ErrorMessage'
 
-const GameContainer = styled.div`
+const PageWrapper = styled.div`
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  position: relative;
 `
 
 class Game extends React.Component {
@@ -18,6 +20,7 @@ class Game extends React.Component {
     name: null,
     leaders: [],
     connectionError: false,
+    actionPreview: null,
   }
   componentDidMount = async () => {
     const gameElement = document.getElementById('game')
@@ -28,6 +31,7 @@ class Game extends React.Component {
       setLeaders: this.handleLeadersChange,
       setName: this.handleNameChange,
       setTilesCount: this.handleTilesCountChange,
+      setActionPreview: this.handleActionPreviewChange,
       showConnectionError: this.handleConnectionError,
     })
 
@@ -48,17 +52,29 @@ class Game extends React.Component {
   handleTilesCountChange = tilesCount => {
     this.setState({ tilesCount })
   }
+  handleActionPreviewChange = actionPreview => {
+    this.setState({ actionPreview })
+  }
   render() {
-    if (this.state.connectionError) {
+    const {
+      actionPreview,
+      connectionError,
+      tilesCount,
+      leaders,
+      name,
+    } = this.state
+
+    if (connectionError) {
       return <ErrorMessage>Can't connect to the GameServer</ErrorMessage>
     }
 
     return (
-      <div>
-        <GameContainer id="game" />
-        <Leaderboard leaders={this.state.leaders} />
-        <PlayerInfo name={this.state.name} tilesCount={this.state.tilesCount} />
-      </div>
+      <PageWrapper>
+        <div id="game" />
+        <Leaderboard leaders={leaders} />
+        <PlayerInfo name={name} tilesCount={tilesCount} />
+        <ActionPreview actionPreview={actionPreview} />
+      </PageWrapper>
     )
   }
 }

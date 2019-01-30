@@ -1,5 +1,13 @@
 // TILE
 export const TILE_RADIUS = 73
+export const NEIGHBOR_DIRECTIONS = [
+  { x: 1, z: -1 },
+  { x: 1, z: 0 },
+  { x: 0, z: 1 },
+  { x: -1, z: 1 },
+  { x: -1, z: 0 },
+  { x: 0, z: -1 },
+]
 
 // COLORS
 export const FACEBOOK_PRIMARY = '#3b5998'

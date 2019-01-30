@@ -124,13 +124,15 @@ class Game {
       this.scale
     )
 
-    if (!tile) return
+    const canPerformAction = this.updateActionPreview(tile)
 
     for (let i = 0; i < this.tiles.length; i++) {
       this.tiles[i].clearHighlight()
     }
 
-    tile.addHighlight()
+    if (tile && canPerformAction) {
+      tile.addHighlight()
+    }
   }
   handleWheelMove = ({ deltaY }) => {
     const zoomDirection = (deltaY < 0 ? -1 : 1) * -1
@@ -216,6 +218,7 @@ class Game {
     }
 
     this.updatePlayerTilesCount()
+    this.updateNeighbors()
   }
   handleActionMessage = data => {
     const split = data.split('|')
@@ -347,6 +350,54 @@ class Game {
     }
 
     this.react.setTilesCount(tilesCount)
+  }
+  updateActionPreview = tile => {
+    let actionPreview = null
+
+    if (tile) {
+      let isNeighborToPlayer = false
+
+      for (let i = 0; i < 6; i++) {
+        const neighbor = tile.neighbors[i]
+
+        if (!neighbor) continue
+
+        if (neighbor.owner && neighbor.owner.id === this.playerId) {
+          isNeighborToPlayer = true
+          break
+        }
+      }
+
+      if (
+        isNeighborToPlayer &&
+        (!tile.owner || tile.owner.id !== this.playerId)
+      ) {
+        let terrain = 'Plains'
+
+        if (tile.mountain) {
+          terrain = 'Mountains'
+        }
+
+        if (tile.forest) {
+          terrain = 'Forest'
+        }
+
+        actionPreview = {
+          label: 'Attack',
+          terrain,
+          duration: '0.5s',
+        }
+      }
+    }
+
+    this.react.setActionPreview(actionPreview)
+
+    return !!actionPreview
+  }
+  updateNeighbors = () => {
+    for (let i = 0; i < this.tiles.length; i++) {
+      this.tiles[i].updateNeighbors(this.tiles)
+    }
   }
 }
 

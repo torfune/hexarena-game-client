@@ -2,6 +2,7 @@ import Animation from './Animation'
 import getPixelPosition from '../functions/getPixelPosition'
 import createImage from '../functions/createImage'
 import hex from '../functions/hex'
+import { NEIGHBOR_DIRECTIONS } from '../../constants'
 
 class Tile {
   constructor({
@@ -25,6 +26,7 @@ class Tile {
     this.image = {}
     this.mountain = mountain
     this.forest = forest
+    this.neighbors = [null, null, null, null, null, null]
 
     const position = getPixelPosition(x, z, scale)
 
@@ -146,6 +148,33 @@ class Tile {
       scale: this.scale,
       stage: this.stages.mountains,
     })
+  }
+  updateNeighbors(tiles) {
+    let missingNeighbors = []
+
+    for (let i = 0; i < 6; i++) {
+      if (!this.neighbors[i]) {
+        missingNeighbors.push(i)
+      }
+    }
+
+    if (!missingNeighbors.length) return
+
+    for (let i = 0; i < tiles.length; i++) {
+      const tile = tiles[i]
+
+      for (let j = 0; j < missingNeighbors.length; j++) {
+        const direction = missingNeighbors[j]
+
+        if (
+          tile.x === this.x + NEIGHBOR_DIRECTIONS[direction].x &&
+          tile.z === this.z + NEIGHBOR_DIRECTIONS[direction].z
+        ) {
+          this.neighbors[direction] = tile
+          break
+        }
+      }
+    }
   }
 }
 
