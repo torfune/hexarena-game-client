@@ -15,6 +15,7 @@ class Tile {
     scale,
     mountain,
     forest,
+    water,
     capital,
   }) {
     this.animations = animations
@@ -25,6 +26,7 @@ class Tile {
     this.stages = stages
     this.scale = scale
     this.image = {}
+    this.water = water
     this.mountain = mountain
     this.forest = forest
     this.capital = capital
@@ -49,6 +51,14 @@ class Tile {
         position,
         scale: capitalScale,
         stage: stages.capitals,
+      })
+    }
+
+    if (water) {
+      this.image.water = createImage('water', {
+        position,
+        scale,
+        stage: stages.waters,
       })
     }
 
@@ -101,6 +111,13 @@ class Tile {
       this.image.capital.scale.y = capitalScale
       this.image.capital.x = position.x
       this.image.capital.y = position.y
+    }
+
+    if (this.image.water) {
+      this.image.water.scale.x = scale
+      this.image.water.scale.y = scale
+      this.image.water.x = position.x
+      this.image.water.y = position.y
     }
 
     if (this.image.mountain) {
