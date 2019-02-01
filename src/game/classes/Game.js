@@ -12,7 +12,7 @@ import getTileByPixelPosition from '../functions/getTileByPixelPosition'
 import getPixelPosition from '../functions/getPixelPosition'
 import getAttackDuration from '../functions/getAttackDuration'
 import pixelToAxial from '../functions/pixelToAxial'
-import { useRemoteGameServer } from '../../config'
+import { GAMESERVER_URL } from '../../config'
 import {
   ZOOM_SPEED,
   MAX_SCALE,
@@ -34,11 +34,7 @@ class Game {
     this.lastMouseMove = null
     this.playerId = null
 
-    const gsUrl = useRemoteGameServer
-      ? 'http://dev.hexagor.io:8000'
-      : 'http://localhost:8000'
-
-    this.socket = io(gsUrl)
+    this.socket = io(GAMESERVER_URL)
       .on('player', this.handlePlayerMessage)
       .on('tile', this.handleTileMessage)
       .on('action', this.handleActionMessage)
@@ -79,15 +75,14 @@ class Game {
 
     if (!tile) return
 
+    const axial = { x: tile.x, z: tile.z }
+
     switch (key) {
       case '1':
-        tile.showTestSprite('mountain')
-        break
-      case '2':
-        tile.showTestSprite('forest')
-        break
-      case '3':
-        tile.showTestSprite('castle')
+        this.socket.emit('debug', {
+          action: 'capture',
+          axial,
+        })
         break
       default:
     }

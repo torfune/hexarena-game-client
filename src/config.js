@@ -1,2 +1,6 @@
-// Use remote GameServer? (true/false)
-export const useRemoteGameServer = true
+// Always commit with 'true' value
+export const REMOTE_GAMESERVER = true
+
+export const GAMESERVER_URL = REMOTE_GAMESERVER
+  ? 'http://dev.hexagor.io:8000'
+  : 'http://localhost:8000'
