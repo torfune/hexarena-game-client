@@ -34,7 +34,7 @@ class Game {
     this.lastMouseMove = null
     this.playerId = null
 
-    this.socket = io(GAMESERVER_URL)
+    this.socket = io(GAMESERVER_URL, { reconnection: false })
       .on('player', this.handlePlayerMessage)
       .on('tile', this.handleTileMessage)
       .on('action', this.handleActionMessage)
