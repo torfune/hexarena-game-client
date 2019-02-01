@@ -50,6 +50,7 @@ class Game {
     this.loop = createGameLoop(this.update, this)
 
     this.stages = {
+      waters: new PIXI.Container(),
       actions: new PIXI.Container(),
       capitals: new PIXI.Container(),
       mountains: new PIXI.Container(),
@@ -64,6 +65,7 @@ class Game {
     this.pixi.stage.addChild(this.stages.forests)
     this.pixi.stage.addChild(this.stages.capitals)
     this.pixi.stage.addChild(this.stages.actions)
+    this.pixi.stage.addChild(this.stages.waters)
 
     document.addEventListener('mousewheel', this.handleWheelMove)
     document.addEventListener('mousemove', this.handleMouseMove)
