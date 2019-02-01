@@ -8,9 +8,10 @@ import createGameLoop from '../functions/createGameLoop'
 import createPixiApp from '../functions/createPixiApp'
 import getTileByXZ from '../functions/getTileByXZ'
 import getItemById from '../functions/getItemById'
-import getTileUnderCursor from '../functions/getTileUnderCursor'
+import getTileByPixelPosition from '../functions/getTileByPixelPosition'
 import getPixelPosition from '../functions/getPixelPosition'
 import getAttackDuration from '../functions/getAttackDuration'
+import pixelToAxial from '../functions/pixelToAxial'
 import { useRemoteGameServer } from '../../config'
 import {
   ZOOM_SPEED,
@@ -72,12 +73,7 @@ class Game {
     document.addEventListener('keyup', this.handleKeyUp)
   }
   handleKeyUp = ({ key }) => {
-    const tile = getTileUnderCursor(
-      this.tiles,
-      this.camera,
-      this.cursor,
-      this.scale
-    )
+    const tile = this.getTileUnderCursor()
 
     if (!tile) return
 
@@ -102,12 +98,7 @@ class Game {
       cursorY: clientY,
     }
 
-    const tile = getTileUnderCursor(
-      this.tiles,
-      this.camera,
-      this.cursor,
-      this.scale
-    )
+    const tile = this.getTileUnderCursor()
 
     if (!tile) return
 
@@ -120,13 +111,7 @@ class Game {
     this.cursor.x = clientX
     this.cursor.y = clientY
 
-    const tile = getTileUnderCursor(
-      this.tiles,
-      this.camera,
-      this.cursor,
-      this.scale
-    )
-
+    const tile = this.getTileUnderCursor()
     const canPerformAction = this.updateActionPreview(tile)
 
     for (let i = 0; i < this.tiles.length; i++) {
@@ -220,15 +205,13 @@ class Game {
       )
 
       if (tiles.length === 1) {
-        this.setCameraToTile(tiles[0])
+        this.setCameraToAxialPosition(tiles[0])
       }
     }
 
     this.updatePlayerTilesCount()
     this.updateNeighbors()
-    this.updateActionPreview(
-      getTileUnderCursor(this.tiles, this.camera, this.cursor, this.scale)
-    )
+    this.updateActionPreview(this.getTileUnderCursor())
   }
   handleActionMessage = data => {
     const split = data.split('|')
@@ -324,11 +307,20 @@ class Game {
 
     // update zoom
     if (this.scale !== this.targetScale) {
+      const pixel = {
+        x: window.innerWidth / 2 - this.camera.x,
+        y: window.innerHeight / 2 - this.camera.y,
+      }
+
+      const axial = pixelToAxial(pixel, this.scale)
+
       this.scale = this.targetScale
 
       for (let i = 0; i < tiles.length; i++) {
         tiles[i].setScale(this.targetScale)
       }
+
+      this.setCameraToAxialPosition(axial)
     }
 
     // update actions
@@ -338,8 +330,8 @@ class Game {
       }
     }
   }
-  setCameraToTile = tile => {
-    const pixel = getPixelPosition(tile.x, tile.z, this.scale)
+  setCameraToAxialPosition = ({ x, z }) => {
+    const pixel = getPixelPosition(x, z, this.scale)
     const screenCenter = { x: window.innerWidth / 2, y: window.innerHeight / 2 }
 
     this.camera.x = screenCenter.x - pixel.x
@@ -410,6 +402,14 @@ class Game {
     for (let i = 0; i < this.tiles.length; i++) {
       this.tiles[i].updateNeighbors(this.tiles)
     }
+  }
+  getTileUnderCursor = () => {
+    const pixel = {
+      x: this.cursor.x - this.camera.x,
+      y: this.cursor.y - this.camera.y,
+    }
+
+    return getTileByPixelPosition(this.tiles, pixel, this.scale)
   }
 }
 

@@ -1,20 +1,12 @@
-import getTileByXZ from './getTileByXZ'
 import { TILE_RADIUS } from '../../constants'
 
-const getTileUnderCursor = (tiles, camera, cursor, scale) => {
+const pixelToAxial = (pixel, scale) => {
   const size = TILE_RADIUS * scale * 2
-
-  const pixel = {
-    x: cursor.x - camera.x,
-    y: cursor.y - camera.y,
-  }
 
   const x = ((Math.sqrt(3) / 3) * pixel.x - (1 / 3) * pixel.y) / size
   const z = ((2 / 3) * pixel.y) / size
 
-  const axial = axialRound({ x, z })
-
-  return getTileByXZ(tiles, axial.x, axial.z)
+  return axialRound({ x, z })
 }
 
 const cubeRound = cube => {
@@ -49,4 +41,4 @@ const axialToCube = axial => {
   return { x: axial.x, y: -axial.x - axial.z, z: axial.z }
 }
 
-export default getTileUnderCursor
+export default pixelToAxial
