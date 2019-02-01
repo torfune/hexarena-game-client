@@ -5,6 +5,7 @@ import forest from '../../images/forest.png'
 import hexagon from '../../images/white.png'
 import castle from '../../images/castle.png'
 import capital from '../../images/capital.png'
+import water from '../../images/water.png'
 
 const loadImages = () => {
   return new Promise(resolve => {
@@ -14,6 +15,7 @@ const loadImages = () => {
       .add('hexagon', hexagon)
       .add('castle', castle)
       .add('capital', capital)
+      .add('water', water)
       .load(resolve)
   })
 }
