@@ -5,6 +5,7 @@ export const TILE_IMAGES = [
   'mountain',
   'capital',
   'water',
+  'castle',
   'background',
   'pattern',
   'fog',
