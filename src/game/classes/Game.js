@@ -272,7 +272,7 @@ class Game {
   }
   handleDisconnectMessage = () => {
     this.clear()
-    window.location.push('/')
+    window.location.pathname = '/'
     console.log('Disconnected.')
   }
   cancelAlliance = playerId => {
