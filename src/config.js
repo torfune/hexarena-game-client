@@ -1,4 +1,4 @@
-// Always commit with 'true' value
+// Always commit with value .... true
 export const REMOTE_GAMESERVER = true
 
 export const GAMESERVER_URL = REMOTE_GAMESERVER
