@@ -42,6 +42,7 @@ class Game {
       .on('leaderboard', this.handleLeaderboardMessage)
       .on('time', this.handleTimeMessage)
       .on('connect_error', this.handleErrorMessage)
+      .on('disconnect', this.handleDisconnectMessage)
 
     this.pixi = createPixiApp(rootElement)
     this.loop = createGameLoop(this.update, this)
@@ -54,6 +55,8 @@ class Game {
       forests: new PIXI.Container(),
       patterns: new PIXI.Container(),
       backgrounds: new PIXI.Container(),
+      fogs: new PIXI.Container(),
+      borders: new PIXI.Container(),
     }
 
     this.pixi.stage.addChild(this.stages.backgrounds)
@@ -63,6 +66,8 @@ class Game {
     this.pixi.stage.addChild(this.stages.capitals)
     this.pixi.stage.addChild(this.stages.actions)
     this.pixi.stage.addChild(this.stages.waters)
+    this.pixi.stage.addChild(this.stages.borders)
+    this.pixi.stage.addChild(this.stages.fogs)
 
     document.addEventListener('mousewheel', this.handleWheelMove)
     document.addEventListener('mousemove', this.handleMouseMove)
@@ -264,6 +269,11 @@ class Game {
     }
 
     console.log(`Browser time difference: ${this.timeDiff}`)
+  }
+  handleDisconnectMessage = () => {
+    this.clear()
+    window.location.push('/')
+    console.log('Disconnected.')
   }
   cancelAlliance = playerId => {
     // todo: implement

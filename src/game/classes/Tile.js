@@ -2,7 +2,8 @@ import Animation from './Animation'
 import getPixelPosition from '../functions/getPixelPosition'
 import createImage from '../functions/createImage'
 import hex from '../functions/hex'
-import { NEIGHBOR_DIRECTIONS } from '../../constants'
+import getRotationBySide from '../functions/getRotationBySide'
+import { NEIGHBOR_DIRECTIONS, TILE_IMAGES } from '../../constants'
 
 class Tile {
   constructor({
@@ -34,108 +35,87 @@ class Tile {
 
     const position = getPixelPosition(x, z, scale)
 
-    this.image.background = createImage('hexagon', {
-      color: '#eee',
-      position,
-      scale,
-      stage: stages.backgrounds,
-    })
+    this.image.background = createImage('hexagon', stages.backgrounds)
+    this.image.background.tint = hex('#eee')
+
+    this.image.fog = []
+    for (let i = 0; i < 6; i++) {
+      this.image.fog[i] = createImage('fog', stages.fogs)
+      this.image.fog[i].rotation = getRotationBySide(i)
+      this.image.fog[i].visible = false
+    }
+
+    this.image.border = []
+    for (let i = 0; i < 6; i++) {
+      this.image.border[i] = createImage('border', stages.borders)
+      this.image.border[i].rotation = getRotationBySide(i)
+      this.image.border[i].visible = false
+    }
 
     if (capital) {
-      this.image.capital = createImage('capital', {
-        position,
-        scale,
-        stage: stages.capitals,
-      })
+      this.image.capital = createImage('capital', stages.capitals)
     }
 
     if (water) {
-      this.image.water = createImage('water', {
-        position,
-        scale,
-        stage: stages.waters,
-      })
+      this.image.water = createImage('water', stages.waters)
     }
 
     if (mountain) {
-      this.image.mountain = createImage('mountain', {
-        position,
-        scale,
-        stage: stages.mountains,
-      })
+      this.image.mountain = createImage('mountain', stages.mountains)
     }
 
     if (forest) {
-      this.image.forest = createImage('forest', {
-        position,
-        scale,
-        stage: stages.forests,
-      })
+      this.image.forest = createImage('forest', stages.forests)
     }
 
     if (owner) {
-      this.image.pattern = createImage('hexagon', {
-        color: owner.pattern,
-        position,
-        scale,
-        stage: stages.patterns,
-      })
+      this.image.pattern = createImage('hexagon', stages.patterns)
+      this.image.pattern.tint = hex(owner.pattern)
+    }
+
+    for (let i = 0; i < TILE_IMAGES.length; i++) {
+      const image = this.image[TILE_IMAGES[i]]
+
+      if (!image) continue
+
+      if (image instanceof Array) {
+        for (let j = 0; j < 6; j++) {
+          image[j].x = position.x
+          image[j].y = position.y
+          image[j].scale.x = scale
+          image[j].scale.y = scale
+        }
+      } else {
+        image.x = position.x
+        image.y = position.y
+        image.scale.x = scale
+        image.scale.y = scale
+      }
     }
   }
   setScale(scale) {
-    const { x, z } = this
-
     this.scale = scale
 
-    const position = getPixelPosition(x, z, scale)
+    const position = getPixelPosition(this.x, this.z, scale)
 
-    if (this.image.background) {
-      this.image.background.scale.x = scale
-      this.image.background.scale.y = scale
-      this.image.background.x = position.x
-      this.image.background.y = position.y
-    }
+    for (let i = 0; i < TILE_IMAGES.length; i++) {
+      const image = this.image[TILE_IMAGES[i]]
 
-    if (this.image.capital) {
-      this.image.capital.scale.x = scale
-      this.image.capital.scale.y = scale
-      this.image.capital.x = position.x
-      this.image.capital.y = position.y
-    }
+      if (!image) continue
 
-    if (this.image.water) {
-      this.image.water.scale.x = scale
-      this.image.water.scale.y = scale
-      this.image.water.x = position.x
-      this.image.water.y = position.y
-    }
-
-    if (this.image.mountain) {
-      this.image.mountain.scale.x = scale
-      this.image.mountain.scale.y = scale
-      this.image.mountain.x = position.x
-      this.image.mountain.y = position.y
-    }
-
-    if (this.image.forest) {
-      this.image.forest.scale.x = scale
-      this.image.forest.scale.y = scale
-      this.image.forest.x = position.x
-      this.image.forest.y = position.y
-    }
-
-    if (this.image.pattern) {
-      this.image.pattern.scale.x = scale
-      this.image.pattern.scale.y = scale
-      this.image.pattern.x = position.x
-      this.image.pattern.y = position.y
-    }
-
-    if (this.image.testSprite) {
-      this.image.testSprite.scale.x = scale
-      this.image.testSprite.scale.y = scale
-      this.image.testSprite.x = position.x
-      this.image.testSprite.y = position.y
+      if (image instanceof Array) {
+        for (let j = 0; j < 6; j++) {
+          image[j].x = position.x
+          image[j].y = position.y
+          image[j].scale.x = scale
+          image[j].scale.y = scale
+        }
+      } else {
+        image.x = position.x
+        image.y = position.y
+        image.scale.x = scale
+        image.scale.y = scale
+      }
     }
   }
   setOwner(owner) {
@@ -148,13 +128,15 @@ class Tile {
         this.stages.patterns.removeChild(this.image.pattern)
       }
 
-      this.image.pattern = createImage('hexagon', {
-        color: owner.pattern,
-        position: getPixelPosition(x, z, scale),
-        scale,
-        stage: stages.patterns,
-        alpha: 0,
-      })
+      const position = getPixelPosition(x, z, scale)
+
+      this.image.pattern = createImage('hexagon', stages.patterns)
+      this.image.pattern.tint = hex(owner.pattern)
+      this.image.pattern.x = position.x
+      this.image.pattern.y = position.y
+      this.image.pattern.scale.x = scale
+      this.image.pattern.scale.y = scale
+      this.image.pattern.alpha = 0
 
       this.animations.push(
         new Animation({
@@ -167,21 +149,19 @@ class Tile {
         })
       )
     }
+
+    this.updateBorders()
+    for (let i = 0; i < 6; i++) {
+      if (this.neighbors[i]) {
+        this.neighbors[i].updateBorders()
+      }
+    }
   }
   addHighlight() {
     this.image.background.tint = hex('#ddd')
   }
   clearHighlight() {
     this.image.background.tint = hex('#eee')
-  }
-  showTestSprite(texture) {
-    const position = getPixelPosition(this.x, this.z, this.scale)
-
-    this.image.testSprite = createImage(texture, {
-      position,
-      scale: this.scale,
-      stage: this.stages.mountains,
-    })
   }
   updateNeighbors(tiles) {
     let missingNeighbors = []
@@ -207,6 +187,26 @@ class Tile {
           this.neighbors[direction] = tile
           break
         }
+      }
+    }
+
+    this.updateFogs()
+  }
+  updateFogs() {
+    for (let i = 0; i < 6; i++) {
+      if (!this.neighbors[i]) {
+        this.image.fog[i].visible = true
+      } else {
+        this.image.fog[i].visible = false
+      }
+    }
+  }
+  updateBorders() {
+    for (let i = 0; i < 6; i++) {
+      if (this.neighbors[i] && this.neighbors[i].owner !== this.owner) {
+        this.image.border[i].visible = true
+      } else {
+        this.image.border[i].visible = false
       }
     }
   }
