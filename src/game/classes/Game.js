@@ -120,6 +120,10 @@ class Game {
       this.tiles[i].clearHighlight()
     }
 
+    if (tile) {
+      this.react.setDebugInfo(`${tile.x}|${tile.z}`)
+    }
+
     if (tile && canPerformAction) {
       tile.addHighlight()
     }

@@ -7,6 +7,7 @@ import Leaderboard from './components/Leaderboard'
 import PlayerInfo from './components/PlayerInfo'
 import ActionPreview from './components/ActionPreview'
 import ErrorMessage from './components/ErrorMessage'
+import DebugInfo from './components/DebugInfo'
 
 const PageWrapper = styled.div`
   width: 100vw;
@@ -21,6 +22,7 @@ class Game extends React.Component {
     leaders: [],
     connectionError: false,
     actionPreview: null,
+    debugInfo: null,
   }
   componentDidMount = async () => {
     const gameElement = document.getElementById('game')
@@ -33,6 +35,7 @@ class Game extends React.Component {
       setTilesCount: this.handleTilesCountChange,
       setActionPreview: this.handleActionPreviewChange,
       showConnectionError: this.handleConnectionError,
+      setDebugInfo: this.handleDebugInfoChange,
     })
 
     cancelAlliance(42)
@@ -49,6 +52,9 @@ class Game extends React.Component {
   handleNameChange = name => {
     this.setState({ name })
   }
+  handleDebugInfoChange = debugInfo => {
+    this.setState({ debugInfo })
+  }
   handleTilesCountChange = tilesCount => {
     this.setState({ tilesCount })
   }
@@ -62,6 +68,7 @@ class Game extends React.Component {
       tilesCount,
       leaders,
       name,
+      debugInfo,
     } = this.state
 
     if (connectionError) {
@@ -71,6 +78,7 @@ class Game extends React.Component {
     return (
       <PageWrapper>
         <div id="game" />
+        <DebugInfo info={debugInfo} />
         <Leaderboard leaders={leaders} />
         <PlayerInfo name={name} tilesCount={tilesCount} />
         <ActionPreview actionPreview={actionPreview} />

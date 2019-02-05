@@ -10,12 +10,27 @@ const Container = styled.div`
   margin: 0 auto;
 `
 
-const HomePage = () => (
-  <Container>
-    <Logo />
-    <PlaySection />
-    <Footer />
-  </Container>
-)
+class HomePage extends React.Component {
+  componentDidMount = () => {
+    document.addEventListener('keydown', this.handleKeyDown)
+  }
+  componentWillUnmount = () => {
+    document.removeEventListener('keydown', this.handleKeyDown)
+  }
+  handleKeyDown = ({ key }) => {
+    if (key === 'Enter') {
+      window.location.pathname = '/game'
+    }
+  }
+  render() {
+    return (
+      <Container>
+        <Logo />
+        <PlaySection />
+        <Footer />
+      </Container>
+    )
+  }
+}
 
 export default HomePage
