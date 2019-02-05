@@ -149,13 +149,6 @@ class Tile {
         })
       )
     }
-
-    this.updateBorders()
-    for (let i = 0; i < 6; i++) {
-      if (this.neighbors[i]) {
-        this.neighbors[i].updateBorders()
-      }
-    }
   }
   addHighlight() {
     this.image.background.tint = hex('#ddd')

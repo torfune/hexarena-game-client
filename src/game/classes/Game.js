@@ -217,6 +217,7 @@ class Game {
 
     this.updatePlayerTilesCount()
     this.updateNeighbors()
+    this.updateBorders()
     this.updateActionPreview(this.getTileUnderCursor())
   }
   handleActionMessage = data => {
@@ -412,6 +413,11 @@ class Game {
   updateNeighbors = () => {
     for (let i = 0; i < this.tiles.length; i++) {
       this.tiles[i].updateNeighbors(this.tiles)
+    }
+  }
+  updateBorders = () => {
+    for (let i = 0; i < this.tiles.length; i++) {
+      this.tiles[i].updateBorders()
     }
   }
   getTileUnderCursor = () => {
