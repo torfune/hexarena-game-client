@@ -7,11 +7,12 @@ import getRotationBySide from '../functions/getRotationBySide'
 import { NEIGHBOR_DIRECTIONS, TILE_IMAGES } from '../../constants'
 
 class Tile {
-  constructor({ x, z, owner, mountain, forest, water, capital }) {
+  constructor({ x, z, owner, mountain, forest, water, capital, castle }) {
     this.x = x
     this.z = z
     this.owner = owner
     this.water = water
+    this.castle = castle
     this.mountain = mountain
     this.forest = forest
     this.capital = capital
@@ -39,6 +40,10 @@ class Tile {
 
     if (capital) {
       this.image.capital = createImage('capital')
+    }
+
+    if (castle) {
+      this.image.castle = createImage('castle')
     }
 
     if (water) {
@@ -101,6 +106,33 @@ class Tile {
       }
     }
   }
+
+  addCastle() {
+    const { x, z, scale, stages } = this
+
+    this.castle = true
+
+    const position = getPixelPosition(x, z, scale)
+
+    this.image.castle = createImage('castle', stages.castles)
+    this.image.castle.x = position.x
+    this.image.castle.y = position.y
+    this.image.castle.scale.x = scale
+    this.image.castle.scale.y = scale
+    this.image.castle.alpha = 0
+
+    this.animations.push(
+      new Animation({
+        image: this.image.castle,
+        onUpdate: image => {
+          const newAlpha = image.alpha + 0.1
+          if (newAlpha >= 1) return true
+          image.alpha = newAlpha
+        },
+      })
+    )
+  }
+
   setOwner(owner) {
     const { x, z } = this
 

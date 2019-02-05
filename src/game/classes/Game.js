@@ -223,13 +223,17 @@ class Game {
     for (let i = 0; i < gsTiles.length; i++) {
       const gsTile = gsTiles[i]
       const tile = getTileByXZ(gsTile.x, gsTile.z)
-      const owner = gsTile.ownerId
+      const gsOwner = gsTile.ownerId
         ? getItemById(this.players, gsTile.ownerId)
         : null
 
       if (tile) {
-        if (tile.owner !== owner) {
-          tile.setOwner(owner)
+        if (gsOwner !== tile.owner) {
+          tile.setOwner(gsOwner)
+        }
+
+        if (gsTile.castle) {
+          tile.addCastle()
         }
       } else {
         this.tiles.push(new Tile({ ...gsTile, owner }))
@@ -298,6 +302,7 @@ class Game {
 
     this.react.setTilesCount(tilesCount)
   }
+
   updateActionPreview = tile => {
     const actionPreview = getActionPreview(tile)
 
