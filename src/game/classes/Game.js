@@ -236,7 +236,7 @@ class Game {
           tile.addCastle()
         }
       } else {
-        this.tiles.push(new Tile({ ...gsTile, owner }))
+        this.tiles.push(new Tile({ ...gsTile, owner: gsOwner }))
 
         if (this.tiles.length === 1) {
           this.handleFirstTileArrival()

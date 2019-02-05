@@ -108,20 +108,20 @@ class Tile {
   }
 
   addCastle() {
-    const { x, z, scale, stages } = this
+    const { x, z } = this
 
     this.castle = true
 
-    const position = getPixelPosition(x, z, scale)
+    const position = getPixelPosition(x, z)
 
-    this.image.castle = createImage('castle', stages.castles)
+    this.image.castle = createImage('castle')
     this.image.castle.x = position.x
     this.image.castle.y = position.y
-    this.image.castle.scale.x = scale
-    this.image.castle.scale.y = scale
+    this.image.castle.scale.x = game.scale
+    this.image.castle.scale.y = game.scale
     this.image.castle.alpha = 0
 
-    this.animations.push(
+    game.animations.push(
       new Animation({
         image: this.image.castle,
         onUpdate: image => {
