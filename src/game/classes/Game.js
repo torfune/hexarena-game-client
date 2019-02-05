@@ -256,8 +256,12 @@ class Game {
     if (!tile) return
 
     if (tile.action) {
+      if (gsAction.destroyed) {
+        tile.action.destroy()
+        return
+      }
+
       tile.action.finishedAt = gsAction.finishedAt
-      tile.action.canceledAt = gsAction.canceledAt
       tile.action.duration = gsAction.duration
     } else {
       tile.action = new Action({ ...gsAction, tile })

@@ -17,7 +17,7 @@ const getActionPreview = tile => {
     }
   }
 
-  if (isNeighborToPlayer && (!tile.owner || tile.owner.id !== game.playerId)) {
+  if (isNeighborToPlayer && !tile.owner) {
     let terrain = 'Plains'
 
     if (tile.mountain) {
