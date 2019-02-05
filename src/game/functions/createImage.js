@@ -1,10 +1,15 @@
 import * as PIXI from 'pixi.js'
 
-const createImage = (texture, stage) => {
-  const image = new PIXI.Sprite(PIXI.loader.resources[texture].texture)
+import game from '../../game'
+
+const createImage = imageName => {
+  const image =
+    imageName === 'background'
+      ? new PIXI.Sprite(PIXI.loader.resources['pattern'].texture)
+      : new PIXI.Sprite(PIXI.loader.resources[imageName].texture)
 
   image.anchor.set(0.5, 0.5)
-  stage.addChild(image)
+  game.stage[imageName].addChild(image)
 
   return image
 }

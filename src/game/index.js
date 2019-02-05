@@ -1,22 +1,22 @@
 import Game from './classes/Game'
 import loadImages from './functions/loadImages'
 
-let game = null
-let cancelAlliance = null
+let game = new Game()
 
 const startGame = (rootElement, reactMethods) => {
-  if (game) return
-
-  game = new Game(rootElement, reactMethods)
-  cancelAlliance = game.cancelAlliance
+  game.start(rootElement, reactMethods)
 
   // only for debug purposes
   window.game = game
 }
 
-const clearGame = () => {
-  game.clear()
-  game = null
+const stopGame = () => {
+  game.stop()
+  game = new Game()
 }
 
-export { startGame, clearGame, cancelAlliance, loadImages }
+// named export for React layer
+export { startGame, stopGame, loadImages }
+
+// default export for Game layer
+export default game

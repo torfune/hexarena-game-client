@@ -1,14 +1,15 @@
 // TILE
 export const TILE_RADIUS = 73
 export const TILE_IMAGES = [
+  'background',
+  'water',
+  'pattern',
   'forest',
   'mountain',
   'capital',
-  'water',
-  'background',
-  'pattern',
-  'fog',
   'border',
+  'action',
+  'fog',
 ]
 export const NEIGHBOR_DIRECTIONS = [
   { x: 1, z: -1 },

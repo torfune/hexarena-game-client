@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
 import io from 'socket.io-client'
+import { navigate } from '@reach/router'
 
 import Tile from './Tile'
 import Player from './Player'
@@ -10,29 +11,45 @@ import getTileByXZ from '../functions/getTileByXZ'
 import getItemById from '../functions/getItemById'
 import getTileByPixelPosition from '../functions/getTileByPixelPosition'
 import getPixelPosition from '../functions/getPixelPosition'
-import getAttackDuration from '../functions/getAttackDuration'
 import pixelToAxial from '../functions/pixelToAxial'
+import parseTiles from '../functions/parseTiles'
+import parsePlayers from '../functions/parsePlayers'
+import parseAction from '../functions/parseAction'
 import { GAMESERVER_URL } from '../../config'
 import {
   ZOOM_SPEED,
   MAX_SCALE,
   MIN_SCALE,
   DEFAULT_SCALE,
+  TILE_IMAGES,
 } from '../../constants'
+import getActionPreview from '../functions/getActionPreview'
 
 class Game {
-  constructor(rootElement, reactMethods) {
+  constructor() {
+    this.animations = []
+    this.camera = { x: null, y: null }
+    this.cameraDrag = null
+    this.cursor = { x: null, y: null }
+    this.lastMouseMove = null
+    this.loop = null
+    this.pixi = null
+    this.playerId = null
+    this.players = []
+    this.react = null
+    this.scale = null
+    this.socket = null
+    this.stage = {}
+    this.targetScale = null
+    this.tiles = []
+  }
+  start(rootElement, reactMethods) {
     this.react = { ...reactMethods }
     this.scale = DEFAULT_SCALE
     this.targetScale = this.scale
-    this.tiles = []
-    this.players = []
-    this.animations = []
-    this.cursor = { x: 0, y: 0 }
-    this.camera = { x: 0, y: 0 }
-    this.cameraDrag = null
-    this.lastMouseMove = null
-    this.playerId = null
+
+    this.pixi = createPixiApp(rootElement)
+    this.loop = createGameLoop(this.update, this)
 
     this.socket = io(GAMESERVER_URL, { reconnection: false })
       .on('player', this.handlePlayerMessage)
@@ -44,36 +61,75 @@ class Game {
       .on('connect_error', this.handleErrorMessage)
       .on('disconnect', this.handleDisconnectMessage)
 
-    this.pixi = createPixiApp(rootElement)
-    this.loop = createGameLoop(this.update, this)
-
-    this.stages = {
-      waters: new PIXI.Container(),
-      actions: new PIXI.Container(),
-      capitals: new PIXI.Container(),
-      mountains: new PIXI.Container(),
-      forests: new PIXI.Container(),
-      patterns: new PIXI.Container(),
-      backgrounds: new PIXI.Container(),
-      fogs: new PIXI.Container(),
-      borders: new PIXI.Container(),
+    for (let i = 0; i < TILE_IMAGES.length; i++) {
+      this.stage[TILE_IMAGES[i]] = new PIXI.Container()
+      this.pixi.stage.addChild(this.stage[TILE_IMAGES[i]])
     }
-
-    this.pixi.stage.addChild(this.stages.backgrounds)
-    this.pixi.stage.addChild(this.stages.patterns)
-    this.pixi.stage.addChild(this.stages.mountains)
-    this.pixi.stage.addChild(this.stages.forests)
-    this.pixi.stage.addChild(this.stages.capitals)
-    this.pixi.stage.addChild(this.stages.actions)
-    this.pixi.stage.addChild(this.stages.waters)
-    this.pixi.stage.addChild(this.stages.borders)
-    this.pixi.stage.addChild(this.stages.fogs)
 
     document.addEventListener('mousewheel', this.handleWheelMove)
     document.addEventListener('mousemove', this.handleMouseMove)
     document.addEventListener('mousedown', this.handleMouseDown)
     document.addEventListener('mouseup', this.handleMouseUp)
     document.addEventListener('keyup', this.handleKeyUp)
+  }
+  update = () => {
+    const { animations, cameraDrag, cursor, tiles } = this
+
+    // update animations
+    if (animations.length) {
+      for (let i = animations.length - 1; i >= 0; i--) {
+        animations[i].update()
+
+        if (animations[i].finished) {
+          animations.splice(i, 1)
+        }
+      }
+    }
+
+    // update camera
+    if (cameraDrag) {
+      this.camera = {
+        x: cameraDrag.camera.x - (cameraDrag.cursor.x - cursor.x),
+        y: cameraDrag.camera.y - (cameraDrag.cursor.y - cursor.y),
+      }
+
+      this.pixi.stage.x = this.camera.x
+      this.pixi.stage.y = this.camera.y
+    }
+
+    // update zoom
+    if (this.scale !== this.targetScale) {
+      const pixel = {
+        x: window.innerWidth / 2 - this.camera.x,
+        y: window.innerHeight / 2 - this.camera.y,
+      }
+
+      const axial = pixelToAxial(pixel, this.scale)
+
+      this.scale = this.targetScale
+
+      for (let i = 0; i < tiles.length; i++) {
+        tiles[i].updateScale()
+      }
+
+      this.setCameraToAxialPosition(axial)
+    }
+
+    // update actions
+    for (let i = 0; i < tiles.length; i++) {
+      if (tiles[i].action) {
+        tiles[i].action.update()
+      }
+    }
+  }
+  stop = () => {
+    document.removeEventListener('mousewheel', this.handleWheelMove)
+    document.removeEventListener('mousemove', this.handleMouseMove)
+    document.removeEventListener('mousedown', this.handleMouseDown)
+    document.removeEventListener('mouseup', this.handleMouseUp)
+
+    this.socket.close()
+    clearInterval(this.loop)
   }
   handleKeyUp = ({ key }) => {
     const tile = this.getTileUnderCursor()
@@ -92,12 +148,13 @@ class Game {
       default:
     }
   }
-  handleMouseDown = ({ clientX, clientY }) => {
+  handleMouseDown = ({ clientX: x, clientY: y }) => {
     this.cameraDrag = {
-      originalX: this.camera.x,
-      originalY: this.camera.y,
-      cursorX: clientX,
-      cursorY: clientY,
+      cursor: { x, y },
+      camera: {
+        x: this.camera.x,
+        y: this.camera.y,
+      },
     }
 
     const tile = this.getTileUnderCursor()
@@ -109,9 +166,8 @@ class Game {
   handleMouseUp = () => {
     this.cameraDrag = null
   }
-  handleMouseMove = ({ clientX, clientY }) => {
-    this.cursor.x = clientX
-    this.cursor.y = clientY
+  handleMouseMove = ({ clientX: x, clientY: y }) => {
+    this.cursor = { x, y }
 
     const tile = this.getTileUnderCursor()
     const canPerformAction = this.updateActionPreview(tile)
@@ -122,6 +178,8 @@ class Game {
 
     if (tile) {
       this.react.setDebugInfo(`${tile.x}|${tile.z}`)
+    } else {
+      this.react.setDebugInfo(null)
     }
 
     if (tile && canPerformAction) {
@@ -141,77 +199,44 @@ class Game {
     this.react.showConnectionError()
     this.socket.close()
   }
-  handlePlayerMessage = data => {
-    const { players } = this
+  handlePlayerMessage = gsData => {
+    const gsPlayers = parsePlayers(gsData)
 
-    const arr = data.includes('><') ? data.split('><') : [data]
-
-    for (let i = 0; i < arr.length; i++) {
-      const [id, name, pattern, alliance] = arr[i].split('|')
-
-      const player = getItemById(players, id)
+    for (let i = 0; i < gsPlayers.length; i++) {
+      const gsPlayer = gsPlayers[i]
+      const player = getItemById(this.players, gsPlayer.id)
 
       if (player) {
-        console.log(`Player ${id} already exists.`)
-        continue
+        console.log(`Player ${gsPlayer.id} already exists.`)
+      } else {
+        this.players.push(new Player({ ...gsPlayer }))
       }
 
-      players.push(new Player({ id, name, pattern, alliance }))
-
-      if (id === this.playerId) {
-        this.react.setName(name)
+      if (gsPlayer.id === this.playerId) {
+        this.react.setName(gsPlayer.name)
       }
     }
   }
-  handleTileMessage = data => {
-    const { players, tiles, scale, animations } = this
+  handleTileMessage = gsData => {
+    const gsTiles = parseTiles(gsData)
 
-    const arr = data.includes('><') ? data.split('><') : [data]
-
-    for (let i = 0; i < arr.length; i++) {
-      let [x, z, water, mountain, forest, castle, ownerId, capital] = arr[
-        i
-      ].split('|')
-
-      x = Number(x)
-      z = Number(z)
-      water = water === 'true'
-      mountain = mountain === 'true'
-      forest = forest === 'true'
-      castle = castle === 'true'
-      ownerId = ownerId === 'null' ? null : ownerId
-      capital = capital === 'true'
-
-      const tile = getTileByXZ(tiles, x, z)
-      const owner = ownerId ? getItemById(players, ownerId) : null
+    for (let i = 0; i < gsTiles.length; i++) {
+      const gsTile = gsTiles[i]
+      const tile = getTileByXZ(gsTile.x, gsTile.z)
+      const owner = gsTile.ownerId
+        ? getItemById(this.players, gsTile.ownerId)
+        : null
 
       if (tile) {
         if (tile.owner !== owner) {
           tile.setOwner(owner)
         }
+      } else {
+        this.tiles.push(new Tile({ ...gsTile, owner }))
 
-        continue
-      }
-
-      tiles.push(
-        new Tile({
-          x,
-          z,
-          animations,
-          stages: this.stages,
-          scale,
-          camera: this.camera,
-          owner,
-          castle,
-          forest,
-          mountain,
-          water,
-          capital,
-        })
-      )
-
-      if (tiles.length === 1) {
-        this.setCameraToAxialPosition(tiles[0])
+        if (this.tiles.length === 1) {
+          this.handleFirstTileArrival()
+        }
       }
     }
 
@@ -220,43 +245,18 @@ class Game {
     this.updateBorders()
     this.updateActionPreview(this.getTileUnderCursor())
   }
-  handleActionMessage = data => {
-    const split = data.split('|')
-    let [
-      x,
-      z,
-      duration,
-      finishedAt,
-      canceledAt,
-      ownerId,
-      counterPlayerId,
-    ] = split
-
-    x = Number(x)
-    z = Number(z)
-    duration = Number(duration)
-    finishedAt = Number(finishedAt)
-    canceledAt = Number(canceledAt)
-
-    const tile = getTileByXZ(this.tiles, x, z)
+  handleActionMessage = gsData => {
+    const gsAction = parseAction(gsData)
+    const tile = getTileByXZ(gsAction.x, gsAction.z)
 
     if (!tile) return
 
     if (tile.action) {
-      tile.action.finishedAt = finishedAt
-      tile.action.canceledAt = canceledAt
-      tile.action.duration = duration
+      tile.action.finishedAt = gsAction.finishedAt
+      tile.action.canceledAt = gsAction.canceledAt
+      tile.action.duration = gsAction.duration
     } else {
-      tile.action = new Action({
-        tile,
-        stages: this.stages,
-        duration,
-        finishedAt,
-        canceledAt,
-        ownerId,
-        counterPlayerId,
-        timeDiff: this.timeDiff,
-      })
+      tile.action = new Action({ ...gsAction, tile })
     }
   }
   handleIdMessage = id => {
@@ -276,81 +276,14 @@ class Game {
     console.log(`Browser time difference: ${this.timeDiff}`)
   }
   handleDisconnectMessage = () => {
-    this.clear()
-    window.location.pathname = '/'
+    this.stop()
+    navigate('/')
     console.log('Disconnected.')
   }
-  cancelAlliance = playerId => {
-    // todo: implement
-  }
-  clear = () => {
-    document.removeEventListener('mousewheel', this.handleWheelMove)
-    document.removeEventListener('mousemove', this.handleMouseMove)
-    document.removeEventListener('mousedown', this.handleMouseDown)
-    document.removeEventListener('mouseup', this.handleMouseUp)
+  handleFirstTileArrival = () => {
+    const firstTile = this.tiles[0]
 
-    this.socket.close()
-    clearInterval(this.loop)
-  }
-  update = () => {
-    const { animations, cameraDrag, cursor, tiles } = this
-
-    // update animations
-    if (animations.length) {
-      for (let i = animations.length - 1; i >= 0; i--) {
-        animations[i].update()
-
-        if (animations[i].finished) {
-          animations.splice(i, 1)
-        }
-      }
-    }
-
-    // update camera
-    if (cameraDrag) {
-      this.camera = {
-        x: cameraDrag.originalX - (cameraDrag.cursorX - cursor.x),
-        y: cameraDrag.originalY - (cameraDrag.cursorY - cursor.y),
-      }
-
-      this.pixi.stage.x = this.camera.x
-      this.pixi.stage.y = this.camera.y
-    }
-
-    // update zoom
-    if (this.scale !== this.targetScale) {
-      const pixel = {
-        x: window.innerWidth / 2 - this.camera.x,
-        y: window.innerHeight / 2 - this.camera.y,
-      }
-
-      const axial = pixelToAxial(pixel, this.scale)
-
-      this.scale = this.targetScale
-
-      for (let i = 0; i < tiles.length; i++) {
-        tiles[i].setScale(this.targetScale)
-      }
-
-      this.setCameraToAxialPosition(axial)
-    }
-
-    // update actions
-    for (let i = 0; i < tiles.length; i++) {
-      if (tiles[i].action) {
-        tiles[i].action.update()
-      }
-    }
-  }
-  setCameraToAxialPosition = ({ x, z }) => {
-    const pixel = getPixelPosition(x, z, this.scale)
-    const screenCenter = { x: window.innerWidth / 2, y: window.innerHeight / 2 }
-
-    this.camera.x = screenCenter.x - pixel.x
-    this.camera.y = screenCenter.y - pixel.y
-
-    this.pixi.stage.x = this.camera.x
-    this.pixi.stage.y = this.camera.y
+    this.setCameraToAxialPosition(firstTile)
   }
   updatePlayerTilesCount = () => {
     let tilesCount = 0
@@ -366,45 +299,7 @@ class Game {
     this.react.setTilesCount(tilesCount)
   }
   updateActionPreview = tile => {
-    let actionPreview = null
-
-    if (tile) {
-      let isNeighborToPlayer = false
-
-      for (let i = 0; i < 6; i++) {
-        const neighbor = tile.neighbors[i]
-
-        if (!neighbor) continue
-
-        if (neighbor.owner && neighbor.owner.id === this.playerId) {
-          isNeighborToPlayer = true
-          break
-        }
-      }
-
-      if (
-        isNeighborToPlayer &&
-        (!tile.owner || tile.owner.id !== this.playerId)
-      ) {
-        let terrain = 'Plains'
-
-        if (tile.mountain) {
-          terrain = 'Mountains'
-        }
-
-        if (tile.forest) {
-          terrain = 'Forest'
-        }
-
-        const durationMs = getAttackDuration(this.playerId, tile)
-
-        actionPreview = {
-          label: 'Attack',
-          terrain,
-          duration: `${durationMs / 1000}s`,
-        }
-      }
-    }
+    const actionPreview = getActionPreview(tile)
 
     this.react.setActionPreview(actionPreview)
 
@@ -421,12 +316,25 @@ class Game {
     }
   }
   getTileUnderCursor = () => {
+    if (!this.cursor || !this.camera) return
+
     const pixel = {
       x: this.cursor.x - this.camera.x,
       y: this.cursor.y - this.camera.y,
     }
 
     return getTileByPixelPosition(this.tiles, pixel, this.scale)
+  }
+  setCameraToAxialPosition = ({ x, z }) => {
+    const pixel = getPixelPosition(x, z)
+
+    this.camera = {
+      x: window.innerWidth / 2 - pixel.x,
+      y: window.innerHeight / 2 - pixel.y,
+    }
+
+    this.pixi.stage.x = this.camera.x
+    this.pixi.stage.y = this.camera.y
   }
 }
 

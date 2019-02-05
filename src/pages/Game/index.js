@@ -1,7 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
+import { navigate } from '@reach/router'
 
-import { startGame, clearGame, cancelAlliance, loadImages } from '../../game'
+import { startGame, stopGame, loadImages } from '../../game'
 
 import Leaderboard from './components/Leaderboard'
 import PlayerInfo from './components/PlayerInfo'
@@ -38,10 +39,15 @@ class Game extends React.Component {
       setDebugInfo: this.handleDebugInfoChange,
     })
 
-    cancelAlliance(42)
+    document.addEventListener('keydown', this.handleKeyDown)
+  }
+  handleKeyDown = ({ key }) => {
+    if (key === 'Escape') {
+      navigate('/')
+    }
   }
   componentWillUnmount = () => {
-    clearGame()
+    stopGame()
   }
   handleLeadersChange = leaders => {
     this.setState({ leaders })

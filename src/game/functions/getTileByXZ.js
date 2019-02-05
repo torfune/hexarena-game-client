@@ -1,7 +1,9 @@
-const getTileByXZ = (tiles, x, z) => {
-  for (let i = 0; i < tiles.length; i++) {
-    if (tiles[i].x === x && tiles[i].z === z) {
-      return tiles[i]
+import game from '../../game'
+
+const getTileByXZ = (x, z) => {
+  for (let i = 0; i < game.tiles.length; i++) {
+    if (game.tiles[i].x === x && game.tiles[i].z === z) {
+      return game.tiles[i]
     }
   }
 

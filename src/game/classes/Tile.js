@@ -1,3 +1,4 @@
+import game from '../../game'
 import Animation from './Animation'
 import getPixelPosition from '../functions/getPixelPosition'
 import createImage from '../functions/createImage'
@@ -6,70 +7,54 @@ import getRotationBySide from '../functions/getRotationBySide'
 import { NEIGHBOR_DIRECTIONS, TILE_IMAGES } from '../../constants'
 
 class Tile {
-  constructor({
-    x,
-    z,
-    stages,
-    camera,
-    owner,
-    animations,
-    scale,
-    mountain,
-    forest,
-    water,
-    capital,
-  }) {
-    this.animations = animations
+  constructor({ x, z, owner, mountain, forest, water, capital }) {
     this.x = x
     this.z = z
-    this.camera = camera
     this.owner = owner
-    this.stages = stages
-    this.scale = scale
-    this.image = {}
     this.water = water
     this.mountain = mountain
     this.forest = forest
     this.capital = capital
     this.neighbors = [null, null, null, null, null, null]
+    this.image = {}
 
-    const position = getPixelPosition(x, z, scale)
+    const position = getPixelPosition(x, z)
 
-    this.image.background = createImage('hexagon', stages.backgrounds)
+    this.image.background = createImage('background')
     this.image.background.tint = hex('#eee')
 
     this.image.fog = []
     for (let i = 0; i < 6; i++) {
-      this.image.fog[i] = createImage('fog', stages.fogs)
+      this.image.fog[i] = createImage('fog')
       this.image.fog[i].rotation = getRotationBySide(i)
       this.image.fog[i].visible = false
     }
 
     this.image.border = []
     for (let i = 0; i < 6; i++) {
-      this.image.border[i] = createImage('border', stages.borders)
+      this.image.border[i] = createImage('border')
       this.image.border[i].rotation = getRotationBySide(i)
       this.image.border[i].visible = false
     }
 
     if (capital) {
-      this.image.capital = createImage('capital', stages.capitals)
+      this.image.capital = createImage('capital')
     }
 
     if (water) {
-      this.image.water = createImage('water', stages.waters)
+      this.image.water = createImage('water')
     }
 
     if (mountain) {
-      this.image.mountain = createImage('mountain', stages.mountains)
+      this.image.mountain = createImage('mountain')
     }
 
     if (forest) {
-      this.image.forest = createImage('forest', stages.forests)
+      this.image.forest = createImage('forest')
     }
 
     if (owner) {
-      this.image.pattern = createImage('hexagon', stages.patterns)
+      this.image.pattern = createImage('pattern')
       this.image.pattern.tint = hex(owner.pattern)
     }
 
@@ -82,21 +67,19 @@ class Tile {
         for (let j = 0; j < 6; j++) {
           image[j].x = position.x
           image[j].y = position.y
-          image[j].scale.x = scale
-          image[j].scale.y = scale
+          image[j].scale.x = game.scale
+          image[j].scale.y = game.scale
         }
       } else {
         image.x = position.x
         image.y = position.y
-        image.scale.x = scale
-        image.scale.y = scale
+        image.scale.x = game.scale
+        image.scale.y = game.scale
       }
     }
   }
-  setScale(scale) {
-    this.scale = scale
-
-    const position = getPixelPosition(this.x, this.z, scale)
+  updateScale() {
+    const position = getPixelPosition(this.x, this.z)
 
     for (let i = 0; i < TILE_IMAGES.length; i++) {
       const image = this.image[TILE_IMAGES[i]]
@@ -107,38 +90,38 @@ class Tile {
         for (let j = 0; j < 6; j++) {
           image[j].x = position.x
           image[j].y = position.y
-          image[j].scale.x = scale
-          image[j].scale.y = scale
+          image[j].scale.x = game.scale
+          image[j].scale.y = game.scale
         }
       } else {
         image.x = position.x
         image.y = position.y
-        image.scale.x = scale
-        image.scale.y = scale
+        image.scale.x = game.scale
+        image.scale.y = game.scale
       }
     }
   }
   setOwner(owner) {
-    const { x, z, scale, stages } = this
+    const { x, z } = this
 
     this.owner = owner
 
     if (owner) {
       if (this.image.pattern) {
-        this.stages.patterns.removeChild(this.image.pattern)
+        game.stage['pattern'].removeChild(this.image.pattern)
       }
 
-      const position = getPixelPosition(x, z, scale)
+      const position = getPixelPosition(x, z)
 
-      this.image.pattern = createImage('hexagon', stages.patterns)
+      this.image.pattern = createImage('pattern')
       this.image.pattern.tint = hex(owner.pattern)
       this.image.pattern.x = position.x
       this.image.pattern.y = position.y
-      this.image.pattern.scale.x = scale
-      this.image.pattern.scale.y = scale
+      this.image.pattern.scale.x = game.scale
+      this.image.pattern.scale.y = game.scale
       this.image.pattern.alpha = 0
 
-      this.animations.push(
+      game.animations.push(
         new Animation({
           image: this.image.pattern,
           onUpdate: image => {

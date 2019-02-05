@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
 
+import game from '../../game'
 import hex from '../functions/hex'
 
 class Rectangle {
@@ -11,7 +12,7 @@ class Rectangle {
     this.animationStep = options.animationStep || 1
 
     this.graphics = new PIXI.Graphics()
-    options.stage.addChild(this.graphics)
+    game.stage['action'].addChild(this.graphics)
 
     this.redraw(options)
   }
