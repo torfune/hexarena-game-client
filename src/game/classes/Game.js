@@ -50,6 +50,7 @@ class Game {
     this.stages = {
       waters: new PIXI.Container(),
       actions: new PIXI.Container(),
+      castles: new PIXI.Container(),
       capitals: new PIXI.Container(),
       mountains: new PIXI.Container(),
       forests: new PIXI.Container(),
@@ -64,6 +65,7 @@ class Game {
     this.pixi.stage.addChild(this.stages.mountains)
     this.pixi.stage.addChild(this.stages.forests)
     this.pixi.stage.addChild(this.stages.capitals)
+    this.pixi.stage.addChild(this.stages.castles)
     this.pixi.stage.addChild(this.stages.actions)
     this.pixi.stage.addChild(this.stages.waters)
     this.pixi.stage.addChild(this.stages.borders)
@@ -188,6 +190,10 @@ class Game {
       if (tile) {
         if (tile.owner !== owner) {
           tile.setOwner(owner)
+        }
+
+        if (castle) {
+          tile.addCastle()
         }
 
         continue
@@ -365,6 +371,7 @@ class Game {
 
     this.react.setTilesCount(tilesCount)
   }
+
   updateActionPreview = tile => {
     let actionPreview = null
 
