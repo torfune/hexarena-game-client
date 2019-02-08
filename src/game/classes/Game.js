@@ -237,6 +237,10 @@ class Game {
         if (gsTile.castle) {
           tile.addCastle()
         }
+
+        if (tile.forest && !gsTile.forest) {
+          tile.removeForest()
+        }
       } else {
         this.tiles.push(new Tile({ ...gsTile, owner: gsOwner }))
 
