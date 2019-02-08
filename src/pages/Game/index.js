@@ -9,6 +9,7 @@ import PlayerInfo from './components/PlayerInfo'
 import ActionPreview from './components/ActionPreview'
 import ErrorMessage from './components/ErrorMessage'
 import DebugInfo from './components/DebugInfo'
+import Resources from './components/Resources'
 
 const PageWrapper = styled.div`
   width: 100vw;
@@ -19,6 +20,7 @@ const PageWrapper = styled.div`
 
 class Game extends React.Component {
   state = {
+    wood: 2,
     name: null,
     leaders: [],
     connectionError: false,
@@ -75,6 +77,7 @@ class Game extends React.Component {
       leaders,
       name,
       debugInfo,
+      wood,
     } = this.state
 
     if (connectionError) {
@@ -87,6 +90,7 @@ class Game extends React.Component {
         <DebugInfo info={debugInfo} />
         <Leaderboard leaders={leaders} />
         <PlayerInfo name={name} tilesCount={tilesCount} />
+        <Resources wood={wood} />
         <ActionPreview actionPreview={actionPreview} />
       </PageWrapper>
     )

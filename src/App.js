@@ -10,10 +10,21 @@ import Marketplace from './pages/Marketplace'
 import { createGlobalStyle } from 'styled-components'
 
 export const GlobalStyle = createGlobalStyle`
+  @import url('https://rsms.me/inter/inter.css');
+
   * {
     outline: none;
     margin: 0;
-    font-family: 'Montserrat';
+  }
+  
+  html {
+    font-family: 'Inter', sans-serif;
+  }
+  
+  @supports (font-variation-settings: normal) {
+    html {
+      font-family: 'Inter var', sans-serif;
+    }
   }
 `
 

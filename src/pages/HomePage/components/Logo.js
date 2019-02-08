@@ -7,7 +7,7 @@ const Container = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #ccc;
   padding: 28px 16px;
   color: ${GOOGLE_PRIMARY};
   font-size: 24px;
@@ -18,12 +18,14 @@ const Container = styled.div`
 
   h1 {
     margin: 0;
+    font-weight: 600;
   }
 
   h2 {
     margin: 0;
     font-size: 20px;
-    color: #444;
+    color: #000;
+    font-weight: 300;
   }
 `
 

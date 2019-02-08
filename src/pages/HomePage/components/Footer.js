@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 const Container = styled.footer`
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #ccc;
   margin-top: 128px;
   padding: 32px 16px;
 `

@@ -1,30 +1,49 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import Header from './Header'
+import Label from './Label'
+import hexagonImagePath from '../../../icons/hexagon.svg'
+
 const Container = styled.div`
-  background: #fff;
-  bottom: 16px;
-  font-family: 'Montserrat';
-  padding: 16px 32px;
+  background: rgba(255, 255, 255, 0.92);
+  bottom: 0;
+  left: 0;
+  height: 200px;
+  width: 290px;
   position: absolute;
-  left: 16px;
-  border-radius: 8px;
-  box-shadow: 1px 1px 16px rgba(0, 0, 0, 0.2);
   user-select: none;
+  border-top-right-radius: 8px;
+  border-top: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  overflow: hidden;
 `
 
-const Header = styled.p`
-  margin: 0;
-  font-size: 20px;
-  font-weight: 500;
-  margin-bottom: 16px;
+const Content = styled.div`
+  padding: 0 30px;
+
+  p {
+    font-size: 18px;
+    font-weight: 500;
+    color: #222;
+    margin: 4px 0;
+  }
 `
 
-const PlayerInfo = ({ name, tilesCount }) => (
-  <Container>
-    <Header>{name}</Header>
-    <p>{tilesCount}</p>
-  </Container>
-)
+const PlayerInfo = ({ name, tilesCount }) => {
+  if (!name) return null
+
+  return (
+    <Container>
+      <Header text="Your Empire" iconSrc={hexagonImagePath} iconSize="20px" />
+      <Content>
+        <Label>Name</Label>
+        <p>{name}</p>
+        <Label>Population</Label>
+        <p>{tilesCount}</p>
+      </Content>
+    </Container>
+  )
+}
 
 export default PlayerInfo

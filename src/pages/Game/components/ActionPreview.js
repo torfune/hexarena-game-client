@@ -32,6 +32,7 @@ const Icon = styled.img`
 const Title = styled.h4`
   font-size: 18px;
   margin-left: 8px;
+  font-weight: 600;
 
   > span {
     color: #666;
