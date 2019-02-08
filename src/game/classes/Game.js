@@ -5,6 +5,7 @@ import { navigate } from '@reach/router'
 import Tile from './Tile'
 import Player from './Player'
 import Action from './Action'
+import Army from './Army'
 import createGameLoop from '../functions/createGameLoop'
 import createPixiApp from '../functions/createPixiApp'
 import getTileByXZ from '../functions/getTileByXZ'
@@ -43,6 +44,9 @@ class Game {
     this.targetScale = null
     this.tiles = []
     this.wood = null
+
+    // temp
+    this.debugArmy = null
   }
   start(rootElement, reactMethods) {
     this.react = { ...reactMethods }
@@ -146,6 +150,9 @@ class Game {
           action: 'capture',
           axial,
         })
+        break
+      case '2':
+        this.updateDebugArmy(tile)
         break
       default:
     }
@@ -314,6 +321,9 @@ class Game {
     this.react.setTilesCount(tilesCount)
   }
   updateActionPreview = tile => {
+    // temp
+    return
+
     const actionPreview = getActionPreview(tile)
 
     this.react.setActionPreview(actionPreview)
@@ -350,6 +360,13 @@ class Game {
 
     this.pixi.stage.x = this.camera.x
     this.pixi.stage.y = this.camera.y
+  }
+  updateDebugArmy = tile => {
+    if (!this.debugArmy) {
+      this.debugArmy = new Army(tile)
+    } else {
+      this.debugArmy.moveOn(tile)
+    }
   }
 }
 

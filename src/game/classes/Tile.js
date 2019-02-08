@@ -106,7 +106,6 @@ class Tile {
       }
     }
   }
-
   addCastle() {
     const { x, z } = this
 
@@ -132,7 +131,6 @@ class Tile {
       })
     )
   }
-
   setOwner(owner) {
     const { x, z } = this
 
