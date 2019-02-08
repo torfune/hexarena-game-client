@@ -3,12 +3,11 @@ import styled from 'styled-components'
 
 const Container = styled.div`
   top: 16px;
-  font-family: 'Montserrat';
   font-size: 26px;
   position: absolute;
   right: 16px;
   user-select: none;
-  font-weight: 700;
+  font-weight: 400;
 `
 
 const DebugInfo = ({ info }) => {
