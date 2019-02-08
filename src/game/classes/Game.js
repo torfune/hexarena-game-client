@@ -42,6 +42,7 @@ class Game {
     this.stage = {}
     this.targetScale = null
     this.tiles = []
+    this.wood = null
   }
   start(rootElement, reactMethods) {
     this.react = { ...reactMethods }
@@ -58,6 +59,7 @@ class Game {
       .on('id', this.handleIdMessage)
       .on('leaderboard', this.handleLeaderboardMessage)
       .on('time', this.handleTimeMessage)
+      .on('wood', this.handleWoodMessage)
       .on('connect_error', this.handleErrorMessage)
       .on('disconnect', this.handleDisconnectMessage)
 
@@ -283,6 +285,11 @@ class Game {
 
     console.log(`Browser time difference: ${this.timeDiff}`)
   }
+  handleWoodMessage = wood => {
+    this.wood = Number(wood)
+
+    this.react.setWood(this.wood)
+  }
   handleDisconnectMessage = () => {
     this.stop()
     navigate('/')
@@ -306,7 +313,6 @@ class Game {
 
     this.react.setTilesCount(tilesCount)
   }
-
   updateActionPreview = tile => {
     const actionPreview = getActionPreview(tile)
 

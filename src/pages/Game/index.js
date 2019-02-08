@@ -20,7 +20,7 @@ const PageWrapper = styled.div`
 
 class Game extends React.Component {
   state = {
-    wood: 2,
+    wood: null,
     name: null,
     leaders: [],
     connectionError: false,
@@ -39,6 +39,7 @@ class Game extends React.Component {
       setActionPreview: this.handleActionPreviewChange,
       showConnectionError: this.handleConnectionError,
       setDebugInfo: this.handleDebugInfoChange,
+      setWood: this.handleWoodChange,
     })
 
     document.addEventListener('keydown', this.handleKeyDown)
@@ -68,6 +69,9 @@ class Game extends React.Component {
   }
   handleActionPreviewChange = actionPreview => {
     this.setState({ actionPreview })
+  }
+  handleWoodChange = wood => {
+    this.setState({ wood })
   }
   render() {
     const {
