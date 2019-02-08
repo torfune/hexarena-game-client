@@ -131,6 +131,10 @@ class Tile {
       })
     )
   }
+  removeForest() {
+    this.forest = false
+    game.stage['forest'].removeChild(this.image.forest)
+  }
   setOwner(owner) {
     const { x, z } = this
 
