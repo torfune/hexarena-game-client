@@ -179,15 +179,23 @@ class Game {
         y: this.camera.y,
       },
     }
+  }
+  handleMouseUp = () => {
+    if (!this.cameraDrag) return
+
+    const cursorDelta =
+      Math.abs(this.cursor.x - this.cameraDrag.cursor.x) +
+      Math.abs(this.cursor.y - this.cameraDrag.cursor.y)
+
+    this.cameraDrag = null
+
+    if (cursorDelta > 32) return
 
     const tile = this.getTileUnderCursor()
 
     if (!tile) return
 
     this.socket.emit('click', `${tile.x}|${tile.z}`)
-  }
-  handleMouseUp = () => {
-    this.cameraDrag = null
   }
   handleMouseMove = ({ clientX: x, clientY: y }) => {
     this.cursor = { x, y }
