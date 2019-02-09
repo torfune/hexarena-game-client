@@ -138,8 +138,6 @@ class Tile {
   setOwner(owner) {
     const { x, z } = this
 
-    this.owner = owner
-
     if (owner) {
       if (this.image.pattern) {
         game.stage['pattern'].removeChild(this.image.pattern)
@@ -165,7 +163,12 @@ class Tile {
           },
         })
       )
+    } else if (this.owner) {
+      game.stage['pattern'].removeChild(this.image.pattern)
+      this.image.pattern = null
     }
+
+    this.owner = owner
   }
   addHighlight() {
     this.image.background.tint = hex('#ddd')
