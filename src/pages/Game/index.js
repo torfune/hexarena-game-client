@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { navigate } from '@reach/router'
 
-import { startGame, stopGame, loadImages } from '../../game'
+import { startGame, stopGame } from '../../game'
 
 import Leaderboard from './components/Leaderboard'
 import PlayerInfo from './components/PlayerInfo'
@@ -27,10 +27,8 @@ class Game extends React.Component {
     actionPreview: null,
     debugInfo: null,
   }
-  componentDidMount = async () => {
+  componentDidMount = () => {
     const gameElement = document.getElementById('game')
-
-    await loadImages()
 
     startGame(gameElement, {
       setLeaders: this.handleLeadersChange,

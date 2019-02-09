@@ -16,6 +16,8 @@ import pixelToAxial from '../functions/pixelToAxial'
 import parseTiles from '../functions/parseTiles'
 import parsePlayers from '../functions/parsePlayers'
 import parseAction from '../functions/parseAction'
+import roundToDecimals from '../functions/roundToDecimals'
+import getActionPreview from '../functions/getActionPreview'
 import { GAMESERVER_URL } from '../../config'
 import {
   ZOOM_SPEED,
@@ -24,7 +26,6 @@ import {
   DEFAULT_SCALE,
   TILE_IMAGES,
 } from '../../constants'
-import getActionPreview from '../functions/getActionPreview'
 
 class Game {
   constructor() {
@@ -118,6 +119,11 @@ class Game {
         tiles[i].updateScale()
       }
 
+      // temp
+      if (this.debugArmy) {
+        this.debugArmy.updateScale()
+      }
+
       this.setCameraToAxialPosition(axial)
     }
 
@@ -126,6 +132,11 @@ class Game {
       if (tiles[i].action) {
         tiles[i].action.update()
       }
+    }
+
+    // update armies
+    if (this.debugArmy) {
+      this.debugArmy.update()
     }
   }
   stop = () => {
@@ -153,6 +164,9 @@ class Game {
         break
       case '2':
         this.updateDebugArmy(tile)
+        break
+      case '3':
+        this.removeDebugArmy()
         break
       default:
     }
@@ -198,10 +212,11 @@ class Game {
   handleWheelMove = ({ deltaY }) => {
     const zoomDirection = (deltaY < 0 ? -1 : 1) * -1
 
-    const newScale = this.scale + zoomDirection * ZOOM_SPEED
+    const scale = this.scale + zoomDirection * ZOOM_SPEED
+    const roundedScale = roundToDecimals(scale, 2)
 
-    if (newScale >= MIN_SCALE && newScale <= MAX_SCALE) {
-      this.targetScale = newScale
+    if (roundedScale >= MIN_SCALE && roundedScale <= MAX_SCALE) {
+      this.targetScale = roundedScale
     }
   }
   handleErrorMessage = () => {
@@ -325,9 +340,6 @@ class Game {
     this.react.setTilesCount(tilesCount)
   }
   updateActionPreview = tile => {
-    // temp
-    return
-
     const actionPreview = getActionPreview(tile)
 
     this.react.setActionPreview(actionPreview)
@@ -371,6 +383,13 @@ class Game {
     } else {
       this.debugArmy.moveOn(tile)
     }
+  }
+  removeDebugArmy = () => {
+    if (!this.debugArmy) return
+
+    this.debugArmy.destroy(() => {
+      this.debugArmy = null
+    })
   }
 }
 

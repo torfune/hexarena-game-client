@@ -37,6 +37,15 @@ export const ACTION_WIDTH = 180
 export const ACTION_HEIGHT = 16
 export const ACTION_BORDER_RADIUS = ACTION_HEIGHT / 2
 
+// ARMIES
+export const UNIT_COUNT = 8
+export const UNIT_POSITION_OFFSET = 60
+export const UNIT_MOVEMENT_SPEED = 0.02
+export const UNIT_RADIUS = 16
+export const UNIT_IMAGE_SCALE = 0.8
+export const UNIT_DOOR_OFFSET = 48
+export const UNIT_MAX_DELAY = 0.4
+
 // ATTACK / DEFEND - (DONT CHANGE THIS WITHOUT CHANGING ON GAMESERVER TOO!)
 export const DEFAULT_DEFEND_POWER = 11
 export const DEFAULT_ATTACK_POWER = 1

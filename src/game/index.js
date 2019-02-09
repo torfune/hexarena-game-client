@@ -2,8 +2,14 @@ import Game from './classes/Game'
 import loadImages from './functions/loadImages'
 
 let game = new Game()
+let imagesLoaded = false
 
-const startGame = (rootElement, reactMethods) => {
+const startGame = async (rootElement, reactMethods) => {
+  if (!imagesLoaded) {
+    await loadImages()
+    imagesLoaded = true
+  }
+
   game.start(rootElement, reactMethods)
 
   // only for debug purposes
@@ -16,7 +22,7 @@ const stopGame = () => {
 }
 
 // named export for React layer
-export { startGame, stopGame, loadImages }
+export { startGame, stopGame }
 
 // default export for Game layer
 export default game
