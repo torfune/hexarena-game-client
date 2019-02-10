@@ -587,7 +587,15 @@ class Tile {
   }
   updateBorders() {
     for (let i = 0; i < 6; i++) {
-      if (this.neighbors[i] && this.neighbors[i].owner !== this.owner) {
+      if (!this.neighbors[i]) continue
+
+      if (this.neighbors[i].owner !== this.owner) {
+        this.image.border[i].visible = true
+      } else if (
+        !this.owner &&
+        game.tilesWithPatternPreview.includes(this) &&
+        !game.tilesWithPatternPreview.includes(this.neighbors[i])
+      ) {
         this.image.border[i].visible = true
       } else {
         this.image.border[i].visible = false
@@ -606,6 +614,28 @@ class Tile {
       !this.village &&
       !this.mountain
     )
+  }
+  addPatternPreview(pattern) {
+    if (this.image.pattern) {
+      this.image.pattern.visible = false
+    }
+
+    const position = getPixelPosition(this.x, this.z)
+
+    this.image.patternPreview = createImage('patternPreview', 'pattern')
+    this.image.patternPreview.x = position.x
+    this.image.patternPreview.y = position.y
+    this.image.patternPreview.tint = hex(pattern)
+    this.image.patternPreview.scale.x = game.scale
+    this.image.patternPreview.scale.y = game.scale
+    this.image.patternPreview.alpha = 0.5
+  }
+  removePatternPreview() {
+    if (this.image.pattern) {
+      this.image.pattern.visible = true
+    }
+
+    game.stage['patternPreview'].removeChild(this.image.patternPreview)
   }
   isContested() {
     let neighborPlayers = []
