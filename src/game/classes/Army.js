@@ -16,7 +16,8 @@ import {
 } from '../../constants'
 
 class Army {
-  constructor(tile) {
+  constructor(id, tile) {
+    this.id = id
     this.tile = tile
     this.units = []
     this.animationFraction = null
@@ -39,7 +40,7 @@ class Army {
   }
   update() {
     if (this.isDestroying) {
-      this.alpha -= 0.05
+      this.alpha -= 0.02
 
       for (let i = 0; i < UNIT_COUNT; i++) {
         this.units[i].setAlpha(this.alpha)
@@ -50,7 +51,11 @@ class Army {
           this.units[i].destroy()
         }
 
-        this.onDestroy()
+        const index = game.armies.indexOf(this)
+        if (index !== -1) {
+          game.armies.splice(index, 1)
+        }
+
         return
       }
     }
@@ -103,9 +108,8 @@ class Army {
       }
     }
   }
-  destroy(callback) {
+  destroy() {
     this.isDestroying = true
-    this.onDestroy = callback
   }
 }
 

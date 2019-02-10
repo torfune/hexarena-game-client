@@ -4,8 +4,8 @@ import { navigate } from '@reach/router'
 
 import Tile from './Tile'
 import Player from './Player'
-import Action from './Action'
 import Army from './Army'
+import Action from './Action'
 import createGameLoop from '../functions/createGameLoop'
 import createPixiApp from '../functions/createPixiApp'
 import getTileByXZ from '../functions/getTileByXZ'
@@ -16,6 +16,7 @@ import pixelToAxial from '../functions/pixelToAxial'
 import parseTiles from '../functions/parseTiles'
 import parsePlayers from '../functions/parsePlayers'
 import parseAction from '../functions/parseAction'
+import parseArmy from '../functions/parseArmy'
 import roundToDecimals from '../functions/roundToDecimals'
 import getActionPreview from '../functions/getActionPreview'
 import { GAMESERVER_URL } from '../../config'
@@ -30,6 +31,7 @@ import {
 class Game {
   constructor() {
     this.animations = []
+    this.armies = []
     this.camera = { x: null, y: null }
     this.cameraDrag = null
     this.cursor = { x: null, y: null }
@@ -40,14 +42,12 @@ class Game {
     this.players = []
     this.react = null
     this.scale = null
+    this.selectedArmyTile = null
     this.socket = null
     this.stage = {}
     this.targetScale = null
     this.tiles = []
     this.wood = null
-
-    // temp
-    this.debugArmy = null
   }
   start(rootElement, reactMethods) {
     this.react = { ...reactMethods }
@@ -65,6 +65,7 @@ class Game {
       .on('leaderboard', this.handleLeaderboardMessage)
       .on('time', this.handleTimeMessage)
       .on('wood', this.handleWoodMessage)
+      .on('army', this.handleArmyMessage)
       .on('connect_error', this.handleErrorMessage)
       .on('disconnect', this.handleDisconnectMessage)
 
@@ -80,7 +81,7 @@ class Game {
     document.addEventListener('keyup', this.handleKeyUp)
   }
   update = () => {
-    const { animations, cameraDrag, cursor, tiles } = this
+    const { animations, cameraDrag, cursor, tiles, armies } = this
 
     // update animations
     if (animations.length) {
@@ -110,7 +111,6 @@ class Game {
         x: window.innerWidth / 2 - this.camera.x,
         y: window.innerHeight / 2 - this.camera.y,
       }
-
       const axial = pixelToAxial(pixel, this.scale)
 
       this.scale = this.targetScale
@@ -119,9 +119,8 @@ class Game {
         tiles[i].updateScale()
       }
 
-      // temp
-      if (this.debugArmy) {
-        this.debugArmy.updateScale()
+      for (let i = 0; i < armies.length; i++) {
+        armies[i].updateScale()
       }
 
       this.setCameraToAxialPosition(axial)
@@ -135,8 +134,8 @@ class Game {
     }
 
     // update armies
-    if (this.debugArmy) {
-      this.debugArmy.update()
+    for (let i = 0; i < armies.length; i++) {
+      armies[i].update()
     }
   }
   stop = () => {
@@ -163,10 +162,12 @@ class Game {
         })
         break
       case '2':
-        this.updateDebugArmy(tile)
+        this.socket.emit('debug', {
+          action: 'add_army',
+          axial,
+        })
         break
       case '3':
-        this.removeDebugArmy()
         break
       case '4':
         this.socket.emit('debug', {
@@ -200,6 +201,36 @@ class Game {
     const tile = this.getTileUnderCursor()
 
     if (!tile) return
+
+    if (this.selectedArmyTile) {
+      const index = this.selectedArmyTile.neighbors.indexOf(tile)
+
+      if (index !== -1) {
+        const { x, z } = this.selectedArmyTile
+        this.socket.emit('send_army', `${x}|${z}|${index}`)
+      }
+
+      this.selectedArmyTile.removeWhiteOverlay()
+      this.selectedArmyTile = null
+
+      return
+    }
+
+    if (tile.castle || tile.capital) {
+      let isThereArmy = false
+
+      for (let i = 0; i < this.armies.length; i++) {
+        if (this.armies[i].tile === tile) {
+          isThereArmy = true
+        }
+      }
+
+      if (isThereArmy) {
+        this.selectedArmyTile = tile
+        tile.addWhiteOverlay()
+        return
+      }
+    }
 
     this.socket.emit('click', `${tile.x}|${tile.z}`)
   }
@@ -325,6 +356,24 @@ class Game {
       tile.action = new Action({ ...gsAction, tile })
     }
   }
+  handleArmyMessage = gsData => {
+    const gsArmy = parseArmy(gsData)
+    const tile = getTileByXZ(gsArmy.x, gsArmy.z)
+    const army = getItemById(this.armies, gsArmy.id)
+
+    if (!tile) return
+
+    if (!army) {
+      const army = new Army(gsArmy.id, tile)
+      this.armies.push(army)
+    } else {
+      army.moveOn(tile)
+
+      if (gsArmy.isDestroyed) {
+        army.destroy()
+      }
+    }
+  }
   handleIdMessage = id => {
     this.playerId = id
   }
@@ -406,20 +455,6 @@ class Game {
 
     this.pixi.stage.x = this.camera.x
     this.pixi.stage.y = this.camera.y
-  }
-  updateDebugArmy = tile => {
-    if (!this.debugArmy) {
-      this.debugArmy = new Army(tile)
-    } else {
-      this.debugArmy.moveOn(tile)
-    }
-  }
-  removeDebugArmy = () => {
-    if (!this.debugArmy) return
-
-    this.debugArmy.destroy(() => {
-      this.debugArmy = null
-    })
   }
 }
 

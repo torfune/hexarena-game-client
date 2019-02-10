@@ -18,6 +18,7 @@ class Tile {
     this.capital = capital
     this.neighbors = [null, null, null, null, null, null]
     this.image = {}
+    this.army = null
 
     const position = getPixelPosition(x, z)
 
@@ -233,6 +234,16 @@ class Tile {
   }
   clearHighlight() {
     this.image.background.tint = hex('#eee')
+  }
+  addWhiteOverlay() {
+    if (!this.image.pattern) return
+
+    this.image.pattern.tint = hex('#fff')
+  }
+  removeWhiteOverlay() {
+    if (!this.image.pattern || !this.owner) return
+
+    this.image.pattern.tint = hex(this.owner.pattern)
   }
   updateNeighbors(tiles) {
     let missingNeighbors = []
