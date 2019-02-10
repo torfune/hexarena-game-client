@@ -106,6 +106,31 @@ class Tile {
       }
     }
   }
+  addCapital() {
+    const { x, z } = this
+
+    this.capital = true
+
+    const position = getPixelPosition(x, z)
+
+    this.image.capital = createImage('capital')
+    this.image.capital.x = position.x
+    this.image.capital.y = position.y
+    this.image.capital.scale.x = game.scale
+    this.image.capital.scale.y = game.scale
+    this.image.capital.alpha = 0
+
+    game.animations.push(
+      new Animation({
+        image: this.image.capital,
+        onUpdate: image => {
+          const newAlpha = image.alpha + 0.1
+          if (newAlpha >= 1) return true
+          image.alpha = newAlpha
+        },
+      })
+    )
+  }
   addCastle() {
     const { x, z } = this
 
@@ -155,6 +180,14 @@ class Tile {
         },
       })
     )
+  }
+  removeCapital() {
+    this.capital = false
+    game.stage['capital'].removeChild(this.image.capital)
+  }
+  removeCastle() {
+    this.castle = false
+    game.stage['castle'].removeChild(this.image.castle)
   }
   removeForest() {
     this.forest = false

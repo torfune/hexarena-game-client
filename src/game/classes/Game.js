@@ -270,12 +270,24 @@ class Game {
           tile.setOwner(gsOwner)
         }
 
+        if (gsTile.capital && !tile.capital) {
+          tile.addCapital()
+        }
+
         if (gsTile.castle && !tile.castle) {
           tile.addCastle()
         }
 
         if (gsTile.forest && !tile.forest) {
           tile.addForest()
+        }
+
+        if (!gsTile.capital && tile.capital) {
+          tile.removeCapital()
+        }
+
+        if (!gsTile.castle && tile.castle) {
+          tile.removeCastle()
         }
 
         if (!gsTile.forest && tile.forest) {
