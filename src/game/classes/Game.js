@@ -168,6 +168,10 @@ class Game {
         })
         break
       case '3':
+        this.socket.emit('debug', {
+          action: 'lose_tile',
+          axial,
+        })
         break
       case '4':
         this.socket.emit('debug', {
