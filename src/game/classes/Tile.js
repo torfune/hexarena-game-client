@@ -131,6 +131,31 @@ class Tile {
       })
     )
   }
+  addForest() {
+    const { x, z } = this
+
+    this.forest = true
+
+    const position = getPixelPosition(x, z)
+
+    this.image.forest = createImage('forest')
+    this.image.forest.x = position.x
+    this.image.forest.y = position.y
+    this.image.forest.scale.x = game.scale
+    this.image.forest.scale.y = game.scale
+    this.image.forest.alpha = 0
+
+    game.animations.push(
+      new Animation({
+        image: this.image.forest,
+        onUpdate: image => {
+          const newAlpha = image.alpha + 0.1
+          if (newAlpha >= 1) return true
+          image.alpha = newAlpha
+        },
+      })
+    )
+  }
   removeForest() {
     this.forest = false
     game.stage['forest'].removeChild(this.image.forest)

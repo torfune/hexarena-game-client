@@ -168,6 +168,12 @@ class Game {
       case '3':
         this.removeDebugArmy()
         break
+      case '4':
+        this.socket.emit('debug', {
+          action: 'add_forest',
+          axial,
+        })
+        break
       default:
     }
   }
@@ -264,11 +270,15 @@ class Game {
           tile.setOwner(gsOwner)
         }
 
-        if (gsTile.castle) {
+        if (gsTile.castle && !tile.castle) {
           tile.addCastle()
         }
 
-        if (tile.forest && !gsTile.forest) {
+        if (gsTile.forest && !tile.forest) {
+          tile.addForest()
+        }
+
+        if (!gsTile.forest && tile.forest) {
           tile.removeForest()
         }
       } else {
