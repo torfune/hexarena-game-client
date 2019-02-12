@@ -7,7 +7,18 @@ import getRotationBySide from '../functions/getRotationBySide'
 import { NEIGHBOR_DIRECTIONS, TILE_IMAGES } from '../../constants'
 
 class Tile {
-  constructor({ x, z, owner, mountain, forest, water, capital, castle }) {
+  constructor({
+    x,
+    z,
+    owner,
+    mountain,
+    forest,
+    water,
+    capital,
+    castle,
+    village,
+    camp,
+  }) {
     this.x = x
     this.z = z
     this.owner = owner
@@ -16,6 +27,8 @@ class Tile {
     this.mountain = mountain
     this.forest = forest
     this.capital = capital
+    this.village = village
+    this.camp = camp
     this.neighbors = [null, null, null, null, null, null]
     this.image = {}
     this.army = null
@@ -45,6 +58,14 @@ class Tile {
 
     if (castle) {
       this.image.castle = createImage('castle')
+    }
+
+    if (village) {
+      this.image.village = createImage('village')
+    }
+
+    if (camp) {
+      this.image.camp = createImage('camp')
     }
 
     if (water) {
@@ -107,23 +128,21 @@ class Tile {
       }
     }
   }
-  addCapital() {
+  addImage(imageName) {
     const { x, z } = this
-
-    this.capital = true
 
     const position = getPixelPosition(x, z)
 
-    this.image.capital = createImage('capital')
-    this.image.capital.x = position.x
-    this.image.capital.y = position.y
-    this.image.capital.scale.x = game.scale
-    this.image.capital.scale.y = game.scale
-    this.image.capital.alpha = 0
+    this.image[imageName] = createImage(imageName)
+    this.image[imageName].x = position.x
+    this.image[imageName].y = position.y
+    this.image[imageName].scale.x = game.scale
+    this.image[imageName].scale.y = game.scale
+    this.image[imageName].alpha = 0
 
     game.animations.push(
       new Animation({
-        image: this.image.capital,
+        image: this.image[imageName],
         onUpdate: image => {
           const newAlpha = image.alpha + 0.1
           if (newAlpha >= 1) return true
@@ -131,56 +150,26 @@ class Tile {
         },
       })
     )
+  }
+  addCapital() {
+    this.capital = true
+    this.addImage('capital')
   }
   addCastle() {
-    const { x, z } = this
-
     this.castle = true
-
-    const position = getPixelPosition(x, z)
-
-    this.image.castle = createImage('castle')
-    this.image.castle.x = position.x
-    this.image.castle.y = position.y
-    this.image.castle.scale.x = game.scale
-    this.image.castle.scale.y = game.scale
-    this.image.castle.alpha = 0
-
-    game.animations.push(
-      new Animation({
-        image: this.image.castle,
-        onUpdate: image => {
-          const newAlpha = image.alpha + 0.1
-          if (newAlpha >= 1) return true
-          image.alpha = newAlpha
-        },
-      })
-    )
+    this.addImage('castle')
   }
   addForest() {
-    const { x, z } = this
-
     this.forest = true
-
-    const position = getPixelPosition(x, z)
-
-    this.image.forest = createImage('forest')
-    this.image.forest.x = position.x
-    this.image.forest.y = position.y
-    this.image.forest.scale.x = game.scale
-    this.image.forest.scale.y = game.scale
-    this.image.forest.alpha = 0
-
-    game.animations.push(
-      new Animation({
-        image: this.image.forest,
-        onUpdate: image => {
-          const newAlpha = image.alpha + 0.1
-          if (newAlpha >= 1) return true
-          image.alpha = newAlpha
-        },
-      })
-    )
+    this.addImage('forest')
+  }
+  addVillage() {
+    this.village = true
+    this.addImage('village')
+  }
+  addCamp() {
+    this.camp = true
+    this.addImage('camp')
   }
   removeCapital() {
     this.capital = false
@@ -193,6 +182,14 @@ class Tile {
   removeForest() {
     this.forest = false
     game.stage['forest'].removeChild(this.image.forest)
+  }
+  removeVillage() {
+    this.village = false
+    game.stage['village'].removeChild(this.image.village)
+  }
+  removeCamp() {
+    this.camp = false
+    game.stage['camp'].removeChild(this.image.camp)
   }
   setOwner(owner) {
     const { x, z } = this

@@ -220,7 +220,7 @@ class Game {
       return
     }
 
-    if (tile.castle || tile.capital) {
+    if (tile.castle || tile.capital || tile.camp) {
       let isThereArmy = false
 
       for (let i = 0; i < this.armies.length; i++) {
@@ -305,28 +305,22 @@ class Game {
           tile.setOwner(gsOwner)
         }
 
-        if (gsTile.capital && !tile.capital) {
-          tile.addCapital()
-        }
+        const structures = [
+          ['capital', 'addCapital', 'removeCapital'],
+          ['castle', 'addCastle', 'removeCastle'],
+          ['forest', 'addForest', 'removeForest'],
+          ['village', 'addVillage', 'removeVillage'],
+          ['camp', 'addCamp', 'removeCamp'],
+        ]
 
-        if (gsTile.castle && !tile.castle) {
-          tile.addCastle()
-        }
+        for (let j = 0; j < structures.length; j++) {
+          const [structure, addMethod, removeMethod] = structures[j]
 
-        if (gsTile.forest && !tile.forest) {
-          tile.addForest()
-        }
-
-        if (!gsTile.capital && tile.capital) {
-          tile.removeCapital()
-        }
-
-        if (!gsTile.castle && tile.castle) {
-          tile.removeCastle()
-        }
-
-        if (!gsTile.forest && tile.forest) {
-          tile.removeForest()
+          if (gsTile[structure] && !tile[structure]) {
+            tile[addMethod]()
+          } else if (!gsTile[structure] && tile[structure]) {
+            tile[removeMethod]()
+          }
         }
       } else {
         this.tiles.push(new Tile({ ...gsTile, owner: gsOwner }))
@@ -367,7 +361,7 @@ class Game {
 
     if (!tile) return
 
-    if (!army) {
+    if (!army && !gsArmy.isDestroyed) {
       const army = new Army(gsArmy.id, tile)
       this.armies.push(army)
     } else {
