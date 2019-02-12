@@ -34,8 +34,18 @@ class Army {
       UNIT_POSITION_OFFSET * game.scale
     )
 
+    const isInside = tile.capital || tile.castle || tile.camp
+
     for (let i = 0; i < UNIT_COUNT; i++) {
-      this.units.push(new Unit(randomizedPositions[i]))
+      if (isInside) {
+        this.units.push(new Unit(position))
+      } else {
+        this.units.push(new Unit(randomizedPositions[i]))
+      }
+    }
+
+    if (isInside) {
+      tile.addArmyIcon()
     }
   }
   update() {
@@ -84,6 +94,10 @@ class Army {
     this.lastScale = game.scale
   }
   moveOn(tile) {
+    if (this.tile.army) {
+      this.tile.removeArmyIcon()
+    }
+
     this.tile = tile
     this.isMoving = true
     this.animationFraction = 0
@@ -106,6 +120,10 @@ class Army {
       } else {
         this.units[i].moveOn(randomizedPositions[i])
       }
+    }
+
+    if (tile.capital || tile.castle || tile.camp) {
+      tile.addArmyIcon()
     }
   }
   destroy() {

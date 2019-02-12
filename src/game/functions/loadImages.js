@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js'
 
 import army from '../../images/army.png'
+import armyIcon from '../../images/army-icon.png'
 import border from '../../images/border.png'
 import camp from '../../images/camp.png'
 import capital from '../../images/capital.png'
@@ -16,6 +17,7 @@ const loadImages = () => {
   return new Promise(resolve => {
     PIXI.loader
       .add('army', army)
+      .add('armyIcon', armyIcon)
       .add('border', border)
       .add('camp', camp)
       .add('capital', capital)

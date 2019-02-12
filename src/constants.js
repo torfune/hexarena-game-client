@@ -8,10 +8,11 @@ export const TILE_IMAGES = [
   'army',
   'forest',
   'mountain',
+  'village',
+  'armyIcon',
+  'camp',
   'capital',
   'castle',
-  'village',
-  'camp',
   'action',
   'fog',
 ]

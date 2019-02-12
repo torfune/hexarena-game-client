@@ -179,6 +179,12 @@ class Game {
           axial,
         })
         break
+      case '5':
+        this.socket.emit('debug', {
+          action: 'add_camp',
+          axial,
+        })
+        break
       default:
     }
   }

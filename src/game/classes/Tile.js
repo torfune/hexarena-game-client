@@ -113,6 +113,26 @@ class Tile {
 
       if (!image) continue
 
+      if (TILE_IMAGES[i] === 'armyIcon') {
+        image.x = position.x
+        image.scale.x = game.scale
+        image.scale.y = game.scale
+
+        let animationRunning = false
+        for (let j = 0; j < game.animations.length; j++) {
+          if (game.animations[j].image === image) {
+            game.animations[j].data.baseY = position.y
+            animationRunning = true
+          }
+        }
+
+        if (!animationRunning) {
+          image.y = position.y - 180 * game.scale
+        }
+
+        continue
+      }
+
       if (image instanceof Array) {
         for (let j = 0; j < 6; j++) {
           image[j].x = position.x
@@ -129,9 +149,7 @@ class Tile {
     }
   }
   addImage(imageName) {
-    const { x, z } = this
-
-    const position = getPixelPosition(x, z)
+    const position = getPixelPosition(this.x, this.z)
 
     this.image[imageName] = createImage(imageName)
     this.image[imageName].x = position.x
@@ -140,16 +158,13 @@ class Tile {
     this.image[imageName].scale.y = game.scale
     this.image[imageName].alpha = 0
 
-    game.animations.push(
-      new Animation({
-        image: this.image[imageName],
-        onUpdate: image => {
-          const newAlpha = image.alpha + 0.1
-          if (newAlpha >= 1) return true
-          image.alpha = newAlpha
-        },
-      })
-    )
+    new Animation({
+      speed: 0.1,
+      image: this.image[imageName],
+      onUpdate: (image, fraction) => {
+        image.alpha = fraction
+      },
+    })
   }
   addCapital() {
     this.capital = true
@@ -171,25 +186,77 @@ class Tile {
     this.camp = true
     this.addImage('camp')
   }
+  addArmyIcon() {
+    this.army = true
+
+    const position = getPixelPosition(this.x, this.z)
+
+    this.image.armyIcon = createImage('armyIcon')
+    this.image.armyIcon.x = position.x
+    this.image.armyIcon.y = position.y
+    this.image.armyIcon.scale.x = game.scale
+    this.image.armyIcon.scale.y = game.scale
+    this.image.armyIcon.alpha = 0
+
+    new Animation({
+      speed: 0.05,
+      image: this.image.armyIcon,
+      context: { baseY: position.y },
+      onUpdate: (image, fraction, context) => {
+        image.alpha = fraction
+        image.y = context.baseY - 180 * game.scale * fraction
+      },
+    })
+  }
+  removeImage(imageName) {
+    const image = this.image[imageName]
+
+    if (!image) return
+
+    new Animation({
+      speed: 0.1,
+      image,
+      context: { stage: game.stage[imageName] },
+      onUpdate: (image, fraction) => {
+        image.alpha = 1 - fraction
+      },
+      onFinish: (image, context) => {
+        context.stage.removeChild(image)
+      },
+    })
+  }
   removeCapital() {
     this.capital = false
-    game.stage['capital'].removeChild(this.image.capital)
+    this.removeImage('capital')
   }
   removeCastle() {
     this.castle = false
-    game.stage['castle'].removeChild(this.image.castle)
+    this.removeImage('castle')
   }
   removeForest() {
     this.forest = false
-    game.stage['forest'].removeChild(this.image.forest)
+    this.removeImage('forest')
   }
   removeVillage() {
     this.village = false
-    game.stage['village'].removeChild(this.image.village)
+    this.removeImage('village')
   }
   removeCamp() {
     this.camp = false
-    game.stage['camp'].removeChild(this.image.camp)
+
+    for (let i = 0; i < game.armies.length; i++) {
+      if (game.armies[i].tile === this) {
+        game.armies[i].moveOn(this)
+      }
+    }
+
+    setTimeout(() => {
+      this.removeImage('camp')
+    }, 200)
+  }
+  removeArmyIcon() {
+    this.army = false
+    this.removeImage('armyIcon')
   }
   setOwner(owner) {
     const { x, z } = this
