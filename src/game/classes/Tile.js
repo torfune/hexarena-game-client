@@ -187,6 +187,8 @@ class Tile {
     this.addImage('camp')
   }
   addArmyIcon() {
+    if (this.army) return
+
     this.army = true
 
     const position = getPixelPosition(this.x, this.z)
