@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { navigate } from '@reach/router'
 
 import Logo from './components/Logo'
 import PlaySection from './components/PlaySection'
@@ -19,7 +20,7 @@ class HomePage extends React.Component {
   }
   handleKeyDown = ({ key }) => {
     if (key === 'Enter') {
-      window.location.pathname = '/game'
+      navigate('game')
     }
   }
   render() {

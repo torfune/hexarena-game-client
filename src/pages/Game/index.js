@@ -27,10 +27,10 @@ class Game extends React.Component {
     actionPreview: null,
     debugInfo: null,
   }
-  componentDidMount = () => {
+  componentDidMount = async () => {
     const gameElement = document.getElementById('game')
 
-    startGame(gameElement, {
+    await startGame(gameElement, {
       setLeaders: this.handleLeadersChange,
       setName: this.handleNameChange,
       setTilesCount: this.handleTilesCountChange,
@@ -49,6 +49,7 @@ class Game extends React.Component {
   }
   componentWillUnmount = () => {
     stopGame()
+    document.removeEventListener('keydown', this.handleKeyDown)
   }
   handleLeadersChange = leaders => {
     this.setState({ leaders })

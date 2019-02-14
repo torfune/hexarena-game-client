@@ -1,7 +1,7 @@
 import Game from './classes/Game'
 import loadImages from './functions/loadImages'
 
-let game = new Game()
+const game = new Game()
 let imagesLoaded = false
 
 const startGame = async (rootElement, reactMethods) => {
@@ -18,7 +18,6 @@ const startGame = async (rootElement, reactMethods) => {
 
 const stopGame = () => {
   game.stop()
-  game = new Game()
 }
 
 // named export for React layer

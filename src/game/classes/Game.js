@@ -41,21 +41,36 @@ class Game {
     this.playerId = null
     this.players = []
     this.react = null
-    this.scale = null
     this.selectedArmyTile = null
     this.socket = null
     this.stage = {}
-    this.targetScale = null
     this.tiles = []
     this.wood = null
-  }
-  start(rootElement, reactMethods) {
-    this.react = { ...reactMethods }
+    this.isRunning = false
+
     this.scale = DEFAULT_SCALE
     this.targetScale = this.scale
 
-    this.pixi = createPixiApp(rootElement)
     this.loop = createGameLoop(this.update, this)
+    this.pixi = createPixiApp()
+
+    for (let i = 0; i < TILE_IMAGES.length; i++) {
+      this.stage[TILE_IMAGES[i]] = new PIXI.Container()
+      this.pixi.stage.addChild(this.stage[TILE_IMAGES[i]])
+    }
+
+    document.addEventListener('mousewheel', this.handleWheelMove)
+    document.addEventListener('mousemove', this.handleMouseMove)
+    document.addEventListener('mousedown', this.handleMouseDown)
+    document.addEventListener('mouseup', this.handleMouseUp)
+    document.addEventListener('keyup', this.handleKeyUp)
+  }
+  start(rootElement, reactMethods) {
+    if (this.isRunning) return
+
+    this.react = { ...reactMethods }
+
+    rootElement.appendChild(this.pixi.view)
 
     this.socket = io(GAMESERVER_URL, { reconnection: false })
       .on('player', this.handlePlayerMessage)
@@ -69,18 +84,36 @@ class Game {
       .on('connect_error', this.handleErrorMessage)
       .on('disconnect', this.handleDisconnectMessage)
 
+    this.isRunning = true
+  }
+  stop() {
+    if (!this.isRunning) return
+
     for (let i = 0; i < TILE_IMAGES.length; i++) {
-      this.stage[TILE_IMAGES[i]] = new PIXI.Container()
-      this.pixi.stage.addChild(this.stage[TILE_IMAGES[i]])
+      this.stage[TILE_IMAGES[i]].removeChildren()
     }
 
-    document.addEventListener('mousewheel', this.handleWheelMove)
-    document.addEventListener('mousemove', this.handleMouseMove)
-    document.addEventListener('mousedown', this.handleMouseDown)
-    document.addEventListener('mouseup', this.handleMouseUp)
-    document.addEventListener('keyup', this.handleKeyUp)
+    this.socket.close()
+
+    this.animations = []
+    this.armies = []
+    this.camera = { x: null, y: null }
+    this.cameraDrag = null
+    this.cursor = { x: null, y: null }
+    this.lastMouseMove = null
+    this.playerId = null
+    this.players = []
+    this.react = null
+    this.selectedArmyTile = null
+    this.socket = null
+    this.targetScale = this.scale
+    this.tiles = []
+    this.wood = null
+    this.isRunning = false
   }
   update = () => {
+    if (!this.isRunning) return
+
     const { animations, cameraDrag, cursor, tiles, armies } = this
 
     // update animations
@@ -138,57 +171,47 @@ class Game {
       armies[i].update()
     }
   }
-  stop = () => {
-    document.removeEventListener('mousewheel', this.handleWheelMove)
-    document.removeEventListener('mousemove', this.handleMouseMove)
-    document.removeEventListener('mousedown', this.handleMouseDown)
-    document.removeEventListener('mouseup', this.handleMouseUp)
-
-    this.socket.close()
-    clearInterval(this.loop)
-  }
   handleKeyUp = ({ key }) => {
+    if (!this.isRunning) return
+
     const tile = this.getTileUnderCursor()
 
     if (!tile) return
 
     const axial = { x: tile.x, z: tile.z }
 
+    let action = null
+
     switch (key) {
       case '1':
-        this.socket.emit('debug', {
-          action: 'capture',
-          axial,
-        })
+        action = 'capture'
         break
       case '2':
-        this.socket.emit('debug', {
-          action: 'add_army',
-          axial,
-        })
+        action = 'add_army'
         break
       case '3':
-        this.socket.emit('debug', {
-          action: 'lose_tile',
-          axial,
-        })
+        action = 'lose_tile'
         break
       case '4':
-        this.socket.emit('debug', {
-          action: 'add_forest',
-          axial,
-        })
+        action = 'add_forest'
         break
       case '5':
-        this.socket.emit('debug', {
-          action: 'add_camp',
-          axial,
-        })
+        action = 'add_camp'
+        break
+      case '6':
+        action = 'add_player'
+        break
+      case '7':
+        action = 'send_army'
         break
       default:
     }
+
+    this.socket.emit('debug', { action, axial })
   }
   handleMouseDown = ({ clientX: x, clientY: y }) => {
+    if (!this.isRunning) return
+
     this.cameraDrag = {
       cursor: { x, y },
       camera: {
@@ -198,7 +221,7 @@ class Game {
     }
   }
   handleMouseUp = () => {
-    if (!this.cameraDrag) return
+    if (!this.cameraDrag || !this.isRunning) return
 
     const cursorDelta =
       Math.abs(this.cursor.x - this.cameraDrag.cursor.x) +
@@ -245,6 +268,8 @@ class Game {
     this.socket.emit('click', `${tile.x}|${tile.z}`)
   }
   handleMouseMove = ({ clientX: x, clientY: y }) => {
+    if (!this.isRunning) return
+
     this.cursor = { x, y }
 
     const tile = this.getTileUnderCursor()
@@ -265,6 +290,8 @@ class Game {
     }
   }
   handleWheelMove = ({ deltaY }) => {
+    if (!this.isRunning) return
+
     const zoomDirection = (deltaY < 0 ? -1 : 1) * -1
 
     const scale = this.scale + zoomDirection * ZOOM_SPEED
@@ -276,7 +303,7 @@ class Game {
   }
   handleErrorMessage = () => {
     this.react.showConnectionError()
-    this.socket.close()
+    this.stop()
   }
   handlePlayerMessage = gsData => {
     const gsPlayers = parsePlayers(gsData)
@@ -379,6 +406,8 @@ class Game {
     }
   }
   handleIdMessage = id => {
+    if (this.playerId) return
+
     this.playerId = id
   }
   handleLeaderboardMessage = leaders => {

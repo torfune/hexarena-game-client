@@ -46,7 +46,7 @@ const Leaderboard = ({ leaders }) => {
       <Header text="Leaderboard" iconSrc={crownImagePath} iconSize="24px" />
       <Content>
         {leaders.map((l, i) => (
-          <Leader key={l.name}>
+          <Leader key={i}>
             <p>
               <span>{i + 1}.</span>
               <span>{l.name}</span>
