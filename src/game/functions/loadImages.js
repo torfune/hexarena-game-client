@@ -12,6 +12,8 @@ import mountain from '../../images/mountain.png'
 import pattern from '../../images/pattern.png'
 import village from '../../images/village.png'
 import water from '../../images/water.png'
+import hitpointsBg from '../../images/hitpoints-bg.png'
+import hitpointsFill from '../../images/hitpoints-fill.png'
 
 const loadImages = () => {
   return new Promise(resolve => {
@@ -28,6 +30,8 @@ const loadImages = () => {
       .add('pattern', pattern)
       .add('village', village)
       .add('water', water)
+      .add('hitpointsBg', hitpointsBg)
+      .add('hitpointsFill', hitpointsFill)
       .load(resolve)
   })
 }

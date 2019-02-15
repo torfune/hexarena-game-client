@@ -1,10 +1,18 @@
+import * as PIXI from 'pixi.js'
 import game from '../../game'
 import Animation from './Animation'
 import getPixelPosition from '../functions/getPixelPosition'
+import getImageAnimation from '../functions/getImageAnimation'
 import createImage from '../functions/createImage'
 import hex from '../functions/hex'
 import getRotationBySide from '../functions/getRotationBySide'
-import { NEIGHBOR_DIRECTIONS, TILE_IMAGES } from '../../constants'
+import {
+  NEIGHBOR_DIRECTIONS,
+  TILE_IMAGES,
+  ARMY_ICON_OFFSET_Y,
+  HITPOINTS_OFFSET_Y,
+  HEART_OFFSET_X,
+} from '../../constants'
 
 class Tile {
   constructor({
@@ -18,6 +26,7 @@ class Tile {
     castle,
     village,
     camp,
+    hitpoints,
   }) {
     this.x = x
     this.z = z
@@ -29,9 +38,11 @@ class Tile {
     this.capital = capital
     this.village = village
     this.camp = camp
+    this.hitpoints = hitpoints
     this.neighbors = [null, null, null, null, null, null]
     this.image = {}
     this.army = null
+    this.hitpointsVisible = false
 
     const position = getPixelPosition(x, z)
 
@@ -80,6 +91,10 @@ class Tile {
       this.image.forest = createImage('forest')
     }
 
+    if (hitpoints !== null) {
+      this.image.hitpointsBg = createImage('hitpointsBg')
+    }
+
     if (owner) {
       this.image.pattern = createImage('pattern')
       this.image.pattern.tint = hex(owner.pattern)
@@ -105,29 +120,36 @@ class Tile {
       }
     }
   }
+  startHover() {
+    if (this.hitpoints === 2 && !this.army) {
+      this.showHitpoints()
+    }
+  }
+  endHover() {
+    if (this.hitpoints === 2 && !this.army && this.hitpointsVisible) {
+      this.hideHitpoints()
+    }
+  }
   updateScale() {
     const position = getPixelPosition(this.x, this.z)
 
     for (let i = 0; i < TILE_IMAGES.length; i++) {
-      const image = this.image[TILE_IMAGES[i]]
+      const imageName = TILE_IMAGES[i]
+      const image = this.image[imageName]
 
       if (!image) continue
 
-      if (TILE_IMAGES[i] === 'armyIcon') {
+      if (imageName === 'armyIcon' || imageName === 'hitpointsBg') {
         image.x = position.x
         image.scale.x = game.scale
         image.scale.y = game.scale
 
-        let animationRunning = false
-        for (let j = 0; j < game.animations.length; j++) {
-          if (game.animations[j].image === image) {
-            game.animations[j].context.baseY = position.y
-            animationRunning = true
-          }
-        }
+        const animation = getImageAnimation(image)
 
-        if (!animationRunning) {
-          image.y = position.y - 180 * game.scale
+        if (animation) {
+          animation.context.baseY = position.y
+        } else {
+          image.y = position.y - ARMY_ICON_OFFSET_Y * game.scale
         }
 
         continue
@@ -189,6 +211,10 @@ class Tile {
   addArmy(army) {
     if (this.army) return
 
+    if (this.hitpointsVisible) {
+      this.hideHitpoints()
+    }
+
     this.army = army
 
     const position = getPixelPosition(this.x, this.z)
@@ -206,9 +232,35 @@ class Tile {
       context: { baseY: position.y },
       onUpdate: (image, fraction, context) => {
         image.alpha = fraction
-        image.y = context.baseY - 180 * game.scale * fraction
+        image.y = context.baseY - ARMY_ICON_OFFSET_Y * game.scale * fraction
       },
     })
+  }
+  addHitpoints(hitpoints) {
+    this.hitpoints = hitpoints
+
+    const position = getPixelPosition(this.x, this.z)
+    const fillTexture = PIXI.loader.resources['hitpointsFill'].texture
+
+    this.image.hitpointsBg = createImage('hitpointsBg')
+    this.image.hitpointsBg.x = position.x
+    this.image.hitpointsBg.y = position.y
+    this.image.hitpointsBg.scale.x = game.scale
+    this.image.hitpointsBg.scale.y = game.scale
+    this.image.hitpointsBg.alpha = 0
+
+    this.image.hearts = [
+      new PIXI.Sprite(fillTexture),
+      new PIXI.Sprite(fillTexture),
+    ]
+
+    this.image.hearts[0].anchor.set(0.5, 0.5)
+    this.image.hearts[1].anchor.set(0.5, 0.5)
+
+    this.image.hearts[1].x += HEART_OFFSET_X
+
+    this.image.hitpointsBg.addChild(this.image.hearts[0])
+    this.image.hitpointsBg.addChild(this.image.hearts[1])
   }
   removeImage(imageName) {
     const image = this.image[imageName]
@@ -216,7 +268,7 @@ class Tile {
     if (!image) return
 
     new Animation({
-      speed: 0.1,
+      speed: 0.05,
       image,
       context: { stage: game.stage[imageName] },
       onUpdate: (image, fraction) => {
@@ -229,11 +281,17 @@ class Tile {
   }
   removeCapital() {
     this.capital = false
-    this.removeImage('capital')
+
+    setTimeout(() => {
+      this.removeImage('capital')
+    }, 400)
   }
   removeCastle() {
     this.castle = false
-    this.removeImage('castle')
+
+    setTimeout(() => {
+      this.removeImage('castle')
+    }, 400)
   }
   removeForest() {
     this.forest = false
@@ -258,7 +316,127 @@ class Tile {
   }
   removeArmy() {
     this.army = null
-    this.removeImage('armyIcon')
+
+    const position = getPixelPosition(this.x, this.z)
+
+    new Animation({
+      speed: 0.05,
+      image: this.image.armyIcon,
+      context: {
+        stage: game.stage['armyIcon'],
+        baseY: position.y,
+      },
+      onUpdate: (image, fraction, context) => {
+        fraction = 1 - fraction
+
+        image.alpha = fraction
+        image.y = context.baseY - ARMY_ICON_OFFSET_Y * game.scale * fraction
+      },
+      onFinish: (image, context) => {
+        context.stage.removeChild(image)
+      },
+    })
+  }
+  removeHitpoints() {
+    this.hitpoints = null
+
+    new Animation({
+      image: this.image.hearts[0],
+      onUpdate: (image, fraction) => {
+        image.alpha = 1 - fraction
+      },
+    })
+
+    setTimeout(() => {
+      this.removeImage('hitpointsBg')
+    }, 500)
+  }
+  updateHitpoints(hitpoints) {
+    if (hitpoints === null) return
+
+    const { hearts } = this.image
+
+    if (hitpoints === 2 && this.hitpoints < 2) {
+      new Animation({
+        image: hearts[1],
+        onUpdate: (image, fraction) => {
+          image.alpha = fraction
+        },
+      })
+
+      setTimeout(() => {
+        if (!this.isHovered() && this.hitpoints === 2) {
+          this.hideHitpoints()
+        }
+      }, 800)
+    } else if (hitpoints < 2 && this.hitpoints === 2) {
+      new Animation({
+        image: hearts[1],
+        onUpdate: (image, fraction) => {
+          image.alpha = 1 - fraction
+        },
+      })
+    }
+
+    if (hitpoints < 2) {
+      this.showHitpoints()
+    }
+
+    this.hitpoints = hitpoints
+  }
+  showHitpoints() {
+    if (this.hitpointsVisible) return
+
+    this.hitpointsVisible = true
+
+    const position = getPixelPosition(this.x, this.z)
+    const animation = getImageAnimation(this.image.hitpointsBg)
+
+    let initialFraction = null
+
+    if (animation) {
+      initialFraction = 1 - animation.fraction
+      animation.destroy()
+    }
+
+    new Animation({
+      speed: 0.05,
+      image: this.image.hitpointsBg,
+      initialFraction,
+      context: { baseY: position.y },
+      onUpdate: (image, fraction, context) => {
+        image.alpha = fraction
+        image.y = context.baseY - HITPOINTS_OFFSET_Y * game.scale * fraction
+      },
+    })
+  }
+  hideHitpoints() {
+    if (!this.hitpointsVisible) return
+
+    this.hitpointsVisible = false
+
+    const position = getPixelPosition(this.x, this.z)
+    const animation = getImageAnimation(this.image.hitpointsBg)
+
+    let initialFraction = null
+
+    if (animation) {
+      initialFraction = 1 - animation.fraction
+      animation.destroy()
+    }
+
+    new Animation({
+      speed: 0.05,
+      initialFraction,
+      image: this.image.hitpointsBg,
+      context: { baseY: position.y },
+      onUpdate: (image, fraction, context) => {
+        fraction = 1 - fraction
+
+        image.alpha = fraction
+        image.y = context.baseY - HITPOINTS_OFFSET_Y * game.scale * fraction
+      },
+    })
   }
   setOwner(owner) {
     const { x, z } = this
@@ -281,10 +459,8 @@ class Tile {
       game.animations.push(
         new Animation({
           image: this.image.pattern,
-          onUpdate: image => {
-            const newAlpha = image.alpha + 0.1
-            if (newAlpha >= 1) return true
-            image.alpha = newAlpha
+          onUpdate: (image, fraction) => {
+            image.alpha = fraction
           },
         })
       )
@@ -357,6 +533,9 @@ class Tile {
         this.image.border[i].visible = false
       }
     }
+  }
+  isHovered() {
+    return game.hoveredTile === this
   }
 }
 

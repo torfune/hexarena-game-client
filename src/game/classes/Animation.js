@@ -2,11 +2,19 @@ import game from '..'
 import { easeInOutQuad } from '../functions/easing'
 
 class Animation {
-  constructor({ image, speed, ease, context, onUpdate, onFinish }) {
+  constructor({
+    image,
+    speed,
+    initialFraction,
+    ease,
+    context,
+    onUpdate,
+    onFinish,
+  }) {
     this.ease = ease || easeInOutQuad
     this.context = context
-    this.speed = speed
-    this.fraction = 0
+    this.speed = speed || 0.1
+    this.fraction = initialFraction || 0
     this.image = image
     this.onUpdate = onUpdate
     this.onFinish = onFinish
@@ -23,12 +31,19 @@ class Animation {
 
     this.onUpdate(this.image, this.ease(this.fraction), this.context)
 
-    if (this.fraction === 1) {
+    if (this.fraction === 1 || isNaN(this.fraction)) {
       if (this.onFinish) {
         this.onFinish(this.image, this.context)
       }
 
       this.finished = true
+    }
+  }
+  destroy = () => {
+    const index = game.animations.indexOf(this)
+
+    if (index !== -1) {
+      game.animations.splice(index, 1)
     }
   }
 }

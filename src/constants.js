@@ -10,6 +10,8 @@ export const TILE_IMAGES = [
   'mountain',
   'village',
   'armyIcon',
+  'hitpointsBg',
+  'hitpointsFill',
   'camp',
   'capital',
   'castle',
@@ -24,6 +26,11 @@ export const NEIGHBOR_DIRECTIONS = [
   { x: -1, z: 0 },
   { x: 0, z: -1 },
 ]
+
+// IMAGE OFFSETS
+export const ARMY_ICON_OFFSET_Y = 180
+export const HEART_OFFSET_X = 57
+export const HITPOINTS_OFFSET_Y = 176
 
 // COLORS
 export const FACEBOOK_PRIMARY = '#3b5998'

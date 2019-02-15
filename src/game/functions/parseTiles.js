@@ -10,11 +10,11 @@ const parseTiles = gsData => {
       water,
       mountain,
       forest,
-      castle,
       ownerId,
-      capital,
       village,
       camp,
+      buildingType,
+      hitpoints,
     ] = gsSplit
 
     gsTiles.push({
@@ -23,11 +23,12 @@ const parseTiles = gsData => {
       water: water === 'true',
       mountain: mountain === 'true',
       forest: forest === 'true',
-      castle: castle === 'true',
+      castle: buildingType === 'castle',
       ownerId: ownerId === 'null' ? null : ownerId,
-      capital: capital === 'true',
+      capital: buildingType === 'capital',
       village: village === 'true',
       camp: camp === 'true',
+      hitpoints: hitpoints === 'null' ? null : Number(hitpoints),
     })
   }
 

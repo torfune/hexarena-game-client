@@ -47,6 +47,7 @@ class Game {
     this.tiles = []
     this.wood = null
     this.isRunning = false
+    this.hoveredTile = null
 
     this.scale = DEFAULT_SCALE
     this.targetScale = this.scale
@@ -170,11 +171,25 @@ class Game {
     for (let i = 0; i < armies.length; i++) {
       armies[i].update()
     }
+
+    // update hovered tile
+    const newHoveredTile = this.getHoveredTile()
+    if (newHoveredTile !== this.hoveredTile) {
+      if (this.hoveredTile) {
+        this.hoveredTile.endHover()
+      }
+
+      if (newHoveredTile) {
+        newHoveredTile.startHover()
+      }
+
+      this.hoveredTile = newHoveredTile
+    }
   }
   handleKeyUp = ({ key }) => {
     if (!this.isRunning) return
 
-    const tile = this.getTileUnderCursor()
+    const tile = this.hoveredTile
 
     if (!tile) return
 
@@ -204,6 +219,18 @@ class Game {
       case '7':
         action = 'send_army'
         break
+      case 'q':
+        action = 'remove_hitpoint'
+        break
+      case 'w':
+        action = 'add_hitpoint'
+        break
+      case 'e':
+        action = 'add_castle'
+        break
+      case 'r':
+        action = 'dummy_capture'
+        break
       default:
     }
 
@@ -231,7 +258,7 @@ class Game {
 
     if (cursorDelta > 32) return
 
-    const tile = this.getTileUnderCursor()
+    const tile = this.hoveredTile
 
     if (!tile) return
 
@@ -272,7 +299,7 @@ class Game {
 
     this.cursor = { x, y }
 
-    const tile = this.getTileUnderCursor()
+    const tile = this.hoveredTile
     const canPerformAction = this.updateActionPreview(tile)
 
     for (let i = 0; i < this.tiles.length; i++) {
@@ -346,6 +373,15 @@ class Game {
           ['camp', 'addCamp', 'removeCamp'],
         ]
 
+        // Hitpoints
+        if (gsTile.hitpoints && !tile.hitpoints) {
+          tile.addHitpoints(gsTile.hitpoints)
+        } else if (gsTile.hitpoints === null && tile.hitpoints) {
+          tile.removeHitpoints()
+        } else if (gsTile.hitpoints !== tile.hitpoints) {
+          tile.updateHitpoints(gsTile.hitpoints)
+        }
+
         for (let j = 0; j < structures.length; j++) {
           const [structure, addMethod, removeMethod] = structures[j]
 
@@ -367,7 +403,7 @@ class Game {
     this.updatePlayerTilesCount()
     this.updateNeighbors()
     this.updateBorders()
-    this.updateActionPreview(this.getTileUnderCursor())
+    this.updateActionPreview(this.hoveredTile)
   }
   handleActionMessage = gsData => {
     const gsAction = parseAction(gsData)
@@ -394,15 +430,21 @@ class Game {
 
     if (!tile) return
 
+    console.log(
+      `Army -> [${tile.x}|${tile.z}] -> ${
+        gsArmy.isDestroyed ? 'destroyed' : 'ok'
+      }`
+    )
+
     if (!army && !gsArmy.isDestroyed) {
       const army = new Army({ ...gsArmy, tile })
       this.armies.push(army)
     } else if (army) {
-      army.moveOn(tile)
-
       if (gsArmy.isDestroyed) {
         army.destroy()
       }
+
+      army.moveOn(tile)
     }
   }
   handleIdMessage = id => {
@@ -468,7 +510,7 @@ class Game {
       this.tiles[i].updateBorders()
     }
   }
-  getTileUnderCursor = () => {
+  getHoveredTile = () => {
     if (!this.cursor || !this.camera) return
 
     const pixel = {
