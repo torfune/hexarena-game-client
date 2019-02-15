@@ -16,8 +16,9 @@ import {
 } from '../../constants'
 
 class Army {
-  constructor(id, tile) {
+  constructor({ id, tile, ownerId }) {
     this.id = id
+    this.ownerId = ownerId
     this.tile = tile
     this.units = []
     this.animationFraction = null
@@ -45,7 +46,7 @@ class Army {
     }
 
     if (isInside) {
-      tile.addArmyIcon()
+      tile.addArmy(this)
     }
   }
   update() {
@@ -94,14 +95,17 @@ class Army {
     this.lastScale = game.scale
   }
   moveOn(tile) {
-    if (this.tile.army) {
-      this.tile.removeArmyIcon()
+    if (tile === this.tile) return
+
+    if (this.tile.army === this) {
+      this.tile.removeArmy()
     }
 
     this.tile = tile
     this.isMoving = true
     this.animationFraction = 0
 
+    const sameOwner = tile.owner && tile.owner.id === this.ownerId
     const position = getPixelPosition(tile.x, tile.z)
     const doorPosition = {
       x: position.x,
@@ -122,12 +126,16 @@ class Army {
       }
     }
 
-    if (tile.capital || tile.castle || tile.camp) {
-      tile.addArmyIcon()
+    if (sameOwner && (tile.capital || tile.castle || tile.camp)) {
+      tile.addArmy(this)
     }
   }
   destroy() {
     this.isDestroying = true
+
+    if (this.tile.army && this.tile.army === this) {
+      this.tile.removeArmy()
+    }
   }
 }
 

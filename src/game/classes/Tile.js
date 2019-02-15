@@ -121,7 +121,7 @@ class Tile {
         let animationRunning = false
         for (let j = 0; j < game.animations.length; j++) {
           if (game.animations[j].image === image) {
-            game.animations[j].data.baseY = position.y
+            game.animations[j].context.baseY = position.y
             animationRunning = true
           }
         }
@@ -186,10 +186,10 @@ class Tile {
     this.camp = true
     this.addImage('camp')
   }
-  addArmyIcon() {
+  addArmy(army) {
     if (this.army) return
 
-    this.army = true
+    this.army = army
 
     const position = getPixelPosition(this.x, this.z)
 
@@ -256,8 +256,8 @@ class Tile {
       this.removeImage('camp')
     }, 200)
   }
-  removeArmyIcon() {
-    this.army = false
+  removeArmy() {
+    this.army = null
     this.removeImage('armyIcon')
   }
   setOwner(owner) {

@@ -6,8 +6,6 @@ const createGameLoop = (updateFunction, gameInstanceReference) => {
   loop.autoStart = true
   loop.add(updateFunction, gameInstanceReference)
 
-  console.log('Loop created.')
-
   return loop
 }
 

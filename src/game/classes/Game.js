@@ -395,9 +395,9 @@ class Game {
     if (!tile) return
 
     if (!army && !gsArmy.isDestroyed) {
-      const army = new Army(gsArmy.id, tile)
+      const army = new Army({ ...gsArmy, tile })
       this.armies.push(army)
-    } else {
+    } else if (army) {
       army.moveOn(tile)
 
       if (gsArmy.isDestroyed) {
