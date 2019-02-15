@@ -5,6 +5,7 @@ import { navigate } from '@reach/router'
 import { startGame, stopGame } from '../../game'
 
 import Leaderboard from './components/Leaderboard'
+import DefeatScreen from './components/DefeatScreen'
 import PlayerInfo from './components/PlayerInfo'
 import ActionPreview from './components/ActionPreview'
 import ErrorMessage from './components/ErrorMessage'
@@ -26,6 +27,9 @@ class Game extends React.Component {
     connectionError: false,
     actionPreview: null,
     debugInfo: null,
+    defeated: false,
+    killerName: null,
+    secondsSurvived: null,
   }
   componentDidMount = async () => {
     const gameElement = document.getElementById('game')
@@ -38,6 +42,7 @@ class Game extends React.Component {
       showConnectionError: this.handleConnectionError,
       setDebugInfo: this.handleDebugInfoChange,
       setWood: this.handleWoodChange,
+      showDefeatScreen: this.showDefeatScreen,
     })
 
     document.addEventListener('keydown', this.handleKeyDown)
@@ -72,6 +77,9 @@ class Game extends React.Component {
   handleWoodChange = wood => {
     this.setState({ wood })
   }
+  showDefeatScreen = ({ killerName, secondsSurvived }) => {
+    this.setState({ defeated: true, killerName, secondsSurvived })
+  }
   render() {
     const {
       actionPreview,
@@ -81,6 +89,9 @@ class Game extends React.Component {
       name,
       debugInfo,
       wood,
+      defeated,
+      secondsSurvived,
+      killerName,
     } = this.state
 
     if (connectionError) {
@@ -95,6 +106,13 @@ class Game extends React.Component {
         <PlayerInfo name={name} tilesCount={tilesCount} />
         <Resources wood={wood} />
         <ActionPreview actionPreview={actionPreview} />
+
+        {defeated && (
+          <DefeatScreen
+            killerName={killerName}
+            secondsSurvived={secondsSurvived}
+          />
+        )}
       </PageWrapper>
     )
   }

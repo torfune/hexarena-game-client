@@ -11,6 +11,8 @@ class Animation {
     onUpdate,
     onFinish,
   }) {
+    if (!game.isRunning) return
+
     this.ease = ease || easeInOutQuad
     this.context = context
     this.speed = speed || 0.1

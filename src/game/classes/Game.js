@@ -1,6 +1,5 @@
 import * as PIXI from 'pixi.js'
 import io from 'socket.io-client'
-import { navigate } from '@reach/router'
 
 import Tile from './Tile'
 import Player from './Player'
@@ -18,6 +17,7 @@ import parsePlayers from '../functions/parsePlayers'
 import parseAction from '../functions/parseAction'
 import parseArmy from '../functions/parseArmy'
 import roundToDecimals from '../functions/roundToDecimals'
+import getDebugCommand from '../functions/getDebugCommand'
 import getActionPreview from '../functions/getActionPreview'
 import { GAMESERVER_URL } from '../../config'
 import {
@@ -48,6 +48,7 @@ class Game {
     this.wood = null
     this.isRunning = false
     this.hoveredTile = null
+    this.defeated = false
 
     this.scale = DEFAULT_SCALE
     this.targetScale = this.scale
@@ -83,6 +84,7 @@ class Game {
       .on('wood', this.handleWoodMessage)
       .on('army', this.handleArmyMessage)
       .on('connect_error', this.handleErrorMessage)
+      .on('defeat', this.handleDefeatMessage)
       .on('disconnect', this.handleDisconnectMessage)
 
     this.isRunning = true
@@ -111,6 +113,7 @@ class Game {
     this.tiles = []
     this.wood = null
     this.isRunning = false
+    this.defeated = false
   }
   update = () => {
     if (!this.isRunning) return
@@ -190,51 +193,13 @@ class Game {
     if (!this.isRunning) return
 
     const tile = this.hoveredTile
+    const command = getDebugCommand(key)
 
-    if (!tile) return
+    if (!tile || !command) return
 
     const axial = { x: tile.x, z: tile.z }
 
-    let action = null
-
-    switch (key) {
-      case '1':
-        action = 'capture'
-        break
-      case '2':
-        action = 'add_army'
-        break
-      case '3':
-        action = 'lose_tile'
-        break
-      case '4':
-        action = 'add_forest'
-        break
-      case '5':
-        action = 'add_camp'
-        break
-      case '6':
-        action = 'add_player'
-        break
-      case '7':
-        action = 'send_army'
-        break
-      case 'q':
-        action = 'remove_hitpoint'
-        break
-      case 'w':
-        action = 'add_hitpoint'
-        break
-      case 'e':
-        action = 'add_castle'
-        break
-      case 'r':
-        action = 'dummy_capture'
-        break
-      default:
-    }
-
-    this.socket.emit('debug', { action, axial })
+    this.socket.emit('debug', { command, axial })
   }
   handleMouseDown = ({ clientX: x, clientY: y }) => {
     if (!this.isRunning) return
@@ -451,6 +416,7 @@ class Game {
     if (this.playerId) return
 
     this.playerId = id
+    this.startedAt = Date.now()
   }
   handleLeaderboardMessage = leaders => {
     this.react.setLeaders(leaders)
@@ -471,14 +437,27 @@ class Game {
     this.react.setWood(this.wood)
   }
   handleDisconnectMessage = () => {
+    if (!this.defeated) {
+      this.react.showConnectionError()
+    }
+
     this.stop()
-    navigate('/')
     console.log('Disconnected.')
   }
   handleFirstTileArrival = () => {
     const firstTile = this.tiles[0]
 
     this.setCameraToAxialPosition(firstTile)
+  }
+  handleDefeatMessage = killerName => {
+    const msSurvived = Date.now() - this.startedAt
+    const secondsSurvived = Math.floor(msSurvived / 1000)
+
+    this.react.showDefeatScreen({ killerName, secondsSurvived })
+
+    this.defeated = true
+
+    console.log('Defeated.')
   }
   updatePlayerTilesCount = () => {
     let tilesCount = 0

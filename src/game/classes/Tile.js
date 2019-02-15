@@ -92,7 +92,7 @@ class Tile {
     }
 
     if (hitpoints !== null) {
-      this.image.hitpointsBg = createImage('hitpointsBg')
+      this.addHitpoints(hitpoints)
     }
 
     if (owner) {
