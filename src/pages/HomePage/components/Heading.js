@@ -2,9 +2,9 @@ import styled from 'styled-components'
 
 const Heading = styled.h3`
   font-size: 26px;
-  font-weight: 600;
+  font-weight: 400;
   margin-bottom: 20px;
-  color: #333;
+  color: #fff;
 `
 
 export default Heading

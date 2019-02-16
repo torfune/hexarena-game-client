@@ -1,15 +1,25 @@
 import React from 'react'
 import styled from 'styled-components'
+import { PRIMARY } from '../../../constants'
 
 const Container = styled.footer`
-  border-top: 1px solid #ccc;
-  margin-top: 128px;
-  padding: 32px 16px;
+  margin-top: auto;
+  color: #fff;
+  text-align: center;
+  padding: 64px 128px;
+  background: #2f2f2f;
+`
+
+const Name = styled.span`
+  color: ${PRIMARY};
+  font-size: 18px;
+  font-weight: 600;
+  padding: 0 4px;
 `
 
 const Footer = () => (
   <Container>
-    <p>Game by Matej Strnad &amp; Katarina Cvetkovicova</p>
+    Game by <Name>Matej Strnad</Name> &amp; <Name>Katarina Cvetkovicova</Name>
   </Container>
 )
 

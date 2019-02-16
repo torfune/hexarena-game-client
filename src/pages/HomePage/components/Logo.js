@@ -1,40 +1,55 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { GOOGLE_PRIMARY } from '../../../constants'
+import { LOGO_SHADOW, PRIMARY } from '../../../constants'
 
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  border-bottom: 1px solid #ccc;
-  padding: 28px 16px;
-  color: ${GOOGLE_PRIMARY};
-  font-size: 24px;
+  align-items: center;
+  padding: 28px 128px;
 
-  h1 > span {
-    color: #333;
+  h1,
+  h2 {
+    color: #fff;
+    margin: 0;
   }
 
   h1 {
-    margin: 0;
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 64px;
+    text-shadow: ${LOGO_SHADOW};
+    position: relative;
   }
 
   h2 {
-    margin: 0;
-    font-size: 20px;
-    color: #000;
-    font-weight: 300;
+    margin-top: 6px;
+    font-size: 36px;
+    font-weight: 200;
   }
+`
+
+const Badge = styled.div`
+  background: ${PRIMARY};
+  font-size: 14px;
+  padding: 4px 0;
+  border-radius: 50px;
+  font-weight: 500;
+  position: absolute;
+  right: 0;
+  width: 80px;
+  margin-left: auto;
+  text-align: center;
 `
 
 const Logo = () => (
   <Container>
     <h1>
-      Hexagor<span>.</span>io
+      Hexagor.io
+      <Badge>Alpha</Badge>
     </h1>
-    <h2>Strategy MMO browser game</h2>
+
+    <h2>Multiplayer strategy game</h2>
   </Container>
 )
 

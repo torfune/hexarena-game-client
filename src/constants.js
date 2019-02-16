@@ -32,10 +32,6 @@ export const ARMY_ICON_OFFSET_Y = 180
 export const HEART_OFFSET_X = 57
 export const HITPOINTS_OFFSET_Y = 176
 
-// COLORS
-export const FACEBOOK_PRIMARY = '#3b5998'
-export const GOOGLE_PRIMARY = '#dd4b39'
-
 // ZOOM
 export const ZOOM_SPEED = 0.1
 export const MAX_SCALE = 1
@@ -63,3 +59,10 @@ export const POWER_PER_NEIGHBOR = 2
 export const MOUNTAIN_POWER = 24
 export const FOREST_POWER = 5
 export const MS_PER_POWER = 150
+
+// COLORS
+export const PRIMARY = '#e84118'
+export const SECONDARY = '#c23616'
+export const BOX_SHADOW = '0px 2px 16px 0px rgba(0, 0, 0, 0.2)'
+export const TEXT_SHADOW = '0px 1px 4px rgba(0, 0, 0, 0.2)'
+export const LOGO_SHADOW = '0px 2px 16px rgba(0, 0, 0, 0.3)'

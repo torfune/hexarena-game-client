@@ -2,27 +2,29 @@ import React from 'react'
 import styled from 'styled-components'
 import { Link } from '@reach/router'
 
-import { GOOGLE_PRIMARY } from '../../../constants'
+import { PRIMARY, BOX_SHADOW, SECONDARY, TEXT_SHADOW } from '../../../constants'
 
 const StyledButton = styled(Link)`
-  background: ${GOOGLE_PRIMARY};
-  border: 1px solid ${GOOGLE_PRIMARY};
-  width: 120px;
+  background: ${PRIMARY};
+  width: 190px;
   border-radius: 4px;
   font-size: 16px;
-  height: 34px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  box-sizing: border-box;
   color: #fff;
-  transition: 0.2s;
   text-align: center;
+  font-weight: 500;
+  box-shadow: ${BOX_SHADOW};
+  text-shadow: ${TEXT_SHADOW};
+  cursor: default;
+  position: relative;
 
   :hover {
-    padding-left: 8px;
-    opacity: 0.9;
+    background: ${SECONDARY};
+    color: #eee;
   }
 `
 

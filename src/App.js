@@ -11,6 +11,7 @@ import { createGlobalStyle } from 'styled-components'
 
 export const GlobalStyle = createGlobalStyle`
   @import url('https://rsms.me/inter/inter.css');
+  @import url('https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700');
 
   * {
     outline: none;
@@ -18,12 +19,13 @@ export const GlobalStyle = createGlobalStyle`
   }
   
   html {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
+    background: #555;
   }
   
   @supports (font-variation-settings: normal) {
     html {
-      font-family: 'Inter var', sans-serif;
+      font-family: 'Montserrat', sans-serif;
     }
   }
 `
