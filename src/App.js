@@ -1,13 +1,13 @@
 import React, { Fragment } from 'react'
 import { Router } from '@reach/router'
+import styled, { createGlobalStyle } from 'styled-components'
 
 import Game from './pages/Game'
 import HomePage from './pages/HomePage'
 import ContactPage from './pages/ContactPage'
 import Blog from './pages/Blog'
 import Marketplace from './pages/Marketplace'
-
-import { createGlobalStyle } from 'styled-components'
+import screenshotSrc from './images/screenshot.png'
 
 export const GlobalStyle = createGlobalStyle`
   @import url('https://rsms.me/inter/inter.css');
@@ -20,7 +20,10 @@ export const GlobalStyle = createGlobalStyle`
   
   html {
     font-family: 'Montserrat', sans-serif;
-    background: #555;
+    background: url(${screenshotSrc});
+    background-size: cover;
+    background-position: center;
+    overflow-x: hidden;
   }
   
   @supports (font-variation-settings: normal) {
@@ -30,10 +33,22 @@ export const GlobalStyle = createGlobalStyle`
   }
 `
 
+const BlackOverlay = styled.div`
+  background: #000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  opacity: 0.6;
+`
+
 const App = () => {
   return (
     <Fragment>
       <GlobalStyle />
+      <BlackOverlay />
       <Router>
         <HomePage path="/" />
         <Game path="game" />

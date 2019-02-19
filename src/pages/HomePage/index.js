@@ -16,7 +16,7 @@ const Container = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  box-shadow: 0px 0px 72px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 0px 72px 0px rgba(0, 0, 0, 0.5);
 `
 
 class HomePage extends React.Component {
