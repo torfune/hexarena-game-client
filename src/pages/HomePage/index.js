@@ -41,6 +41,8 @@ class HomePage extends React.Component {
       } else {
         this.setState({ disabledUntil: false })
       }
+    } else {
+      this.setState({ disabledUntil: false })
     }
 
     document.addEventListener('keydown', this.handleKeyDown)
