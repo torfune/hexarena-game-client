@@ -1,6 +1,6 @@
 {
   "name": "hexagor-browser",
-  "version": "0.1.0",
+  "version": "Alpha 1.0.0",
   "private": true,
   "dependencies": {
     "@reach/router": "^1.2.1",
