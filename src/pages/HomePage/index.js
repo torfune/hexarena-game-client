@@ -5,7 +5,9 @@ import { navigate } from '@reach/router'
 import Logo from './components/Logo'
 import ReleaseNotes from './components/ReleaseNotes'
 import PlaySection from './components/PlaySection'
+import Countdown from './components/Countdown'
 import Footer from './components/Footer'
+import { GAMESERVER_URL } from '../../config'
 
 const Container = styled.div`
   width: 1200px;
@@ -20,26 +22,69 @@ const Container = styled.div`
 `
 
 class HomePage extends React.Component {
-  componentDidMount = () => {
+  interval = null
+  state = {
+    disabledUntil: null,
+    countdownTime: null,
+  }
+  componentDidMount = async () => {
+    const response = await fetch(`${GAMESERVER_URL}/status`)
+    const data = await response.json()
+    const { disabledUntil } = data
+
+    if (disabledUntil) {
+      const now = Date.now()
+
+      if (disabledUntil > now) {
+        this.setState({ disabledUntil })
+        this.interval = setInterval(this.updateCountdown, 100)
+      } else {
+        this.setState({ disabledUntil: false })
+      }
+    }
+
     document.addEventListener('keydown', this.handleKeyDown)
   }
   componentWillUnmount = () => {
     document.removeEventListener('keydown', this.handleKeyDown)
   }
   handleKeyDown = ({ key }) => {
+    if (this.state.disabledUntil !== false) return
+
     if (key === 'Enter') {
       navigate('game')
     }
   }
+  updateCountdown = () => {
+    const { disabledUntil } = this.state
+
+    const now = Date.now()
+
+    if (now >= disabledUntil) {
+      this.setState({ disabledUntil: false })
+      clearInterval(this.interval)
+      this.interval = null
+    } else {
+      this.setState({ countdownTime: disabledUntil - now })
+    }
+  }
   render() {
-    return (
-      <Container>
-        <Logo />
-        <PlaySection />
-        <ReleaseNotes />
-        <Footer />
-      </Container>
-    )
+    const { disabledUntil, countdownTime } = this.state
+
+    if (disabledUntil === null) return null
+
+    if (disabledUntil === false) {
+      return (
+        <Container>
+          <Logo />
+          <PlaySection />
+          <ReleaseNotes />
+          <Footer />
+        </Container>
+      )
+    }
+
+    return <Countdown time={countdownTime} />
   }
 }
 
