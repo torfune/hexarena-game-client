@@ -249,6 +249,7 @@ class Game {
     }
 
     if (
+      tile.owner &&
       tile.owner.id === this.playerId &&
       (tile.castle || tile.capital || tile.camp)
     ) {

@@ -8,6 +8,7 @@ import Leaderboard from './components/Leaderboard'
 import DefeatScreen from './components/DefeatScreen'
 import PlayerInfo from './components/PlayerInfo'
 import ActionPreview from './components/ActionPreview'
+import StructureName from './components/StructureName'
 import ErrorMessage from './components/ErrorMessage'
 import DebugInfo from './components/DebugInfo'
 import Resources from './components/Resources'
@@ -30,6 +31,7 @@ class Game extends React.Component {
     defeated: false,
     killerName: null,
     secondsSurvived: null,
+    hoveredStructure: null,
   }
   componentDidMount = async () => {
     const gameElement = document.getElementById('game')
@@ -43,6 +45,7 @@ class Game extends React.Component {
       setDebugInfo: this.handleDebugInfoChange,
       setWood: this.handleWoodChange,
       showDefeatScreen: this.showDefeatScreen,
+      setHoveredStructure: this.handleHoveredStructureChange,
     })
 
     document.addEventListener('keydown', this.handleKeyDown)
@@ -80,6 +83,9 @@ class Game extends React.Component {
   showDefeatScreen = ({ killerName, secondsSurvived }) => {
     this.setState({ defeated: true, killerName, secondsSurvived })
   }
+  handleHoveredStructureChange = hoveredStructure => {
+    this.setState({ hoveredStructure })
+  }
   render() {
     const {
       actionPreview,
@@ -92,6 +98,7 @@ class Game extends React.Component {
       defeated,
       secondsSurvived,
       killerName,
+      hoveredStructure,
     } = this.state
 
     if (connectionError) {
@@ -106,6 +113,14 @@ class Game extends React.Component {
         <PlayerInfo name={name} tilesCount={tilesCount} />
         <Resources wood={wood} />
         <ActionPreview actionPreview={actionPreview} />
+
+        {hoveredStructure && (
+          <StructureName
+            name={hoveredStructure.name}
+            x={hoveredStructure.x}
+            y={hoveredStructure.y}
+          />
+        )}
 
         {defeated && (
           <DefeatScreen

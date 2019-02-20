@@ -1,5 +1,6 @@
 import Game from './classes/Game'
 import loadImages from './functions/loadImages'
+import { GAMESERVER_URL } from '../config'
 
 const game = new Game()
 let imagesLoaded = false
@@ -8,6 +9,11 @@ const startGame = async (rootElement, reactMethods) => {
   if (!imagesLoaded) {
     await loadImages()
     imagesLoaded = true
+
+    const response = await fetch(`${GAMESERVER_URL}/config`)
+    const gsConfig = await response.json()
+
+    window.gsConfig = gsConfig
   }
 
   game.start(rootElement, reactMethods)

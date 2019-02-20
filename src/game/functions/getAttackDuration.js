@@ -1,14 +1,14 @@
-import {
-  DEFAULT_ATTACK_POWER,
-  DEFAULT_DEFEND_POWER,
-  FOREST_POWER,
-  MOUNTAIN_POWER,
-  MS_PER_POWER,
-  POWER_PER_NEIGHBOR,
-} from '../../constants'
-
 // DONT CHANGE THIS WITHOUT CHANGING ON GAMESERVER TOO!
 const getAttackDuration = (playerId, tile) => {
+  const {
+    DEFAULT_ATTACK_POWER,
+    DEFAULT_DEFEND_POWER,
+    FOREST_POWER,
+    MOUNTAIN_POWER,
+    MS_PER_POWER,
+    POWER_PER_NEIGHBOR,
+  } = window.gsConfig
+
   let defendPower = DEFAULT_DEFEND_POWER
   let attackPower = DEFAULT_ATTACK_POWER
 

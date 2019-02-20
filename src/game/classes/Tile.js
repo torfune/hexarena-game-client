@@ -584,6 +584,48 @@ class Tile {
   isHovered() {
     return game.hoveredTile === this
   }
+  isEmpty() {
+    return (
+      !this.castle &&
+      !this.capital &&
+      !this.forest &&
+      !this.camp &&
+      !this.village &&
+      !this.mountain
+    )
+  }
+  isContested() {
+    let neighborPlayers = []
+
+    for (let i = 0; i < 6; i++) {
+      const n = this.neighbors[i]
+
+      if (n && n.owner && !neighborPlayers.includes(n.owner)) {
+        neighborPlayers.push(n.owner)
+      }
+    }
+
+    return neighborPlayers.length >= 2
+  }
+  getStructureName() {
+    let structure = 'Plains'
+
+    if (this.mountain) {
+      structure = 'Mountains'
+    } else if (this.forest) {
+      structure = 'Forest'
+    } else if (this.castle) {
+      structure = 'Castle'
+    } else if (this.capital) {
+      structure = 'Capital'
+    } else if (this.camp) {
+      structure = 'Camp'
+    } else if (this.village) {
+      structure = 'Village'
+    }
+
+    return structure
+  }
 }
 
 export default Tile

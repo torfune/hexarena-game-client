@@ -2,6 +2,10 @@ import React from 'react'
 import styled from 'styled-components'
 
 import swordsSrc from '../../../icons/swords.svg'
+import clockSrc from '../../../icons/clock.svg'
+import hammerSrc from '../../../icons/resources.svg'
+import axeSrc from '../../../icons/axe.svg'
+import armySrc from '../../../icons/army.svg'
 
 const Container = styled.div.attrs(({ x, y }) => ({
   style: {
@@ -20,6 +24,14 @@ const Container = styled.div.attrs(({ x, y }) => ({
   transition-delay: ${({ isVisible }) => (isVisible ? '0.4s' : '0s')};
 `
 
+const Plus = styled.span`
+  font-size: 22px;
+  font-weight: 600;
+  margin-right: -4px;
+  position: relative;
+  top: -1px;
+`
+
 const Header = styled.div`
   display: flex;
   align-items: center;
@@ -29,17 +41,21 @@ const Icon = styled.img`
   height: 20px;
 `
 
-const Title = styled.h4`
+const Label = styled.h4`
   font-size: 18px;
   margin-left: 8px;
+  margin-right: 10px;
   font-weight: 600;
-
-  > span {
-    color: #666;
-  }
 `
 
-const Terrain = styled.p`
+const Duration = styled.h4`
+  font-size: 18px;
+  margin-left: 8px;
+  font-weight: 500;
+  color: #666;
+`
+
+const Structure = styled.p`
   margin-top: 4px;
   font-style: italic;
 `
@@ -79,27 +95,61 @@ class ActionPreview extends React.Component {
     const { x, y, actionPreview, isVisible } = this.state
 
     let label = null
-    let terrain = null
+    let structure = null
     let duration = null
 
     if (actionPreview) {
       label = actionPreview.label
-      terrain = actionPreview.terrain
+      structure = actionPreview.structure
       duration = actionPreview.duration
     }
 
     return (
       <Container x={x} y={y} isVisible={isVisible}>
         <Header>
-          <Icon src={swordsSrc} />
-          <Title>
-            {label} <span>{duration}</span>
-          </Title>
+          {renderIconByLabel(label)}
+          <Label>{label}</Label>
+
+          <Icon src={clockSrc} />
+          <Duration>{duration}</Duration>
         </Header>
-        <Terrain>{terrain}</Terrain>
+        <Structure>{structure}</Structure>
       </Container>
     )
   }
+}
+
+const renderIconByLabel = label => {
+  let src = null
+
+  switch (label) {
+    case 'Attack':
+      src = swordsSrc
+      break
+    case 'Fortify':
+      src = hammerSrc
+      break
+    case 'Harvest':
+      src = axeSrc
+      break
+    case 'Recruit':
+      src = armySrc
+      break
+    default:
+  }
+
+  if (!src) return null
+
+  if (label === 'Recruit') {
+    return (
+      <div>
+        <Plus>+</Plus>
+        <Icon src={src} />
+      </div>
+    )
+  }
+
+  return <Icon src={src} />
 }
 
 export default ActionPreview
