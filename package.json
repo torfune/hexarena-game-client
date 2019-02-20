@@ -1,5 +1,5 @@
 {
-  "name": "hexagor-browser",
+  "name": "hexagor-fe",
   "version": "Alpha 1.0.0",
   "private": true,
   "dependencies": {
@@ -15,7 +15,8 @@
   "scripts": {
     "dev": "react-scripts start",
     "start": "react-scripts start",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "build-alpha": "REACT_APP_GSURL=http://alpha.hexagor.io:8000 react-scripts build"
   },
   "browserslist": [
     ">0.2%",
