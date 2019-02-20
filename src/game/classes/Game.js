@@ -42,6 +42,7 @@ class Game {
     this.players = []
     this.react = null
     this.selectedArmyTile = null
+    this.selectedArmyTargetTiles = null
     this.socket = null
     this.stage = {}
     this.tiles = []
@@ -49,7 +50,6 @@ class Game {
     this.isRunning = false
     this.hoveredTile = null
     this.defeated = false
-
     this.scale = DEFAULT_SCALE
     this.targetScale = this.scale
 
@@ -228,20 +228,30 @@ class Game {
     if (!tile) return
 
     if (this.selectedArmyTile) {
-      const index = this.selectedArmyTile.neighbors.indexOf(tile)
+      let index = null
 
-      if (index !== -1) {
+      for (let i = 0; i < 6; i++) {
+        if (this.selectedArmyTargetTiles[i].includes(tile)) {
+          index = i
+          break
+        }
+      }
+
+      if (index !== null) {
         const { x, z } = this.selectedArmyTile
         this.socket.emit('send_army', `${x}|${z}|${index}`)
       }
 
-      this.selectedArmyTile.removeWhiteOverlay()
+      this.selectedArmyTile.unselectArmy()
       this.selectedArmyTile = null
 
       return
     }
 
-    if (tile.castle || tile.capital || tile.camp) {
+    if (
+      tile.owner.id === this.playerId &&
+      (tile.castle || tile.capital || tile.camp)
+    ) {
       let isThereArmy = false
 
       for (let i = 0; i < this.armies.length; i++) {
@@ -252,7 +262,7 @@ class Game {
 
       if (isThereArmy) {
         this.selectedArmyTile = tile
-        tile.addWhiteOverlay()
+        tile.selectArmy()
         return
       }
     }

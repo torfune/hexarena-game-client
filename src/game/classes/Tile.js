@@ -4,6 +4,7 @@ import Animation from './Animation'
 import getPixelPosition from '../functions/getPixelPosition'
 import getImageAnimation from '../functions/getImageAnimation'
 import createImage from '../functions/createImage'
+import invertHexDirection from '../functions/invertHexDirection'
 import hex from '../functions/hex'
 import getRotationBySide from '../functions/getRotationBySide'
 import {
@@ -61,6 +62,13 @@ class Tile {
       this.image.border[i] = createImage('border')
       this.image.border[i].rotation = getRotationBySide(i)
       this.image.border[i].visible = false
+    }
+
+    this.image.arrow = []
+    for (let i = 0; i < 6; i++) {
+      this.image.arrow[i] = createImage('arrow')
+      this.image.arrow[i].rotation = getRotationBySide(i)
+      this.image.arrow[i].visible = false
     }
 
     if (capital) {
@@ -477,15 +485,54 @@ class Tile {
   clearHighlight() {
     this.image.background.tint = hex('#eee')
   }
-  addWhiteOverlay() {
+  selectArmy() {
     if (!this.image.pattern) return
 
     this.image.pattern.tint = hex('#fff')
+
+    for (let i = 0; i < 6; i++) {
+      const n = this.neighbors[i]
+      const direction = invertHexDirection(i)
+
+      if (n) {
+        n.image.arrow[direction].visible = true
+      }
+    }
+
+    const armyTargetTiles = []
+    for (let i = 0; i < 6; i++) {
+      let nextTile = this.neighbors[i]
+      armyTargetTiles[i] = []
+
+      if (!nextTile) continue
+
+      armyTargetTiles[i].push(nextTile)
+
+      for (let j = 0; j < 3; j++) {
+        const lastTile = armyTargetTiles[i][armyTargetTiles[i].length - 1]
+        nextTile = lastTile.neighbors[i]
+
+        if (!nextTile) break
+
+        armyTargetTiles[i].push(nextTile)
+      }
+    }
+
+    game.selectedArmyTargetTiles = armyTargetTiles
   }
-  removeWhiteOverlay() {
+  unselectArmy() {
     if (!this.image.pattern || !this.owner) return
 
     this.image.pattern.tint = hex(this.owner.pattern)
+
+    for (let i = 0; i < 6; i++) {
+      const n = this.neighbors[i]
+      const direction = invertHexDirection(i)
+
+      if (n) {
+        n.image.arrow[direction].visible = false
+      }
+    }
   }
   updateNeighbors(tiles) {
     let missingNeighbors = []
