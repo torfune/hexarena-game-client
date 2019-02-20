@@ -1,104 +1,82 @@
+import * as PIXI from 'pixi.js'
+
 import game from '../../game'
 import getPixelPosition from '../functions/getPixelPosition'
-import Rectangle from './Rectangle'
-import {
-  ACTION_WIDTH,
-  ACTION_HEIGHT,
-  ACTION_BORDER_RADIUS,
-} from '../../constants'
+import hex from '../functions/hex'
+
+const ACTION_RADIUS = 48
 
 class Action {
   constructor({ tile, finishedAt, duration }) {
-    const { x, z } = tile
-
     this.tile = tile
     this.finishedAt = finishedAt
     this.duration = duration
     this.isActive = true
 
-    const position = getPixelPosition(x, z)
+    this.fill = new PIXI.Graphics()
+    this.background = new PIXI.Graphics()
+    this.iconBackground = new PIXI.Graphics()
 
-    this.background = new Rectangle({
-      stage: game.stage['action'],
-      color: '#000',
-      position,
-      width: ACTION_WIDTH,
-      height: ACTION_HEIGHT,
-      scale: game.scale,
-      borderRadius: ACTION_BORDER_RADIUS,
-      alpha: 0.1,
-      animationStep: 0.01,
-    })
-
-    this.fill = new Rectangle({
-      stage: game.stage['action'],
-      color: '#000',
-      position,
-      width: 0,
-      height: ACTION_HEIGHT,
-      scale: game.scale,
-      borderRadius: ACTION_BORDER_RADIUS,
-      animationStep: 0.03,
-      alpha: 0.3,
-    })
+    this.tile.action = this
+    game.stage.action.addChild(this.background)
+    game.stage.action.addChild(this.fill)
+    game.stage.action.addChild(this.iconBackground)
+    game.actions.push(this)
 
     this.update()
   }
   update() {
-    const { finishedAt, canceledAt, duration } = this
+    const { finishedAt, duration } = this
     const now = Date.now() + game.timeDiff
+    const timeDelta = finishedAt - now
 
-    if (!this.isActive) {
-      this.background.redraw({})
-      this.fill.redraw({})
-
-      if (this.background.alpha <= 0) {
-        game.stage['action'].removeChild(this.background.graphics)
-        game.stage['action'].removeChild(this.fill.graphics)
-        this.tile.action = null
-      }
-
-      return
-    }
-
-    if (
-      (finishedAt && now >= finishedAt) ||
-      (canceledAt && now >= canceledAt)
-    ) {
-      this.destroy()
-      return
+    let fraction = Math.round((1 - timeDelta / duration) * 100) / 100
+    if (fraction < 0) {
+      fraction = 0
     }
 
     const position = getPixelPosition(this.tile.x, this.tile.z)
-    const timeDelta = finishedAt - now
-    const percentage = Math.round((1 - timeDelta / duration) * 100) / 100
-    const width = ACTION_WIDTH * percentage
+    const radius = Math.round(ACTION_RADIUS * game.scale)
 
-    this.background.redraw({ position, scale: game.scale })
+    this.background.clear()
+    this.background.beginFill(hex('#fff'))
+    this.background.drawCircle(0, 0, radius - 1)
+    this.background.endFill()
+    this.background.x = position.x
+    this.background.y = position.y
 
-    if (width < 0) return
+    const startAngle = -Math.PI / 2
+    const arcSize = Math.PI * 2 * fraction
+    const endAngle = startAngle + arcSize
 
-    this.fill.redraw({
-      width,
-      position: {
-        x:
-          position.x -
-          (ACTION_WIDTH / 2) * game.scale +
-          (width * game.scale) / 2,
-        y: position.y,
-      },
-      scale: game.scale,
-    })
+    this.fill.clear()
+    this.fill.beginFill(hex('#111'))
+    this.fill.moveTo(position.x, position.y)
+    this.fill.arc(position.x, position.y, radius, startAngle, endAngle)
+    this.fill.endFill()
+
+    this.iconBackground.clear()
+    this.iconBackground.beginFill(hex('#fff'))
+    this.iconBackground.drawCircle(0, 0, radius - radius / 3)
+    this.iconBackground.endFill()
+    this.iconBackground.x = position.x
+    this.iconBackground.y = position.y
+
+    if (fraction >= 1) {
+      this.destroy()
+    }
   }
   destroy() {
-    this.isActive = false
+    const index = game.actions.indexOf(this)
+    if (index !== -1) {
+      game.actions.splice(index, 1)
+    }
 
-    this.background.targetAlpha = 0
-    this.background.animationStep *= -1
+    this.tile.action = null
 
-    this.fill.targetAlpha = 0
-    this.fill.animationStep *= -1
-    this.fill.defaultOptions.width = this.fill.width
+    game.stage.action.removeChild(this.background)
+    game.stage.action.removeChild(this.fill)
+    game.stage.action.removeChild(this.iconBackground)
   }
 }
 

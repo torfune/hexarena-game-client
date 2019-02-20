@@ -32,6 +32,7 @@ class Game {
   constructor() {
     this.animations = []
     this.armies = []
+    this.actions = []
     this.camera = { x: null, y: null }
     this.cameraDrag = null
     this.cursor = { x: null, y: null }
@@ -118,7 +119,7 @@ class Game {
   update = () => {
     if (!this.isRunning) return
 
-    const { animations, cameraDrag, cursor, tiles, armies } = this
+    const { animations, cameraDrag, cursor, tiles, armies, actions } = this
 
     // update animations
     if (animations.length) {
@@ -164,10 +165,8 @@ class Game {
     }
 
     // update actions
-    for (let i = 0; i < tiles.length; i++) {
-      if (tiles[i].action) {
-        tiles[i].action.update()
-      }
+    for (let i = 0; i < actions.length; i++) {
+      actions[i].update()
     }
 
     // update armies
@@ -387,16 +386,10 @@ class Game {
 
     if (!tile) return
 
-    if (tile.action) {
-      if (gsAction.destroyed) {
-        tile.action.destroy()
-        return
-      }
-
-      tile.action.finishedAt = gsAction.finishedAt
-      tile.action.duration = gsAction.duration
-    } else {
-      tile.action = new Action({ ...gsAction, tile })
+    if (!tile.action) {
+      new Action({ ...gsAction, tile })
+    } else if (gsAction.destroyed) {
+      tile.action.destroy()
     }
   }
   handleArmyMessage = gsData => {
@@ -405,12 +398,6 @@ class Game {
     const army = getItemById(this.armies, gsArmy.id)
 
     if (!tile) return
-
-    console.log(
-      `Army -> [${tile.x}|${tile.z}] -> ${
-        gsArmy.isDestroyed ? 'destroyed' : 'ok'
-      }`
-    )
 
     if (!army && !gsArmy.isDestroyed) {
       const army = new Army({ ...gsArmy, tile })
