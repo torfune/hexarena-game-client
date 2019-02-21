@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { LOGO_SHADOW, PRIMARY } from '../../../constants'
+import { LOGO_SHADOW, PRIMARY, BOX_SHADOW } from '../../../constants'
 
 const Container = styled.div`
   display: flex;
@@ -37,16 +37,17 @@ const Badge = styled.div`
   font-weight: 500;
   position: absolute;
   right: 0;
-  width: 80px;
+  width: 110px;
   margin-left: auto;
   text-align: center;
+  box-shadow: ${BOX_SHADOW};
 `
 
 const Logo = () => (
   <Container>
     <h1>
       Hexagor.io
-      <Badge>Alpha</Badge>
+      <Badge>Alpha 1.0.0</Badge>
     </h1>
 
     <h2>Multiplayer strategy game</h2>

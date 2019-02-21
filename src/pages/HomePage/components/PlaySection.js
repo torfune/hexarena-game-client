@@ -23,7 +23,7 @@ const InputAndButtonContainer = styled.div`
 const PlaySection = () => (
   <Container>
     <div>
-      <Heading>Play as guest</Heading>
+      <Heading>Quick play</Heading>
       <InputAndButtonContainer>
         <NameInput />
         <PlayButton />
