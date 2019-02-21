@@ -1,24 +1,25 @@
 // TILE
 export const TILE_RADIUS = 73
 export const TILE_IMAGES = [
-  'background',
-  'water',
-  'pattern',
-  'border',
-  'arrow',
-  'army',
-  'forest',
-  'mountain',
-  'village',
-  'armyIcon',
-  'hitpointsBg',
-  'hitpointsFill',
-  'camp',
-  'capital',
-  'castle',
-  'action',
   'fog',
-]
+  'action',
+  'castle',
+  'capital',
+  'camp',
+  'hitpointsFill',
+  'hitpointsBg',
+  'armyIcon',
+  'village',
+  'mountain',
+  'forest',
+  'army',
+  'arrow',
+  'border',
+  'highlight',
+  'pattern',
+  'background',
+].reverse()
+
 export const NEIGHBOR_DIRECTIONS = [
   { x: 1, z: -1 },
   { x: 1, z: 0 },

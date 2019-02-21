@@ -47,8 +47,12 @@ class Tile {
 
     const position = getPixelPosition(x, z)
 
-    this.image.background = createImage('background')
+    this.image.background = createImage('background', 'pattern')
     this.image.background.tint = hex('#eee')
+
+    this.image.highlight = createImage('highlight', 'pattern')
+    this.image.highlight.alpha = 0.22
+    this.image.highlight.visible = false
 
     this.image.fog = []
     for (let i = 0; i < 6; i++) {
@@ -480,10 +484,10 @@ class Tile {
     this.owner = owner
   }
   addHighlight() {
-    this.image.background.tint = hex('#ddd')
+    this.image.highlight.visible = true
   }
   clearHighlight() {
-    this.image.background.tint = hex('#eee')
+    this.image.highlight.visible = false
   }
   selectArmy() {
     if (!this.image.pattern) return

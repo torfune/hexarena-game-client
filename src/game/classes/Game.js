@@ -186,6 +186,14 @@ class Game {
       }
 
       this.hoveredTile = newHoveredTile
+
+      this.updateHighlights()
+
+      // if (this.hoveredTile) {
+      //   this.react.setDebugInfo(`${this.hoveredTile.x}|${this.hoveredTile.z}`)
+      // } else {
+      //   this.react.setDebugInfo(null)
+      // }
     }
   }
   handleKeyUp = ({ key }) => {
@@ -273,23 +281,6 @@ class Game {
     if (!this.isRunning) return
 
     this.cursor = { x, y }
-
-    const tile = this.hoveredTile
-    const canPerformAction = this.updateActionPreview(tile)
-
-    for (let i = 0; i < this.tiles.length; i++) {
-      this.tiles[i].clearHighlight()
-    }
-
-    if (tile) {
-      this.react.setDebugInfo(`${tile.x}|${tile.z}`)
-    } else {
-      this.react.setDebugInfo(null)
-    }
-
-    if (tile && canPerformAction) {
-      tile.addHighlight()
-    }
   }
   handleWheelMove = ({ deltaY }) => {
     if (!this.isRunning) return
@@ -485,6 +476,48 @@ class Game {
   updateBorders = () => {
     for (let i = 0; i < this.tiles.length; i++) {
       this.tiles[i].updateBorders()
+    }
+  }
+  updateHighlights = () => {
+    for (let i = 0; i < this.tiles.length; i++) {
+      const t = this.tiles[i]
+
+      if (t.owner && t.owner.id === this.playerId && t.action) {
+        this.tiles[i].addHighlight()
+      } else {
+        this.tiles[i].clearHighlight()
+      }
+    }
+
+    if (!this.hoveredTile) return
+
+    if (this.selectedArmyTile) {
+      let index = null
+
+      for (let i = 0; i < 6; i++) {
+        if (this.selectedArmyTargetTiles[i].includes(this.hoveredTile)) {
+          index = i
+          break
+        }
+      }
+
+      if (index !== null) {
+        const tiles = this.selectedArmyTargetTiles[index]
+
+        for (let i = 0; i < tiles.length; i++) {
+          tiles[i].addHighlight()
+        }
+      }
+    } else {
+      const canPerformAction = this.updateActionPreview(this.hoveredTile)
+      const hasArmy =
+        this.hoveredTile.army &&
+        this.hoveredTile.owner &&
+        this.hoveredTile.owner.id === this.playerId
+
+      if (canPerformAction || hasArmy) {
+        this.hoveredTile.addHighlight()
+      }
     }
   }
   getHoveredTile = () => {

@@ -77,6 +77,8 @@ class Action {
     game.stage.action.removeChild(this.background)
     game.stage.action.removeChild(this.fill)
     game.stage.action.removeChild(this.iconBackground)
+
+    game.updateHighlights()
   }
 }
 
