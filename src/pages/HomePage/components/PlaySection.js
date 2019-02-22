@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 
 import PlayButton from './PlayButton'
@@ -20,16 +20,27 @@ const InputAndButtonContainer = styled.div`
   grid-gap: 16px;
 `
 
-const PlaySection = () => (
-  <Container>
-    <div>
-      <Heading>Quick play</Heading>
-      <InputAndButtonContainer>
-        <NameInput />
-        <PlayButton />
-      </InputAndButtonContainer>
-    </div>
-  </Container>
-)
+const PlaySection = () => {
+  const storageName = window.localStorage.getItem('name')
+
+  const [name, setName] = useState(storageName || '')
+
+  const handleNameChange = event => {
+    setName(event.target.value)
+    window.localStorage.setItem('name', event.target.value)
+  }
+
+  return (
+    <Container>
+      <div>
+        <Heading>Quick play</Heading>
+        <InputAndButtonContainer>
+          <NameInput value={name} onChange={handleNameChange} />
+          <PlayButton />
+        </InputAndButtonContainer>
+      </div>
+    </Container>
+  )
+}
 
 export default PlaySection

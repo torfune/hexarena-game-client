@@ -68,7 +68,7 @@ class Game {
     document.addEventListener('mouseup', this.handleMouseUp)
     document.addEventListener('keyup', this.handleKeyUp)
   }
-  start(rootElement, reactMethods) {
+  start(rootElement, reactMethods, name) {
     if (this.isRunning) return
 
     this.react = { ...reactMethods }
@@ -87,6 +87,8 @@ class Game {
       .on('connect_error', this.handleErrorMessage)
       .on('defeat', this.handleDefeatMessage)
       .on('disconnect', this.handleDisconnectMessage)
+
+    this.socket.emit('start', name)
 
     this.isRunning = true
   }

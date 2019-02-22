@@ -35,18 +35,23 @@ class Game extends React.Component {
   }
   componentDidMount = async () => {
     const gameElement = document.getElementById('game')
+    const name = window.localStorage.getItem('name')
 
-    await startGame(gameElement, {
-      setLeaders: this.handleLeadersChange,
-      setName: this.handleNameChange,
-      setTilesCount: this.handleTilesCountChange,
-      setActionPreview: this.handleActionPreviewChange,
-      showConnectionError: this.handleConnectionError,
-      setDebugInfo: this.handleDebugInfoChange,
-      setWood: this.handleWoodChange,
-      showDefeatScreen: this.showDefeatScreen,
-      setHoveredStructure: this.handleHoveredStructureChange,
-    })
+    await startGame(
+      gameElement,
+      {
+        setLeaders: this.handleLeadersChange,
+        setName: this.handleNameChange,
+        setTilesCount: this.handleTilesCountChange,
+        setActionPreview: this.handleActionPreviewChange,
+        showConnectionError: this.handleConnectionError,
+        setDebugInfo: this.handleDebugInfoChange,
+        setWood: this.handleWoodChange,
+        showDefeatScreen: this.showDefeatScreen,
+        setHoveredStructure: this.handleHoveredStructureChange,
+      },
+      name
+    )
 
     document.addEventListener('keydown', this.handleKeyDown)
   }
