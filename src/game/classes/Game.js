@@ -62,7 +62,11 @@ class Game {
       this.pixi.stage.addChild(this.stage[TILE_IMAGES[i]])
     }
 
-    document.addEventListener('mousewheel', this.handleWheelMove)
+    const wheelEvent = /Firefox/i.test(navigator.userAgent)
+      ? 'DOMMouseScroll'
+      : 'mousewheel'
+
+    document.addEventListener(wheelEvent, this.handleWheelMove)
     document.addEventListener('mousemove', this.handleMouseMove)
     document.addEventListener('mousedown', this.handleMouseDown)
     document.addEventListener('mouseup', this.handleMouseUp)
@@ -284,11 +288,11 @@ class Game {
 
     this.cursor = { x, y }
   }
-  handleWheelMove = ({ deltaY }) => {
+  handleWheelMove = ({ deltaY, detail }) => {
     if (!this.isRunning) return
 
-    const zoomDirection = (deltaY < 0 ? -1 : 1) * -1
-
+    const delta = deltaY || detail
+    const zoomDirection = (delta < 0 ? -1 : 1) * -1
     const scale = this.scale + zoomDirection * ZOOM_SPEED
     const roundedScale = roundToDecimals(scale, 2)
 
