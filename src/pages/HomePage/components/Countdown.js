@@ -43,7 +43,7 @@ const Countdown = ({ time }) => {
   return (
     <Container>
       <h1>Hexagor.io</h1>
-      <h2>Alpha 1.0.0</h2>
+      <h2>Alpha 1.1.0</h2>
 
       <Time>
         {days}:{hours.padStart(2, '0')}:{minutes.padStart(2, '0')}:
