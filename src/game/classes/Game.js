@@ -194,6 +194,7 @@ class Game {
       this.hoveredTile = newHoveredTile
 
       this.updateHighlights()
+      this.updateNamePreview(this.hoveredTile)
 
       // if (this.hoveredTile) {
       //   this.react.setDebugInfo(`${this.hoveredTile.x}|${this.hoveredTile.z}`)
@@ -484,6 +485,13 @@ class Game {
     this.react.setActionPreview(actionPreview)
 
     return !!actionPreview
+  }
+  updateNamePreview = tile => {
+    if (!tile || !tile.owner || tile.owner.id === this.playerId) {
+      this.react.setNamePreview(null)
+    } else {
+      this.react.setNamePreview(tile.owner.name)
+    }
   }
   updateNeighbors = () => {
     for (let i = 0; i < this.tiles.length; i++) {

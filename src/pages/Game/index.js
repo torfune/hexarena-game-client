@@ -7,6 +7,7 @@ import Leaderboard from './components/Leaderboard'
 import DefeatScreen from './components/DefeatScreen'
 import PlayerInfo from './components/PlayerInfo'
 import ActionPreview from './components/ActionPreview'
+import NamePreview from './components/NamePreview'
 import StructureName from './components/StructureName'
 import ErrorMessage from './components/ErrorMessage'
 import DebugInfo from './components/DebugInfo'
@@ -26,6 +27,7 @@ class Game extends React.Component {
     leaders: [],
     connectionError: false,
     actionPreview: null,
+    namePreview: null,
     debugInfo: null,
     defeated: false,
     killerName: null,
@@ -43,6 +45,7 @@ class Game extends React.Component {
         setName: this.handleNameChange,
         setTilesCount: this.handleTilesCountChange,
         setActionPreview: this.handleActionPreviewChange,
+        setNamePreview: this.handleNamePreviewChange,
         showConnectionError: this.handleConnectionError,
         setDebugInfo: this.handleDebugInfoChange,
         setWood: this.handleWoodChange,
@@ -73,6 +76,9 @@ class Game extends React.Component {
   handleActionPreviewChange = actionPreview => {
     this.setState({ actionPreview })
   }
+  handleNamePreviewChange = namePreview => {
+    this.setState({ namePreview })
+  }
   handleWoodChange = wood => {
     this.setState({ wood })
   }
@@ -85,6 +91,7 @@ class Game extends React.Component {
   render() {
     const {
       actionPreview,
+      namePreview,
       connectionError,
       tilesCount,
       leaders,
@@ -109,6 +116,7 @@ class Game extends React.Component {
         <PlayerInfo name={name} tilesCount={tilesCount} />
         <Resources wood={wood} />
         <ActionPreview actionPreview={actionPreview} />
+        <NamePreview name={namePreview} />
 
         {hoveredStructure && (
           <StructureName
