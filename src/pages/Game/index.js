@@ -1,6 +1,5 @@
 import React from 'react'
 import styled from 'styled-components'
-import { navigate } from '@reach/router'
 
 import { startGame, stopGame } from '../../game'
 
@@ -52,17 +51,9 @@ class Game extends React.Component {
       },
       name
     )
-
-    document.addEventListener('keydown', this.handleKeyDown)
-  }
-  handleKeyDown = ({ key }) => {
-    if (key === 'Escape') {
-      navigate('/')
-    }
   }
   componentWillUnmount = () => {
     stopGame()
-    document.removeEventListener('keydown', this.handleKeyDown)
   }
   handleLeadersChange = leaders => {
     this.setState({ leaders })

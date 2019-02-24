@@ -205,6 +205,11 @@ class Game {
   handleKeyUp = ({ key }) => {
     if (!this.isRunning) return
 
+    if (key === 'Escape') {
+      this.socket.emit('cancel')
+      return
+    }
+
     const tile = this.hoveredTile
     const command = getDebugCommand(key)
 
@@ -394,7 +399,13 @@ class Game {
     const tile = getTileByXZ(gsArmy.x, gsArmy.z)
     const army = getItemById(this.armies, gsArmy.id)
 
-    if (!tile) return
+    if (!tile) {
+      if (army) {
+        army.destroy()
+      }
+
+      return
+    }
 
     if (!army && !gsArmy.isDestroyed) {
       const army = new Army({ ...gsArmy, tile })
