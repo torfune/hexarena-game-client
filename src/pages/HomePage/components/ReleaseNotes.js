@@ -56,6 +56,18 @@ const EditorCredits = styled.p`
 
 const updates = [
   {
+    version: 'Alpha 1.1.0',
+    points: [
+      'Improved Mountain generator.',
+      'Escape now cancels Action instead of quitting game.',
+      'Player names are visible on hover.',
+      'Contested tiles are marked with icon.',
+      'Improved Village spawn algorithm, they never spawn on empire border.',
+    ],
+    day: 24,
+    month: 2,
+  },
+  {
     version: 'Alpha 1.0.0',
     points: [
       'Every Player starts with 7 tiles, with Capital at center.',
