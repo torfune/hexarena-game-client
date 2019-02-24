@@ -15,6 +15,7 @@ import mountain from '../../images/mountain.png'
 import pattern from '../../images/pattern.png'
 import village from '../../images/village.png'
 import water from '../../images/water.png'
+import contested from '../../images/contested.png'
 
 const loadImages = () => {
   return new Promise(resolve => {
@@ -34,6 +35,7 @@ const loadImages = () => {
       .add('pattern', pattern)
       .add('village', village)
       .add('water', water)
+      .add('contested', contested)
       .load(resolve)
   })
 }

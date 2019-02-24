@@ -1,6 +1,7 @@
 // TILE
 export const TILE_RADIUS = 73
 export const TILE_IMAGES = [
+  'contested',
   'fog',
   'action',
   'castle',

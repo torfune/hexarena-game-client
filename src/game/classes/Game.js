@@ -195,6 +195,7 @@ class Game {
 
       this.updateHighlights()
       this.updateNamePreview(this.hoveredTile)
+      this.updateContested()
 
       // if (this.hoveredTile) {
       //   this.react.setDebugInfo(`${this.hoveredTile.x}|${this.hoveredTile.z}`)
@@ -427,6 +428,7 @@ class Game {
   }
   handleLeaderboardMessage = leaders => {
     this.react.setLeaders(leaders)
+    console.log(leaders)
   }
   handleTimeMessage = serverTime => {
     const browserTime = Date.now()
@@ -542,6 +544,17 @@ class Game {
 
       if (canPerformAction || hasArmy) {
         this.hoveredTile.addHighlight()
+      }
+    }
+  }
+  updateContested = () => {
+    for (let i = 0; i < this.tiles.length; i++) {
+      const t = this.tiles[i]
+
+      if (t === this.hoveredTile && t.isContested() && !t.owner) {
+        this.tiles[i].addContested()
+      } else {
+        this.tiles[i].removeContested()
       }
     }
   }

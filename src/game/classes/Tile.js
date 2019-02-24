@@ -54,6 +54,9 @@ class Tile {
     this.image.highlight.alpha = 0.22
     this.image.highlight.visible = false
 
+    this.image.contested = createImage('contested')
+    this.image.contested.visible = false
+
     this.image.fog = []
     for (let i = 0; i < 6; i++) {
       this.image.fog[i] = createImage('fog')
@@ -273,6 +276,12 @@ class Tile {
 
     this.image.hitpointsBg.addChild(this.image.hearts[0])
     this.image.hitpointsBg.addChild(this.image.hearts[1])
+  }
+  addContested() {
+    this.image.contested.visible = true
+  }
+  removeContested() {
+    this.image.contested.visible = false
   }
   removeImage(imageName) {
     const image = this.image[imageName]
