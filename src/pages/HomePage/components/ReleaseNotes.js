@@ -43,29 +43,41 @@ const Point = styled.p`
   }
 `
 
+const EditorCredits = styled.p`
+  text-align: right;
+  font-style: italic;
+
+  span {
+    font-weight: 600;
+    font-size: 18px;
+    color: ${PRIMARY};
+  }
+`
+
 const updates = [
   {
     version: 'Alpha 1.0.0',
     points: [
-      'Removed old Camps (replaced with Villages and Mountains).',
+      'Every Player starts with 7 tiles, with Capital at center.',
+      'Added Hit Points System. Capitals have 2 hit points.',
+      'Removed Camps (replaced with Villages and Mountains).',
       'Removed cooldown on Army recruitment.',
-      'Capturing a Mountain also captures neighboring tiles.',
-      'Non-neutral Mountains cannot be captured.',
-      'Added Villages. Villages spawn on your territory as you grow. Capturing a Village also captures neighboring tiles. Village randomly spawns Forests and Camps.',
-      'Improved graphics & animations.',
-      'Disabled manual attacks on non-neutral tiles.',
-      'Disabled manual attacks on neutral tiles with 2 or more neighboring players.',
-      'Added Hitpoints system. Armies can be used to destroy Castles.',
-      'Capital has 2 hitpoints.',
       'Removed Action countering system.',
       'Removed Water.',
-      'Added Camps with Army. Randomly spawned by Villages.',
-      'Gold system replaced with Wood system. You get 1 wood for cutting Forest. Wood is used for building Castles and recruiting Armies.',
-      'Every Player starts with 7 tiles.',
-      'Lots of other small gameplay and design changes.',
+      'Gold system is replaced with Wood system, with 1 Wood for cutting each Forest tile. Wood is used for building Castles and recruiting armies.',
+      'Armies can be used to destroy Castles.',
+      'Added Camps with Armies. Randomly spawned by Villages.',
+      'Added Villages. Villages spawn on your territory as it grows. Capturing a Village also captures neighboring tiles. Villages randomly spawn Forests and Camps.',
+      'Capturing a Mountain also captures neighboring tiles.',
+      'Non-neutral Mountains cannot be captured.',
+      'Disabled manual attacks on non-neutral tiles.',
+      'Disabled manual attacks on neutral tiles with 2 or more neighboring players.',
+      'Improved graphics & animations.',
+      'Lots of other various changes.',
     ],
     day: 22,
     month: 2,
+    editedBy: 'Joeyjojo',
   },
 ]
 
@@ -79,6 +91,11 @@ const ReleaseNotes = () => (
         {update.points.map(point => (
           <Point key={point}>{point}</Point>
         ))}
+        {update.editedBy && (
+          <EditorCredits>
+            Edited by <span>{update.editedBy}</span>
+          </EditorCredits>
+        )}
       </UpdateContainer>
     ))}
   </Container>

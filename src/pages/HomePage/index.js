@@ -5,7 +5,6 @@ import { navigate } from '@reach/router'
 import Logo from './components/Logo'
 import ReleaseNotes from './components/ReleaseNotes'
 import PlaySection from './components/PlaySection'
-import Countdown from './components/Countdown'
 import Footer from './components/Footer'
 import { GAMESERVER_URL } from '../../config'
 
@@ -73,20 +72,17 @@ class HomePage extends React.Component {
   render() {
     const { disabledUntil, countdownTime } = this.state
 
-    if (disabledUntil === null) return null
-
-    if (disabledUntil === false) {
-      return (
-        <Container>
-          <Logo />
-          <PlaySection />
-          <ReleaseNotes />
-          <Footer />
-        </Container>
-      )
-    }
-
-    return <Countdown time={countdownTime} />
+    return (
+      <Container>
+        <Logo />
+        <PlaySection
+          disabledUntil={disabledUntil}
+          countdownTime={countdownTime}
+        />
+        <ReleaseNotes />
+        <Footer />
+      </Container>
+    )
   }
 }
 

@@ -21,6 +21,7 @@ const StyledButton = styled(Link)`
   text-shadow: ${TEXT_SHADOW};
   cursor: default;
   position: relative;
+  margin-left: 16px;
 
   :hover {
     background: ${SECONDARY};
