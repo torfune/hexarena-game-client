@@ -105,7 +105,7 @@ class Game extends React.Component {
     } = this.state
 
     if (connectionError) {
-      return <ErrorMessage>Can't connect to the GameServer</ErrorMessage>
+      return <ErrorMessage />
     }
 
     return (

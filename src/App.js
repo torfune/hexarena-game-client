@@ -24,6 +24,7 @@ export const GlobalStyle = createGlobalStyle`
     background-size: cover;
     background-position: center;
     overflow-x: hidden;
+    min-height: 100vh;
   }
   
   @supports (font-variation-settings: normal) {

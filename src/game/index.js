@@ -10,10 +10,14 @@ const startGame = async (rootElement, reactMethods, name) => {
     await loadImages()
     imagesLoaded = true
 
-    const response = await fetch(`${GAMESERVER_URL}/config`)
-    const gsConfig = await response.json()
+    try {
+      const response = await fetch(`${GAMESERVER_URL}/config`)
+      const gsConfig = await response.json()
 
-    window.gsConfig = gsConfig
+      window.gsConfig = gsConfig
+    } catch (err) {
+      reactMethods.showConnectionError()
+    }
   }
 
   game.start(rootElement, reactMethods, name)
