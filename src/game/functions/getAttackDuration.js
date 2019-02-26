@@ -3,8 +3,6 @@ const getAttackDuration = (playerId, tile) => {
   const {
     DEFAULT_ATTACK_POWER,
     DEFAULT_DEFEND_POWER,
-    FOREST_POWER,
-    MOUNTAIN_POWER,
     MS_PER_POWER,
     POWER_PER_NEIGHBOR,
   } = window.gsConfig
@@ -18,14 +16,6 @@ const getAttackDuration = (playerId, tile) => {
     if (neighbor && neighbor.owner && neighbor.owner.id === playerId) {
       attackPower += POWER_PER_NEIGHBOR
     }
-  }
-
-  if (tile.mountain) {
-    defendPower += MOUNTAIN_POWER
-  }
-
-  if (tile.forest) {
-    defendPower += FOREST_POWER
   }
 
   return (defendPower - attackPower) * MS_PER_POWER

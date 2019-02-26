@@ -428,7 +428,6 @@ class Game {
   }
   handleLeaderboardMessage = leaders => {
     this.react.setLeaders(leaders)
-    console.log(leaders)
   }
   handleTimeMessage = serverTime => {
     const browserTime = Date.now()
