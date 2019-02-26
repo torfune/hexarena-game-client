@@ -2,6 +2,8 @@ import game from '../../game'
 import getAttackDuration from './getAttackDuration'
 
 const getActionPreview = tile => {
+  const { BUILD_COST, RECRUIT_COST } = window.gsConfig
+
   if (!tile) return null
 
   let isNeighborToPlayer = false
@@ -32,7 +34,7 @@ const getActionPreview = tile => {
   }
 
   // Build
-  if (isOwnedByPlayer && game.wood > 0 && tile.isEmpty()) {
+  if (isOwnedByPlayer && game.wood >= BUILD_COST && tile.isEmpty()) {
     return {
       label: 'Fortify',
       structure,
@@ -52,7 +54,7 @@ const getActionPreview = tile => {
   // Recruit
   if (
     isOwnedByPlayer &&
-    game.wood > 0 &&
+    game.wood >= RECRUIT_COST &&
     (tile.castle || tile.capital) &&
     !tile.army
   ) {

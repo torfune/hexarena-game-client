@@ -23,13 +23,13 @@ const Content = styled.div`
 `
 
 const Slots = styled.div`
-  margin-top: 6px;
+  margin-top: 8px;
   display: flex;
   justify-content: space-between;
 `
 
 const Slot = styled.img`
-  height: 32px;
+  height: 22px;
   filter: ${props => (!props.isFilled ? 'grayscale(1)' : null)};
   opacity: ${props => (!props.isFilled ? '0.4' : null)};
 `
@@ -38,7 +38,7 @@ const WoodSection = ({ wood }) => {
   if (wood === null) return null
 
   const woodIcons = []
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 6; i++) {
     woodIcons.push(i < wood)
   }
 
