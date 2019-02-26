@@ -276,7 +276,9 @@ class Game {
       let isThereArmy = false
 
       for (let i = 0; i < this.armies.length; i++) {
-        if (this.armies[i].tile === tile) {
+        const army = this.armies[i]
+
+        if (army.tile === tile && army.ownerId === this.playerId) {
           isThereArmy = true
         }
       }
