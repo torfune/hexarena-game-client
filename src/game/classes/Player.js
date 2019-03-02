@@ -1,9 +1,9 @@
 class Player {
-  constructor({ id, name, pattern, alliance }) {
+  constructor({ id, name, pattern, tilesCount }) {
     this.id = id
     this.name = name
     this.pattern = pattern
-    this.alliance = alliance
+    this.tilesCount = tilesCount
   }
 }
 

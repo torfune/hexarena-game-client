@@ -1,5 +1,5 @@
 // Always commit with value .... true
-export const REMOTE_GAMESERVER = false
+export const REMOTE_GAMESERVER = true
 
 let GAMESERVER_URL = 'http://localhost:8000'
 

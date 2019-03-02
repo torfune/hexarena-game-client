@@ -84,12 +84,12 @@ class Game {
       .on('tile', this.handleTileMessage)
       .on('action', this.handleActionMessage)
       .on('id', this.handleIdMessage)
-      .on('leaderboard', this.handleLeaderboardMessage)
       .on('time', this.handleTimeMessage)
       .on('wood', this.handleWoodMessage)
       .on('army', this.handleArmyMessage)
       .on('connect_error', this.handleErrorMessage)
       .on('defeat', this.handleDefeatMessage)
+      .on('countdown', this.handleCountdownMessage)
       .on('disconnect', this.handleDisconnectMessage)
 
     this.socket.emit('start', name)
@@ -309,6 +309,9 @@ class Game {
       this.targetScale = roundedScale
     }
   }
+  handleCountdownMessage = seconds => {
+    this.react.setCountdownSeconds(seconds)
+  }
   handleErrorMessage = () => {
     this.react.showConnectionError()
     this.stop()
@@ -321,7 +324,7 @@ class Game {
       const player = getItemById(this.players, gsPlayer.id)
 
       if (player) {
-        console.log(`Player ${gsPlayer.id} already exists.`)
+        player.tilesCount = gsPlayer.tilesCount
       } else {
         this.players.push(new Player({ ...gsPlayer }))
       }
@@ -330,6 +333,14 @@ class Game {
         this.react.setName(gsPlayer.name)
       }
     }
+
+    for (let i = this.players.length - 1; i >= 0; i--) {
+      if (!getItemById(gsPlayers, this.players[i].id)) {
+        this.players.splice(i, 1)
+      }
+    }
+
+    this.react.setPlayers(this.players)
   }
   handleTileMessage = gsData => {
     const gsTiles = parseTiles(gsData)
@@ -428,9 +439,6 @@ class Game {
     this.playerId = id
     this.startedAt = Date.now()
   }
-  handleLeaderboardMessage = leaders => {
-    this.react.setLeaders(leaders)
-  }
   handleTimeMessage = serverTime => {
     const browserTime = Date.now()
     this.timeDiff = serverTime - browserTime
@@ -457,6 +465,7 @@ class Game {
   handleFirstTileArrival = () => {
     const firstTile = this.tiles[0]
 
+    this.react.showGame()
     this.setCameraToAxialPosition(firstTile)
   }
   handleDefeatMessage = killerName => {

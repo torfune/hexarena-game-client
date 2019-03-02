@@ -10,8 +10,8 @@ import ActionPreview from './components/ActionPreview'
 import NamePreview from './components/NamePreview'
 import StructureName from './components/StructureName'
 import ErrorMessage from './components/ErrorMessage'
-import DebugInfo from './components/DebugInfo'
 import Resources from './components/Resources'
+import WaitingScreen from './components/WaitingScreen'
 
 const PageWrapper = styled.div`
   width: 100vw;
@@ -24,7 +24,7 @@ class Game extends React.Component {
   state = {
     wood: null,
     name: null,
-    leaders: [],
+    players: [],
     connectionError: false,
     actionPreview: null,
     namePreview: null,
@@ -33,6 +33,9 @@ class Game extends React.Component {
     killerName: null,
     secondsSurvived: null,
     hoveredStructure: null,
+    waiting: true,
+    tilesCount: null,
+    countdownSeconds: null,
   }
   componentDidMount = async () => {
     const gameElement = document.getElementById('game')
@@ -41,16 +44,22 @@ class Game extends React.Component {
     await startGame(
       gameElement,
       {
-        setLeaders: this.handleLeadersChange,
-        setName: this.handleNameChange,
-        setTilesCount: this.handleTilesCountChange,
-        setActionPreview: this.handleActionPreviewChange,
-        setNamePreview: this.handleNamePreviewChange,
-        showConnectionError: this.handleConnectionError,
-        setDebugInfo: this.handleDebugInfoChange,
-        setWood: this.handleWoodChange,
+        setPlayers: this.getChangeHandler('players'),
+        setName: this.getChangeHandler('name'),
+        setTilesCount: this.getChangeHandler('tilesCount'),
+        setActionPreview: this.getChangeHandler('actionPreview'),
+        setNamePreview: this.getChangeHandler('namePreview'),
+        setDebugInfo: this.getChangeHandler('debugInfo'),
+        setWood: this.getChangeHandler('wood'),
+        setCountdownSeconds: this.getChangeHandler('countdownSeconds'),
+        setHoveredStructure: this.getChangeHandler('hoveredStructure'),
         showDefeatScreen: this.showDefeatScreen,
-        setHoveredStructure: this.handleHoveredStructureChange,
+        showConnectionError: () => {
+          this.setState({ connectionError: true })
+        },
+        showGame: () => {
+          this.setState({ waiting: false })
+        },
       },
       name
     )
@@ -58,78 +67,45 @@ class Game extends React.Component {
   componentWillUnmount = () => {
     stopGame()
   }
-  handleLeadersChange = leaders => {
-    this.setState({ leaders })
-  }
-  handleConnectionError = () => {
-    this.setState({ connectionError: true })
-  }
-  handleNameChange = name => {
-    this.setState({ name })
-  }
-  handleDebugInfoChange = debugInfo => {
-    this.setState({ debugInfo })
-  }
-  handleTilesCountChange = tilesCount => {
-    this.setState({ tilesCount })
-  }
-  handleActionPreviewChange = actionPreview => {
-    this.setState({ actionPreview })
-  }
-  handleNamePreviewChange = namePreview => {
-    this.setState({ namePreview })
-  }
-  handleWoodChange = wood => {
-    this.setState({ wood })
+  getChangeHandler = name => value => {
+    this.setState({ [name]: value })
   }
   showDefeatScreen = ({ killerName, secondsSurvived }) => {
     this.setState({ defeated: true, killerName, secondsSurvived })
   }
-  handleHoveredStructureChange = hoveredStructure => {
-    this.setState({ hoveredStructure })
-  }
   render() {
-    const {
-      actionPreview,
-      namePreview,
-      connectionError,
-      tilesCount,
-      leaders,
-      name,
-      debugInfo,
-      wood,
-      defeated,
-      secondsSurvived,
-      killerName,
-      hoveredStructure,
-    } = this.state
-
-    if (connectionError) {
+    if (this.state.connectionError) {
       return <ErrorMessage />
     }
 
     return (
       <PageWrapper>
         <div id="game" />
-        <DebugInfo info={debugInfo} />
-        <Leaderboard leaders={leaders} />
-        <PlayerInfo name={name} tilesCount={tilesCount} />
-        <Resources wood={wood} />
-        <ActionPreview actionPreview={actionPreview} />
-        <NamePreview name={namePreview} />
+        <Leaderboard leaders={this.state.players} />
+        <PlayerInfo name={this.state.name} tilesCount={this.state.tilesCount} />
+        <Resources wood={this.state.wood} />
+        <ActionPreview actionPreview={this.state.actionPreview} />
+        <NamePreview name={this.state.namePreview} />
 
-        {hoveredStructure && (
+        {this.state.hoveredStructure && (
           <StructureName
-            name={hoveredStructure.name}
-            x={hoveredStructure.x}
-            y={hoveredStructure.y}
+            name={this.state.hoveredStructure.name}
+            x={this.state.hoveredStructure.x}
+            y={this.state.hoveredStructure.y}
           />
         )}
 
-        {defeated && (
+        {this.state.defeated && (
           <DefeatScreen
-            killerName={killerName}
-            secondsSurvived={secondsSurvived}
+            killerName={this.state.killerName}
+            secondsSurvived={this.state.secondsSurvived}
+          />
+        )}
+
+        {this.state.waiting && (
+          <WaitingScreen
+            players={this.state.players}
+            countdownSeconds={this.state.countdownSeconds}
           />
         )}
       </PageWrapper>
