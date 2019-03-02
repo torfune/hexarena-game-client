@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage'
 import ContactPage from './pages/ContactPage'
 import Blog from './pages/Blog'
 import Marketplace from './pages/Marketplace'
+import GamesOverview from './pages/GamesOverview'
 import screenshotSrc from './images/screenshot.png'
 
 export const GlobalStyle = createGlobalStyle`
@@ -16,6 +17,7 @@ export const GlobalStyle = createGlobalStyle`
   * {
     outline: none;
     margin: 0;
+    box-sizing: border-box;
   }
   
   html {
@@ -56,6 +58,7 @@ const App = () => {
         <ContactPage path="contact" />
         <Blog path="blog" />
         <Marketplace path="marketplace" />
+        <GamesOverview path="games" />
       </Router>
     </Fragment>
   )
