@@ -47,7 +47,7 @@ const Logo = () => (
   <Container>
     <h1>
       Hexagor.io
-      <Badge>Alpha 1.1.0</Badge>
+      <Badge>Alpha 1.2.0</Badge>
     </h1>
 
     <h2>Multiplayer strategy game</h2>

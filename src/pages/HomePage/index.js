@@ -7,6 +7,7 @@ import ReleaseNotes from './components/ReleaseNotes'
 import PlaySection from './components/PlaySection'
 import Footer from './components/Footer'
 import { GAMESERVER_URL } from '../../config'
+import axios from 'axios'
 
 const Container = styled.div`
   width: 1200px;
@@ -25,11 +26,19 @@ class HomePage extends React.Component {
   state = {
     disabledUntil: null,
     countdownTime: null,
+    winners: null,
   }
   componentDidMount = async () => {
-    const response = await fetch(`${GAMESERVER_URL}/status`)
-    const data = await response.json()
-    const { disabledUntil } = data
+    const statusRes = await axios.get(`${GAMESERVER_URL}/status`)
+    const winnersRes = await axios.get(`${GAMESERVER_URL}/winners`)
+
+    const winners = winnersRes.data
+      .split('\n')
+      .filter(l => l !== '')
+      .reverse()
+    this.setState({ winners })
+
+    const disabledUntil = statusRes.data.disabledUntil
 
     if (disabledUntil) {
       const now = Date.now()
@@ -70,7 +79,7 @@ class HomePage extends React.Component {
     }
   }
   render() {
-    const { disabledUntil, countdownTime } = this.state
+    const { disabledUntil, countdownTime, winners } = this.state
 
     return (
       <Container>
@@ -78,6 +87,7 @@ class HomePage extends React.Component {
         <PlaySection
           disabledUntil={disabledUntil}
           countdownTime={countdownTime}
+          winners={winners}
         />
         <ReleaseNotes />
         <Footer />

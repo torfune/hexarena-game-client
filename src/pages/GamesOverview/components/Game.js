@@ -4,6 +4,22 @@ import styled from 'styled-components'
 import Player from './Player'
 import { BOX_SHADOW } from '../../../constants'
 
+const statusColor = status => {
+  switch (status) {
+    case 'pending':
+      return '#0097e6' // blue
+
+    case 'starting':
+      return '#44bd32' // green
+
+    case 'running':
+      return '#c23616' // red
+
+    default:
+      return '#000'
+  }
+}
+
 const Container = styled.div`
   background: #fff;
   margin-bottom: 16px;
@@ -19,7 +35,7 @@ const Status = styled.div`
   width: 128px;
   text-align: center;
   color: #fff;
-  background: ${({ status }) => (status === 'running' ? '#44bd32' : '#0097e6')};
+  background: ${({ status }) => statusColor(status)};
 `
 
 const PlayersList = styled.div`

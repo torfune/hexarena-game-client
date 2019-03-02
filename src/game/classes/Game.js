@@ -72,7 +72,7 @@ class Game {
     document.addEventListener('mouseup', this.handleMouseUp)
     document.addEventListener('keyup', this.handleKeyUp)
   }
-  start(rootElement, reactMethods, name) {
+  start(rootElement, reactMethods, name, pattern) {
     if (this.isRunning) return
 
     this.react = { ...reactMethods }
@@ -90,9 +90,10 @@ class Game {
       .on('connect_error', this.handleErrorMessage)
       .on('defeat', this.handleDefeatMessage)
       .on('countdown', this.handleCountdownMessage)
+      .on('win', this.handleWinMessage)
       .on('disconnect', this.handleDisconnectMessage)
 
-    this.socket.emit('start', name)
+    this.socket.emit('start', { name, pattern })
 
     this.isRunning = true
   }
@@ -308,6 +309,9 @@ class Game {
     if (roundedScale >= MIN_SCALE && roundedScale <= MAX_SCALE) {
       this.targetScale = roundedScale
     }
+  }
+  handleWinMessage = () => {
+    this.react.winGame()
   }
   handleCountdownMessage = seconds => {
     this.react.setCountdownSeconds(seconds)

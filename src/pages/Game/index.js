@@ -12,6 +12,7 @@ import StructureName from './components/StructureName'
 import ErrorMessage from './components/ErrorMessage'
 import Resources from './components/Resources'
 import WaitingScreen from './components/WaitingScreen'
+import WinScreen from './components/WinScreen'
 
 const PageWrapper = styled.div`
   width: 100vw;
@@ -36,10 +37,12 @@ class Game extends React.Component {
     waiting: true,
     tilesCount: null,
     countdownSeconds: null,
+    isWinner: false,
   }
   componentDidMount = async () => {
     const gameElement = document.getElementById('game')
     const name = window.localStorage.getItem('name')
+    const pattern = window.localStorage.getItem('pattern')
 
     await startGame(
       gameElement,
@@ -54,6 +57,9 @@ class Game extends React.Component {
         setCountdownSeconds: this.getChangeHandler('countdownSeconds'),
         setHoveredStructure: this.getChangeHandler('hoveredStructure'),
         showDefeatScreen: this.showDefeatScreen,
+        winGame: () => {
+          this.setState({ isWinner: true })
+        },
         showConnectionError: () => {
           this.setState({ connectionError: true })
         },
@@ -61,7 +67,8 @@ class Game extends React.Component {
           this.setState({ waiting: false })
         },
       },
-      name
+      name,
+      pattern
     )
   }
   componentWillUnmount = () => {
@@ -74,7 +81,7 @@ class Game extends React.Component {
     this.setState({ defeated: true, killerName, secondsSurvived })
   }
   render() {
-    if (this.state.connectionError) {
+    if (this.state.connectionError && !this.state.isWinner) {
       return <ErrorMessage />
     }
 
@@ -108,6 +115,8 @@ class Game extends React.Component {
             countdownSeconds={this.state.countdownSeconds}
           />
         )}
+
+        {this.state.isWinner && <WinScreen />}
       </PageWrapper>
     )
   }
