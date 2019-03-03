@@ -46,8 +46,8 @@ const Badge = styled.div`
 const Logo = () => (
   <Container>
     <h1>
-      Hexagor.io
-      <Badge>Alpha 1.2.0</Badge>
+      HexArena.io
+      <Badge>Alpha 1.2.1</Badge>
     </h1>
 
     <h2>Multiplayer strategy game</h2>

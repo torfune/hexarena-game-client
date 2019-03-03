@@ -11,7 +11,7 @@ const Container = styled.div`
 const UpdateContainer = styled.div`
   color: #fff;
   margin-top: 32px;
-  margin-bottom: 130px;
+  margin-bottom: 32px;
   background: #383838;
   padding: 48px;
   border-radius: 8px;
@@ -55,6 +55,27 @@ const EditorCredits = styled.p`
 `
 
 const updates = [
+  {
+    version: 'Alpha 1.2.1',
+    points: ['Added waiting screen chat.', 'Game is more stable.'],
+    day: 3,
+    month: 3,
+  },
+  {
+    version: 'Alpha 1.2.0',
+    points: [
+      'Wood capacity is now 6 instead of 4.',
+      'Castle costs 2 wood instead of 1.',
+      'Castle starts with free Army.',
+      'Game is split into multiple arena instances with 3 - 6 players. Last alive wins.',
+      'Capturing a mountain is as fast as any other tile.',
+      'Selectable pattern colors.',
+      'Manual attacks are little bit slower.',
+      'Several army bugs are fixed.',
+    ],
+    day: 2,
+    month: 3,
+  },
   {
     version: 'Alpha 1.1.0',
     points: [

@@ -58,7 +58,13 @@ const PlaySection = ({ disabledUntil, countdownTime, winners }) => {
     <Container>
       <div>
         <Heading>
-          {disabledUntil === false ? 'Quick play' : 'Test session opens in:'}
+          {disabledUntil === false ? (
+            'Quick play'
+          ) : (
+            <p>
+              Next <span>Alpha</span> test starts in:
+            </p>
+          )}
         </Heading>
 
         {disabledUntil === false ? (
