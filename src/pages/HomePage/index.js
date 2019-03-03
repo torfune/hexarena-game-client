@@ -38,10 +38,11 @@ class HomePage extends React.Component {
       .reverse()
     this.setState({ winners })
 
-    const disabledUntil = statusRes.data.disabledUntil
+    const { timeRemaining } = statusRes.data
 
-    if (disabledUntil) {
+    if (timeRemaining) {
       const now = Date.now()
+      const disabledUntil = now + Number(timeRemaining)
 
       if (disabledUntil > now) {
         this.setState({ disabledUntil })

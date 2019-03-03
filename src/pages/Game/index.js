@@ -111,7 +111,7 @@ class Game extends React.Component {
           />
         )}
 
-        {this.state.waiting && (
+        {this.state.waiting && this.state.players.length > 0 && (
           <WaitingScreen
             players={this.state.players}
             countdownSeconds={this.state.countdownSeconds}
