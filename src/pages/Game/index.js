@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { startGame, stopGame } from '../../game'
+import { startGame, stopGame, sendMessage } from '../../game'
 
 import Leaderboard from './components/Leaderboard'
 import DefeatScreen from './components/DefeatScreen'
@@ -26,6 +26,7 @@ class Game extends React.Component {
     wood: null,
     name: null,
     players: [],
+    messages: [],
     connectionError: false,
     actionPreview: null,
     namePreview: null,
@@ -48,6 +49,7 @@ class Game extends React.Component {
       gameElement,
       {
         setPlayers: this.getChangeHandler('players'),
+        setMessages: this.getChangeHandler('messages'),
         setName: this.getChangeHandler('name'),
         setTilesCount: this.getChangeHandler('tilesCount'),
         setActionPreview: this.getChangeHandler('actionPreview'),
@@ -113,6 +115,8 @@ class Game extends React.Component {
           <WaitingScreen
             players={this.state.players}
             countdownSeconds={this.state.countdownSeconds}
+            messages={this.state.messages}
+            sendMessage={sendMessage}
           />
         )}
 

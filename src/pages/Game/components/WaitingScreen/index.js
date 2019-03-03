@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import Player from './components/Player'
+import Chat from './components/Chat'
 
 const Container = styled.div`
   position: absolute;
@@ -10,6 +11,8 @@ const Container = styled.div`
   width: 100vw;
   height: 100vh;
   padding: 128px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
 `
 
 const Heading = styled.h2`
@@ -26,6 +29,21 @@ const Row = styled.div`
 
 const playersPerRoom = 6
 
+const getWaitingMessage = numberOfPlayers => {
+  const minPlayers = 3
+  const n = minPlayers - numberOfPlayers
+
+  if (n <= 0 || numberOfPlayers === 0) {
+    return ''
+  }
+
+  if (n === 1) {
+    return 'Waiting for 1 more player'
+  } else {
+    return `Waiting for ${n} more players`
+  }
+}
+
 const WaitingScreen = props => {
   const players = []
 
@@ -41,21 +59,24 @@ const WaitingScreen = props => {
 
   return (
     <Container>
-      <Heading>
-        {props.countdownSeconds !== null
-          ? `Game starts in ${props.countdownSeconds} seconds`
-          : 'Waiting for other players'}
-      </Heading>
-      <Row>
-        {players.slice(0, 3).map(({ name, pattern }, index) => (
-          <Player key={index} name={name} pattern={pattern} />
-        ))}
-      </Row>
-      <Row>
-        {players.slice(3, 6).map(({ name, pattern }, index) => (
-          <Player key={index} name={name} pattern={pattern} />
-        ))}
-      </Row>
+      <div>
+        <Heading>
+          {props.countdownSeconds !== null
+            ? `Game starts in ${props.countdownSeconds} seconds`
+            : getWaitingMessage(props.players.length)}
+        </Heading>
+        <Row>
+          {players.slice(0, 3).map(({ name, pattern }, index) => (
+            <Player key={index} name={name} pattern={pattern} />
+          ))}
+        </Row>
+        <Row>
+          {players.slice(3, 6).map(({ name, pattern }, index) => (
+            <Player key={index} name={name} pattern={pattern} />
+          ))}
+        </Row>
+      </div>
+      <Chat messages={props.messages} sendMessage={props.sendMessage} />
     </Container>
   )
 }

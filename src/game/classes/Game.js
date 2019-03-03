@@ -84,6 +84,7 @@ class Game {
       .on('tile', this.handleTileMessage)
       .on('action', this.handleActionMessage)
       .on('id', this.handleIdMessage)
+      .on('messages', this.handleMessagesMessage)
       .on('time', this.handleTimeMessage)
       .on('wood', this.handleWoodMessage)
       .on('army', this.handleArmyMessage)
@@ -205,6 +206,9 @@ class Game {
       // }
     }
   }
+  sendMessage = message => {
+    this.socket.emit('message', message)
+  }
   handleKeyUp = ({ key }) => {
     if (!this.isRunning) return
 
@@ -312,6 +316,9 @@ class Game {
   }
   handleWinMessage = () => {
     this.react.winGame()
+  }
+  handleMessagesMessage = messages => {
+    this.react.setMessages(messages)
   }
   handleCountdownMessage = seconds => {
     this.react.setCountdownSeconds(seconds)

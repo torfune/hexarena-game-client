@@ -30,8 +30,10 @@ const stopGame = () => {
   game.stop()
 }
 
+const sendMessage = game.sendMessage
+
 // named export for React layer
-export { startGame, stopGame }
+export { startGame, stopGame, sendMessage }
 
 // default export for Game layer
 export default game

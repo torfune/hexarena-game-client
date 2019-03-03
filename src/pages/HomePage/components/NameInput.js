@@ -14,7 +14,6 @@ const NameInput = styled.input.attrs({
   font-size: 16px;
   padding-left: 12px;
   height: 40px;
-  box-sizing: border-box;
   width: 250px;
   box-shadow: ${BOX_SHADOW};
   color: #fff;
