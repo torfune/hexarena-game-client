@@ -15,14 +15,10 @@ const Container = styled.div.attrs(({ x, y }) => ({
   box-shadow: 1px 1px 16px rgba(0, 0, 0, 0.2);
 `
 
-const StructureName = ({ name, x, y }) => {
-  console.log(`${x}|${y}`)
-
-  return (
-    <Container x={x} y={y}>
-      {name}
-    </Container>
-  )
-}
+const StructureName = ({ name, x, y }) => (
+  <Container x={x} y={y}>
+    {name}
+  </Container>
+)
 
 export default StructureName

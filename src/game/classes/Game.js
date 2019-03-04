@@ -479,7 +479,6 @@ class Game {
   handleFirstTileArrival = () => {
     const firstTile = this.tiles[0]
 
-    console.log('showing game')
     this.react.showGame()
     this.setCameraToAxialPosition(firstTile)
   }
@@ -490,8 +489,6 @@ class Game {
     this.react.showDefeatScreen({ killerName, secondsSurvived })
 
     this.defeated = true
-
-    console.log('Defeated.')
   }
   updatePlayerTilesCount = () => {
     let tilesCount = 0
