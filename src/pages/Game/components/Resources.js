@@ -2,7 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 
 import Header from './Header'
-import Label from './Label'
 import resourcesImagePath from '../../../icons/resources.svg'
 import woodImagePath from '../../../images/wood.png'
 
@@ -14,22 +13,22 @@ const Container = styled.div`
   position: absolute;
   top: 0;
   user-select: none;
-  width: 290px;
+  width: 360px;
 `
 
 const Content = styled.div`
   padding: 0 30px;
-  padding-bottom: 12px;
+  padding-bottom: 16px;
 `
 
 const Slots = styled.div`
-  margin-top: 8px;
+  margin-top: 24px;
   display: flex;
   justify-content: space-between;
 `
 
 const Slot = styled.img`
-  height: 22px;
+  height: 28px;
   filter: ${props => (!props.isFilled ? 'grayscale(1)' : null)};
   opacity: ${props => (!props.isFilled ? '0.4' : null)};
 `
@@ -44,9 +43,8 @@ const WoodSection = ({ wood }) => {
 
   return (
     <Container>
-      <Header text="Resources" iconSrc={resourcesImagePath} iconSize="22px" />
+      <Header text="Wood" iconSrc={resourcesImagePath} iconSize="22px" />
       <Content>
-        <Label>Wood</Label>
         <Slots>
           {woodIcons.map((isFilled, index) => (
             <Slot key={index} src={woodImagePath} isFilled={isFilled} />

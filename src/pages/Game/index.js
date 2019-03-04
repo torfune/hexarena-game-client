@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-import { startGame, stopGame, sendMessage } from '../../game'
+import { startGame, stopGame, sendMessage, updateScreenSize } from '../../game'
 
 import Leaderboard from './components/Leaderboard'
 import DefeatScreen from './components/DefeatScreen'
@@ -30,7 +30,6 @@ class Game extends React.Component {
     connectionError: false,
     actionPreview: null,
     namePreview: null,
-    debugInfo: null,
     defeated: false,
     killerName: null,
     secondsSurvived: null,
@@ -54,7 +53,6 @@ class Game extends React.Component {
         setTilesCount: this.getChangeHandler('tilesCount'),
         setActionPreview: this.getChangeHandler('actionPreview'),
         setNamePreview: this.getChangeHandler('namePreview'),
-        setDebugInfo: this.getChangeHandler('debugInfo'),
         setWood: this.getChangeHandler('wood'),
         setCountdownSeconds: this.getChangeHandler('countdownSeconds'),
         setHoveredStructure: this.getChangeHandler('hoveredStructure'),
@@ -72,9 +70,12 @@ class Game extends React.Component {
       name,
       pattern
     )
+
+    window.addEventListener('resize', updateScreenSize)
   }
   componentWillUnmount = () => {
     stopGame()
+    window.removeEventListener('resize', updateScreenSize)
   }
   getChangeHandler = name => value => {
     this.setState({ [name]: value })

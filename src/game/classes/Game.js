@@ -209,6 +209,9 @@ class Game {
   sendMessage = message => {
     this.socket.emit('message', message)
   }
+  updateScreenSize = () => {
+    this.pixi.renderer.resize(window.innerWidth, window.innerHeight)
+  }
   handleKeyUp = ({ key }) => {
     if (!this.isRunning) return
 
@@ -476,6 +479,7 @@ class Game {
   handleFirstTileArrival = () => {
     const firstTile = this.tiles[0]
 
+    console.log('showing game')
     this.react.showGame()
     this.setCameraToAxialPosition(firstTile)
   }

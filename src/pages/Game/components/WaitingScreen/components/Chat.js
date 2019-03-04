@@ -72,7 +72,6 @@ const Chat = ({ messages, sendMessage }) => {
   })
 
   useEffect(() => {
-    console.log(elementRef.current)
     elementRef.current.scrollTop = elementRef.current.scrollHeight
   })
 
