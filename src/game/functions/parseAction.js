@@ -1,13 +1,21 @@
+import getTileByXZ from './getTileByXZ'
+
 const parseAction = gsData => {
-  const [x, z, duration, finishedAt, ownerId, destroyed] = gsData.split('|')
+  let [x, z, duration, finishedAt, ownerId, status, id, type] = gsData.split(
+    '|'
+  )
+
+  x = Number(x)
+  z = Number(z)
 
   return {
-    x: Number(x),
-    z: Number(z),
+    tile: getTileByXZ(x, z),
     duration: Number(duration),
-    finishedAt: Number(finishedAt),
+    finishedAt: finishedAt === 'undefined' ? null : Number(finishedAt),
     ownerId: ownerId === 'null' ? null : ownerId,
-    destroyed: destroyed === 'true',
+    status,
+    type,
+    id,
   }
 }
 

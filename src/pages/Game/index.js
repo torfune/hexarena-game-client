@@ -11,6 +11,7 @@ import NamePreview from './components/NamePreview'
 import StructureName from './components/StructureName'
 import ErrorMessage from './components/ErrorMessage'
 import Resources from './components/Resources'
+import Actions from './components/Actions'
 import WaitingScreen from './components/WaitingScreen'
 import WinScreen from './components/WinScreen'
 
@@ -38,6 +39,7 @@ class Game extends React.Component {
     tilesCount: null,
     countdownSeconds: null,
     isWinner: false,
+    actionQueue: [],
   }
   componentDidMount = async () => {
     const gameElement = document.getElementById('game')
@@ -54,6 +56,7 @@ class Game extends React.Component {
         setActionPreview: this.getChangeHandler('actionPreview'),
         setNamePreview: this.getChangeHandler('namePreview'),
         setWood: this.getChangeHandler('wood'),
+        setActionQueue: this.getChangeHandler('actionQueue'),
         setCountdownSeconds: this.getChangeHandler('countdownSeconds'),
         setHoveredStructure: this.getChangeHandler('hoveredStructure'),
         showDefeatScreen: this.showDefeatScreen,
@@ -78,7 +81,9 @@ class Game extends React.Component {
     window.removeEventListener('resize', updateScreenSize)
   }
   getChangeHandler = name => value => {
-    this.setState({ [name]: value })
+    if (this.state[name] !== value) {
+      this.setState({ [name]: value })
+    }
   }
   showDefeatScreen = ({ killerName, secondsSurvived }) => {
     this.setState({ defeated: true, killerName, secondsSurvived })
@@ -91,11 +96,13 @@ class Game extends React.Component {
     return (
       <PageWrapper>
         <div id="game" />
+
         <Leaderboard leaders={this.state.players} />
         <PlayerInfo name={this.state.name} tilesCount={this.state.tilesCount} />
         <Resources wood={this.state.wood} />
         <ActionPreview actionPreview={this.state.actionPreview} />
         <NamePreview name={this.state.namePreview} />
+        <Actions actions={this.state.actionQueue} />
 
         {this.state.hoveredStructure && (
           <StructureName

@@ -43,7 +43,7 @@ const Leaderboard = ({ leaders }) => {
 
   return (
     <Container>
-      <Header text="Leaderboard" iconSrc={crownImagePath} iconSize="24px" />
+      <Header text="Players" iconSrc={crownImagePath} iconSize="24px" />
       <Content>
         {leaders.map((l, i) => (
           <Leader key={i}>

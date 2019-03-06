@@ -33,6 +33,7 @@ class Game {
     this.animations = []
     this.armies = []
     this.actions = []
+    this.actionQueue = []
     this.camera = { x: null, y: null }
     this.cameraDrag = null
     this.cursor = { x: null, y: null }
@@ -92,6 +93,7 @@ class Game {
       .on('defeat', this.handleDefeatMessage)
       .on('countdown', this.handleCountdownMessage)
       .on('win', this.handleWinMessage)
+      .on('action_queue', this.handleActionQueueMessage)
       .on('disconnect', this.handleDisconnectMessage)
 
     this.socket.emit('start', { name, pattern })
@@ -330,6 +332,37 @@ class Game {
     this.react.showConnectionError()
     this.stop()
   }
+  handleActionQueueMessage = gsData => {
+    const newActionQueue = gsData
+      ? gsData.split('><').map(data => parseAction(data))
+      : []
+
+    this.react.setActionQueue(newActionQueue)
+
+    for (let i = 0; i < this.actionQueue.length; i++) {
+      const gsAction = this.actionQueue[i]
+
+      if (
+        !getItemById(newActionQueue, gsAction.id) &&
+        gsAction.tile.action &&
+        !gsAction.tile.action.isActive
+      ) {
+        gsAction.tile.action.destroy()
+      }
+    }
+
+    this.actionQueue = newActionQueue
+
+    for (let i = 0; i < this.actionQueue.length; i++) {
+      const gsAction = this.actionQueue[i]
+
+      if (!gsAction.tile.action) {
+        new Action({ ...gsAction, isActive: false, number: i })
+      } else {
+        gsAction.tile.action.setNumber(i)
+      }
+    }
+  }
   handlePlayerMessage = gsData => {
     const gsPlayers = parsePlayers(gsData)
 
@@ -413,14 +446,13 @@ class Game {
   }
   handleActionMessage = gsData => {
     const gsAction = parseAction(gsData)
-    const tile = getTileByXZ(gsAction.x, gsAction.z)
 
-    if (!tile) return
-
-    if (!tile.action) {
-      new Action({ ...gsAction, tile })
-    } else if (gsAction.destroyed) {
-      tile.action.destroy()
+    if (!gsAction.tile.action) {
+      new Action({ ...gsAction, isActive: true })
+    } else if (gsAction.status === 'done') {
+      gsAction.tile.action.destroy()
+    } else if (!gsAction.tile.action.isActive) {
+      gsAction.tile.action.activate(gsAction.finishedAt, gsAction.duration)
     }
   }
   handleArmyMessage = gsData => {
