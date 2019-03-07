@@ -92,6 +92,7 @@ class Game {
       .on('connect_error', this.handleErrorMessage)
       .on('defeat', this.handleDefeatMessage)
       .on('countdown', this.handleCountdownMessage)
+      .on('finish_seconds', this.handleFinishSecondsMessage)
       .on('win', this.handleWinMessage)
       .on('action_queue', this.handleActionQueueMessage)
       .on('disconnect', this.handleDisconnectMessage)
@@ -443,6 +444,9 @@ class Game {
     this.updateNeighbors()
     this.updateBorders()
     this.updateActionPreview(this.hoveredTile)
+  }
+  handleFinishSecondsMessage = seconds => {
+    this.react.setFinishSeconds(seconds)
   }
   handleActionMessage = gsData => {
     const gsAction = parseAction(gsData)

@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { startGame, stopGame, sendMessage, updateScreenSize } from '../../game'
 
 import Leaderboard from './components/Leaderboard'
+import FinishCountdown from './components/FinishCountdown'
 import DefeatScreen from './components/DefeatScreen'
 import PlayerInfo from './components/PlayerInfo'
 import ActionPreview from './components/ActionPreview'
@@ -38,6 +39,7 @@ class Game extends React.Component {
     waiting: true,
     tilesCount: null,
     countdownSeconds: null,
+    finishSeconds: null,
     isWinner: false,
     actionQueue: [],
   }
@@ -56,6 +58,7 @@ class Game extends React.Component {
         setActionPreview: this.getChangeHandler('actionPreview'),
         setNamePreview: this.getChangeHandler('namePreview'),
         setWood: this.getChangeHandler('wood'),
+        setFinishSeconds: this.getChangeHandler('finishSeconds'),
         setActionQueue: this.getChangeHandler('actionQueue'),
         setCountdownSeconds: this.getChangeHandler('countdownSeconds'),
         setHoveredStructure: this.getChangeHandler('hoveredStructure'),
@@ -81,9 +84,7 @@ class Game extends React.Component {
     window.removeEventListener('resize', updateScreenSize)
   }
   getChangeHandler = name => value => {
-    if (this.state[name] !== value) {
-      this.setState({ [name]: value })
-    }
+    this.setState({ [name]: value })
   }
   showDefeatScreen = ({ killerName, secondsSurvived }) => {
     this.setState({ defeated: true, killerName, secondsSurvived })
@@ -103,6 +104,7 @@ class Game extends React.Component {
         <ActionPreview actionPreview={this.state.actionPreview} />
         <NamePreview name={this.state.namePreview} />
         <Actions actions={this.state.actionQueue} />
+        <FinishCountdown finishSeconds={this.state.finishSeconds} />
 
         {this.state.hoveredStructure && (
           <StructureName
