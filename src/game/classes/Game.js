@@ -19,6 +19,7 @@ import parseArmy from '../functions/parseArmy'
 import roundToDecimals from '../functions/roundToDecimals'
 import getDebugCommand from '../functions/getDebugCommand'
 import getActionPreview from '../functions/getActionPreview'
+import canAttack from '../functions/canAttack'
 import { GAMESERVER_URL } from '../../config'
 import {
   ZOOM_SPEED,
@@ -52,6 +53,8 @@ class Game {
     this.isRunning = false
     this.hoveredTile = null
     this.defeated = false
+    this.tilesWithPatternPreview = []
+
     this.scale = DEFAULT_SCALE
     this.targetScale = this.scale
 
@@ -207,6 +210,8 @@ class Game {
       // } else {
       //   this.react.setDebugInfo(null)
       // }
+
+      this.updatePatternPreviews()
     }
   }
   sendMessage = message => {
@@ -460,6 +465,8 @@ class Game {
     } else if (!gsAction.tile.action.isActive) {
       gsAction.tile.action.activate(gsAction.finishedAt, gsAction.duration)
     }
+
+    this.updatePatternPreviews()
   }
   handleArmyMessage = gsData => {
     const gsArmy = parseArmy(gsData)
@@ -627,6 +634,114 @@ class Game {
     }
 
     return getTileByPixelPosition(this.tiles, pixel, this.scale)
+  }
+  getTilesToCapture = tile => {
+    let tilesToCapture = []
+
+    // A : Attack hover
+    if (canAttack(tile)) {
+      tilesToCapture.push(tile)
+    }
+
+    // B : Action
+    for (let i = 0; i < this.actions.length; i++) {
+      const action = this.actions[i]
+      tilesToCapture.push(action.tile)
+    }
+
+    // C : Army send
+    // if (this.selectedArmyTile) {
+    //   let index = null
+
+    //   for (let i = 0; i < 6; i++) {
+    //     if (this.selectedArmyTargetTiles[i].includes(tile)) {
+    //       index = i
+    //       break
+    //     }
+    //   }
+
+    //   if (index !== null) {
+    //     const tiles = this.selectedArmyTargetTiles[index]
+
+    //     for (let i = 0; i < tiles.length; i++) {
+    //       if (!tiles[i].owner && !tilesToCapture.includes(tiles[i])) {
+    //         tilesToCapture.push(tiles[i])
+    //         if (tiles[i].mountain || tiles[i].castle) {
+    //           break
+    //         }
+    //       } else if (
+    //         tiles[i].owner &&
+    //         tiles[i].owner.id !== this.playerId &&
+    //         !tilesToCapture.includes(tiles[i])
+    //       ) {
+    //         if (tiles[i].mountain) {
+    //           break
+    //         }
+    //         tilesToCapture.push(tiles[i])
+    //         if (tiles[i].castle || tiles[i].capital) {
+    //           break
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
+
+    // Mountains
+    for (let i = tilesToCapture.length - 1; i >= 0; i--) {
+      const t = tilesToCapture[i]
+
+      if (t.mountain || t.village) {
+        for (let j = 0; j < 6; j++) {
+          const neighbor = t.neighbors[j]
+
+          if (!neighbor) continue
+
+          if (
+            !tilesToCapture.includes(neighbor) &&
+            (!neighbor.owner || neighbor.owner.id !== this.playerId)
+          ) {
+            tilesToCapture.push(neighbor)
+          }
+        }
+      }
+    }
+
+    return tilesToCapture
+  }
+  updatePatternPreviews = () => {
+    const tile = this.hoveredTile
+
+    if (!tile) return
+
+    let pattern = null
+
+    for (let i = 0; i < this.players.length; i++) {
+      if (this.players[i].id === this.playerId) {
+        pattern = this.players[i].pattern
+      }
+    }
+
+    const oldTilesWithPatternPreview = this.tilesWithPatternPreview
+
+    this.tilesWithPatternPreview = this.getTilesToCapture(tile)
+
+    for (let i = 0; i < oldTilesWithPatternPreview.length; i++) {
+      const t = oldTilesWithPatternPreview[i]
+
+      if (!this.tilesWithPatternPreview.includes(t)) {
+        t.removePatternPreview()
+      }
+    }
+
+    for (let i = 0; i < this.tilesWithPatternPreview.length; i++) {
+      const n = this.tilesWithPatternPreview[i]
+
+      if (!oldTilesWithPatternPreview.includes(n)) {
+        n.addPatternPreview(pattern)
+      }
+    }
+
+    this.updateBorders()
   }
   setCameraToAxialPosition = ({ x, z }) => {
     const pixel = getPixelPosition(x, z)

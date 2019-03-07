@@ -18,6 +18,7 @@ export const TILE_IMAGES = [
   'army',
   'arrow',
   'border',
+  'patternPreview',
   'highlight',
   'pattern',
   'background',
