@@ -451,6 +451,8 @@ class Game {
   handleActionMessage = gsData => {
     const gsAction = parseAction(gsData)
 
+    if (!gsAction.tile) return
+
     if (!gsAction.tile.action) {
       new Action({ ...gsAction, isActive: true })
     } else if (gsAction.status === 'done') {
