@@ -4,9 +4,7 @@ import styled from 'styled-components'
 import Heading from './Heading'
 import { PRIMARY } from '../../../constants'
 
-const Container = styled.div`
-  padding: 96px 128px;
-`
+const Container = styled.div``
 
 const UpdateContainer = styled.div`
   color: #fff;
@@ -55,6 +53,19 @@ const EditorCredits = styled.p`
 `
 
 const updates = [
+  {
+    version: 'Alpha 1.3.0',
+    points: [
+      'Added Action stack.',
+      'Slower game tempo.',
+      'Auto-capture of neutral tiles with >= 5 neighbors.',
+      'Smaller world size.',
+      'In-game Action icons.',
+      "Window resize doesn't break the game.",
+    ],
+    day: 7,
+    month: 3,
+  },
   {
     version: 'Alpha 1.2.1',
     points: ['Added waiting screen chat.', 'Game is more stable.'],

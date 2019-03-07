@@ -6,11 +6,12 @@ import Logo from './components/Logo'
 import ReleaseNotes from './components/ReleaseNotes'
 import PlaySection from './components/PlaySection'
 import Footer from './components/Footer'
-import { GAMESERVER_URL } from '../../config'
+import Winners from './components/Winners'
 import axios from 'axios'
+import { GAMESERVER_URL } from '../../config'
 
 const Container = styled.div`
-  width: 1200px;
+  width: 1300px;
   margin: 0 auto;
   background: #333;
   padding-top: 64px;
@@ -19,6 +20,13 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   box-shadow: 0px 0px 72px 0px rgba(0, 0, 0, 0.5);
+`
+
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  padding: 96px 128px;
+  grid-gap: 64px;
 `
 
 class HomePage extends React.Component {
@@ -88,9 +96,11 @@ class HomePage extends React.Component {
         <PlaySection
           disabledUntil={disabledUntil}
           countdownTime={countdownTime}
-          winners={winners}
         />
-        <ReleaseNotes />
+        <Grid>
+          <ReleaseNotes />
+          <Winners winners={winners} />
+        </Grid>
         <Footer />
       </Container>
     )

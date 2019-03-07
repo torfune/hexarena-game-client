@@ -4,7 +4,6 @@ import styled from 'styled-components'
 import PlayButton from './PlayButton'
 import NameInput from './NameInput'
 import Heading from './Heading'
-import Winners from './Winners'
 import Countdown from './Countdown'
 import PatternSelector from './PatternSelector'
 
@@ -33,7 +32,7 @@ const InputAndButtonContainer = styled.div`
   display: flex;
 `
 
-const PlaySection = ({ disabledUntil, countdownTime, winners }) => {
+const PlaySection = ({ disabledUntil, countdownTime }) => {
   const storageName = window.localStorage.getItem('name')
   const storagePattern = window.localStorage.getItem('pattern')
 
@@ -84,7 +83,6 @@ const PlaySection = ({ disabledUntil, countdownTime, winners }) => {
           <Countdown time={countdownTime} />
         )}
       </div>
-      <Winners winners={winners} />
     </Container>
   )
 }

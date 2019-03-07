@@ -10,7 +10,7 @@ const Heading = styled.h3`
 
   span {
     color: ${PRIMARY};
-    font-weight: 600;
+    font-weight: 500;
   }
 `
 
