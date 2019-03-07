@@ -16,6 +16,7 @@ const Winner = styled.div`
   border-radius: 8px;
   display: flex;
   align-items: center;
+  margin-bottom: 8px;
 `
 
 const Name = styled.p`
