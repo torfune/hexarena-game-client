@@ -463,6 +463,10 @@ class Game {
       }
     }
 
+    for (let i = 0; i < this.tiles.length; i++) {
+      this.tiles[i].updateBlackOverlay()
+    }
+
     this.updatePlayerTilesCount()
     this.updateNeighbors()
     this.updateBorders()
