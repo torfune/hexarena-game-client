@@ -15,6 +15,7 @@ import Resources from './components/Resources'
 import Actions from './components/Actions'
 import WaitingScreen from './components/WaitingScreen'
 import WinScreen from './components/WinScreen'
+import TimesUpScreen from './components/TimesUpScreen'
 
 const PageWrapper = styled.div`
   width: 100vw;
@@ -42,6 +43,10 @@ class Game extends React.Component {
     countdownSeconds: null,
     finishSeconds: null,
     isWinner: false,
+    playerId: null,
+    timesUp: false,
+    timesUpWinnerId: null,
+    timesUpPlayers: null,
     actionQueue: [],
   }
   componentDidMount = async () => {
@@ -65,6 +70,7 @@ class Game extends React.Component {
         setCountdownSeconds: this.getChangeHandler('countdownSeconds'),
         setHoveredStructure: this.getChangeHandler('hoveredStructure'),
         showDefeatScreen: this.showDefeatScreen,
+        showTimesUpScreen: this.showTimesUpScreen,
         winGame: () => {
           this.setState({ isWinner: true })
         },
@@ -91,8 +97,20 @@ class Game extends React.Component {
   showDefeatScreen = ({ killerName, secondsSurvived }) => {
     this.setState({ defeated: true, killerName, secondsSurvived })
   }
+  showTimesUpScreen = ({ players, winnerId, playerId }) => {
+    this.setState({
+      timesUp: true,
+      timesUpPlayers: players,
+      timesUpWinnerId: winnerId,
+      playerId,
+    })
+  }
   render() {
-    if (this.state.connectionError && !this.state.isWinner) {
+    if (
+      this.state.connectionError &&
+      !this.state.isWinner &&
+      !this.state.timesUp
+    ) {
       return <ErrorMessage />
     }
 
@@ -120,6 +138,14 @@ class Game extends React.Component {
           <DefeatScreen
             killerName={this.state.killerName}
             secondsSurvived={this.state.secondsSurvived}
+          />
+        )}
+
+        {this.state.timesUp && (
+          <TimesUpScreen
+            players={this.state.timesUpPlayers}
+            winnerId={this.state.timesUpWinnerId}
+            playerId={this.state.playerId}
           />
         )}
 

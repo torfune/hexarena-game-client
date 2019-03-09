@@ -41,6 +41,16 @@ const Leader = styled.div`
 const Leaderboard = ({ leaders }) => {
   if (!leaders.length) return null
 
+  leaders.sort((a, b) => {
+    if (a.tilesCount > b.tilesCount) {
+      return -1
+    } else if (a.tilesCount < b.tilesCount) {
+      return 1
+    } else {
+      return 0
+    }
+  })
+
   return (
     <Container>
       <Header text="Players" iconSrc={crownImagePath} iconSize="24px" />

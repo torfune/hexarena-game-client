@@ -100,6 +100,7 @@ class Game {
       .on('finish_seconds', this.handleFinishSecondsMessage)
       .on('win', this.handleWinMessage)
       .on('action_queue', this.handleActionQueueMessage)
+      .on('times_up', this.handleTimesUpMessage)
       .on('disconnect', this.handleDisconnectMessage)
 
     this.socket.emit('start', { name, pattern })
@@ -551,6 +552,10 @@ class Game {
     this.react.showDefeatScreen({ killerName, secondsSurvived })
 
     this.defeated = true
+  }
+  handleTimesUpMessage = ({ players, winnerId }) => {
+    console.log(`Time's up!`)
+    this.react.showTimesUpScreen({ players, winnerId, playerId: this.playerId })
   }
   updatePlayerTilesCount = () => {
     let tilesCount = 0
