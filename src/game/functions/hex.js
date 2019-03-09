@@ -1,5 +1,6 @@
 const hex = hexColor => {
   if (
+    !hexColor ||
     !hexColor.includes('#') ||
     (hexColor.length !== 4 && hexColor.length !== 7)
   ) {
