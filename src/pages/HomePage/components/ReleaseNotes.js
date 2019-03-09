@@ -54,9 +54,19 @@ const EditorCredits = styled.p`
 
 const updates = [
   {
+    version: 'Alpha 1.3.1',
+    points: [
+      'Faster manual attacks.',
+      'Added capture previews.',
+      'Fixed many small bugs and glitches.',
+    ],
+    day: 7,
+    month: 3,
+  },
+  {
     version: 'Alpha 1.3.0',
     points: [
-      'Added Action stack.',
+      'Added Action queue.',
       'Slower game tempo.',
       'Auto-capture of neutral tiles with >= 5 neighbors.',
       'Smaller world size.',
