@@ -54,6 +54,10 @@ class Tile {
     this.image.highlight.alpha = 0.22
     this.image.highlight.visible = false
 
+    this.image.blackOverlay = createImage('blackOverlay')
+    this.image.blackOverlay.alpha = 0.2
+    this.image.blackOverlay.visible = false
+
     this.image.contested = createImage('contested')
     this.image.contested.visible = false
 
@@ -133,6 +137,13 @@ class Tile {
         image.scale.x = game.scale
         image.scale.y = game.scale
       }
+    }
+  }
+  updateBlackOverlay() {
+    if (this.mountain && this.owner) {
+      this.image.blackOverlay.visible = true
+    } else {
+      this.image.blackOverlay.visible = false
     }
   }
   startHover() {
