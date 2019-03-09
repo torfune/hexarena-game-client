@@ -652,18 +652,23 @@ class Game {
 
     return getTileByPixelPosition(this.tiles, pixel, this.scale)
   }
-  getTilesToCapture = tile => {
+  getTilesToCapture = (tile, playerId) => {
     let tilesToCapture = []
 
     // A : Attack hover
-    if (canAttack(tile)) {
-      tilesToCapture.push(tile)
+    if (this.playerId === playerId) {
+      if (canAttack(tile)) {
+        tilesToCapture.push(tile)
+      }
     }
 
     // B : Action
     for (let i = 0; i < this.actions.length; i++) {
       const action = this.actions[i]
-      tilesToCapture.push(action.tile)
+
+      if (action.ownerId === playerId) {
+        tilesToCapture.push(action.tile)
+      }
     }
 
     // C : Army send
@@ -715,7 +720,7 @@ class Game {
 
           if (
             !tilesToCapture.includes(neighbor) &&
-            (!neighbor.owner || neighbor.owner.id !== this.playerId)
+            (!neighbor.owner || neighbor.owner.id !== playerId)
           ) {
             tilesToCapture.push(neighbor)
           }
@@ -726,21 +731,61 @@ class Game {
     return tilesToCapture
   }
   updatePatternPreviews = () => {
-    const tile = this.hoveredTile
-
-    if (!tile) return
-
-    let pattern = null
-
-    for (let i = 0; i < this.players.length; i++) {
-      if (this.players[i].id === this.playerId) {
-        pattern = this.players[i].pattern
+    const actions = []
+    for (let i = 0; i < this.actions.length; i++) {
+      if (this.actions[i].type === 'attack') {
+        actions.push(this.actions[i])
       }
     }
 
     const oldTilesWithPatternPreview = this.tilesWithPatternPreview
+    this.tilesWithPatternPreview = []
 
-    this.tilesWithPatternPreview = this.getTilesToCapture(tile)
+    const pattern = {}
+
+    for (let i = 0; i < actions.length; i++) {
+      const tilesToCapture = this.getTilesToCapture(
+        actions[i].tile,
+        actions[i].ownerId
+      )
+
+      for (let j = 0; j < tilesToCapture.length; j++) {
+        const t = tilesToCapture[j]
+
+        if (this.tilesWithPatternPreview.includes(t)) continue
+
+        this.tilesWithPatternPreview.push(t)
+
+        for (let k = 0; k < this.players.length; k++) {
+          if (this.players[k].id === actions[i].ownerId) {
+            pattern[`${t.x}|${t.z}`] = this.players[k].pattern
+            break
+          }
+        }
+      }
+    }
+
+    if (this.hoveredTile && !this.hoveredTile.owner) {
+      const tilesToCapture = this.getTilesToCapture(
+        this.hoveredTile,
+        this.playerId
+      )
+
+      for (let i = 0; i < tilesToCapture.length; i++) {
+        const t = tilesToCapture[i]
+
+        if (this.tilesWithPatternPreview.includes(t)) continue
+
+        this.tilesWithPatternPreview.push(t)
+
+        for (let j = 0; j < this.players.length; j++) {
+          if (this.players[j].id === this.playerId) {
+            pattern[`${t.x}|${t.z}`] = this.players[j].pattern
+            break
+          }
+        }
+      }
+    }
 
     for (let i = 0; i < oldTilesWithPatternPreview.length; i++) {
       const t = oldTilesWithPatternPreview[i]
@@ -751,10 +796,10 @@ class Game {
     }
 
     for (let i = 0; i < this.tilesWithPatternPreview.length; i++) {
-      const n = this.tilesWithPatternPreview[i]
+      const t = this.tilesWithPatternPreview[i]
 
-      if (!oldTilesWithPatternPreview.includes(n)) {
-        n.addPatternPreview(pattern)
+      if (!oldTilesWithPatternPreview.includes(t)) {
+        t.addPatternPreview(pattern[`${t.x}|${t.z}`])
       }
     }
 
