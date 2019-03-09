@@ -23,6 +23,7 @@ import mountain from '../../images/mountain.png'
 import pattern from '../../images/pattern.png'
 import village from '../../images/village.png'
 import water from '../../images/water.png'
+import blackOverlay from '../../images/black-overlay.png'
 
 const loadImages = () => {
   return new Promise(resolve => {
@@ -37,6 +38,7 @@ const loadImages = () => {
       .add('army', army)
       .add('armyIcon', armyIcon)
       .add('arrow', arrow)
+      .add('blackOverlay', blackOverlay)
       .add('border', border)
       .add('camp', camp)
       .add('capital', capital)

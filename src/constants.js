@@ -20,6 +20,7 @@ export const TILE_IMAGES = [
   'border',
   'patternPreview',
   'highlight',
+  'blackOverlay',
   'pattern',
   'background',
 ].reverse()
