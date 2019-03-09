@@ -39,6 +39,7 @@ const Header = styled.div`
 
 const Icon = styled.img`
   height: 20px;
+  opacity: ${props => props.opacity};
 `
 
 const Label = styled.h4`
@@ -110,7 +111,7 @@ class ActionPreview extends React.Component {
           {renderIconByLabel(label)}
           <Label>{label}</Label>
 
-          <Icon src={clockSrc} />
+          <Icon src={clockSrc} opacity="0.6" />
           <Duration>{duration}</Duration>
         </Header>
         <Structure>{structure}</Structure>

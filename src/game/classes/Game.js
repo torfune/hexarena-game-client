@@ -58,14 +58,6 @@ class Game {
     this.scale = DEFAULT_SCALE
     this.targetScale = this.scale
 
-    this.loop = createGameLoop(this.update, this)
-    this.pixi = createPixiApp()
-
-    for (let i = 0; i < TILE_IMAGES.length; i++) {
-      this.stage[TILE_IMAGES[i]] = new PIXI.Container()
-      this.pixi.stage.addChild(this.stage[TILE_IMAGES[i]])
-    }
-
     const wheelEvent = /Firefox/i.test(navigator.userAgent)
       ? 'DOMMouseScroll'
       : 'mousewheel'
@@ -78,6 +70,16 @@ class Game {
   }
   start(rootElement, reactMethods, name, pattern) {
     if (this.isRunning) return
+
+    if (!this.pixi) {
+      this.loop = createGameLoop(this.update, this)
+      this.pixi = createPixiApp()
+
+      for (let i = 0; i < TILE_IMAGES.length; i++) {
+        this.stage[TILE_IMAGES[i]] = new PIXI.Container()
+        this.pixi.stage.addChild(this.stage[TILE_IMAGES[i]])
+      }
+    }
 
     this.react = { ...reactMethods }
 
@@ -248,7 +250,7 @@ class Game {
       },
     }
   }
-  handleMouseUp = () => {
+  handleMouseUp = event => {
     if (!this.cameraDrag || !this.isRunning) return
 
     const cursorDelta =
@@ -306,7 +308,22 @@ class Game {
       }
     }
 
-    this.socket.emit('click', `${tile.x}|${tile.z}`)
+    let button = null
+    switch (event.button) {
+      case 0:
+        button = 'left'
+        break
+
+      case 2:
+        button = 'right'
+        break
+
+      default:
+    }
+
+    if (button) {
+      this.socket.emit('click', `${tile.x}|${tile.z}|${button}`)
+    }
   }
   handleMouseMove = ({ clientX: x, clientY: y }) => {
     if (!this.isRunning) return

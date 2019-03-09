@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { useSpring, animated } from 'react-spring'
+import { animated } from 'react-spring'
 
 import Header from '../Header'
 import Action from './Action'
@@ -28,11 +28,20 @@ const Container = styled.div`
 const Content = styled.div`
   padding: 0 24px;
   height: 72px;
-  width: 256px;
   margin: 0 auto;
   display: flex;
+  width: 308px;
   align-items: center;
   position: relative;
+`
+
+const BottomText = styled.div`
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  text-align: center;
+  padding: 8px 32px;
+  background: #eee;
 `
 
 const Actions = props => {
@@ -56,15 +65,10 @@ const Actions = props => {
     setActions(newActions)
   }, [props.actions])
 
-  const bottom = useSpring({
-    bottom: props.actions.length > 0 ? '0px' : '-128px',
-    config: { tension: 400 },
-  })
-
   return (
-    <BottomWrapper style={bottom}>
+    <BottomWrapper>
       <Container>
-        <Header text="Actions" iconSrc={clockSrc} iconSize="22px" />
+        <Header text="Action queue" iconSrc={clockSrc} iconSize="22px" />
 
         <Content>
           <Slots />
@@ -78,6 +82,10 @@ const Actions = props => {
             />
           ))}
         </Content>
+
+        <BottomText>
+          Use <span>right click</span> to add Action to queue.
+        </BottomText>
       </Container>
     </BottomWrapper>
   )

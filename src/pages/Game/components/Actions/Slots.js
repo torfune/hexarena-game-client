@@ -20,7 +20,7 @@ const Ball = styled.div`
 
 const Slots = () => (
   <Container>
-    {[0, 1, 2, 3].map(i => (
+    {[0, 1, 2, 3, 4].map(i => (
       <Slot key={i}>
         <Ball />
       </Slot>
