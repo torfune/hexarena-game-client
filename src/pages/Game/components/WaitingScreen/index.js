@@ -33,7 +33,7 @@ const getWaitingMessage = (numberOfPlayers, minPlayers) => {
   const n = minPlayers - numberOfPlayers
 
   if (n <= 0 || numberOfPlayers === 0) {
-    return ''
+    return '...'
   }
 
   if (n === 1) {

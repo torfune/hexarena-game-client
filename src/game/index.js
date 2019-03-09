@@ -15,8 +15,6 @@ const startGame = async (rootElement, reactMethods, name, pattern) => {
       const gsConfig = await response.json()
 
       window.gsConfig = gsConfig
-
-      reactMethods.setMinPlayers(gsConfig.MIN_PLAYERS)
     } catch (err) {
       reactMethods.showConnectionError()
     }
@@ -24,7 +22,10 @@ const startGame = async (rootElement, reactMethods, name, pattern) => {
 
   game.start(rootElement, reactMethods, name, pattern)
 
-  // only for debug purposes
+  // Pass Gameserver constants to React layer
+  reactMethods.setMinPlayers(window.gsConfig.MIN_PLAYERS)
+
+  // Only for debug purposes
   window.game = game
 }
 
@@ -35,8 +36,8 @@ const stopGame = () => {
 const sendMessage = game.sendMessage
 const updateScreenSize = game.updateScreenSize
 
-// named export for React layer
+// Named export for React layer
 export { startGame, stopGame, sendMessage, updateScreenSize }
 
-// default export for Game layer
+// Default export for Game layer
 export default game
