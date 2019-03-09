@@ -8,12 +8,13 @@ import createImage from '../functions/createImage'
 const ACTION_RADIUS = 49
 
 class Action {
-  constructor({ tile, finishedAt, duration, type, isActive, number }) {
+  constructor({ tile, finishedAt, duration, type, isActive, number, ownerId }) {
     this.tile = tile
     this.finishedAt = finishedAt
     this.duration = duration
     this.isActive = isActive || false
     this.type = type
+    this.ownerId = ownerId
 
     const iconTexture = this.isActive
       ? getActionTexture(type)
