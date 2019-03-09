@@ -15,6 +15,8 @@ const startGame = async (rootElement, reactMethods, name, pattern) => {
       const gsConfig = await response.json()
 
       window.gsConfig = gsConfig
+
+      reactMethods.setMinPlayers(gsConfig.MIN_PLAYERS)
     } catch (err) {
       reactMethods.showConnectionError()
     }

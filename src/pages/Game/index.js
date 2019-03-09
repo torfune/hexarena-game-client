@@ -36,6 +36,7 @@ class Game extends React.Component {
     killerName: null,
     secondsSurvived: null,
     hoveredStructure: null,
+    minPlayers: null,
     waiting: true,
     tilesCount: null,
     countdownSeconds: null,
@@ -52,6 +53,7 @@ class Game extends React.Component {
       gameElement,
       {
         setPlayers: this.getChangeHandler('players'),
+        setMinPlayers: this.getChangeHandler('minPlayers'),
         setMessages: this.getChangeHandler('messages'),
         setName: this.getChangeHandler('name'),
         setTilesCount: this.getChangeHandler('tilesCount'),
@@ -124,6 +126,7 @@ class Game extends React.Component {
         {this.state.waiting && this.state.players.length > 0 && (
           <WaitingScreen
             players={this.state.players}
+            minPlayers={this.state.minPlayers}
             countdownSeconds={this.state.countdownSeconds}
             messages={this.state.messages}
             sendMessage={sendMessage}

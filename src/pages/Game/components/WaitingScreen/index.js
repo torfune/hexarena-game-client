@@ -29,8 +29,7 @@ const Row = styled.div`
 
 const playersPerRoom = 6
 
-const getWaitingMessage = numberOfPlayers => {
-  const minPlayers = 3
+const getWaitingMessage = (numberOfPlayers, minPlayers) => {
   const n = minPlayers - numberOfPlayers
 
   if (n <= 0 || numberOfPlayers === 0) {
@@ -63,7 +62,7 @@ const WaitingScreen = props => {
         <Heading>
           {props.countdownSeconds !== null
             ? `Game starts in ${props.countdownSeconds} seconds`
-            : getWaitingMessage(props.players.length)}
+            : getWaitingMessage(props.players.length, props.minPlayers)}
         </Heading>
         <Row>
           {players.slice(0, 3).map(({ name, pattern }, index) => (

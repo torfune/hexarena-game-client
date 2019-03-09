@@ -1,7 +1,7 @@
 version: 2
 jobs:
   deploy-develop:
-    working_directory: ~/hexagor-fe
+    working_directory: ~/hexarena-fe
     docker:
       - image: circleci/node:latest
     steps:
@@ -24,9 +24,9 @@ jobs:
       - run:
           name: Copy files
           command: |
-            scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null build root@eu.hexagor.io:~/hexagor/hexagor-fe
+            scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null build root@eu.hexagor.io:~/hexarena/hexarena-fe
   deploy-alpha:
-    working_directory: ~/hexagor-fe
+    working_directory: ~/hexarena-fe
     docker:
       - image: circleci/node:latest
     steps:
@@ -49,7 +49,7 @@ jobs:
       - run:
           name: Copy files
           command: |
-            scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null build root@alpha.hexagor.io:~/hexagor/hexagor-fe
+            scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null build root@alpha.hexagor.io:~/hexarena/hexarena-fe
 
 workflows:
   version: 2
