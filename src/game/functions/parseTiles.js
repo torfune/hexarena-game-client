@@ -17,9 +17,17 @@ const parseTiles = gsData => {
       hitpoints,
     ] = gsSplit
 
+    const numberX = Number(x)
+    const numberZ = Number(z)
+
+    if (isNaN(numberX) || isNaN(numberZ)) {
+      console.log(`Broken tile! ${x}|${z}`)
+      continue
+    }
+
     gsTiles.push({
-      x: Number(x),
-      z: Number(z),
+      x: numberX,
+      z: numberZ,
       water: water === 'true',
       mountain: mountain === 'true',
       forest: forest === 'true',
