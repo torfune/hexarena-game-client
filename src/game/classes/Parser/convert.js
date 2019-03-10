@@ -19,6 +19,10 @@ const convert = (value, type) => {
 
     case 'bool':
       return value === 'true' ? true : false
+
+    default:
+      console.error(`Invalid type: ${type}`)
+      return null
   }
 }
 
