@@ -1,33 +1,21 @@
 import * as PIXI from 'pixi.js'
-import io from 'socket.io-client'
-
-import Tile from './Tile'
-import Player from './Player'
-import Army from './Army'
-import Action from './Action'
+import Messenger from './Messenger'
 import createGameLoop from '../functions/createGameLoop'
 import createPixiApp from '../functions/createPixiApp'
-import getTileByXZ from '../functions/getTileByXZ'
-import getItemById from '../functions/getItemById'
 import getTileByPixelPosition from '../functions/getTileByPixelPosition'
 import getPixelPosition from '../functions/getPixelPosition'
 import pixelToAxial from '../functions/pixelToAxial'
-import parseTiles from '../functions/parseTiles'
-import parsePlayers from '../functions/parsePlayers'
-import parseAction from '../functions/parseAction'
-import parseArmy from '../functions/parseArmy'
 import roundToDecimals from '../functions/roundToDecimals'
 import getDebugCommand from '../functions/getDebugCommand'
 import getActionPreview from '../functions/getActionPreview'
 import canAttack from '../functions/canAttack'
-import { GAMESERVER_URL } from '../../config'
 import {
   ZOOM_SPEED,
   MAX_SCALE,
   MIN_SCALE,
   DEFAULT_SCALE,
   TILE_IMAGES,
-} from '../../constants'
+} from '../constants'
 
 class Game {
   constructor() {
@@ -85,25 +73,8 @@ class Game {
 
     rootElement.appendChild(this.pixi.view)
 
-    this.socket = io(GAMESERVER_URL, { reconnection: false })
-      .on('player', this.handlePlayerMessage)
-      .on('tile', this.handleTileMessage)
-      .on('action', this.handleActionMessage)
-      .on('id', this.handleIdMessage)
-      .on('messages', this.handleMessagesMessage)
-      .on('time', this.handleTimeMessage)
-      .on('wood', this.handleWoodMessage)
-      .on('army', this.handleArmyMessage)
-      .on('connect_error', this.handleErrorMessage)
-      .on('defeat', this.handleDefeatMessage)
-      .on('countdown', this.handleCountdownMessage)
-      .on('finish_seconds', this.handleFinishSecondsMessage)
-      .on('win', this.handleWinMessage)
-      .on('action_queue', this.handleActionQueueMessage)
-      .on('times_up', this.handleTimesUpMessage)
-      .on('disconnect', this.handleDisconnectMessage)
-
-    this.socket.emit('start', { name, pattern })
+    this.messenger = new Messenger()
+    this.messenger.emit('start', { name, pattern })
 
     this.isRunning = true
   }
@@ -114,7 +85,7 @@ class Game {
       this.stage[TILE_IMAGES[i]].removeChildren()
     }
 
-    this.socket.close()
+    this.messenger.close()
 
     this.animations = []
     this.armies = []
@@ -218,7 +189,7 @@ class Game {
     }
   }
   sendMessage = message => {
-    this.socket.emit('message', message)
+    this.messenger.emit('message', message)
   }
   updateScreenSize = () => {
     this.pixi.renderer.resize(window.innerWidth, window.innerHeight)
@@ -227,7 +198,7 @@ class Game {
     if (!this.isRunning) return
 
     if (key === 'Escape') {
-      this.socket.emit('cancel')
+      this.messenger.emit('cancel')
       return
     }
 
@@ -238,7 +209,7 @@ class Game {
 
     const axial = { x: tile.x, z: tile.z }
 
-    this.socket.emit('debug', { command, axial })
+    this.messenger.emit('debug', { command, axial })
   }
   handleMouseDown = ({ clientX: x, clientY: y }) => {
     if (!this.isRunning) return
@@ -278,7 +249,7 @@ class Game {
 
       if (index !== null) {
         const { x, z } = this.selectedArmyTile
-        this.socket.emit('send_army', `${x}|${z}|${index}`)
+        this.messenger.emit('send_army', `${x}|${z}|${index}`)
       }
 
       this.selectedArmyTile.unselectArmy()
@@ -323,7 +294,7 @@ class Game {
     }
 
     if (button) {
-      this.socket.emit('click', `${tile.x}|${tile.z}|${button}`)
+      this.messenger.emit('click', `${tile.x}|${tile.z}|${button}`)
     }
   }
   handleMouseMove = ({ clientX: x, clientY: y }) => {
@@ -343,223 +314,11 @@ class Game {
       this.targetScale = roundedScale
     }
   }
-  handleWinMessage = () => {
-    this.react.winGame()
-  }
-  handleMessagesMessage = messages => {
-    this.react.setMessages(messages)
-  }
-  handleCountdownMessage = seconds => {
-    this.react.setCountdownSeconds(seconds)
-  }
-  handleErrorMessage = () => {
-    this.react.showConnectionError()
-    this.stop()
-  }
-  handleActionQueueMessage = gsData => {
-    const newActionQueue = gsData
-      ? gsData.split('><').map(data => parseAction(data))
-      : []
-
-    this.react.setActionQueue(newActionQueue)
-
-    for (let i = 0; i < this.actionQueue.length; i++) {
-      const gsAction = this.actionQueue[i]
-
-      if (
-        !getItemById(newActionQueue, gsAction.id) &&
-        gsAction.tile.action &&
-        !gsAction.tile.action.isActive
-      ) {
-        gsAction.tile.action.destroy()
-      }
-    }
-
-    this.actionQueue = newActionQueue
-
-    for (let i = 0; i < this.actionQueue.length; i++) {
-      const gsAction = this.actionQueue[i]
-
-      if (!gsAction.tile.action) {
-        new Action({ ...gsAction, isActive: false, number: i })
-      } else {
-        gsAction.tile.action.setNumber(i)
-      }
-    }
-  }
-  handlePlayerMessage = gsData => {
-    const gsPlayers = parsePlayers(gsData)
-
-    for (let i = 0; i < gsPlayers.length; i++) {
-      const gsPlayer = gsPlayers[i]
-      const player = getItemById(this.players, gsPlayer.id)
-
-      if (player) {
-        player.tilesCount = gsPlayer.tilesCount
-      } else {
-        this.players.push(new Player({ ...gsPlayer }))
-      }
-
-      if (gsPlayer.id === this.playerId) {
-        this.react.setName(gsPlayer.name)
-      }
-    }
-
-    for (let i = this.players.length - 1; i >= 0; i--) {
-      if (!getItemById(gsPlayers, this.players[i].id)) {
-        this.players.splice(i, 1)
-      }
-    }
-
-    this.react.setPlayers(this.players)
-  }
-  handleTileMessage = gsData => {
-    const gsTiles = parseTiles(gsData)
-
-    for (let i = 0; i < gsTiles.length; i++) {
-      const gsTile = gsTiles[i]
-      const tile = getTileByXZ(gsTile.x, gsTile.z)
-      const gsOwner = gsTile.ownerId
-        ? getItemById(this.players, gsTile.ownerId)
-        : null
-
-      if (tile) {
-        if (gsOwner !== tile.owner) {
-          tile.setOwner(gsOwner)
-        }
-
-        const structures = [
-          ['capital', 'addCapital', 'removeCapital'],
-          ['castle', 'addCastle', 'removeCastle'],
-          ['forest', 'addForest', 'removeForest'],
-          ['village', 'addVillage', 'removeVillage'],
-          ['camp', 'addCamp', 'removeCamp'],
-        ]
-
-        // Hitpoints
-        if (gsTile.hitpoints && !tile.hitpoints) {
-          tile.addHitpoints(gsTile.hitpoints)
-        } else if (gsTile.hitpoints === null && tile.hitpoints) {
-          tile.removeHitpoints()
-        } else if (gsTile.hitpoints !== tile.hitpoints) {
-          tile.updateHitpoints(gsTile.hitpoints)
-        }
-
-        for (let j = 0; j < structures.length; j++) {
-          const [structure, addMethod, removeMethod] = structures[j]
-
-          if (gsTile[structure] && !tile[structure]) {
-            tile[addMethod]()
-          } else if (!gsTile[structure] && tile[structure]) {
-            tile[removeMethod]()
-          }
-        }
-      } else {
-        this.tiles.push(new Tile({ ...gsTile, owner: gsOwner }))
-
-        if (this.tiles.length === 1) {
-          this.handleFirstTileArrival()
-        }
-      }
-    }
-
-    for (let i = 0; i < this.tiles.length; i++) {
-      this.tiles[i].updateBlackOverlay()
-    }
-
-    this.updatePlayerTilesCount()
-    this.updateNeighbors()
-    this.updateBorders()
-    this.updateActionPreview(this.hoveredTile)
-  }
-  handleFinishSecondsMessage = seconds => {
-    this.react.setFinishSeconds(seconds)
-  }
-  handleActionMessage = gsData => {
-    const gsAction = parseAction(gsData)
-
-    if (!gsAction.tile) return
-
-    if (!gsAction.tile.action) {
-      new Action({ ...gsAction, isActive: true })
-    } else if (gsAction.status === 'done') {
-      gsAction.tile.action.destroy()
-    } else if (!gsAction.tile.action.isActive) {
-      gsAction.tile.action.activate(gsAction.finishedAt, gsAction.duration)
-    }
-
-    this.updatePatternPreviews()
-  }
-  handleArmyMessage = gsData => {
-    const gsArmy = parseArmy(gsData)
-    const tile = getTileByXZ(gsArmy.x, gsArmy.z)
-    const army = getItemById(this.armies, gsArmy.id)
-
-    if (!tile) {
-      if (army) {
-        army.destroy()
-      }
-
-      return
-    }
-
-    if (!army && !gsArmy.isDestroyed) {
-      const army = new Army({ ...gsArmy, tile })
-      this.armies.push(army)
-    } else if (army) {
-      if (gsArmy.isDestroyed) {
-        army.destroy()
-      }
-
-      army.moveOn(tile)
-    }
-  }
-  handleIdMessage = id => {
-    if (this.playerId) return
-
-    this.playerId = id
-    this.startedAt = Date.now()
-  }
-  handleTimeMessage = serverTime => {
-    const browserTime = Date.now()
-    this.timeDiff = serverTime - browserTime
-
-    if (this.timeDiff < 0) {
-      this.timeDiff = 0
-    }
-
-    console.log(`Browser time difference: ${this.timeDiff}`)
-  }
-  handleWoodMessage = wood => {
-    this.wood = Number(wood)
-
-    this.react.setWood(this.wood)
-  }
-  handleDisconnectMessage = () => {
-    if (!this.defeated) {
-      this.react.showConnectionError()
-    }
-
-    this.stop()
-    console.log('Disconnected.')
-  }
   handleFirstTileArrival = () => {
     const firstTile = this.tiles[0]
 
     this.react.showGame()
     this.setCameraToAxialPosition(firstTile)
-  }
-  handleDefeatMessage = killerName => {
-    const msSurvived = Date.now() - this.startedAt
-    const secondsSurvived = Math.floor(msSurvived / 1000)
-
-    this.react.showDefeatScreen({ killerName, secondsSurvived })
-
-    this.defeated = true
-  }
-  handleTimesUpMessage = ({ players, winnerId }) => {
-    console.log(`Time's up!`)
-    this.react.showTimesUpScreen({ players, winnerId, playerId: this.playerId })
   }
   updatePlayerTilesCount = () => {
     let tilesCount = 0

@@ -14,10 +14,10 @@
     "styled-components": "^4.1.3"
   },
   "scripts": {
-    "dev": "REACT_APP_GSURL=http://localhost:8000 react-scripts start",
+    "dev": "REACT_APP_GAMESERVER_URL=http://localhost:8000 react-scripts start",
     "start": "react-scripts start",
-    "build": "react-scripts build",
-    "build-alpha": "REACT_APP_GSURL=http://alpha.hexagor.io:8000 react-scripts build"
+    "build": "REACT_APP_GAMESERVER_URL=http://dev.hexagor.io:8000 react-scripts build",
+    "build-alpha": "REACT_APP_GAMESERVER_URL=http://alpha.hexagor.io:8000 react-scripts build"
   },
   "browserslist": [
     ">0.2%",

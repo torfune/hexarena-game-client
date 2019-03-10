@@ -1,5 +1,4 @@
 import * as PIXI from 'pixi.js'
-
 import game from '../../game'
 import getPixelPosition from '../functions/getPixelPosition'
 import hex from '../functions/hex'

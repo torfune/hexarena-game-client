@@ -13,7 +13,7 @@ import {
   ARMY_ICON_OFFSET_Y,
   HITPOINTS_OFFSET_Y,
   HEART_OFFSET_X,
-} from '../../constants'
+} from '../constants'
 
 class Tile {
   constructor({
@@ -22,7 +22,6 @@ class Tile {
     owner,
     mountain,
     forest,
-    water,
     capital,
     castle,
     village,
@@ -32,7 +31,6 @@ class Tile {
     this.x = x
     this.z = z
     this.owner = owner
-    this.water = water
     this.castle = castle
     this.mountain = mountain
     this.forest = forest
@@ -96,10 +94,6 @@ class Tile {
 
     if (camp) {
       this.image.camp = createImage('camp')
-    }
-
-    if (water) {
-      this.image.water = createImage('water')
     }
 
     if (mountain) {
