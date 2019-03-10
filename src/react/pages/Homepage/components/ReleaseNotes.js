@@ -54,13 +54,22 @@ const EditorCredits = styled.p`
 
 const updates = [
   {
+    version: 'Alpha 1.3.2',
+    points: [
+      'Leaderboard is now sorted correctly.',
+      'Fixed some small bugs and glitches.',
+    ],
+    day: 10,
+    month: 3,
+  },
+  {
     version: 'Alpha 1.3.1',
     points: [
       'Faster manual attacks.',
       'Added capture previews.',
       'Fixed many small bugs and glitches.',
     ],
-    day: 7,
+    day: 9,
     month: 3,
   },
   {
