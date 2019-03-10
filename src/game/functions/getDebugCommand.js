@@ -12,6 +12,7 @@ const getDebugCommand = key => {
     ['e', 'add_castle'],
     ['r', 'dummy_capture'],
     ['t', 'add_village'],
+    ['c', 'clear'],
   ]
 
   for (const command of debugCommands) {

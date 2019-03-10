@@ -54,7 +54,7 @@ class Game {
     document.addEventListener('mousemove', this.handleMouseMove)
     document.addEventListener('mousedown', this.handleMouseDown)
     document.addEventListener('mouseup', this.handleMouseUp)
-    document.addEventListener('keyup', this.handleKeyUp)
+    document.addEventListener('keydown', this.handleKeyDown)
   }
   start(rootElement, reactMethods, name, pattern) {
     if (this.isRunning) return
@@ -194,7 +194,7 @@ class Game {
   updateScreenSize = () => {
     this.pixi.renderer.resize(window.innerWidth, window.innerHeight)
   }
-  handleKeyUp = ({ key }) => {
+  handleKeyDown = ({ key }) => {
     if (!this.isRunning) return
 
     if (key === 'Escape') {
