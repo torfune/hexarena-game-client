@@ -1,5 +1,4 @@
 import * as PIXI from 'pixi.js'
-
 import game from '../../game'
 
 const createImage = (imageName, textureName) => {

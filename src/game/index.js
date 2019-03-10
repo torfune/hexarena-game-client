@@ -1,6 +1,7 @@
 import Game from './classes/Game'
 import loadImages from './functions/loadImages'
-import { GAMESERVER_URL } from '../config'
+
+const GAMESERVER_URL = process.env.REACT_APP_GAMESERVER_URL
 
 const game = new Game()
 let imagesLoaded = false
@@ -17,12 +18,14 @@ const startGame = async (rootElement, reactMethods, name, pattern) => {
       window.gsConfig = gsConfig
     } catch (err) {
       reactMethods.showConnectionError()
+      console.error(`Can't connect to Gameserver: ${GAMESERVER_URL}`)
+      return
     }
   }
 
   game.start(rootElement, reactMethods, name, pattern)
 
-  // Pass Gameserver constants to React layer
+  // Pass Gameserver constants to React layers
   reactMethods.setMinPlayers(window.gsConfig.MIN_PLAYERS)
 
   // Only for debug purposes

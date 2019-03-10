@@ -1,4 +1,3 @@
-// DONT CHANGE THIS WITHOUT CHANGING ON GAMESERVER TOO!
 const getAttackDuration = (playerId, tile) => {
   const {
     DEFAULT_ATTACK_POWER,
