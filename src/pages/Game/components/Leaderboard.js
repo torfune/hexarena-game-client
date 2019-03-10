@@ -9,7 +9,7 @@ const Container = styled.div`
   bottom: 0;
   right: 0;
   min-height: 256px;
-  width: 260px;
+  min-width: 256px;
   position: absolute;
   user-select: none;
   border-top-left-radius: 8px;
@@ -24,18 +24,38 @@ const Content = styled.div`
 
 const Leader = styled.div`
   display: flex;
-  justify-content: space-between;
-  padding-right: 8px;
+`
 
-  p {
-    color: #222;
-    margin: 8px 0;
-    font-weight: 500;
+const Order = styled.p`
+  color: #222;
+  font-weight: 500;
+  width: 14px;
+  margin: 8px 0;
+  padding-right: 18px;
+`
+const Pattern = styled.div`
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: ${({ pattern }) => pattern};
+  align-self: center;
+  margin: 8px;
+  position: relative;
+  top: -1px;
+`
 
-    span:first-child {
-      padding-right: 8px;
-    }
-  }
+const Name = styled.p`
+  color: #222;
+  font-weight: 500;
+  margin: 8px 0;
+  padding-right: 18px;
+`
+
+const TilesCount = styled.p`
+  color: #222;
+  font-weight: 500;
+  width: 18px;
+  margin: 8px 0 8px auto;
 `
 
 const Leaderboard = ({ leaders }) => {
@@ -57,11 +77,10 @@ const Leaderboard = ({ leaders }) => {
       <Content>
         {leaders.map((l, i) => (
           <Leader key={i}>
-            <p>
-              <span>{i + 1}.</span>
-              <span>{l.name}</span>
-            </p>
-            <p>{l.tilesCount}</p>
+            <Order>{i + 1}.</Order>
+            <Pattern pattern={l.pattern} />
+            <Name>{l.name}</Name>
+            <TilesCount>{l.tilesCount}</TilesCount>
           </Leader>
         ))}
       </Content>
