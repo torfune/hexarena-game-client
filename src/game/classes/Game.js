@@ -139,14 +139,14 @@ class Game {
       this.pixi.stage.x = this.camera.x
       this.pixi.stage.y = this.camera.y
     } else if (this.cameraMove.x !== 0 && this.cameraMove.y !== 0) {
-      this.camera.x += this.cameraMove.x * (CAMERA_SPEED * (2 / 3))
-      this.camera.y += this.cameraMove.y * (CAMERA_SPEED * (2 / 3))
+      this.camera.x += this.cameraMove.x * (CAMERA_SPEED * (2 / 3) * this.scale)
+      this.camera.y += this.cameraMove.y * (CAMERA_SPEED * (2 / 3) * this.scale)
 
       this.pixi.stage.x = this.camera.x
       this.pixi.stage.y = this.camera.y
     } else if (this.cameraMove.x !== 0 || this.cameraMove.y !== 0) {
-      this.camera.x += this.cameraMove.x * CAMERA_SPEED
-      this.camera.y += this.cameraMove.y * CAMERA_SPEED
+      this.camera.x += this.cameraMove.x * CAMERA_SPEED * this.scale
+      this.camera.y += this.cameraMove.y * CAMERA_SPEED * this.scale
 
       this.pixi.stage.x = this.camera.x
       this.pixi.stage.y = this.camera.y
@@ -367,10 +367,6 @@ class Game {
     const actionPreview = getActionPreview(tile)
 
     this.react.setActionPreview(actionPreview)
-
-    // if (actionPreview) {
-    //   console.log(actionPreview.notEoughWood)
-    // }
 
     return !!actionPreview
   }
