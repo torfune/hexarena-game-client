@@ -34,6 +34,9 @@ export const NEIGHBOR_DIRECTIONS = [
   { x: 0, z: -1 },
 ]
 
+// CAMERA
+export const CAMERA_SPEED = 14
+
 // IMAGE OFFSETS
 export const ARMY_ICON_OFFSET_Y = 180
 export const HEART_OFFSET_X = 57

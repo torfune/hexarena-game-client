@@ -34,11 +34,13 @@ const getActionPreview = tile => {
   }
 
   // Build
-  if (isOwnedByPlayer && game.wood >= BUILD_COST && tile.isEmpty()) {
+  if (isOwnedByPlayer && tile.isEmpty()) {
     return {
       label: 'Fortify',
       structure,
       duration: `${window.gsConfig.BUILD_DURATION / 1000}s`,
+      notEnoughWood: game.wood < BUILD_COST,
+      woodCost: BUILD_COST,
     }
   }
 
@@ -52,16 +54,13 @@ const getActionPreview = tile => {
   }
 
   // Recruit
-  if (
-    isOwnedByPlayer &&
-    game.wood >= RECRUIT_COST &&
-    (tile.castle || tile.capital) &&
-    !tile.army
-  ) {
+  if (isOwnedByPlayer && (tile.castle || tile.capital) && !tile.army) {
     return {
       label: 'Recruit',
       structure,
       duration: `${window.gsConfig.RECRUIT_DURATION / 1000}s`,
+      notEnoughWood: game.wood < RECRUIT_COST,
+      woodCost: RECRUIT_COST,
     }
   }
 }

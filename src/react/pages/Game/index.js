@@ -125,7 +125,14 @@ class Game extends React.Component {
 
         <Leaderboard leaders={this.state.players} />
         <PlayerInfo name={this.state.name} tilesCount={this.state.tilesCount} />
-        <Resources wood={this.state.wood} />
+        <Resources
+          wood={this.state.wood}
+          notEnoughWood={
+            this.state.actionPreview
+              ? this.state.actionPreview.notEnoughWood
+              : false
+          }
+        />
         <ActionPreview actionPreview={this.state.actionPreview} />
         <NamePreview name={this.state.namePreview} />
         <Actions actions={this.state.actionQueue} />

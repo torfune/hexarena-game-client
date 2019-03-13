@@ -9,6 +9,7 @@ const Container = styled.div`
   background: rgba(255, 255, 255, 0.92);
   border-bottom-right-radius: 12px;
   border: 1px solid #ddd;
+  border-left: none;
   border-top: none;
   position: absolute;
   top: 0;
@@ -33,7 +34,7 @@ const Slot = styled.img`
   opacity: ${props => (!props.isFilled ? '0.4' : null)};
 `
 
-const WoodSection = ({ wood }) => {
+const WoodSection = ({ wood, notEnoughWood }) => {
   if (wood === null) return null
 
   const woodIcons = []
@@ -43,7 +44,12 @@ const WoodSection = ({ wood }) => {
 
   return (
     <Container>
-      <Header text="Wood" iconSrc={resourcesImagePath} iconSize="22px" />
+      <Header
+        text="Wood"
+        iconSrc={resourcesImagePath}
+        iconSize="22px"
+        red={notEnoughWood}
+      />
       <Content>
         <Slots>
           {woodIcons.map((isFilled, index) => (

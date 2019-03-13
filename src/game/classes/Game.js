@@ -15,6 +15,7 @@ import {
   MIN_SCALE,
   DEFAULT_SCALE,
   TILE_IMAGES,
+  CAMERA_SPEED,
 } from '../constants'
 
 class Game {
@@ -24,6 +25,7 @@ class Game {
     this.actions = []
     this.actionQueue = []
     this.camera = { x: null, y: null }
+    this.cameraMove = { x: 0, y: 0 }
     this.cameraDrag = null
     this.cursor = { x: null, y: null }
     this.lastMouseMove = null
@@ -38,10 +40,16 @@ class Game {
     this.stage = {}
     this.tiles = []
     this.wood = null
-    this.isRunning = false
     this.hoveredTile = null
+    this.isRunning = false
     this.defeated = false
     this.tilesWithPatternPreview = []
+    this.keyDown = {
+      a: false,
+      w: false,
+      d: false,
+      s: false,
+    }
 
     this.scale = DEFAULT_SCALE
     this.targetScale = this.scale
@@ -55,6 +63,7 @@ class Game {
     document.addEventListener('mousedown', this.handleMouseDown)
     document.addEventListener('mouseup', this.handleMouseUp)
     document.addEventListener('keydown', this.handleKeyDown)
+    document.addEventListener('keyup', this.handleKeyUp)
   }
   start(rootElement, reactMethods, name, pattern) {
     if (this.isRunning) return
@@ -129,6 +138,18 @@ class Game {
 
       this.pixi.stage.x = this.camera.x
       this.pixi.stage.y = this.camera.y
+    } else if (this.cameraMove.x !== 0 && this.cameraMove.y !== 0) {
+      this.camera.x += this.cameraMove.x * (CAMERA_SPEED * (2 / 3))
+      this.camera.y += this.cameraMove.y * (CAMERA_SPEED * (2 / 3))
+
+      this.pixi.stage.x = this.camera.x
+      this.pixi.stage.y = this.camera.y
+    } else if (this.cameraMove.x !== 0 || this.cameraMove.y !== 0) {
+      this.camera.x += this.cameraMove.x * CAMERA_SPEED
+      this.camera.y += this.cameraMove.y * CAMERA_SPEED
+
+      this.pixi.stage.x = this.camera.x
+      this.pixi.stage.y = this.camera.y
     }
 
     // update zoom
@@ -197,6 +218,9 @@ class Game {
   handleKeyDown = ({ key }) => {
     if (!this.isRunning) return
 
+    this.keyDown[key] = true
+    this.updateCameraMove()
+
     if (key === 'Escape') {
       this.messenger.emit('cancel')
       return
@@ -210,6 +234,12 @@ class Game {
     const axial = { x: tile.x, z: tile.z }
 
     this.messenger.emit('debug', { command, axial })
+  }
+  handleKeyUp = ({ key }) => {
+    if (!this.isRunning) return
+
+    this.keyDown[key] = false
+    this.updateCameraMove()
   }
   handleMouseDown = ({ clientX: x, clientY: y }) => {
     if (!this.isRunning) return
@@ -337,6 +367,10 @@ class Game {
     const actionPreview = getActionPreview(tile)
 
     this.react.setActionPreview(actionPreview)
+
+    // if (actionPreview) {
+    //   console.log(actionPreview.notEoughWood)
+    // }
 
     return !!actionPreview
   }
@@ -583,6 +617,25 @@ class Game {
 
     this.pixi.stage.x = this.camera.x
     this.pixi.stage.y = this.camera.y
+  }
+  updateCameraMove = () => {
+    this.cameraMove = { x: 0, y: 0 }
+
+    if (this.keyDown['d']) {
+      this.cameraMove.x--
+    }
+
+    if (this.keyDown['a']) {
+      this.cameraMove.x++
+    }
+
+    if (this.keyDown['s']) {
+      this.cameraMove.y--
+    }
+
+    if (this.keyDown['w']) {
+      this.cameraMove.y++
+    }
   }
 }
 
