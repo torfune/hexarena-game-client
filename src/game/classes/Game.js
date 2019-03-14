@@ -7,7 +7,7 @@ import getPixelPosition from '../functions/getPixelPosition'
 import pixelToAxial from '../functions/pixelToAxial'
 import roundToDecimals from '../functions/roundToDecimals'
 import getDebugCommand from '../functions/getDebugCommand'
-import getActionPreview from '../functions/getActionPreview'
+import getHoveredTileInfo from '../functions/getHoveredTileInfo'
 import canAttack from '../functions/canAttack'
 import {
   ZOOM_SPEED,
@@ -370,12 +370,12 @@ class Game {
 
     this.react.setTilesCount(tilesCount)
   }
-  updateActionPreview = tile => {
-    const actionPreview = getActionPreview(tile)
+  updateHoveredTileInfo = tile => {
+    const hoveredTileInfo = getHoveredTileInfo(tile)
 
-    this.react.setActionPreview(actionPreview)
+    this.react.setHoveredTileInfo(hoveredTileInfo)
 
-    return !!actionPreview
+    return !!hoveredTileInfo
   }
   updateNamePreview = tile => {
     if (!tile || !tile.owner || tile.owner.id === this.playerId) {
@@ -425,7 +425,7 @@ class Game {
         }
       }
     } else {
-      const canPerformAction = this.updateActionPreview(this.hoveredTile)
+      const canPerformAction = this.updateHoveredTileInfo(this.hoveredTile)
       const hasArmy =
         this.hoveredTile.army &&
         this.hoveredTile.owner &&
