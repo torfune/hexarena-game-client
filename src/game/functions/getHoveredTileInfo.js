@@ -1,7 +1,7 @@
-import game from '../../game'
+import game from '..'
 import getAttackDuration from './getAttackDuration'
 
-const getActionPreview = tile => {
+const getHoveredTileInfo = tile => {
   const { BUILD_COST, RECRUIT_COST } = window.gsConfig
 
   if (!tile) return null
@@ -63,6 +63,19 @@ const getActionPreview = tile => {
       woodCost: RECRUIT_COST,
     }
   }
+
+  // Structure
+  if (!isNeighborToPlayer || isOwnedByPlayer) {
+    if (
+      structure !== 'Plains' &&
+      structure !== 'Castle' &&
+      structure !== 'Capital'
+    ) {
+      return {
+        structure,
+      }
+    }
+  }
 }
 
-export default getActionPreview
+export default getHoveredTileInfo

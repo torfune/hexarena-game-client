@@ -13,7 +13,7 @@ import Leaderboard from './components/Leaderboard'
 import FinishCountdown from './components/FinishCountdown'
 import DefeatScreen from './components/DefeatScreen'
 import PlayerInfo from './components/PlayerInfo'
-import ActionPreview from './components/ActionPreview'
+import HoveredTileInfo from './components/HoveredTileInfo/'
 import NamePreview from './components/NamePreview'
 import StructureName from './components/StructureName'
 import ErrorMessage from './components/ErrorMessage'
@@ -39,10 +39,11 @@ class Game extends React.Component {
     defeated: false,
     isWinner: false,
     timesUp: false,
-    actionPreview: null,
+    waiting: true,
     countdownSeconds: null,
     finishSeconds: null,
     hoveredStructure: null,
+    hoveredTileInfo: null,
     killerName: null,
     minPlayers: null,
     namePreview: null,
@@ -51,7 +52,6 @@ class Game extends React.Component {
     tilesCount: null,
     timesUpPlayers: null,
     timesUpWinnerId: null,
-    waiting: true,
     wood: null,
   }
   componentDidMount = async () => {
@@ -61,11 +61,11 @@ class Game extends React.Component {
     await startGame(
       gameElement,
       {
-        setActionPreview: this.getChangeHandler('actionPreview'),
         setActionQueue: this.getChangeHandler('actionQueue'),
         setCountdownSeconds: this.getChangeHandler('countdownSeconds'),
         setFinishSeconds: this.getChangeHandler('finishSeconds'),
         setHoveredStructure: this.getChangeHandler('hoveredStructure'),
+        setHoveredTileInfo: this.getChangeHandler('hoveredTileInfo'),
         setMessages: this.getChangeHandler('messages'),
         setMinPlayers: this.getChangeHandler('minPlayers'),
         setNamePreview: this.getChangeHandler('namePreview'),
@@ -128,12 +128,12 @@ class Game extends React.Component {
         <Resources
           wood={this.state.wood}
           notEnoughWood={
-            this.state.actionPreview
-              ? this.state.actionPreview.notEnoughWood
+            this.state.hoveredTileInfo
+              ? this.state.hoveredTileInfo.notEnoughWood
               : false
           }
         />
-        <ActionPreview actionPreview={this.state.actionPreview} />
+        <HoveredTileInfo hoveredTileInfo={this.state.hoveredTileInfo} />
         <NamePreview name={this.state.namePreview} />
         <Actions actions={this.state.actionQueue} />
         <FinishCountdown finishSeconds={this.state.finishSeconds} />
