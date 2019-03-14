@@ -1,10 +1,20 @@
 import React from 'react'
 import styled from 'styled-components'
 
-const Container = styled.p`
+const Container = styled.div`
+  margin-top: 32px;
+`
+const CountdownTime = styled.p`
   color: #fff;
   font-size: 40px;
   font-weight: 700;
+`
+
+const OpeningTime = styled.p`
+  font-size: 19px;
+  color: #ccc; 
+  font-weight: 200; 
+  margin-top: 18px;
 `
 
 const Countdown = ({ time }) => {
@@ -19,10 +29,15 @@ const Countdown = ({ time }) => {
   minutes = String(minutes)
   hours = String(hours)
 
+  const openingDate = new Date(new Date().getTime() + time).toLocaleString(navigator.language)
+
   return (
     <Container>
+      <CountdownTime>
       {days}:{hours.padStart(2, '0')}:{minutes.padStart(2, '0')}:
       {seconds.padStart(2, '0')}
+      </CountdownTime>
+      <OpeningTime>{openingDate}</OpeningTime>      
     </Container>
   )
 }
