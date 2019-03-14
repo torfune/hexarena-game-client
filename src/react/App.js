@@ -15,6 +15,7 @@ export const GlobalStyle = createGlobalStyle`
     outline: none;
     margin: 0;
     box-sizing: border-box;
+    user-select: none;
   }
   
   html {

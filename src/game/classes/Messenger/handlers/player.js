@@ -8,16 +8,19 @@ const handlePlayer = gsData => {
 
   for (let i = 0; i < gsPlayers.length; i++) {
     const gsPlayer = gsPlayers[i]
-    const player = getItemById(game.players, gsPlayer.id)
+    let player = getItemById(game.players, gsPlayer.id)
 
     if (player) {
       player.tilesCount = gsPlayer.tilesCount
+      player.pattern = gsPlayer.pattern
     } else {
-      game.players.push(new Player({ ...gsPlayer }))
+      player = new Player({ ...gsPlayer })
+      game.players.push(player)
     }
 
-    if (gsPlayer.id === game.playerId) {
-      game.react.setName(gsPlayer.name)
+    if (player.id === game.playerId) {
+      game.player = player
+      game.react.setPlayer(player)
     }
   }
 

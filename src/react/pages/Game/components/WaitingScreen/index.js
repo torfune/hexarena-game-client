@@ -65,13 +65,27 @@ const WaitingScreen = props => {
             : getWaitingMessage(props.players.length, props.minPlayers)}
         </Heading>
         <Row>
-          {players.slice(0, 3).map(({ name, pattern }, index) => (
-            <Player key={index} name={name} pattern={pattern} />
+          {players.slice(0, 3).map(({ id, name, pattern }, index) => (
+            <Player
+              key={index}
+              name={name}
+              pattern={pattern}
+              isThisPlayer={id === props.player.id}
+              players={props.players}
+              onPatternSelect={props.onPatternSelect}
+            />
           ))}
         </Row>
         <Row>
-          {players.slice(3, 6).map(({ name, pattern }, index) => (
-            <Player key={index} name={name} pattern={pattern} />
+          {players.slice(3, 6).map(({ id, name, pattern }, index) => (
+            <Player
+              key={index}
+              name={name}
+              pattern={pattern}
+              isThisPlayer={id === props.player.id}
+              players={props.players}
+              onPatternSelect={props.onPatternSelect}
+            />
           ))}
         </Row>
       </div>

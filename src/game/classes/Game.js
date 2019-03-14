@@ -31,6 +31,7 @@ class Game {
     this.lastMouseMove = null
     this.loop = null
     this.pixi = null
+    this.player = null
     this.playerId = null
     this.players = []
     this.react = null
@@ -214,6 +215,9 @@ class Game {
   }
   updateScreenSize = () => {
     this.pixi.renderer.resize(window.innerWidth, window.innerHeight)
+  }
+  selectPattern = pattern => {
+    this.messenger.emit('select_pattern', pattern)
   }
   handleKeyDown = ({ key }) => {
     if (!this.isRunning) return

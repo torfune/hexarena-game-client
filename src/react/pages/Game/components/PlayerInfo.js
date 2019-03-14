@@ -30,15 +30,15 @@ const Content = styled.div`
   }
 `
 
-const PlayerInfo = ({ name, tilesCount }) => {
-  if (!name) return null
+const PlayerInfo = ({ player, tilesCount }) => {
+  if (!player) return null
 
   return (
     <Container>
       <Header text="Your Empire" iconSrc={hexagonImagePath} iconSize="20px" />
       <Content>
         <Label>Name</Label>
-        <p>{name}</p>
+        <p>{player.name}</p>
         <Label>Population</Label>
         <p>{tilesCount}</p>
       </Content>

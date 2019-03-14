@@ -6,6 +6,7 @@ import {
   stopGame,
   sendMessage,
   updateScreenSize,
+  selectPattern,
 } from '../../../game'
 
 import Leaderboard from './components/Leaderboard'
@@ -31,49 +32,47 @@ const PageWrapper = styled.div`
 
 class Game extends React.Component {
   state = {
-    wood: null,
-    name: null,
-    players: [],
+    actionQueue: [],
     messages: [],
+    players: [],
     connectionError: false,
-    actionPreview: null,
-    namePreview: null,
     defeated: false,
-    killerName: null,
-    secondsSurvived: null,
-    hoveredStructure: null,
-    minPlayers: null,
-    waiting: true,
-    tilesCount: null,
+    isWinner: false,
+    timesUp: false,
+    actionPreview: null,
     countdownSeconds: null,
     finishSeconds: null,
-    isWinner: false,
-    playerId: null,
-    timesUp: false,
-    timesUpWinnerId: null,
+    hoveredStructure: null,
+    killerName: null,
+    minPlayers: null,
+    namePreview: null,
+    player: null,
+    secondsSurvived: null,
+    tilesCount: null,
     timesUpPlayers: null,
-    actionQueue: [],
+    timesUpWinnerId: null,
+    waiting: true,
+    wood: null,
   }
   componentDidMount = async () => {
     const gameElement = document.getElementById('game')
     const name = window.localStorage.getItem('name')
-    const pattern = window.localStorage.getItem('pattern')
 
     await startGame(
       gameElement,
       {
-        setPlayers: this.getChangeHandler('players'),
-        setMinPlayers: this.getChangeHandler('minPlayers'),
-        setMessages: this.getChangeHandler('messages'),
-        setName: this.getChangeHandler('name'),
-        setTilesCount: this.getChangeHandler('tilesCount'),
         setActionPreview: this.getChangeHandler('actionPreview'),
-        setNamePreview: this.getChangeHandler('namePreview'),
-        setWood: this.getChangeHandler('wood'),
-        setFinishSeconds: this.getChangeHandler('finishSeconds'),
         setActionQueue: this.getChangeHandler('actionQueue'),
         setCountdownSeconds: this.getChangeHandler('countdownSeconds'),
+        setFinishSeconds: this.getChangeHandler('finishSeconds'),
         setHoveredStructure: this.getChangeHandler('hoveredStructure'),
+        setMessages: this.getChangeHandler('messages'),
+        setMinPlayers: this.getChangeHandler('minPlayers'),
+        setNamePreview: this.getChangeHandler('namePreview'),
+        setPlayer: this.getChangeHandler('player'),
+        setPlayers: this.getChangeHandler('players'),
+        setTilesCount: this.getChangeHandler('tilesCount'),
+        setWood: this.getChangeHandler('wood'),
         showDefeatScreen: this.showDefeatScreen,
         showTimesUpScreen: this.showTimesUpScreen,
         winGame: () => {
@@ -86,8 +85,7 @@ class Game extends React.Component {
           this.setState({ waiting: false })
         },
       },
-      name,
-      pattern
+      name
     )
 
     window.addEventListener('resize', updateScreenSize)
@@ -102,12 +100,11 @@ class Game extends React.Component {
   showDefeatScreen = ({ killerName, secondsSurvived }) => {
     this.setState({ defeated: true, killerName, secondsSurvived })
   }
-  showTimesUpScreen = ({ players, winnerId, playerId }) => {
+  showTimesUpScreen = ({ players, winnerId }) => {
     this.setState({
       timesUp: true,
       timesUpPlayers: players,
       timesUpWinnerId: winnerId,
-      playerId,
     })
   }
   render() {
@@ -124,7 +121,10 @@ class Game extends React.Component {
         <div id="game" />
 
         <Leaderboard leaders={this.state.players} />
-        <PlayerInfo name={this.state.name} tilesCount={this.state.tilesCount} />
+        <PlayerInfo
+          player={this.state.player}
+          tilesCount={this.state.tilesCount}
+        />
         <Resources
           wood={this.state.wood}
           notEnoughWood={
@@ -157,17 +157,19 @@ class Game extends React.Component {
           <TimesUpScreen
             players={this.state.timesUpPlayers}
             winnerId={this.state.timesUpWinnerId}
-            playerId={this.state.playerId}
+            playerId={this.state.player.id}
           />
         )}
 
         {this.state.waiting && this.state.players.length > 0 && (
           <WaitingScreen
             players={this.state.players}
+            player={this.state.player}
             minPlayers={this.state.minPlayers}
             countdownSeconds={this.state.countdownSeconds}
             messages={this.state.messages}
             sendMessage={sendMessage}
+            onPatternSelect={selectPattern}
           />
         )}
 
