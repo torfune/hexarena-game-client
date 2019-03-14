@@ -53,11 +53,14 @@ class Game extends React.Component {
     timesUpWinnerId: null,
     timesUpPlayers: null,
     actionQueue: [],
+    pattern: null,
   }
   componentDidMount = async () => {
     const gameElement = document.getElementById('game')
     const name = window.localStorage.getItem('name')
     const pattern = window.localStorage.getItem('pattern')
+
+    this.setState({ pattern })
 
     await startGame(
       gameElement,
@@ -124,7 +127,7 @@ class Game extends React.Component {
         <div id="game" />
 
         <Leaderboard leaders={this.state.players} />
-        <PlayerInfo name={this.state.name} tilesCount={this.state.tilesCount} />
+        <PlayerInfo name={this.state.name} tilesCount={this.state.tilesCount} color={this.state.pattern} />
         <Resources
           wood={this.state.wood}
           notEnoughWood={
