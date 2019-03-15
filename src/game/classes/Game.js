@@ -77,6 +77,8 @@ class Game {
         this.stage[TILE_IMAGES[i]] = new PIXI.Container()
         this.pixi.stage.addChild(this.stage[TILE_IMAGES[i]])
       }
+    } else {
+      this.pixi.start()
     }
 
     this.react = { ...reactMethods }
@@ -96,6 +98,7 @@ class Game {
     }
 
     this.messenger.close()
+    this.pixi.stop()
 
     this.animations = []
     this.armies = []
