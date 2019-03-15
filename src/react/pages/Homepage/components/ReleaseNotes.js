@@ -54,6 +54,19 @@ const EditorCredits = styled.p`
 
 const updates = [
   {
+    version: 'Alpha 1.4.0',
+    points: [
+      'Armies are more responsive.',
+      'Color selector is now in Waiting screen in order to prevent same color players.',
+      'Village can spawn 2 forests and 2 camps.',
+      'Added WASD camera movement.',
+      'Improved hover descriptions, it now shows wood costs.',
+      'Small graphics improvements & bug fixes.',
+    ],
+    day: 15,
+    month: 3,
+  },
+  {
     version: 'Alpha 1.3.2',
     points: [
       'Leaderboard is now sorted correctly.',
