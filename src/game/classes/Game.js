@@ -66,7 +66,7 @@ class Game {
     document.addEventListener('keydown', this.handleKeyDown)
     document.addEventListener('keyup', this.handleKeyUp)
   }
-  start(rootElement, reactMethods, name, pattern) {
+  start(rootElement, reactMethods, name) {
     if (this.isRunning) return
 
     if (!this.pixi) {
@@ -84,7 +84,7 @@ class Game {
     rootElement.appendChild(this.pixi.view)
 
     this.messenger = new Messenger()
-    this.messenger.emit('start', { name, pattern })
+    this.messenger.emit('start', name)
 
     this.isRunning = true
   }

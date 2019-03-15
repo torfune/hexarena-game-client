@@ -21,13 +21,29 @@ const Container = styled.div`
 
 const Content = styled.div`
   padding: 0 30px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+`
 
-  p {
-    font-size: 18px;
-    font-weight: 500;
-    color: #222;
-    margin: 4px 0;
+const Column = styled.div`
+  :last-child {
+    justify-self: right;
   }
+`
+
+const Text = styled.p`
+  font-size: 18px;
+  font-weight: 500;
+  color: #222;
+  margin: 4px 0;
+`
+
+const Pattern = styled.div`
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  background: ${({ color }) => color};
+  margin: 8px auto;
 `
 
 const PlayerInfo = ({ player, tilesCount }) => {
@@ -37,10 +53,16 @@ const PlayerInfo = ({ player, tilesCount }) => {
     <Container>
       <Header text="Your Empire" iconSrc={hexagonImagePath} iconSize="20px" />
       <Content>
-        <Label>Name</Label>
-        <p>{player.name}</p>
-        <Label>Population</Label>
-        <p>{tilesCount}</p>
+        <Column>
+          <Label>Name</Label>
+          <Text>{player.name}</Text>
+          <Label>Population</Label>
+          <Text>{tilesCount}</Text>
+        </Column>
+        <Column>
+          <Label>Color</Label>
+          <Pattern color={player.pattern} />
+        </Column>
       </Content>
     </Container>
   )
