@@ -48,10 +48,6 @@ class Tile {
     this.image.background = createImage('background', 'pattern')
     this.image.background.tint = hex('#eee')
 
-    this.image.highlight = createImage('highlight', 'pattern')
-    this.image.highlight.alpha = 0.22
-    this.image.highlight.visible = false
-
     this.image.blackOverlay = createImage('blackOverlay')
     this.image.blackOverlay.alpha = 0.2
     this.image.blackOverlay.visible = false
@@ -496,12 +492,6 @@ class Tile {
     }
 
     this.owner = owner
-  }
-  addHighlight() {
-    this.image.highlight.visible = true
-  }
-  clearHighlight() {
-    this.image.highlight.visible = false
   }
   selectArmy() {
     if (!this.image.pattern) return

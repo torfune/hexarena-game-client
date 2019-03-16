@@ -19,7 +19,6 @@ export const TILE_IMAGES = [
   'arrow',
   'border',
   'patternPreview',
-  'highlight',
   'blackOverlay',
   'pattern',
   'background',

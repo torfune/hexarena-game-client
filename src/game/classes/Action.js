@@ -147,8 +147,6 @@ class Action {
     game.stage.actionIcon.removeChild(this.icon)
     game.stage.actionIcon.removeChild(this.cancelIcon)
     game.stage.actionIcon.removeChild(this.number)
-
-    game.updateHighlights()
   }
 }
 

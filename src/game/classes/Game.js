@@ -200,16 +200,9 @@ class Game {
 
       this.hoveredTile = newHoveredTile
 
-      this.updateHighlights()
+      this.updateHoveredTileInfo(this.hoveredTile)
       this.updateNamePreview(this.hoveredTile)
       this.updateContested()
-
-      // if (this.hoveredTile) {
-      //   this.react.setDebugInfo(`${this.hoveredTile.x}|${this.hoveredTile.z}`)
-      // } else {
-      //   this.react.setDebugInfo(null)
-      // }
-
       this.updatePatternPreviews()
     }
   }
@@ -394,48 +387,6 @@ class Game {
       this.tiles[i].updateBorders()
     }
   }
-  updateHighlights = () => {
-    for (let i = 0; i < this.tiles.length; i++) {
-      const t = this.tiles[i]
-
-      if (t.owner && t.owner.id === this.playerId && t.action) {
-        this.tiles[i].addHighlight()
-      } else {
-        this.tiles[i].clearHighlight()
-      }
-    }
-
-    if (!this.hoveredTile) return
-
-    if (this.selectedArmyTile) {
-      let index = null
-
-      for (let i = 0; i < 6; i++) {
-        if (this.selectedArmyTargetTiles[i].includes(this.hoveredTile)) {
-          index = i
-          break
-        }
-      }
-
-      if (index !== null) {
-        const tiles = this.selectedArmyTargetTiles[index]
-
-        for (let i = 0; i < tiles.length; i++) {
-          tiles[i].addHighlight()
-        }
-      }
-    } else {
-      const canPerformAction = this.updateHoveredTileInfo(this.hoveredTile)
-      const hasArmy =
-        this.hoveredTile.army &&
-        this.hoveredTile.owner &&
-        this.hoveredTile.owner.id === this.playerId
-
-      if (canPerformAction || hasArmy) {
-        this.hoveredTile.addHighlight()
-      }
-    }
-  }
   updateContested = () => {
     for (let i = 0; i < this.tiles.length; i++) {
       const t = this.tiles[i]
@@ -471,7 +422,7 @@ class Game {
     for (let i = 0; i < this.actions.length; i++) {
       const action = this.actions[i]
 
-      if (action.ownerId === playerId) {
+      if (action.type === 'attack' && action.ownerId === playerId) {
         tilesToCapture.push(action.tile)
       }
     }
