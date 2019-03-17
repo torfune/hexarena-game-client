@@ -114,7 +114,7 @@ class Army {
     )
 
     for (let i = 0; i < UNIT_COUNT; i++) {
-      if (tile.capital || tile.castle) {
+      if (tile.capital || tile.castle || tile.camp) {
         this.units[i].moveOn(doorPosition)
       } else {
         this.units[i].moveOn(randomizedPositions[i])
