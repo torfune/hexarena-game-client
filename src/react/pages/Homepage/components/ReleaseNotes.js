@@ -54,6 +54,15 @@ const EditorCredits = styled.p`
 
 const updates = [
   {
+    version: 'Alpha 1.4.1',
+    points: [
+      'Camps are spawning less frequently.',
+      'Game automatically finishes after 15 minutes. Player with most tiles wins.',
+    ],
+    day: 17,
+    month: 3,
+  },
+  {
     version: 'Alpha 1.4.0',
     points: [
       'Armies are more responsive.',
