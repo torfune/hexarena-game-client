@@ -49,7 +49,6 @@ class HomePage extends React.Component {
   componentDidMount = async () => {
     const statusRes = await axios.get(`${GAMESERVER_URL}/status`)
     const winnersRes = await axios.get(`${GAMESERVER_URL}/winners`)
-    const versionRes = await axios.get(`${GAMESERVER_URL}/version`)
 
     const winners = winnersRes.data
       .split('\n')
@@ -58,7 +57,7 @@ class HomePage extends React.Component {
 
     this.setState({ winners })
 
-    const { timeRemaining } = statusRes.data
+    const { timeRemaining, version: gsVersion } = statusRes.data
 
     if (timeRemaining) {
       const now = Date.now()
@@ -73,8 +72,6 @@ class HomePage extends React.Component {
     } else {
       this.setState({ disabledUntil: false })
     }
-
-    const gsVersion = versionRes.data
 
     if (gsVersion !== version) {
       console.log(`Versions not matched! GS: ${gsVersion}, FE: ${version}`)
