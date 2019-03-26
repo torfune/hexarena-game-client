@@ -7,6 +7,7 @@ const Container = styled.div`
   position: relative;
   text-align: center;
   transform: rotateZ(90deg);
+  margin: ${props => props.margin};
 
   .hexagon {
     background: ${props => props.color};

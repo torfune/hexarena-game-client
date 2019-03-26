@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-
+import Hexagon from '../../../shared/Hexagon'
 import Header from './Header'
 import Label from './Label'
 import hexagonImagePath from '../../../../assets/icons/hexagon.svg'
@@ -10,7 +10,7 @@ const Container = styled.div`
   bottom: 0;
   left: 0;
   height: 200px;
-  width: 290px;
+  width: 260px;
   position: absolute;
   user-select: none;
   border-top-right-radius: 8px;
@@ -22,13 +22,13 @@ const Container = styled.div`
 const Content = styled.div`
   padding: 0 30px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 1fr 1fr;
 `
 
-const Column = styled.div`
-  :last-child {
-    justify-self: right;
-  }
+const GridField = styled.div`
+  grid-row: ${props => props.row};
+  grid-column: ${props => props.column};
 `
 
 const Text = styled.p`
@@ -38,31 +38,34 @@ const Text = styled.p`
   margin: 4px 0;
 `
 
-const Pattern = styled.div`
-  height: 40px;
-  width: 40px;
-  border-radius: 50%;
-  background: ${({ color }) => color};
-  margin: 8px auto;
-`
-
-const PlayerInfo = ({ player, tilesCount }) => {
-  if (!player) return null
+const PlayerInfo = ({ player, tilesCount, villages }) => {
+  if (!player || !villages) return null
 
   return (
     <Container>
       <Header text="Your Empire" iconSrc={hexagonImagePath} iconSize="20px" />
       <Content>
-        <Column>
+        <GridField row="1" column="1">
           <Label>Name</Label>
           <Text>{player.name}</Text>
-          <Label>Population</Label>
+        </GridField>
+
+        <GridField row="2" column="1">
+          <Label>Tiles</Label>
           <Text>{tilesCount}</Text>
-        </Column>
-        <Column>
+        </GridField>
+
+        <GridField row="1" column="2">
           <Label>Color</Label>
-          <Pattern color={player.pattern} />
-        </Column>
+          <Hexagon margin="4px 0 0 0" size="20px" color={player.pattern} />
+        </GridField>
+
+        <GridField row="2" column="2">
+          <Label>Villages</Label>
+          <Text>
+            {villages.current}/{villages.limit}
+          </Text>
+        </GridField>
       </Content>
     </Container>
   )

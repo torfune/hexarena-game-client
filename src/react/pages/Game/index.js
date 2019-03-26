@@ -52,6 +52,7 @@ class Game extends React.Component {
     tilesCount: null,
     timesUpPlayers: null,
     timesUpWinnerId: null,
+    villages: null,
     wood: null,
   }
   componentDidMount = async () => {
@@ -72,6 +73,7 @@ class Game extends React.Component {
         setPlayer: this.getChangeHandler('player'),
         setPlayers: this.getChangeHandler('players'),
         setTilesCount: this.getChangeHandler('tilesCount'),
+        setVillages: this.getChangeHandler('villages'),
         setWood: this.getChangeHandler('wood'),
         showDefeatScreen: this.showDefeatScreen,
         showTimesUpScreen: this.showTimesUpScreen,
@@ -124,6 +126,7 @@ class Game extends React.Component {
         <PlayerInfo
           player={this.state.player}
           tilesCount={this.state.tilesCount}
+          villages={this.state.villages}
         />
         <Resources
           wood={this.state.wood}
