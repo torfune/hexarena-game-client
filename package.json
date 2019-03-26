@@ -1,6 +1,6 @@
 {
   "name": "hexagor-fe",
-  "version": "Alpha 1.4.1",
+  "version": "Alpha 1.5.0",
   "private": true,
   "dependencies": {
     "@reach/router": "^1.2.1",
