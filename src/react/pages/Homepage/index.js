@@ -77,7 +77,7 @@ class HomePage extends React.Component {
     const gsVersion = versionRes.data
 
     if (gsVersion !== version) {
-      console.log(`Versions not matched! ${versionRes.data} x ${version}`)
+      console.log(`Versions not matched! GS: ${gsVersion}, FE: ${version}`)
       this.setState({
         errorMessage: `GameServer version is not same as client version.`,
       })
