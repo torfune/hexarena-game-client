@@ -18,5 +18,11 @@
     "start": "react-scripts start",
     "build-dev": "REACT_APP_GAMESERVER_URL=http://us-gs-0.hexarena.io react-scripts build",
     "build-live": "REACT_APP_GAMESERVER_URL=http://us-gs-1.hexarena.io react-scripts build"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie all",
+    "not op_mini all"
+  ]
 }
