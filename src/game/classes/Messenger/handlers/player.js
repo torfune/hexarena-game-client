@@ -28,9 +28,11 @@ const handlePlayer = gsData => {
 
   for (let i = game.players.length - 1; i >= 0; i--) {
     if (!getItemById(gsPlayers, game.players[i].id)) {
+      game.deadPlayers.push(game.players[i])
       game.players.splice(i, 1)
     }
   }
+  console.log(game.deadPlayers)
 
   game.react.setPlayers(game.players)
 }

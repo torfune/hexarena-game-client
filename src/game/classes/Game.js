@@ -34,6 +34,7 @@ class Game {
     this.player = null
     this.playerId = null
     this.players = []
+    this.deadPlayers = []
     this.react = null
     this.selectedArmyTile = null
     this.selectedArmyTargetTiles = null
