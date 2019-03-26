@@ -20,7 +20,7 @@ jobs:
             - ~/.cache/yarn
       - run:
           name: Build
-          command: yarn build
+          command: yarn build-live
       - run:
           name: Copy files
           command: |
@@ -46,7 +46,7 @@ jobs:
             - ~/.cache/yarn
       - run:
           name: Build
-          command: yarn build
+          command: yarn build-dev
       - run:
           name: Copy files
           command: |
@@ -56,11 +56,11 @@ workflows:
   version: 2
   build-and-deploy:
     jobs:
+      - deploy-live:
+          filters:
+            branches:
+              only: master
       - deploy-dev:
           filters:
             branches:
               only: develop
-      - deploy-live:
-          filters:
-            branches:
-              only: alpha
