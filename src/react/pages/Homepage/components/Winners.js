@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-
 import Heading from './Heading'
+import { version } from '../../../../../package.json'
 
 const Container = styled.div``
 
@@ -44,7 +44,7 @@ const Winners = props => {
 
   return (
     <Container>
-      <Heading>Winners of Alpha 1.4.1</Heading>
+      <Heading>Winners of {version}</Heading>
       <List>
         {winners.map(({ name, color }, index) => (
           <Winner key={index}>

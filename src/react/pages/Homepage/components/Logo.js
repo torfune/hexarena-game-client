@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-
+import { version } from '../../../../../package.json'
 import { LOGO_SHADOW, PRIMARY, BOX_SHADOW } from '../../../constants'
 
 const Container = styled.div`
@@ -47,7 +47,7 @@ const Logo = () => (
   <Container>
     <h1>
       HexArena.io
-      <Badge>Alpha 1.4.1</Badge>
+      <Badge>{version}</Badge>
     </h1>
 
     <h2>Multiplayer strategy game</h2>

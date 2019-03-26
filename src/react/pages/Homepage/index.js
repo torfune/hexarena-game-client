@@ -1,13 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
+import axios from 'axios'
 import { navigate } from '@reach/router'
-
 import Logo from './components/Logo'
 import ReleaseNotes from './components/ReleaseNotes'
 import PlaySection from './components/PlaySection'
 import Footer from './components/Footer'
 import Winners from './components/Winners'
-import axios from 'axios'
+import { version } from '../../../../package.json'
 
 const GAMESERVER_URL = process.env.REACT_APP_GAMESERVER_URL
 
@@ -30,21 +30,32 @@ const Grid = styled.div`
   grid-gap: 64px;
 `
 
+const Error = styled.div`
+  color: #fff;
+  text-align: center;
+  background: #444;
+  margin-top: 128px;
+  padding: 32px;
+`
+
 class HomePage extends React.Component {
   interval = null
   state = {
     disabledUntil: null,
     countdownTime: null,
     winners: null,
+    errorMessage: null,
   }
   componentDidMount = async () => {
     const statusRes = await axios.get(`${GAMESERVER_URL}/status`)
     const winnersRes = await axios.get(`${GAMESERVER_URL}/winners`)
+    const versionRes = await axios.get(`${GAMESERVER_URL}/version`)
 
     const winners = winnersRes.data
       .split('\n')
       .filter(l => l !== '')
       .reverse()
+
     this.setState({ winners })
 
     const { timeRemaining } = statusRes.data
@@ -61,6 +72,15 @@ class HomePage extends React.Component {
       }
     } else {
       this.setState({ disabledUntil: false })
+    }
+
+    const gsVersion = versionRes.data
+
+    if (gsVersion !== version) {
+      console.log(`Versions not matched! ${versionRes.data} x ${version}`)
+      this.setState({
+        errorMessage: `GameServer version is not same as client version.`,
+      })
     }
 
     document.addEventListener('keydown', this.handleKeyDown)
@@ -89,7 +109,11 @@ class HomePage extends React.Component {
     }
   }
   render() {
-    const { disabledUntil, countdownTime, winners } = this.state
+    const { disabledUntil, countdownTime, winners, errorMessage } = this.state
+
+    if (errorMessage) {
+      return <Error>{errorMessage}</Error>
+    }
 
     return (
       <Container>

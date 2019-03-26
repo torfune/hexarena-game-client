@@ -8,7 +8,6 @@ import GamesOverview from './pages/GamesOverview'
 import screenshotSrc from '../assets/images/screenshot.png'
 
 export const GlobalStyle = createGlobalStyle`
-  @import url('https://rsms.me/inter/inter.css');
   @import url('https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700');
 
   * {
