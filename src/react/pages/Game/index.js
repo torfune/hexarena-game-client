@@ -18,6 +18,7 @@ import NamePreview from './components/NamePreview'
 import StructureName from './components/StructureName'
 import ErrorMessage from './components/ErrorMessage'
 import Resources from './components/Resources'
+import Time from './components/Time'
 import Actions from './components/Actions'
 import WaitingScreen from './components/WaitingScreen'
 import WinScreen from './components/WinScreen'
@@ -32,14 +33,13 @@ const PageWrapper = styled.div`
 
 class Game extends React.Component {
   state = {
-    actionQueue: [],
     messages: [],
     players: [],
     connectionError: false,
     defeated: false,
     isWinner: false,
     timesUp: false,
-    waiting: true,
+    actionQueue: null,
     countdownSeconds: null,
     finishSeconds: null,
     hoveredStructure: null,
@@ -50,9 +50,11 @@ class Game extends React.Component {
     player: null,
     secondsSurvived: null,
     tilesCount: null,
+    time: null,
     timesUpPlayers: null,
     timesUpWinnerId: null,
     villages: null,
+    waiting: true,
     wood: null,
   }
   componentDidMount = async () => {
@@ -73,6 +75,7 @@ class Game extends React.Component {
         setPlayer: this.getChangeHandler('player'),
         setPlayers: this.getChangeHandler('players'),
         setTilesCount: this.getChangeHandler('tilesCount'),
+        setTime: this.getChangeHandler('time'),
         setVillages: this.getChangeHandler('villages'),
         setWood: this.getChangeHandler('wood'),
         showDefeatScreen: this.showDefeatScreen,
@@ -139,6 +142,7 @@ class Game extends React.Component {
         <HoveredTileInfo hoveredTileInfo={this.state.hoveredTileInfo} />
         <NamePreview name={this.state.namePreview} />
         <Actions actions={this.state.actionQueue} />
+        <Time time={this.state.time} />
         <FinishCountdown finishSeconds={this.state.finishSeconds} />
 
         {this.state.hoveredStructure && (

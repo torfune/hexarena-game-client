@@ -1,14 +1,7 @@
 import game from '../../..'
 
-const handleTime = serverTime => {
-  const browserTime = Date.now()
-  game.timeDiff = serverTime - browserTime
-
-  if (game.timeDiff < 0) {
-    game.timeDiff = 0
-  }
-
-  console.log(`Browser time difference: ${game.timeDiff}`)
+const handleTime = time => {
+  game.react.setTime(time)
 }
 
 export default handleTime

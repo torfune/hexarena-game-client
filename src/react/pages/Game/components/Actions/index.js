@@ -45,6 +45,8 @@ const BottomText = styled.div`
 `
 
 const Actions = props => {
+  if (!props.actions) return null
+
   const [actions, setActions] = useState([])
 
   useEffect(() => {

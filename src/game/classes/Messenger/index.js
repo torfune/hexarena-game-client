@@ -11,6 +11,7 @@ import handleFinishSeconds from './handlers/finishSeconds'
 import handleId from './handlers/id'
 import handleMessages from './handlers/messages'
 import handlePlayer from './handlers/player'
+import handleServerTime from './handlers/serverTime'
 import handleTile from './handlers/tile'
 import handleTime from './handlers/time'
 import handleTimesUp from './handlers/timesUp'
@@ -34,6 +35,7 @@ class Messenger {
       .on('id', handleId.bind(this))
       .on('messages', handleMessages.bind(this))
       .on('player', handlePlayer.bind(this))
+      .on('server_time', handleServerTime.bind(this))
       .on('tile', handleTile.bind(this))
       .on('time', handleTime.bind(this))
       .on('times_up', handleTimesUp.bind(this))
