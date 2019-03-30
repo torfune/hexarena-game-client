@@ -10,7 +10,7 @@ const Container = styled.div`
   bottom: 0;
   left: 0;
   height: 200px;
-  width: 260px;
+  width: 256px;
   position: absolute;
   user-select: none;
   border-top-right-radius: 8px;

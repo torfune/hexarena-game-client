@@ -7,8 +7,8 @@ const Container = styled.div`
   background: rgba(255, 255, 255, 0.92);
   bottom: 0;
   right: 0;
-  min-height: 256px;
-  min-width: 256px;
+  min-height: 240px;
+  width: 256px;
   position: absolute;
   user-select: none;
   border-top-left-radius: 8px;
@@ -25,20 +25,13 @@ const Leader = styled.div`
   display: flex;
 `
 
-const Order = styled.p`
-  color: #222;
-  font-weight: 500;
-  width: 14px;
-  margin: 8px 0;
-  padding-right: 18px;
-`
 const Pattern = styled.div`
   height: 16px;
   width: 16px;
   border-radius: 50%;
   background: ${({ pattern }) => pattern};
   align-self: center;
-  margin: 8px;
+  margin-right: 8px;
   position: relative;
   top: -1px;
 `
@@ -70,13 +63,45 @@ const Leaderboard = ({ leaders }) => {
     }
   })
 
+  // leaders = [
+  //   {
+  //     name: 'asadsad',
+  //     pattern: '#f33',
+  //     tilesCount: 33,
+  //   },
+  //   {
+  //     name: 'asadsad',
+  //     pattern: '#f33',
+  //     tilesCount: 33,
+  //   },
+  //   {
+  //     name: 'asadsad',
+  //     pattern: '#f33',
+  //     tilesCount: 33,
+  //   },
+  //   {
+  //     name: 'asadsad',
+  //     pattern: '#f33',
+  //     tilesCount: 33,
+  //   },
+  //   {
+  //     name: 'asadsad',
+  //     pattern: '#f33',
+  //     tilesCount: 33,
+  //   },
+  //   {
+  //     name: 'asadsad',
+  //     pattern: '#f33',
+  //     tilesCount: 33,
+  //   },
+  // ]
+
   return (
     <Container>
       <Header text="Players" iconSrc={crownImagePath} iconSize="24px" />
       <Content>
         {leaders.map((l, i) => (
           <Leader key={i}>
-            <Order>{i + 1}.</Order>
             <Pattern pattern={l.pattern} />
             <Name>{l.name}</Name>
             <TilesCount>{l.tilesCount}</TilesCount>

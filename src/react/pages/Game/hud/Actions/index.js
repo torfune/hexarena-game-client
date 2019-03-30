@@ -1,25 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { animated } from 'react-spring'
 import Action from './Action'
 import Slots from './Slots'
 import Header from '../../../../shared/Header'
 import clockSrc from '../../../../../assets/icons/clock.svg'
 
-const BottomWrapper = styled(animated.div)`
-  position: absolute;
-  bottom: 0;
-  width: 100vw;
-  display: flex;
-  justify-content: center;
-`
-
 const Container = styled.div`
+  position: absolute;
+  left: 256px;
+  bottom: 0;
   background: rgba(255, 255, 255, 0.92);
   border-top-right-radius: 12px;
-  border-top-left-radius: 12px;
   border: 1px solid #ddd;
-  border-top: none;
   user-select: none;
   overflow: hidden;
 `
@@ -40,7 +32,7 @@ const BottomText = styled.div`
   color: #666;
   text-align: center;
   padding: 8px 32px;
-  background: #eee;
+  font-style: italic;
 `
 
 const Actions = props => {
@@ -67,28 +59,26 @@ const Actions = props => {
   }, [props.actions])
 
   return (
-    <BottomWrapper>
-      <Container>
-        <Header text="Action queue" iconSrc={clockSrc} iconSize="22px" />
+    <Container>
+      <Header text="Actions" iconSrc={clockSrc} iconSize="22px" />
 
-        <Content>
-          <Slots />
+      <Content>
+        <Slots />
 
-          {actions.map((action, index) => (
-            <Action
-              key={action.id}
-              index={index}
-              type={action.type}
-              isActive={index === 0}
-            />
-          ))}
-        </Content>
+        {actions.map((action, index) => (
+          <Action
+            key={action.id}
+            index={index}
+            type={action.type}
+            isActive={index === 0}
+          />
+        ))}
+      </Content>
 
-        <BottomText>
-          Use <span>right click</span> to add Action to queue.
-        </BottomText>
-      </Container>
-    </BottomWrapper>
+      <BottomText>
+        Use <span>right click</span> to add Action to queue.
+      </BottomText>
+    </Container>
   )
 }
 

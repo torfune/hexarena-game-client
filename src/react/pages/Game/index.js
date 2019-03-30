@@ -6,6 +6,7 @@ import Leaderboard from './hud/Leaderboard'
 import NamePreview from './hud/NamePreview'
 import Time from './hud/Time'
 import Wood from './hud/Wood'
+import Diplomacy from './hud/Diplomacy'
 import YourEmpire from './hud/YourEmpire'
 import DefeatScreen from './screens/DefeatScreen'
 import ErrorScreen from './screens/ErrorScreen'
@@ -31,11 +32,11 @@ class Game extends React.Component {
   state = {
     messages: [],
     players: [],
+    actionQueue: [],
     connectionError: false,
     defeated: false,
     isWinner: false,
     timesUp: false,
-    actionQueue: null,
     countdownSeconds: null,
     finishSeconds: null,
     hoveredStructure: null,
@@ -126,6 +127,7 @@ class Game extends React.Component {
           tilesCount={this.state.tilesCount}
           villages={this.state.villages}
         />
+        <Diplomacy />
         <Wood
           wood={this.state.wood}
           notEnoughWood={
