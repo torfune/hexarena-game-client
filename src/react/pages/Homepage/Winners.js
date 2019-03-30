@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import Heading from './Heading'
-import { version } from '../../../../../package.json'
+import { version } from '../../../../package.json'
 
 const Container = styled.div``
 

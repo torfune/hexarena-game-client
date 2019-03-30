@@ -1,6 +1,5 @@
 import React from 'react'
 import styled from 'styled-components'
-
 import playerSrc from '../../../../assets/icons/player.svg'
 
 const Container = styled.div.attrs(({ x, y }) => ({

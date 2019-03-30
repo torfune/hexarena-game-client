@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import { BOX_SHADOW } from '../../../constants'
+import { BOX_SHADOW } from '../../constants'
 
 const NameInput = styled.input.attrs({
   placeholder: 'Guest 42',

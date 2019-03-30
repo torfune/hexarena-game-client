@@ -1,8 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
+import Header from '../../../shared/Header'
+import Label from '../../../shared/Label'
 import Hexagon from '../../../shared/Hexagon'
-import Header from './Header'
-import Label from './Label'
 import hexagonImagePath from '../../../../assets/icons/hexagon.svg'
 
 const Container = styled.div`

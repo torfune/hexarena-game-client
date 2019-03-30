@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { useTransition } from 'react-spring'
 import PatternSelector from './PatternSelector'
-import Hexagon from '../../../../../shared/Hexagon'
-import { BOX_SHADOW } from '../../../../../constants'
+import Hexagon from '../../../../shared/Hexagon'
+import { BOX_SHADOW } from '../../../../constants'
 
 const Container = styled.div`
   margin: 0 32px;

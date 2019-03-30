@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import styled from 'styled-components'
 import clockSrc from '../../../../../assets/icons/clock.svg'
 import woodSrc from '../../../../../assets/images/wood.png'
-import ActionType from './ActionType'
+import ActionType from './ActionLabel'
 import { PRIMARY } from '../../../../constants'
 
 const getColumns = ({ showWood, showDuration }) => {

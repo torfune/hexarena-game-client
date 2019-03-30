@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import { version } from '../../../../../package.json'
-import { LOGO_SHADOW, PRIMARY, BOX_SHADOW } from '../../../constants'
+import { version } from '../../../../package.json'
+import { LOGO_SHADOW, PRIMARY, BOX_SHADOW } from '../../constants'
 
 const Container = styled.div`
   display: flex;

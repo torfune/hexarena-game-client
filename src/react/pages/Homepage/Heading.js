@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import { PRIMARY } from '../../../constants'
+import { PRIMARY } from '../../constants'
 
 const Heading = styled.h3`
   font-size: 26px;

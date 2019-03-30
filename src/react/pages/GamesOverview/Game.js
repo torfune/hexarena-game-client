@@ -1,8 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-
 import Player from './Player'
-import { BOX_SHADOW } from '../../../constants'
+import { BOX_SHADOW } from '../../constants'
 
 const statusColor = status => {
   switch (status) {

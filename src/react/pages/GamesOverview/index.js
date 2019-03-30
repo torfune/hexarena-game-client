@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-
-import GamesList from './components/GamesList'
+import GamesList from './GamesList'
 
 const GAMESERVER_URL = process.env.REACT_APP_GAMESERVER_URL
 

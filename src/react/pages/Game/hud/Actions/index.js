@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { animated } from 'react-spring'
-
-import Header from '../Header'
 import Action from './Action'
 import Slots from './Slots'
+import Header from '../../../../shared/Header'
 import clockSrc from '../../../../../assets/icons/clock.svg'
 
 const BottomWrapper = styled(animated.div)`

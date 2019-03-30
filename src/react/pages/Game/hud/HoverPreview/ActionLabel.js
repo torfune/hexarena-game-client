@@ -30,7 +30,7 @@ const Container = styled.div`
   }
 `
 
-const ActionType = ({ label }) => (
+const ActionLabel = ({ label }) => (
   <Container>
     {renderIconByLabel(label)}
     <h4>{label}</h4>
@@ -73,4 +73,4 @@ const renderIconByLabel = label => {
   return <Icon src={src} />
 }
 
-export default ActionType
+export default ActionLabel

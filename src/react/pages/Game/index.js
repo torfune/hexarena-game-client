@@ -1,28 +1,24 @@
 import React from 'react'
 import styled from 'styled-components'
-
+import Actions from './hud/Actions'
+import HoverPreview from './hud/HoverPreview'
+import Leaderboard from './hud/Leaderboard'
+import NamePreview from './hud/NamePreview'
+import Time from './hud/Time'
+import Wood from './hud/Wood'
+import YourEmpire from './hud/YourEmpire'
+import DefeatScreen from './screens/DefeatScreen'
+import ErrorScreen from './screens/ErrorScreen'
+import TimesUpScreen from './screens/TimesUpScreen'
+import WaitingScreen from './screens/WaitingScreen'
+import WinScreen from './screens/WinScreen'
 import {
+  selectPattern,
+  sendMessage,
   startGame,
   stopGame,
-  sendMessage,
   updateScreenSize,
-  selectPattern,
 } from '../../../game'
-
-import Leaderboard from './components/Leaderboard'
-import FinishCountdown from './components/FinishCountdown'
-import DefeatScreen from './components/DefeatScreen'
-import PlayerInfo from './components/PlayerInfo'
-import HoveredTileInfo from './components/HoveredTileInfo/'
-import NamePreview from './components/NamePreview'
-import StructureName from './components/StructureName'
-import ErrorMessage from './components/ErrorMessage'
-import Resources from './components/Resources'
-import Time from './components/Time'
-import Actions from './components/Actions'
-import WaitingScreen from './components/WaitingScreen'
-import WinScreen from './components/WinScreen'
-import TimesUpScreen from './components/TimesUpScreen'
 
 const PageWrapper = styled.div`
   width: 100vw;
@@ -118,20 +114,19 @@ class Game extends React.Component {
       !this.state.isWinner &&
       !this.state.timesUp
     ) {
-      return <ErrorMessage />
+      return <ErrorScreen />
     }
 
     return (
       <PageWrapper>
         <div id="game" />
-
         <Leaderboard leaders={this.state.players} />
-        <PlayerInfo
+        <YourEmpire
           player={this.state.player}
           tilesCount={this.state.tilesCount}
           villages={this.state.villages}
         />
-        <Resources
+        <Wood
           wood={this.state.wood}
           notEnoughWood={
             this.state.hoveredTileInfo
@@ -139,27 +134,16 @@ class Game extends React.Component {
               : false
           }
         />
-        <HoveredTileInfo hoveredTileInfo={this.state.hoveredTileInfo} />
+        <HoverPreview hoveredTileInfo={this.state.hoveredTileInfo} />
         <NamePreview name={this.state.namePreview} />
         <Actions actions={this.state.actionQueue} />
         <Time time={this.state.time} />
-        <FinishCountdown finishSeconds={this.state.finishSeconds} />
-
-        {this.state.hoveredStructure && (
-          <StructureName
-            name={this.state.hoveredStructure.name}
-            x={this.state.hoveredStructure.x}
-            y={this.state.hoveredStructure.y}
-          />
-        )}
-
         {this.state.defeated && (
           <DefeatScreen
             killerName={this.state.killerName}
             secondsSurvived={this.state.secondsSurvived}
           />
         )}
-
         {this.state.timesUp && (
           <TimesUpScreen
             players={this.state.timesUpPlayers}
@@ -167,7 +151,6 @@ class Game extends React.Component {
             playerId={this.state.player.id}
           />
         )}
-
         {this.state.waiting && this.state.players.length > 0 && (
           <WaitingScreen
             players={this.state.players}
@@ -179,7 +162,6 @@ class Game extends React.Component {
             onPatternSelect={selectPattern}
           />
         )}
-
         {this.state.isWinner && <WinScreen />}
       </PageWrapper>
     )

@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-
-import { BOX_SHADOW } from '../../../constants'
+import { BOX_SHADOW } from '../constants'
 
 const Container = styled.div`
   margin-top: 24px;

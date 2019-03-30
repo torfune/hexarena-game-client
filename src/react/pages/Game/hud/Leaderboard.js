@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-
-import Header from './Header'
+import Header from '../../../shared/Header'
 import crownImagePath from '../../../../assets/icons/crown.svg'
 
 const Container = styled.div`

@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { Link } from '@reach/router'
 
-import { PRIMARY, BOX_SHADOW, SECONDARY, TEXT_SHADOW } from '../../../constants'
+import { PRIMARY, BOX_SHADOW, SECONDARY, TEXT_SHADOW } from '../../constants'
 
 const StyledButton = styled(Link)`
   background: ${PRIMARY};

@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { PRIMARY } from '../../../constants'
+import { PRIMARY } from '../../constants'
 
 const Container = styled.footer`
   margin-top: auto;

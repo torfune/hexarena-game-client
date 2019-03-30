@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-
-import Header from './Header'
+import Header from '../../../shared/Header'
 import resourcesImagePath from '../../../../assets/icons/resources.svg'
 import woodImagePath from '../../../../assets/images/wood.png'
 

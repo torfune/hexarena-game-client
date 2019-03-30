@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import styled from 'styled-components'
-
-import { BOX_SHADOW } from '../../../../../constants'
+import { BOX_SHADOW } from '../../../../constants'
 
 const Container = styled.div`
   border-left: 2px solid #333;

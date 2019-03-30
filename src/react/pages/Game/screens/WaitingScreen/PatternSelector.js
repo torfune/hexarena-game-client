@@ -1,9 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
 import { animated } from 'react-spring'
-import Hexagon from '../../../../../shared/Hexagon'
-import { BOX_SHADOW } from '../../../../../constants'
-import lockSrc from '../../../../../../assets/icons/lock.svg'
+import Hexagon from '../../../../shared/Hexagon'
+import lockSrc from '../../../../../assets/icons/lock.svg'
+import { BOX_SHADOW } from '../../../../constants'
 
 const Container = styled(animated.div)`
   top: 40px;

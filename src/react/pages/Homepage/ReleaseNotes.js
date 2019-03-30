@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import Heading from './Heading'
-import { PRIMARY } from '../../../constants'
+import { PRIMARY } from '../../constants'
 
 const Container = styled.div``
 
