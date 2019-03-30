@@ -4,6 +4,7 @@ import swordsSrc from '../../../../../assets/icons/swords.svg'
 import hammerSrc from '../../../../../assets/icons/resources.svg'
 import axeSrc from '../../../../../assets/icons/axe.svg'
 import armySrc from '../../../../../assets/icons/army.svg'
+import crossSrc from '../../../../../assets/icons/cross.svg'
 
 const Plus = styled.span`
   font-size: 22px;
@@ -20,6 +21,7 @@ const Icon = styled.img`
 const Container = styled.div`
   display: flex;
   padding-right: 12px;
+  padding-bottom: 6px;
 
   h4 {
     font-size: 18px;
@@ -39,6 +41,9 @@ const renderIconByLabel = label => {
   let src = null
 
   switch (label) {
+    case 'Cancel action':
+      src = crossSrc
+      break
     case 'Capture':
       src = swordsSrc
       break

@@ -22,6 +22,14 @@ const getHoveredTileInfo = tile => {
 
   const structure = tile.getStructureName()
 
+  // Cancel
+  if (tile.action && tile.action.ownerId === game.player.id) {
+    return {
+      label: 'Cancel action',
+      structure,
+    }
+  }
+
   // Attack
   if (isNeighborToPlayer && !tile.owner && !tile.isContested()) {
     const durationMs = getAttackDuration(game.playerId, tile)
@@ -44,7 +52,7 @@ const getHoveredTileInfo = tile => {
     }
   }
 
-  // Harvest
+  // Cut
   if (isOwnedByPlayer && tile.forest) {
     return {
       label: 'Get wood',
@@ -64,7 +72,7 @@ const getHoveredTileInfo = tile => {
     }
   }
 
-  // Structure
+  // No Action available
   if (!isNeighborToPlayer || isOwnedByPlayer) {
     if (
       structure !== 'Plains' &&

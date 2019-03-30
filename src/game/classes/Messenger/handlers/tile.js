@@ -61,7 +61,7 @@ const handleTile = gsData => {
   game.updatePlayerTilesCount()
   game.updateNeighbors()
   game.updateBorders()
-  game.updateHoveredTileInfo(game.hoveredTile)
+  game.updateHoveredTileInfo()
 }
 
 export default handleTile

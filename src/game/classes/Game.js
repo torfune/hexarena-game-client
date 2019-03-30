@@ -200,7 +200,7 @@ class Game {
 
       this.hoveredTile = newHoveredTile
 
-      this.updateHoveredTileInfo(this.hoveredTile)
+      this.updateHoveredTileInfo()
       this.updateNamePreview(this.hoveredTile)
       this.updateContested()
       this.updatePatternPreviews()
@@ -363,8 +363,8 @@ class Game {
 
     this.react.setTilesCount(tilesCount)
   }
-  updateHoveredTileInfo = tile => {
-    const hoveredTileInfo = getHoveredTileInfo(tile)
+  updateHoveredTileInfo = () => {
+    const hoveredTileInfo = getHoveredTileInfo(this.hoveredTile)
 
     this.react.setHoveredTileInfo(hoveredTileInfo)
 

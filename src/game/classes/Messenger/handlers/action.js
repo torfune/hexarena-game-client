@@ -18,6 +18,7 @@ const handleAction = gsData => {
   }
 
   game.updatePatternPreviews()
+  game.updateHoveredTileInfo()
 }
 
 export default handleAction

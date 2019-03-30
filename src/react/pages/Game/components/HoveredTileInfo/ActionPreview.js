@@ -5,10 +5,23 @@ import woodSrc from '../../../../../assets/images/wood.png'
 import ActionType from './ActionType'
 import { PRIMARY } from '../../../../constants'
 
+const getColumns = ({ showWood, showDuration }) => {
+  let columns = 'auto'
+
+  if (showWood) {
+    columns += ' 1px 52px'
+  }
+
+  if (showDuration) {
+    columns += ' 1px 52px'
+  }
+
+  return columns
+}
+
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: ${props =>
-    props.showWood ? 'auto 1px 52px 1px 52px' : 'auto 1px 52px'};
+  grid-template-columns: ${getColumns};
   grid-template-rows: auto 6px auto;
   padding-left: 12px;
   padding-right: 8px;
@@ -54,6 +67,7 @@ const Structure = styled.div`
   font-style: italic;
   position: relative;
   top: 2px;
+  padding-bottom: 4px;
 `
 const NotEnoughWood = styled.div`
   background: #333;
@@ -75,19 +89,23 @@ const ActionPreview = ({
 }) => {
   return (
     <Fragment>
-      <Grid showWood={!!woodCost}>
+      <Grid showWood={!!woodCost} showDuration={!!duration}>
         <HorizontalLine />
 
         <ActionType label={label} />
 
         <Structure>{structure}</Structure>
 
-        <VerticalLine column="2" />
+        {duration && (
+          <React.Fragment>
+            <VerticalLine column="2" />
 
-        <IconWrapper column="3">
-          <Icon src={clockSrc} />
-        </IconWrapper>
-        <Value column="3">{duration}</Value>
+            <IconWrapper column="3">
+              <Icon src={clockSrc} />
+            </IconWrapper>
+            <Value column="3">{duration}</Value>
+          </React.Fragment>
+        )}
 
         {woodCost && (
           <React.Fragment>
