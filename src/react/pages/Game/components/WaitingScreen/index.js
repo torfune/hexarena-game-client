@@ -12,7 +12,7 @@ const Container = styled.div`
   height: 100vh;
   padding: 128px;
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 2fr 450px;
 `
 
 const Heading = styled.h2`

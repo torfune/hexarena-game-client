@@ -16,6 +16,7 @@ const Heading = styled.h2`
 const MessagesContainer = styled.div`
   height: 512px;
   overflow-y: scroll;
+  overflow-x: hidden;
   margin-top: 32px;
 `
 
