@@ -39,16 +39,16 @@ const renderIconByLabel = label => {
   let src = null
 
   switch (label) {
-    case 'Attack':
+    case 'Capture':
       src = swordsSrc
       break
-    case 'Fortify':
+    case 'Build tower':
       src = hammerSrc
       break
-    case 'Harvest':
+    case 'Get wood':
       src = axeSrc
       break
-    case 'Recruit':
+    case 'Recruit army':
       src = armySrc
       break
     default:

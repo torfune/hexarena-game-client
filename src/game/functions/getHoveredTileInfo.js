@@ -27,7 +27,7 @@ const getHoveredTileInfo = tile => {
     const durationMs = getAttackDuration(game.playerId, tile)
 
     return {
-      label: 'Attack',
+      label: 'Capture',
       structure,
       duration: `${durationMs / 1000}s`,
     }
@@ -36,7 +36,7 @@ const getHoveredTileInfo = tile => {
   // Build
   if (isOwnedByPlayer && tile.isEmpty()) {
     return {
-      label: 'Fortify',
+      label: 'Build tower',
       structure,
       duration: `${window.gsConfig.BUILD_DURATION / 1000}s`,
       notEnoughWood: game.wood < BUILD_COST,
@@ -47,7 +47,7 @@ const getHoveredTileInfo = tile => {
   // Harvest
   if (isOwnedByPlayer && tile.forest) {
     return {
-      label: 'Harvest',
+      label: 'Get wood',
       structure,
       duration: `${window.gsConfig.CUT_DURATION / 1000}s`,
     }
@@ -56,7 +56,7 @@ const getHoveredTileInfo = tile => {
   // Recruit
   if (isOwnedByPlayer && (tile.castle || tile.capital) && !tile.army) {
     return {
-      label: 'Recruit',
+      label: 'Recruit army',
       structure,
       duration: `${window.gsConfig.RECRUIT_DURATION / 1000}s`,
       notEnoughWood: game.wood < RECRUIT_COST,
