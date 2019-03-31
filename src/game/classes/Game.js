@@ -591,6 +591,15 @@ class Game {
       this.cameraMove.y++
     }
   }
+  acceptRequest = senderId => {
+    this.messenger.emit('request', { action: 'accept', senderId })
+  }
+  declineRequest = senderId => {
+    this.messenger.emit('request', { action: 'decline', senderId })
+  }
+  createRequest = receiverId => {
+    this.messenger.emit('request', { action: 'create', receiverId })
+  }
 }
 
 export default Game

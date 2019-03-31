@@ -39,9 +39,21 @@ const stopGame = () => {
 const sendMessage = game.sendMessage
 const updateScreenSize = game.updateScreenSize
 const selectPattern = game.selectPattern
+const acceptRequest = game.acceptRequest
+const createRequest = game.createRequest
+const declineRequest = game.declineRequest
 
 // Named export for React layer
-export { startGame, stopGame, sendMessage, updateScreenSize, selectPattern }
+export {
+  startGame,
+  stopGame,
+  sendMessage,
+  updateScreenSize,
+  selectPattern,
+  acceptRequest,
+  createRequest,
+  declineRequest,
+}
 
 // Default export for Game layer
 export default game

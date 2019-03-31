@@ -22,6 +22,8 @@ const player = {
   name: 'string',
   pattern: 'string',
   tilesCount: 'number',
+  allyId: 'string',
+  allyDied: 'bool',
 }
 
 const tile = {

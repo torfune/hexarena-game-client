@@ -13,6 +13,8 @@ const handlePlayer = gsData => {
     if (player) {
       player.tilesCount = gsPlayer.tilesCount
       player.pattern = gsPlayer.pattern
+      player.allyId = gsPlayer.allyId
+      player.allyDied = gsPlayer.allyDied
     } else {
       player = new Player({ ...gsPlayer })
       game.players.push(player)

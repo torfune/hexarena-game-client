@@ -7,93 +7,6 @@ import Label from '../../../../shared/Label'
 import playerSrc from '../../../../../assets/icons/player.svg'
 import { PRIMARY } from '../../../../constants'
 
-const ally = {
-  pattern: '#fbc531',
-  name: 'Abrakaar23',
-  tilesCount: 139,
-}
-
-// const ally = null
-
-const playerId = 0
-
-const players = [
-  {
-    id: 0,
-    pattern: '#fbc531',
-    name: 'Trumpeta22',
-    tilesCount: 80,
-  },
-  {
-    id: 1,
-    pattern: '#f343ff',
-    name: 'Franta',
-    tilesCount: 83,
-  },
-  {
-    id: 2,
-    pattern: '#f34300',
-    name: 'Adam',
-    tilesCount: 10,
-  },
-  {
-    id: 3,
-    pattern: '#03c53f',
-    name: 'matej1111',
-    tilesCount: 203,
-  },
-]
-
-const requests = [
-  {
-    timeout: 0.8,
-    sender: {
-      id: 1,
-      pattern: '#f343ff',
-      name: 'Franta',
-      tilesCount: 83,
-    },
-    receiver: {
-      id: 0,
-      pattern: '#fbc531',
-      name: 'Trumpeta22',
-      tilesCount: 80,
-    },
-  },
-  {
-    timeout: 0.3,
-    sender: {
-      id: 2,
-      pattern: '#f34300',
-      name: 'Adam',
-      tilesCount: 10,
-    },
-    receiver: {
-      id: 0,
-      pattern: '#fbc531',
-      name: 'Trumpeta22',
-      tilesCount: 80,
-    },
-  },
-  {
-    timeout: 0.5,
-    sender: {
-      id: 0,
-      pattern: '#fbc531',
-      name: 'Trumpeta22',
-      tilesCount: 80,
-    },
-    receiver: {
-      id: 3,
-      pattern: '#03c53f',
-      name: 'matej1111',
-      tilesCount: 203,
-    },
-  },
-]
-
-// const requests = []
-
 const Container = styled.div`
   background: rgba(255, 255, 255, 0.92);
   bottom: 0;
@@ -109,7 +22,7 @@ const Container = styled.div`
 `
 
 const Content = styled.div`
-  padding: 0px 30px 12px 30px;
+  padding: 0 30px;
 `
 
 const ToggleButton = styled.div`
@@ -122,13 +35,23 @@ const ToggleButton = styled.div`
   border-radius: 2px;
   font-size: 14px;
   margin-top: 20px;
+  margin-bottom: 12px;
 
   :hover {
     opacity: 0.9;
   }
 `
 
-const Diplomacy = ({ acceptRequest, declineRequest, sendRequest }) => {
+const Diplomacy = ({
+  requests,
+  players,
+  playerId,
+  ally,
+  allyDied,
+  acceptRequest,
+  declineRequest,
+  createRequest,
+}) => {
   const [sendingRequest, setSendingRequest] = useState(false)
   const containerRef = useRef(null)
 
@@ -141,6 +64,11 @@ const Diplomacy = ({ acceptRequest, declineRequest, sendRequest }) => {
   }, [])
 
   const handleMouseLeave = () => {
+    setSendingRequest(false)
+  }
+
+  const handleCreate = id => {
+    createRequest(id)
     setSendingRequest(false)
   }
 
@@ -157,7 +85,7 @@ const Diplomacy = ({ acceptRequest, declineRequest, sendRequest }) => {
       />
       <Content>
         {ally ? (
-          <Ally ally={ally} />
+          <Ally ally={ally} died={allyDied} />
         ) : (
           <Fragment>
             <Label>
@@ -171,7 +99,7 @@ const Diplomacy = ({ acceptRequest, declineRequest, sendRequest }) => {
               sendingRequest={sendingRequest}
               onAccept={acceptRequest}
               onDecline={declineRequest}
-              onSend={sendRequest}
+              onCreate={handleCreate}
             />
 
             <ToggleButton

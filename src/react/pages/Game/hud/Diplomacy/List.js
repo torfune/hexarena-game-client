@@ -78,10 +78,19 @@ const Line = styled.div`
 const TimeoutBar = styled.div`
   position: absolute;
   width: ${props => `${props.timeout * 100}%`};
+  transition: 0.2s;
   bottom: 0;
   left: 0;
   background: #888;
   height: 2px;
+`
+
+const NoPlayersText = styled.p`
+  font-style: italic;
+  font-size: 14px;
+  color: #666;
+  margin-top: 12px;
+  text-align: center;
 `
 
 const List = ({
@@ -91,23 +100,29 @@ const List = ({
   sendingRequest,
   onAccept,
   onDecline,
-  onSend,
+  onCreate,
 }) => {
   if (sendingRequest) {
+    players = players.filter(p => p.id !== playerId && !p.allyId && !p.allyDied)
+
     return (
       <Container>
-        {players.map(({ id, name, pattern }) => (
-          <Item
-            key={pattern}
-            clickable={true}
-            onClick={() => {
-              onSend(id)
-            }}
-          >
-            <Pattern color={pattern} />
-            <Name>{name}</Name>
-          </Item>
-        ))}
+        {players.length > 0 ? (
+          players.map(({ id, name, pattern }) => (
+            <Item
+              key={pattern}
+              clickable={true}
+              onClick={() => {
+                onCreate(id)
+              }}
+            >
+              <Pattern color={pattern} />
+              <Name>{name}</Name>
+            </Item>
+          ))
+        ) : (
+          <NoPlayersText>Every player is already in alliance</NoPlayersText>
+        )}
       </Container>
     )
   } else {

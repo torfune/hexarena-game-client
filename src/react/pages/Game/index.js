@@ -14,6 +14,9 @@ import TimesUpScreen from './screens/TimesUpScreen'
 import WaitingScreen from './screens/WaitingScreen'
 import WinScreen from './screens/WinScreen'
 import {
+  acceptRequest,
+  createRequest,
+  declineRequest,
   selectPattern,
   sendMessage,
   startGame,
@@ -30,13 +33,17 @@ const PageWrapper = styled.div`
 
 class Game extends React.Component {
   state = {
+    actionQueue: [],
     messages: [],
     players: [],
-    actionQueue: [],
+    requests: [],
+    waiting: true,
+    allyDied: false,
     connectionError: false,
     defeated: false,
     isWinner: false,
     timesUp: false,
+    ally: null,
     countdownSeconds: null,
     finishSeconds: null,
     hoveredStructure: null,
@@ -51,7 +58,6 @@ class Game extends React.Component {
     timesUpPlayers: null,
     timesUpWinnerId: null,
     villages: null,
-    waiting: true,
     wood: null,
   }
   componentDidMount = async () => {
@@ -62,6 +68,8 @@ class Game extends React.Component {
       gameElement,
       {
         setActionQueue: this.getChangeHandler('actionQueue'),
+        setAlly: this.getChangeHandler('ally'),
+        setAllyDied: this.getChangeHandler('allyDied'),
         setCountdownSeconds: this.getChangeHandler('countdownSeconds'),
         setFinishSeconds: this.getChangeHandler('finishSeconds'),
         setHoveredStructure: this.getChangeHandler('hoveredStructure'),
@@ -71,6 +79,7 @@ class Game extends React.Component {
         setNamePreview: this.getChangeHandler('namePreview'),
         setPlayer: this.getChangeHandler('player'),
         setPlayers: this.getChangeHandler('players'),
+        setRequests: this.getChangeHandler('requests'),
         setTilesCount: this.getChangeHandler('tilesCount'),
         setTime: this.getChangeHandler('time'),
         setVillages: this.getChangeHandler('villages'),
@@ -127,7 +136,16 @@ class Game extends React.Component {
           tilesCount={this.state.tilesCount}
           villages={this.state.villages}
         />
-        <Diplomacy />
+        <Diplomacy
+          requests={this.state.requests}
+          players={this.state.players}
+          playerId={this.state.player ? this.state.player.id : null}
+          ally={this.state.ally}
+          allyDied={this.state.allyDied}
+          createRequest={createRequest}
+          acceptRequest={acceptRequest}
+          declineRequest={declineRequest}
+        />
         <Wood
           wood={this.state.wood}
           notEnoughWood={
