@@ -54,6 +54,17 @@ const EditorCredits = styled.p`
 
 const updates = [
   {
+    version: 'Alpha 1.5.0',
+    points: [
+      'Added Alliances. You can only have one ally. If your ally wins, you win too.',
+      'Villages are no longer spawning in range of enemy Castles.',
+      'Added neutral Villages and Camps.',
+      'Game duration is now 10 minutes.',
+    ],
+    day: 31,
+    month: 3,
+  },
+  {
     version: 'Alpha 1.4.1',
     points: [
       'Camps are spawning less frequently.',
