@@ -31,17 +31,9 @@ const Countdown = ({ time }) => {
 
   const openingDate = new Date(new Date().getTime() + time)
 
-  // const openingDay = openingDate.getDate()
-  // const openingMonth = openingDate.getMonth()
-  // const openingYear = openingDate.getFullYear()
-  // const openingHour = openingDate.getHours()
-
-  // openingDate = new Date(
-  //   openingYear,
-  //   openingMonth,
-  //   openingDay,
-  //   openingHour
-  // )
+  if (openingDate.getSeconds() > 50) {
+    openingDate.setHours(openingDate.getHours() + 1, 0, 0)
+  }
 
   return (
     <Container>
