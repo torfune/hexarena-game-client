@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 import { useSpring, animated } from 'react-spring'
-
 import PlayersTable from './PlayersTable'
 
 const Container = styled(animated.div)`
@@ -53,13 +52,30 @@ const TimesUpScreen = props => {
 }
 
 const renderWinnerText = ({ players, winnerId, playerId }) => {
-  if (winnerId === playerId) {
-    return 'You are the winner!'
+  const winner = players.find(({ id }) => id === winnerId)
+  let ally = null
+
+  if (winner.allyId && !winner.allyDied) {
+    ally = players.find(({ id }) => id === winner.allyId)
   }
 
-  const winner = players.find(({ id }) => id === winnerId)
+  if (winnerId === playerId) {
+    if (ally) {
+      return `You and ${ally.name} win the game!`
+    } else {
+      return 'You win the game!'
+    }
+  }
 
-  return `${winner.name} is the winner!`
+  if (ally) {
+    if (ally.id === playerId) {
+      return `You and ${winner.name} win the game!`
+    } else {
+      return `${winner.name} and ${ally.name} win the game!`
+    }
+  } else {
+    return `${winner.name} wins the game!`
+  }
 }
 
 export default TimesUpScreen
