@@ -29,22 +29,19 @@ const Countdown = ({ time }) => {
   minutes = String(minutes)
   hours = String(hours)
 
-  let openingDate = new Date(new Date().getTime() + time)
+  const openingDate = new Date(new Date().getTime() + time)
 
-  const openingDay = openingDate.getUTCDate()
-  const openingMonth = openingDate.getUTCMonth()
-  const openingYear = openingDate.getUTCFullYear()
-  const openingHour =
-    openingDate.getUTCMinutes() > 50
-      ? openingDate.getUTCHours() + 1
-      : openingDate.getUTCHours()
+  // const openingDay = openingDate.getDate()
+  // const openingMonth = openingDate.getMonth()
+  // const openingYear = openingDate.getFullYear()
+  // const openingHour = openingDate.getHours()
 
-  openingDate = new Date(
-    openingYear,
-    openingMonth,
-    openingDay,
-    openingHour
-  ).toLocaleString(navigator.language)
+  // openingDate = new Date(
+  //   openingYear,
+  //   openingMonth,
+  //   openingDay,
+  //   openingHour
+  // )
 
   return (
     <Container>
@@ -52,7 +49,9 @@ const Countdown = ({ time }) => {
         {days}:{hours.padStart(2, '0')}:{minutes.padStart(2, '0')}:
         {seconds.padStart(2, '0')}
       </CountdownTime>
-      {/* <OpeningTime>{openingDate}</OpeningTime> */}
+      <OpeningTime>
+        {openingDate.toLocaleString(navigator.language)}
+      </OpeningTime>
     </Container>
   )
 }
