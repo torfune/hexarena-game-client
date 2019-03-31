@@ -52,7 +52,7 @@ const Countdown = ({ time }) => {
         {days}:{hours.padStart(2, '0')}:{minutes.padStart(2, '0')}:
         {seconds.padStart(2, '0')}
       </CountdownTime>
-      <OpeningTime>{openingDate}</OpeningTime>
+      {/* <OpeningTime>{openingDate}</OpeningTime> */}
     </Container>
   )
 }
