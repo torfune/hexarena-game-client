@@ -20,6 +20,7 @@ import handleTimesUp from './handlers/timesUp'
 import handleVillages from './handlers/villages'
 import handleWin from './handlers/win'
 import handleWood from './handlers/wood'
+import handleStatus from './handlers/status'
 
 const GAMESERVER_URL = process.env.REACT_APP_GAMESERVER_URL
 
@@ -47,6 +48,7 @@ class Messenger {
       .on('villages', handleVillages.bind(this))
       .on('win', handleWin.bind(this))
       .on('wood', handleWood.bind(this))
+      .on('status', handleStatus.bind(this))
   }
   emit = (message, data) => {
     this.socket.emit(message, data)

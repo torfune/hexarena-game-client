@@ -42,6 +42,7 @@ class Game {
     this.stage = {}
     this.tiles = []
     this.wood = null
+    this.status = null
     this.hoveredTile = null
     this.isRunning = false
     this.defeated = false

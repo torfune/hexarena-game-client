@@ -37,6 +37,7 @@ class Game extends React.Component {
     messages: [],
     players: [],
     requests: [],
+    deadPlayers: [],
     waiting: true,
     allyDied: false,
     connectionError: false,
@@ -59,6 +60,7 @@ class Game extends React.Component {
     timesUpWinnerId: null,
     villages: null,
     wood: null,
+    status: null,
   }
   componentDidMount = async () => {
     const gameElement = document.getElementById('game')
@@ -84,6 +86,8 @@ class Game extends React.Component {
         setTime: this.getChangeHandler('time'),
         setVillages: this.getChangeHandler('villages'),
         setWood: this.getChangeHandler('wood'),
+        setStatus: this.getChangeHandler('status'),
+        setDeadPlayers: this.getChangeHandler('deadPlayers'),
         showDefeatScreen: this.showDefeatScreen,
         showTimesUpScreen: this.showTimesUpScreen,
         winGame: () => {
@@ -130,7 +134,10 @@ class Game extends React.Component {
     return (
       <PageWrapper>
         <div id="game" />
-        <Leaderboard leaders={this.state.players} />
+        <Leaderboard
+          leaders={this.state.players}
+          deadPlayers={this.state.deadPlayers}
+        />
         <YourEmpire
           player={this.state.player}
           tilesCount={this.state.tilesCount}

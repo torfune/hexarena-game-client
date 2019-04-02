@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import Header from '../../../shared/Header'
 import crownImagePath from '../../../../assets/icons/crown.svg'
+import skullImagePath from '../../../../assets/icons/skull.svg'
 
 const Container = styled.div`
   background: rgba(255, 255, 255, 0.92);
@@ -21,7 +22,7 @@ const Content = styled.div`
   padding: 8px 30px;
 `
 
-const Leader = styled.div`
+const Player = styled.div`
   display: flex;
 `
 
@@ -30,6 +31,16 @@ const Pattern = styled.div`
   width: 16px;
   border-radius: 50%;
   background: ${({ pattern }) => pattern};
+  align-self: center;
+  margin-right: 8px;
+  position: relative;
+  top: -1px;
+`
+
+const Scull = styled.img`
+  height: 16px;
+  width: 16px;
+  opacity: 0.8;
   align-self: center;
   margin-right: 8px;
   position: relative;
@@ -50,7 +61,7 @@ const TilesCount = styled.p`
   margin: 8px 0 8px auto;
 `
 
-const Leaderboard = ({ leaders }) => {
+const Leaderboard = ({ leaders, deadPlayers }) => {
   if (!leaders.length) return null
 
   leaders.sort((a, b) => {
@@ -101,11 +112,18 @@ const Leaderboard = ({ leaders }) => {
       <Header text="Players" iconSrc={crownImagePath} iconSize="24px" />
       <Content>
         {leaders.map((l, i) => (
-          <Leader key={i}>
+          <Player key={i}>
             <Pattern pattern={l.pattern} />
             <Name>{l.name}</Name>
             <TilesCount>{l.tilesCount}</TilesCount>
-          </Leader>
+          </Player>
+        ))}
+        {deadPlayers.map((d, i) => (
+          <Player key={i}>
+            <Scull src={skullImagePath} />
+            <Name>{d.name}</Name>
+            <TilesCount>0</TilesCount>
+          </Player>
         ))}
       </Content>
     </Container>
