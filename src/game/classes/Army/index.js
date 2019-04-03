@@ -9,18 +9,29 @@ import {
   UNIT_RADIUS,
   UNIT_DOOR_OFFSET,
 } from '../../constants'
+import store from '../../../store'
 
 class Army {
-  constructor({ id, tile, ownerId }) {
+  constructor({ id, tileId, ownerId, isDestroyed }) {
+    const tile = store.getItemById('tiles', tileId)
+
+    if (!tile) {
+      console.warn(`Cannot create Army on a non-existing tile: ${tileId}`)
+      return
+    }
+
     this.id = id
-    this.ownerId = ownerId
     this.tile = tile
-    this.units = []
-    this.animationFraction = null
-    this.isMoving = false
-    this.isDestroying = false
-    this.lastScale = game.scale
+    this.tileId = tileId
+    this.ownerId = ownerId
+    this.isDestroyed = isDestroyed
+
     this.alpha = 1
+    this.animationFraction = null
+    this.isDestroying = false
+    this.isMoving = false
+    this.lastScale = game.scale
+    this.units = []
 
     const position = getPixelPosition(tile.x, tile.z)
     const randomizedPositions = getUniqueRandomizedPositions(
@@ -44,6 +55,24 @@ class Army {
       tile.addArmy(this)
     }
   }
+  set(key, value) {
+    this[key] = value
+
+    switch (key) {
+      case 'tileId':
+        this.moveOn(value)
+        break
+
+      case 'isDestroyed':
+        if (value) {
+          this.destroy()
+        }
+        break
+
+      default:
+        break
+    }
+  }
   update() {
     if (this.isDestroying) {
       this.alpha -= 0.02
@@ -52,18 +81,18 @@ class Army {
         this.units[i].setAlpha(this.alpha)
       }
 
-      if (this.alpha <= 0) {
-        for (let i = 0; i < UNIT_COUNT; i++) {
-          this.units[i].destroy()
-        }
+      // if (this.alpha <= 0) {
+      //   for (let i = 0; i < UNIT_COUNT; i++) {
+      //     this.units[i].destroy()
+      //   }
 
-        const index = game.armies.indexOf(this)
-        if (index !== -1) {
-          game.armies.splice(index, 1)
-        }
+      //   const index = game.armies.indexOf(this)
+      //   if (index !== -1) {
+      //     game.armies.splice(index, 1)
+      //   }
 
-        return
-      }
+      //   return
+      // }
     }
 
     if (!this.isMoving) return
@@ -89,10 +118,15 @@ class Army {
 
     this.lastScale = game.scale
   }
-  moveOn(tile) {
-    if (tile === this.tile) return
+  moveOn(tileId) {
+    const tile = store.getItemById('tiles', tileId)
 
-    if (this.tile.army === this) {
+    if (!tile) {
+      this.destroy()
+      return
+    }
+
+    if (this.tile.army && this.tile.army.id === this.id) {
       this.tile.removeArmy()
     }
 

@@ -1,50 +1,44 @@
 import * as PIXI from 'pixi.js'
-import Messenger from './Messenger'
+import Socket from '../../Socket'
+import loadImages from '../functions/loadImages'
 import createGameLoop from '../functions/createGameLoop'
 import createPixiApp from '../functions/createPixiApp'
-import getTileByPixelPosition from '../functions/getTileByPixelPosition'
+import getTileByXZ from '../functions/getTileByXZ'
 import getPixelPosition from '../functions/getPixelPosition'
 import pixelToAxial from '../functions/pixelToAxial'
 import roundToDecimals from '../functions/roundToDecimals'
 import getDebugCommand from '../functions/getDebugCommand'
 import getHoveredTileInfo from '../functions/getHoveredTileInfo'
 import canAttack from '../functions/canAttack'
+import store from '../../store'
 import {
-  ZOOM_SPEED,
+  CAMERA_SPEED,
+  DEFAULT_SCALE,
   MAX_SCALE,
   MIN_SCALE,
-  DEFAULT_SCALE,
   TILE_IMAGES,
-  CAMERA_SPEED,
+  ZOOM_SPEED,
 } from '../constants'
+
+const GAMESERVER_HOST = process.env.REACT_APP_GAMESERVER_HOST
 
 class Game {
   constructor() {
+    this.socket = new Socket()
     this.animations = []
-    this.armies = []
-    this.actions = []
-    this.actionQueue = []
-    this.camera = { x: null, y: null }
+    this.camera = null
     this.cameraMove = { x: 0, y: 0 }
     this.cameraDrag = null
-    this.cursor = { x: null, y: null }
+    this.cursor = null
     this.lastMouseMove = null
     this.loop = null
     this.pixi = null
-    this.player = null
-    this.playerId = null
-    this.players = []
-    this.react = null
     this.selectedArmyTile = null
     this.selectedArmyTargetTiles = null
-    this.socket = null
     this.stage = {}
-    this.tiles = []
-    this.wood = null
-    this.hoveredTile = null
-    this.isRunning = false
-    this.defeated = false
+    this.imagesLoaded = false
     this.tilesWithPatternPreview = []
+    this.serverTimeDiff = null
     this.keyDown = {
       a: false,
       w: false,
@@ -59,15 +53,30 @@ class Game {
       ? 'DOMMouseScroll'
       : 'mousewheel'
 
-    document.addEventListener(wheelEvent, this.handleWheelMove)
-    document.addEventListener('mousemove', this.handleMouseMove)
-    document.addEventListener('mousedown', this.handleMouseDown)
-    document.addEventListener('mouseup', this.handleMouseUp)
-    document.addEventListener('keydown', this.handleKeyDown)
-    document.addEventListener('keyup', this.handleKeyUp)
+    document.addEventListener(wheelEvent, this.handleWheelMove.bind(this))
+    document.addEventListener('mousemove', this.handleMouseMove.bind(this))
+    document.addEventListener('mousedown', this.handleMouseDown.bind(this))
+    document.addEventListener('mouseup', this.handleMouseUp.bind(this))
+    document.addEventListener('keydown', this.handleKeyDown.bind(this))
+    document.addEventListener('keyup', this.handleKeyUp.bind(this))
   }
-  start(rootElement, reactMethods, name) {
-    if (this.isRunning) return
+  async start(rootElement, name) {
+    console.log('Starting game...')
+
+    if (!this.imagesLoaded) {
+      await loadImages()
+      this.imagesLoaded = true
+
+      try {
+        const response = await fetch(`http://${GAMESERVER_HOST}/config`)
+        const gsConfig = await response.json()
+
+        window.gsConfig = gsConfig
+      } catch (err) {
+        console.error(`Can't connect to Gameserver: ${GAMESERVER_HOST}`)
+        return
+      }
+    }
 
     if (!this.pixi) {
       this.loop = createGameLoop(this.update, this)
@@ -81,14 +90,11 @@ class Game {
       this.pixi.start()
     }
 
-    this.react = { ...reactMethods }
-
     rootElement.appendChild(this.pixi.view)
+    this.setupStoreListeners()
 
-    this.messenger = new Messenger()
-    this.messenger.emit('start', name)
-
-    this.isRunning = true
+    await this.socket.connect(GAMESERVER_HOST)
+    this.socket.send('start', name)
   }
   stop() {
     if (!this.isRunning) return
@@ -97,47 +103,48 @@ class Game {
       this.stage[TILE_IMAGES[i]].removeChildren()
     }
 
-    this.messenger.close()
+    this.socket.close()
     this.pixi.stop()
 
+    this.socket = new Socket()
     this.animations = []
-    this.armies = []
-    this.camera = { x: null, y: null }
+    this.camera = null
+    this.cameraMove = { x: 0, y: 0 }
     this.cameraDrag = null
-    this.cursor = { x: null, y: null }
+    this.cursor = null
     this.lastMouseMove = null
-    this.playerId = null
-    this.players = []
-    this.react = null
     this.selectedArmyTile = null
-    this.socket = null
-    this.targetScale = this.scale
-    this.tiles = []
-    this.wood = null
-    this.isRunning = false
-    this.defeated = false
+    this.selectedArmyTargetTiles = null
+    this.tilesWithPatternPreview = []
+    this.serverTimeDiff = null
+    this.keyDown = {
+      a: false,
+      w: false,
+      d: false,
+      s: false,
+    }
   }
-  update = () => {
-    if (!this.isRunning) return
+  update() {
+    if (!store.actions) return
 
-    const { animations, cameraDrag, cursor, tiles, armies, actions } = this
+    // Animations
+    if (this.animations.length > 0) {
+      for (let i = this.animations.length - 1; i >= 0; i--) {
+        this.animations[i].update()
 
-    // update animations
-    if (animations.length) {
-      for (let i = animations.length - 1; i >= 0; i--) {
-        animations[i].update()
-
-        if (animations[i].finished) {
-          animations.splice(i, 1)
+        if (this.animations[i].finished) {
+          this.animations.splice(i, 1)
         }
       }
     }
 
-    // update camera
-    if (cameraDrag) {
+    // Camera
+    if (this.cameraDrag) {
+      const { camera, cursor } = this.cameraDrag
+
       this.camera = {
-        x: cameraDrag.camera.x - (cameraDrag.cursor.x - cursor.x),
-        y: cameraDrag.camera.y - (cameraDrag.cursor.y - cursor.y),
+        x: camera.x - (cursor.x - this.cursor.x),
+        y: camera.y - (cursor.y - this.cursor.y),
       }
 
       this.pixi.stage.x = this.camera.x
@@ -156,7 +163,7 @@ class Game {
       this.pixi.stage.y = this.camera.y
     }
 
-    // update zoom
+    // Zoom
     if (this.scale !== this.targetScale) {
       const pixel = {
         x: window.innerWidth / 2 - this.camera.x,
@@ -166,94 +173,125 @@ class Game {
 
       this.scale = this.targetScale
 
-      for (let i = 0; i < tiles.length; i++) {
-        tiles[i].updateScale()
+      for (let i = 0; i < store.tiles.length; i++) {
+        store.tiles[i].updateScale()
       }
 
-      for (let i = 0; i < armies.length; i++) {
-        armies[i].updateScale()
+      for (let i = 0; i < store.armies.length; i++) {
+        store.armies[i].updateScale()
       }
 
       this.setCameraToAxialPosition(axial)
     }
 
-    // update actions
-    for (let i = 0; i < actions.length; i++) {
-      actions[i].update()
+    // Actions
+    for (let i = 0; i < store.actions.length; i++) {
+      store.actions[i].update()
     }
 
-    // update armies
-    for (let i = 0; i < armies.length; i++) {
-      armies[i].update()
+    // Armies
+    for (let i = 0; i < store.armies.length; i++) {
+      store.armies[i].update()
     }
 
-    // update hovered tile
+    // Hovered tile
     const newHoveredTile = this.getHoveredTile()
-    if (newHoveredTile !== this.hoveredTile) {
-      if (this.hoveredTile) {
-        this.hoveredTile.endHover()
-      }
 
-      if (newHoveredTile) {
-        newHoveredTile.startHover()
-      }
+    // existing -> non-existing
+    if (store.hoveredTile && !newHoveredTile) {
+      store.hoveredTile.endHover()
+      store.hoveredTile = null
+    }
 
-      this.hoveredTile = newHoveredTile
+    // non-existing -> existing
+    if (!store.hoveredTile && newHoveredTile) {
+      store.hoveredTile = newHoveredTile
+      store.hoveredTile.startHover()
 
       this.updateHoveredTileInfo()
-      this.updateNamePreview(this.hoveredTile)
+      this.updateContested()
+      this.updatePatternPreviews()
+    }
+
+    // existing[A] -> existing[B]
+    if (
+      store.hoveredTile &&
+      newHoveredTile &&
+      store.hoveredTile.id !== newHoveredTile.id
+    ) {
+      store.hoveredTile.endHover()
+      store.hoveredTile = newHoveredTile
+      store.hoveredTile.startHover()
+
+      this.updateHoveredTileInfo()
       this.updateContested()
       this.updatePatternPreviews()
     }
   }
-  sendMessage = message => {
+  setupStoreListeners() {
+    store.onChange('tiles', (current, last) => {
+      if (!current) return
+
+      if (!last) {
+        this.setCameraToAxialPosition(current[0])
+      }
+
+      this.updateBlackOverlays()
+      this.updateNeighbors()
+      this.updateBorders()
+      this.updateHoveredTileInfo()
+      this.updatePatternPreviews()
+    })
+
+    store.onChange('actions', () => {
+      this.updatePatternPreviews()
+    })
+
+    store.onChange('serverTime', current => {
+      this.serverTimeDiff = Date.now() - current
+    })
+  }
+  sendMessage(message) {
     this.messenger.emit('message', message)
   }
-  updateScreenSize = () => {
+  updateScreenSize() {
     this.pixi.renderer.resize(window.innerWidth, window.innerHeight)
   }
-  selectPattern = pattern => {
+  selectPattern(pattern) {
     this.messenger.emit('select_pattern', pattern)
   }
-  handleKeyDown = ({ key }) => {
-    if (!this.isRunning) return
-
+  handleKeyDown({ key }) {
     this.keyDown[key] = true
     this.updateCameraMove()
 
     if (key === 'Escape') {
-      this.messenger.emit('cancel')
+      this.socket.send('cancel')
       return
     }
 
-    const tile = this.hoveredTile
+    const tile = store.hoveredTile
     const command = getDebugCommand(key)
 
     if (!tile || !command) return
 
-    const axial = { x: tile.x, z: tile.z }
-
-    this.messenger.emit('debug', { command, axial })
+    this.socket.send('debug', `${command}|${tile.x}|${tile.z}`)
   }
-  handleKeyUp = ({ key }) => {
-    if (!this.isRunning) return
-
+  handleKeyUp({ key }) {
     this.keyDown[key] = false
     this.updateCameraMove()
-  }
-  handleMouseDown = ({ clientX: x, clientY: y }) => {
-    if (!this.isRunning) return
 
-    this.cameraDrag = {
-      cursor: { x, y },
-      camera: {
-        x: this.camera.x,
-        y: this.camera.y,
-      },
+    if (key === 'h') {
+      store.showHUD = !store.showHUD
     }
   }
-  handleMouseUp = event => {
-    if (!this.cameraDrag || !this.isRunning) return
+  handleMouseDown({ clientX: x, clientY: y }) {
+    this.cameraDrag = {
+      cursor: { x, y },
+      camera: { ...this.camera },
+    }
+  }
+  handleMouseUp(event) {
+    if (!this.cameraDrag) return
 
     const cursorDelta =
       Math.abs(this.cursor.x - this.cameraDrag.cursor.x) +
@@ -263,7 +301,7 @@ class Game {
 
     if (cursorDelta > 32) return
 
-    const tile = this.hoveredTile
+    const tile = store.hoveredTile
 
     if (!tile) return
 
@@ -279,7 +317,7 @@ class Game {
 
       if (index !== null) {
         const { x, z } = this.selectedArmyTile
-        this.messenger.emit('send_army', `${x}|${z}|${index}`)
+        this.socket.send('send_army', `${x}|${z}|${index}`)
       }
 
       this.selectedArmyTile.unselectArmy()
@@ -290,15 +328,15 @@ class Game {
 
     if (
       tile.owner &&
-      tile.owner.id === this.playerId &&
+      tile.owner.id === store.player.id &&
       (tile.castle || tile.capital || tile.camp)
     ) {
       let isThereArmy = false
 
-      for (let i = 0; i < this.armies.length; i++) {
-        const army = this.armies[i]
+      for (let i = 0; i < store.armies.length; i++) {
+        const army = store.armies[i]
 
-        if (army.tile === tile && army.ownerId === this.playerId) {
+        if (army.tile.id === tile.id && army.ownerId === store.player.id) {
           isThereArmy = true
         }
       }
@@ -324,17 +362,13 @@ class Game {
     }
 
     if (button) {
-      this.messenger.emit('click', `${tile.x}|${tile.z}|${button}`)
+      this.socket.send('click', `${tile.x}|${tile.z}|${button}`)
     }
   }
-  handleMouseMove = ({ clientX: x, clientY: y }) => {
-    if (!this.isRunning) return
-
+  handleMouseMove({ clientX: x, clientY: y }) {
     this.cursor = { x, y }
   }
-  handleWheelMove = ({ deltaY, detail }) => {
-    if (!this.isRunning) return
-
+  handleWheelMove({ deltaY, detail }) {
     const delta = deltaY || detail
     const zoomDirection = (delta < 0 ? -1 : 1) * -1
     const scale = this.scale + zoomDirection * ZOOM_SPEED
@@ -344,61 +378,39 @@ class Game {
       this.targetScale = roundedScale
     }
   }
-  handleFirstTileArrival = () => {
-    const firstTile = this.tiles[0]
-
-    this.react.showGame()
-    this.setCameraToAxialPosition(firstTile)
-  }
-  updatePlayerTilesCount = () => {
-    let tilesCount = 0
-
-    for (let i = 0; i < this.tiles.length; i++) {
-      const owner = this.tiles[i].owner
-
-      if (owner && owner.id === this.playerId) {
-        tilesCount++
-      }
-    }
-
-    this.react.setTilesCount(tilesCount)
-  }
-  updateHoveredTileInfo = () => {
-    const hoveredTileInfo = getHoveredTileInfo(this.hoveredTile)
-
-    this.react.setHoveredTileInfo(hoveredTileInfo)
+  updateHoveredTileInfo() {
+    const hoveredTileInfo = getHoveredTileInfo(store.hoveredTile)
 
     return !!hoveredTileInfo
   }
-  updateNamePreview = tile => {
-    if (!tile || !tile.owner || tile.owner.id === this.playerId) {
-      this.react.setNamePreview(null)
-    } else {
-      this.react.setNamePreview(tile.owner.name)
-    }
-  }
-  updateNeighbors = () => {
-    for (let i = 0; i < this.tiles.length; i++) {
-      this.tiles[i].updateNeighbors(this.tiles)
-    }
-  }
-  updateBorders = () => {
-    for (let i = 0; i < this.tiles.length; i++) {
-      this.tiles[i].updateBorders()
-    }
-  }
-  updateContested = () => {
-    for (let i = 0; i < this.tiles.length; i++) {
-      const t = this.tiles[i]
+  updateNeighbors() {
+    if (!store.tiles) return
 
-      if (t === this.hoveredTile && t.isContested() && !t.owner) {
-        this.tiles[i].addContested()
+    for (let i = 0; i < store.tiles.length; i++) {
+      store.tiles[i].updateNeighbors()
+    }
+  }
+  updateBorders() {
+    if (!store.tiles) return
+
+    for (let i = 0; i < store.tiles.length; i++) {
+      store.tiles[i].updateBorders()
+    }
+  }
+  updateContested() {
+    if (!store.tiles) return
+
+    for (let i = 0; i < store.tiles.length; i++) {
+      const t = store.tiles[i]
+
+      if (t === store.hoveredTile && t.isContested() && !t.owner) {
+        t.addContested()
       } else {
-        this.tiles[i].removeContested()
+        t.removeContested()
       }
     }
   }
-  getHoveredTile = () => {
+  getHoveredTile() {
     if (!this.cursor || !this.camera) return
 
     const pixel = {
@@ -406,63 +418,30 @@ class Game {
       y: this.cursor.y - this.camera.y,
     }
 
-    return getTileByPixelPosition(this.tiles, pixel, this.scale)
+    const axial = pixelToAxial(pixel, this.scale)
+
+    return getTileByXZ(axial.x, axial.z)
   }
-  getTilesToCapture = (tile, playerId) => {
-    let tilesToCapture = []
+  getTilesToCapture(tile, playerId) {
+    const tilesToCapture = []
 
     // A : Attack hover
-    if (this.playerId === playerId) {
+    if (store.player.id === playerId) {
       if (canAttack(tile)) {
         tilesToCapture.push(tile)
       }
     }
 
     // B : Action
-    for (let i = 0; i < this.actions.length; i++) {
-      const action = this.actions[i]
+    for (let i = 0; i < store.actions.length; i++) {
+      const action = store.actions[i]
+
+      if (tilesToCapture.includes(action.tile)) continue
 
       if (action.type === 'attack' && action.ownerId === playerId) {
         tilesToCapture.push(action.tile)
       }
     }
-
-    // C : Army send
-    // if (this.selectedArmyTile) {
-    //   let index = null
-
-    //   for (let i = 0; i < 6; i++) {
-    //     if (this.selectedArmyTargetTiles[i].includes(tile)) {
-    //       index = i
-    //       break
-    //     }
-    //   }
-
-    //   if (index !== null) {
-    //     const tiles = this.selectedArmyTargetTiles[index]
-
-    //     for (let i = 0; i < tiles.length; i++) {
-    //       if (!tiles[i].owner && !tilesToCapture.includes(tiles[i])) {
-    //         tilesToCapture.push(tiles[i])
-    //         if (tiles[i].mountain || tiles[i].castle) {
-    //           break
-    //         }
-    //       } else if (
-    //         tiles[i].owner &&
-    //         tiles[i].owner.id !== this.playerId &&
-    //         !tilesToCapture.includes(tiles[i])
-    //       ) {
-    //         if (tiles[i].mountain) {
-    //           break
-    //         }
-    //         tilesToCapture.push(tiles[i])
-    //         if (tiles[i].castle || tiles[i].capital) {
-    //           break
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
 
     // Mountains
     for (let i = tilesToCapture.length - 1; i >= 0; i--) {
@@ -470,15 +449,12 @@ class Game {
 
       if (t.mountain || t.village) {
         for (let j = 0; j < 6; j++) {
-          const neighbor = t.neighbors[j]
+          const n = t.neighbors[j]
 
-          if (!neighbor) continue
+          if (!n) continue
 
-          if (
-            !tilesToCapture.includes(neighbor) &&
-            (!neighbor.owner || neighbor.owner.id !== playerId)
-          ) {
-            tilesToCapture.push(neighbor)
+          if (!n.owner && !n.bedrock && !tilesToCapture.includes(n)) {
+            tilesToCapture.push(n)
           }
         }
       }
@@ -486,24 +462,21 @@ class Game {
 
     return tilesToCapture
   }
-  updatePatternPreviews = () => {
-    const actions = []
-    for (let i = 0; i < this.actions.length; i++) {
-      if (this.actions[i].type === 'attack') {
-        actions.push(this.actions[i])
-      }
-    }
+  updatePatternPreviews() {
+    if (!store.actions) return
 
     const oldTilesWithPatternPreview = this.tilesWithPatternPreview
-    this.tilesWithPatternPreview = []
-
     const pattern = {}
 
-    for (let i = 0; i < actions.length; i++) {
-      const tilesToCapture = this.getTilesToCapture(
-        actions[i].tile,
-        actions[i].ownerId
-      )
+    this.tilesWithPatternPreview = []
+
+    // Actions
+    for (let i = 0; i < store.actions.length; i++) {
+      const action = store.actions[i]
+
+      if (action.type !== 'attack') continue
+
+      const tilesToCapture = this.getTilesToCapture(action.tile, action.ownerId)
 
       for (let j = 0; j < tilesToCapture.length; j++) {
         const t = tilesToCapture[j]
@@ -512,20 +485,18 @@ class Game {
 
         this.tilesWithPatternPreview.push(t)
 
-        for (let k = 0; k < this.players.length; k++) {
-          if (this.players[k].id === actions[i].ownerId) {
-            pattern[`${t.x}|${t.z}`] = this.players[k].pattern
+        for (let k = 0; k < store.players.length; k++) {
+          if (store.players[k].id === action.ownerId) {
+            pattern[`${t.x}|${t.z}`] = store.players[k].pattern
             break
           }
         }
       }
     }
 
-    if (this.hoveredTile && !this.hoveredTile.owner) {
-      const tilesToCapture = this.getTilesToCapture(
-        this.hoveredTile,
-        this.playerId
-      )
+    // Hovered tile
+    if (store.hoveredTile && !store.hoveredTile.owner) {
+      const tilesToCapture = this.getTilesToCapture(store.hoveredTile, store.id)
 
       for (let i = 0; i < tilesToCapture.length; i++) {
         const t = tilesToCapture[i]
@@ -534,12 +505,7 @@ class Game {
 
         this.tilesWithPatternPreview.push(t)
 
-        for (let j = 0; j < this.players.length; j++) {
-          if (this.players[j].id === this.playerId) {
-            pattern[`${t.x}|${t.z}`] = this.players[j].pattern
-            break
-          }
-        }
+        pattern[`${t.x}|${t.z}`] = store.player.pattern
       }
     }
 
@@ -561,7 +527,7 @@ class Game {
 
     this.updateBorders()
   }
-  setCameraToAxialPosition = ({ x, z }) => {
+  setCameraToAxialPosition({ x, z }) {
     const pixel = getPixelPosition(x, z)
 
     this.camera = {
@@ -572,7 +538,7 @@ class Game {
     this.pixi.stage.x = this.camera.x
     this.pixi.stage.y = this.camera.y
   }
-  updateCameraMove = () => {
+  updateCameraMove() {
     this.cameraMove = { x: 0, y: 0 }
 
     if (this.keyDown['d']) {
@@ -591,14 +557,19 @@ class Game {
       this.cameraMove.y++
     }
   }
-  acceptRequest = senderId => {
+  acceptRequest(senderId) {
     this.messenger.emit('request', { action: 'accept', senderId })
   }
-  declineRequest = senderId => {
+  declineRequest(senderId) {
     this.messenger.emit('request', { action: 'decline', senderId })
   }
-  createRequest = receiverId => {
+  createRequest(receiverId) {
     this.messenger.emit('request', { action: 'create', receiverId })
+  }
+  updateBlackOverlays() {
+    for (let i = 0; i < store.tiles.length; i++) {
+      store.tiles[i].updateBlackOverlay()
+    }
   }
 }
 

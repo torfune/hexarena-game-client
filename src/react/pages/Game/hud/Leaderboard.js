@@ -2,6 +2,9 @@ import React from 'react'
 import styled from 'styled-components'
 import Header from '../../../shared/Header'
 import crownImagePath from '../../../../assets/icons/crown.svg'
+import useStore from '../../../hooks/useStore'
+import { observer } from 'mobx-react-lite'
+import { HUD_SCALE } from '../../../constants'
 
 const Container = styled.div`
   background: rgba(255, 255, 255, 0.92);
@@ -15,6 +18,8 @@ const Container = styled.div`
   border-top: 1px solid #ddd;
   border-left: 1px solid #ddd;
   overflow: hidden;
+  transform-origin: right bottom;
+  transform: scale(${HUD_SCALE});
 `
 
 const Content = styled.div`
@@ -23,6 +28,7 @@ const Content = styled.div`
 
 const Leader = styled.div`
   display: flex;
+  opacity: ${props => props.opacity};
 `
 
 const Pattern = styled.div`
@@ -50,10 +56,12 @@ const TilesCount = styled.p`
   margin: 8px 0 8px auto;
 `
 
-const Leaderboard = ({ leaders }) => {
-  if (!leaders.length) return null
+const Leaderboard = () => {
+  const { players } = useStore()
 
-  leaders.sort((a, b) => {
+  if (!players.length) return null
+
+  const sortedPlayers = [...players].sort((a, b) => {
     if (a.tilesCount > b.tilesCount) {
       return -1
     } else if (a.tilesCount < b.tilesCount) {
@@ -63,45 +71,12 @@ const Leaderboard = ({ leaders }) => {
     }
   })
 
-  // leaders = [
-  //   {
-  //     name: 'asadsad',
-  //     pattern: '#f33',
-  //     tilesCount: 33,
-  //   },
-  //   {
-  //     name: 'asadsad',
-  //     pattern: '#f33',
-  //     tilesCount: 33,
-  //   },
-  //   {
-  //     name: 'asadsad',
-  //     pattern: '#f33',
-  //     tilesCount: 33,
-  //   },
-  //   {
-  //     name: 'asadsad',
-  //     pattern: '#f33',
-  //     tilesCount: 33,
-  //   },
-  //   {
-  //     name: 'asadsad',
-  //     pattern: '#f33',
-  //     tilesCount: 33,
-  //   },
-  //   {
-  //     name: 'asadsad',
-  //     pattern: '#f33',
-  //     tilesCount: 33,
-  //   },
-  // ]
-
   return (
     <Container>
       <Header text="Players" iconSrc={crownImagePath} iconSize="24px" />
       <Content>
-        {leaders.map((l, i) => (
-          <Leader key={i}>
+        {sortedPlayers.map((l, i) => (
+          <Leader key={i} opacity={l.alive ? 1 : 0.2}>
             <Pattern pattern={l.pattern} />
             <Name>{l.name}</Name>
             <TilesCount>{l.tilesCount}</TilesCount>
@@ -112,4 +87,4 @@ const Leaderboard = ({ leaders }) => {
   )
 }
 
-export default Leaderboard
+export default observer(Leaderboard)

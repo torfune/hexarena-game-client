@@ -3,6 +3,9 @@ import styled from 'styled-components'
 import Header from '../../../shared/Header'
 import resourcesImagePath from '../../../../assets/icons/resources.svg'
 import woodImagePath from '../../../../assets/images/wood.png'
+import useStore from '../../../hooks/useStore'
+import { observer } from 'mobx-react-lite'
+import { HUD_SCALE } from '../../../constants'
 
 const Container = styled.div`
   background: rgba(255, 255, 255, 0.92);
@@ -14,6 +17,8 @@ const Container = styled.div`
   top: 0;
   user-select: none;
   width: 360px;
+  transform-origin: left top;
+  transform: scale(${HUD_SCALE});
 `
 
 const Content = styled.div`
@@ -33,7 +38,9 @@ const Slot = styled.img`
   opacity: ${props => (!props.isFilled ? '0.4' : null)};
 `
 
-const WoodSection = ({ wood, notEnoughWood }) => {
+const WoodSection = () => {
+  const { wood } = useStore()
+
   if (wood === null) return null
 
   const woodIcons = []
@@ -47,7 +54,7 @@ const WoodSection = ({ wood, notEnoughWood }) => {
         text="Wood"
         iconSrc={resourcesImagePath}
         iconSize="22px"
-        red={notEnoughWood}
+        red={false}
       />
       <Content>
         <Slots>
@@ -60,4 +67,4 @@ const WoodSection = ({ wood, notEnoughWood }) => {
   )
 }
 
-export default WoodSection
+export default observer(WoodSection)

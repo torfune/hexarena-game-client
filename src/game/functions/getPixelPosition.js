@@ -1,4 +1,4 @@
-import game from '../../game'
+import game from '../index'
 import { TILE_RADIUS } from '../constants'
 
 const getPixelPosition = (x, z) => ({

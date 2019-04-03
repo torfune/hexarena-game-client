@@ -4,6 +4,9 @@ import Header from '../../../shared/Header'
 import Label from '../../../shared/Label'
 import Hexagon from '../../../shared/Hexagon'
 import hexagonImagePath from '../../../../assets/icons/hexagon.svg'
+import useStore from '../../../hooks/useStore'
+import { observer } from 'mobx-react-lite'
+import { HUD_SCALE } from '../../../constants'
 
 const Container = styled.div`
   background: rgba(255, 255, 255, 0.92);
@@ -17,6 +20,8 @@ const Container = styled.div`
   border-top: 1px solid #ddd;
   border-right: 1px solid #ddd;
   overflow: hidden;
+  transform-origin: left bottom;
+  transform: scale(${HUD_SCALE});
 `
 
 const Content = styled.div`
@@ -38,7 +43,9 @@ const Text = styled.p`
   margin: 4px 0;
 `
 
-const PlayerInfo = ({ player, tilesCount, villages }) => {
+const PlayerInfo = () => {
+  const { player, villages } = useStore()
+
   if (!player || !villages) return null
 
   return (
@@ -52,7 +59,7 @@ const PlayerInfo = ({ player, tilesCount, villages }) => {
 
         <GridField row="2" column="1">
           <Label>Tiles</Label>
-          <Text>{tilesCount}</Text>
+          <Text>{player.tilesCount}</Text>
         </GridField>
 
         <GridField row="1" column="2">
@@ -71,4 +78,4 @@ const PlayerInfo = ({ player, tilesCount, villages }) => {
   )
 }
 
-export default PlayerInfo
+export default observer(PlayerInfo)

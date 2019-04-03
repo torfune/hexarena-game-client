@@ -3,33 +3,40 @@ import game from '../../game'
 import getPixelPosition from '../functions/getPixelPosition'
 import hex from '../functions/hex'
 import createImage from '../functions/createImage'
+import store from '../../store'
 
 const ACTION_RADIUS = 49
 
 class Action {
-  constructor({ tile, finishedAt, duration, type, isActive, number, ownerId }) {
-    this.tile = tile
-    this.finishedAt = finishedAt
-    this.duration = duration
-    this.isActive = isActive || false
-    this.type = type
-    this.ownerId = ownerId
+  constructor({ id, type, tileId, ownerId, status, duration, finishedAt }) {
+    const tile = store.getItemById('tiles', tileId)
+    const owner = store.getItemById('players', ownerId)
 
-    const iconTexture = this.isActive
-      ? getActionTexture(type)
-      : 'actionIconEmpty'
+    if (!tile || !owner) return
+
+    this.id = id
+    this.type = type
+    this.tileId = tileId
+    this.tile = tile
+    this.ownerId = ownerId
+    this.owner = owner
+    this.status = status
+    this.duration = duration
+    this.finishedAt = finishedAt
 
     this.fill = new PIXI.Graphics()
     this.background = createImage('actionBg')
-    this.icon = createImage('actionIcon', iconTexture)
     this.cancelIcon = createImage('actionIcon', 'actionIconCancel')
-
-    this.mouseLeft = false
     this.cancelIcon.visible = false
+    this.mouseLeft = false
+    this.icon = createImage(
+      'actionIcon',
+      this.status === 'running' ? getActionTexture(type) : 'actionIconEmpty'
+    )
 
-    if (!this.isActive) {
+    if (this.status !== 'running') {
       this.number = new PIXI.Text(
-        number,
+        1,
         new PIXI.TextStyle({
           fontFamily: 'Montserrat',
           fontSize: 44,
@@ -45,32 +52,46 @@ class Action {
     game.stage.actionFill.addChild(this.fill)
 
     this.tile.action = this
-    game.actions.push(this)
     this.update()
   }
-  activate(finishedAt, duration) {
-    this.finishedAt = finishedAt
-    this.duration = duration
-    this.isActive = true
+  set(key, value) {
+    this[key] = value
 
-    game.stage.actionIcon.removeChild(this.icon)
-    game.stage.actionIcon.removeChild(this.number)
+    switch (key) {
+      case 'status':
+        switch (this.status) {
+          case 'done':
+            this.destroy()
+            break
 
-    this.icon = createImage('actionIcon', getActionTexture(this.type))
-  }
-  setNumber(number) {
-    if (!this.number) return
+          case 'running':
+            game.stage.actionIcon.removeChild(this.icon)
+            game.stage.actionIcon.removeChild(this.number)
+            this.icon = createImage('actionIcon', getActionTexture(this.type))
+            break
 
-    this.number.text = number
+          default:
+            break
+        }
+        break
+
+      default:
+        break
+    }
   }
   update() {
     const { finishedAt, duration } = this
-    const now = Date.now() + game.timeDiff
+    const now = Date.now() + game.serverTimeDiff
     const timeDelta = finishedAt - now
 
     let fraction = Math.round((1 - timeDelta / duration) * 100) / 100
-    if (fraction < 0 || !this.isActive) {
+
+    if (fraction < 0 || this.status === 'pending') {
       fraction = 0
+    }
+
+    if (fraction > 1 || this.status === 'done') {
+      fraction = 1
     }
 
     const position = getPixelPosition(this.tile.x, this.tile.z)
@@ -108,10 +129,6 @@ class Action {
       this.number.scale.y = game.scale
     }
 
-    if (fraction >= 1) {
-      this.destroy()
-    }
-
     if (game.hoveredTile !== this.tile) {
       this.mouseLeft = true
     }
@@ -135,10 +152,7 @@ class Action {
     }
   }
   destroy() {
-    const index = game.actions.indexOf(this)
-    if (index !== -1) {
-      game.actions.splice(index, 1)
-    }
+    store.removeItemById('actions', this.id)
 
     this.tile.action = null
 

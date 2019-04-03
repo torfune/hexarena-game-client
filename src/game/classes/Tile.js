@@ -7,41 +7,50 @@ import createImage from '../functions/createImage'
 import invertHexDirection from '../functions/invertHexDirection'
 import hex from '../functions/hex'
 import getRotationBySide from '../functions/getRotationBySide'
+import store from '../../store'
 import {
   NEIGHBOR_DIRECTIONS,
   TILE_IMAGES,
   ARMY_ICON_OFFSET_Y,
   HITPOINTS_OFFSET_Y,
   HEART_OFFSET_X,
+  BEDROCK_COLOR,
 } from '../constants'
 
 class Tile {
   constructor({
+    id,
     x,
     z,
-    owner,
-    mountain,
-    forest,
+    ownerId,
+    camp,
     capital,
     castle,
+    forest,
+    mountain,
     village,
-    camp,
+    bedrock,
     hitpoints,
   }) {
+    this.id = id
     this.x = x
     this.z = z
-    this.owner = owner
-    this.castle = castle
-    this.mountain = mountain
-    this.forest = forest
-    this.capital = capital
-    this.village = village
+    this.ownerId = ownerId
     this.camp = camp
+    this.capital = capital
+    this.castle = castle
+    this.forest = forest
+    this.mountain = mountain
+    this.village = village
+    this.bedrock = bedrock
     this.hitpoints = hitpoints
-    this.neighbors = [null, null, null, null, null, null]
-    this.image = {}
+
+    this.previous = {}
+    this.owner = ownerId ? store.getItemById('players', ownerId) : null
     this.army = null
     this.hitpointsVisible = false
+    this.image = {}
+    this.neighbors = [null, null, null, null, null, null]
 
     const position = getPixelPosition(x, z)
 
@@ -100,13 +109,17 @@ class Tile {
       this.image.forest = createImage('forest')
     }
 
+    if (bedrock) {
+      this.image.background.tint = hex(BEDROCK_COLOR)
+    }
+
     if (hitpoints !== null) {
       this.addHitpoints(hitpoints)
     }
 
-    if (owner) {
+    if (this.owner) {
       this.image.pattern = createImage('pattern')
-      this.image.pattern.tint = hex(owner.pattern)
+      this.image.pattern.tint = hex(this.owner.pattern)
     }
 
     for (let i = 0; i < TILE_IMAGES.length; i++) {
@@ -127,6 +140,44 @@ class Tile {
         image.scale.x = game.scale
         image.scale.y = game.scale
       }
+    }
+  }
+  set(key, value) {
+    this.previous[key] = this[key]
+    this[key] = value
+
+    switch (key) {
+      case 'capital':
+      case 'castle':
+      case 'camp':
+      case 'village':
+      case 'forest':
+        this.updateImage(key)
+        break
+
+      case 'ownerId':
+        this.changeOwner(value)
+        break
+
+      case 'hitpoints':
+        if (!this.previous.hitpoints && this.hitpoints) {
+          this.addHitpoints(this.hitpoints)
+        } else if (this.previous.hitpoints && !this.hitpoints) {
+          this.removeHitpoints()
+        } else {
+          this.updateHitpoints(this.hitpoints)
+        }
+        break
+
+      default:
+        break
+    }
+  }
+  updateImage(key) {
+    if (this[key] && !this.image[key]) {
+      this.addImage(key)
+    } else {
+      this.removeImage(key)
     }
   }
   updateBlackOverlay() {
@@ -205,11 +256,9 @@ class Tile {
     })
   }
   addCapital() {
-    this.capital = true
     this.addImage('capital')
   }
   addCastle() {
-    this.castle = true
     this.addImage('castle')
   }
   addForest() {
@@ -289,10 +338,14 @@ class Tile {
 
     if (!image) return
 
+    delete this.image[imageName]
+
     new Animation({
       speed: 0.05,
       image,
-      context: { stage: game.stage[imageName] },
+      context: {
+        stage: game.stage[imageName],
+      },
       onUpdate: (image, fraction) => {
         image.alpha = 1 - fraction
       },
@@ -326,9 +379,9 @@ class Tile {
   removeCamp() {
     this.camp = false
 
-    for (let i = 0; i < game.armies.length; i++) {
-      if (game.armies[i].tile === this) {
-        game.armies[i].moveOn(this)
+    for (let i = 0; i < store.armies.length; i++) {
+      if (store.armies[i].tile === this) {
+        store.armies[i].moveOn(this)
       }
     }
 
@@ -373,12 +426,12 @@ class Tile {
       this.removeImage('hitpointsBg')
     }, 500)
   }
-  updateHitpoints(hitpoints) {
-    if (hitpoints === null) return
+  updateHitpoints() {
+    if (this.hitpoints === null) return
 
     const { hearts } = this.image
 
-    if (hitpoints === 2 && this.hitpoints < 2) {
+    if (this.hitpoints === 2 && this.previous.hitpoints < 2) {
       new Animation({
         image: hearts[1],
         onUpdate: (image, fraction) => {
@@ -387,11 +440,11 @@ class Tile {
       })
 
       setTimeout(() => {
-        if (!this.isHovered() && this.hitpoints === 2) {
+        if (!this.isHovered() && this.previous.hitpoints === 2) {
           this.hideHitpoints()
         }
       }, 800)
-    } else if (hitpoints < 2 && this.hitpoints === 2) {
+    } else if (this.hitpoints < 2 && this.previous.hitpoints === 2) {
       new Animation({
         image: hearts[1],
         onUpdate: (image, fraction) => {
@@ -400,11 +453,9 @@ class Tile {
       })
     }
 
-    if (hitpoints < 2) {
+    if (this.hitpoints < 2) {
       this.showHitpoints()
     }
-
-    this.hitpoints = hitpoints
   }
   showHitpoints() {
     if (this.hitpointsVisible) return
@@ -460,15 +511,15 @@ class Tile {
       },
     })
   }
-  setOwner(owner) {
-    const { x, z } = this
+  changeOwner(ownerId) {
+    const owner = ownerId ? store.getItemById('players', ownerId) : null
 
     if (owner) {
       if (this.image.pattern) {
         game.stage['pattern'].removeChild(this.image.pattern)
       }
 
-      const position = getPixelPosition(x, z)
+      const position = getPixelPosition(this.x, this.z)
 
       this.image.pattern = createImage('pattern')
       this.image.pattern.tint = hex(owner.pattern)
@@ -542,7 +593,7 @@ class Tile {
       }
     }
   }
-  updateNeighbors(tiles) {
+  updateNeighbors() {
     let missingNeighbors = []
 
     for (let i = 0; i < 6; i++) {
@@ -553,8 +604,8 @@ class Tile {
 
     if (!missingNeighbors.length) return
 
-    for (let i = 0; i < tiles.length; i++) {
-      const tile = tiles[i]
+    for (let i = 0; i < store.tiles.length; i++) {
+      const tile = store.tiles[i]
 
       for (let j = 0; j < missingNeighbors.length; j++) {
         const direction = missingNeighbors[j]
@@ -582,23 +633,55 @@ class Tile {
   }
   updateBorders() {
     for (let i = 0; i < 6; i++) {
-      if (!this.neighbors[i]) continue
+      const n = this.neighbors[i]
 
-      if (this.neighbors[i].owner !== this.owner) {
-        this.image.border[i].visible = true
-      } else if (
-        !this.owner &&
-        game.tilesWithPatternPreview.includes(this) &&
-        !game.tilesWithPatternPreview.includes(this.neighbors[i])
-      ) {
-        this.image.border[i].visible = true
-      } else {
-        this.image.border[i].visible = false
+      if (!n) continue
+
+      let showBorder = false
+      let borderTint = null
+
+      // Bedrock -> !Bedrock
+      if (this.bedrock && !n.bedrock) {
+        showBorder = true
+        borderTint = '#444'
       }
+
+      // !Bedrock -> Bedrock
+      if (!this.bedrock && n.bedrock) {
+        showBorder = true
+        borderTint = '#444'
+      }
+
+      // Owned -> Neutral
+      if (this.owner && !n.owner) {
+        showBorder = true
+      }
+
+      // Neutral -> Owned
+      if (!this.owner && n.owner) {
+        showBorder = true
+      }
+
+      // Owned -> Owned
+      if (this.owner && n.owner && this.owner.id !== n.owner.id) {
+        showBorder = true
+      }
+
+      // Preview -> Neutral
+      if (
+        game.tilesWithPatternPreview.includes(this) &&
+        !n.owner &&
+        !game.tilesWithPatternPreview.includes(n)
+      ) {
+        showBorder = true
+      }
+
+      this.image.border[i].visible = showBorder
+      this.image.border[i].tint = borderTint ? hex(borderTint) : hex('#fff')
     }
   }
   isHovered() {
-    return game.hoveredTile === this
+    return store.hoveredTile && store.hoveredTile.id === this.id
   }
   isEmpty() {
     return (
@@ -633,17 +716,17 @@ class Tile {
     game.stage['patternPreview'].removeChild(this.image.patternPreview)
   }
   isContested() {
-    let neighborPlayers = []
+    let neighborPlayersIds = []
 
     for (let i = 0; i < 6; i++) {
       const n = this.neighbors[i]
 
-      if (n && n.owner && !neighborPlayers.includes(n.owner)) {
-        neighborPlayers.push(n.owner)
+      if (n && n.owner && !neighborPlayersIds.includes(n.owner.id)) {
+        neighborPlayersIds.push(n.owner.id)
       }
     }
 
-    return neighborPlayers.length >= 2
+    return neighborPlayersIds.length >= 2
   }
   getStructureName() {
     let structure = 'Plains'

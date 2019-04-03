@@ -1,9 +1,9 @@
-import game from '../../game'
+import store from '../../store'
 
 const getTileByXZ = (x, z) => {
-  for (let i = 0; i < game.tiles.length; i++) {
-    if (game.tiles[i].x === x && game.tiles[i].z === z) {
-      return game.tiles[i]
+  for (let i = 0; i < store.tiles.length; i++) {
+    if (store.tiles[i].x === x && store.tiles[i].z === z) {
+      return store.tiles[i]
     }
   }
 

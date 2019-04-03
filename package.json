@@ -1,23 +1,26 @@
 {
   "name": "hexagor-fe",
-  "version": "Alpha 1.5.0",
+  "version": "Alpha 1.5.1",
   "private": true,
   "dependencies": {
     "@reach/router": "^1.2.1",
     "axios": "^0.18.0",
+    "mobx": "^5.9.4",
+    "mobx-react-devtools": "^6.1.1",
+    "mobx-react-lite": "^1.2.0",
     "pixi.js": "^4.8.5",
+    "react": "^16.8.1",
     "react-dom": "^16.8.1",
     "react-scripts": "2.1.3",
     "react-spring": "^8.0.7",
-    "react": "^16.8.1",
     "socket.io-client": "^2.2.0",
     "styled-components": "^4.1.3"
   },
   "scripts": {
-    "dev": "REACT_APP_GAMESERVER_URL=http://localhost:8000 react-scripts start",
+    "dev": "REACT_APP_GAMESERVER_HOST=localhost:8000 react-scripts start",
     "start": "react-scripts start",
-    "build-dev": "REACT_APP_GAMESERVER_URL=http://us-gs-0.hexarena.io react-scripts build",
-    "build-live": "REACT_APP_GAMESERVER_URL=http://us-gs-1.hexarena.io react-scripts build"
+    "build-dev": "REACT_APP_GAMESERVER_HOST=us-gs-0.hexarena.io react-scripts build",
+    "build-live": "REACT_APP_GAMESERVER_HOST=us-gs-1.hexarena.io react-scripts build"
   },
   "browserslist": [
     ">0.2%",

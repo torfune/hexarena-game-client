@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import GamesList from './GamesList'
 
-const GAMESERVER_URL = process.env.REACT_APP_GAMESERVER_URL
+const GAMESERVER_HOST = process.env.REACT_APP_GAMESERVER_HOST
 
 const GamesOverview = () => {
   const [games, setGames] = useState(null)
 
   const fetchGames = async () => {
-    const response = await axios.get(`${GAMESERVER_URL}/games`)
+    const response = await axios.get(`http://${GAMESERVER_HOST}/games`)
 
     setGames(response.data)
 

@@ -11,8 +11,6 @@ class Animation {
     onUpdate,
     onFinish,
   }) {
-    if (!game.isRunning) return
-
     this.ease = ease || easeInOutQuad
     this.context = context
     this.speed = speed || 0.1
@@ -43,7 +41,6 @@ class Animation {
   }
   destroy = () => {
     const index = game.animations.indexOf(this)
-
     if (index !== -1) {
       game.animations.splice(index, 1)
     }

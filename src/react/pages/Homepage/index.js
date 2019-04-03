@@ -9,7 +9,7 @@ import Footer from './Footer'
 import Winners from './Winners'
 import { version } from '../../../../package.json'
 
-const GAMESERVER_URL = process.env.REACT_APP_GAMESERVER_URL
+const GAMESERVER_HOST = process.env.REACT_APP_GAMESERVER_HOST
 
 const Container = styled.div`
   width: 1300px;
@@ -47,8 +47,8 @@ class HomePage extends React.Component {
     errorMessage: null,
   }
   componentDidMount = async () => {
-    const statusRes = await axios.get(`${GAMESERVER_URL}/status`)
-    const winnersRes = await axios.get(`${GAMESERVER_URL}/winners`)
+    const statusRes = await axios.get(`http://${GAMESERVER_HOST}/status`)
+    const winnersRes = await axios.get(`http://${GAMESERVER_HOST}/winners`)
 
     const winners = winnersRes.data
       .split('\n')

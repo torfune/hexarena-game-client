@@ -8,7 +8,7 @@ const convert = (value, type) => {
       const number = Number(value)
 
       if (isNaN(number)) {
-        console.error(`Can't convert to Number: ${value}`)
+        console.error(`Can't convert to number: ${value}`)
         return null
       }
 

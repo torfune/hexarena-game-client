@@ -1,4 +1,5 @@
-import game from '../../game'
+import game from '../index'
+import store from '../../store'
 
 const canAttack = tile => {
   for (let i = 0; i < 6; i++) {
@@ -7,9 +8,10 @@ const canAttack = tile => {
     if (
       neighbor &&
       neighbor.owner &&
-      neighbor.owner.id === game.playerId &&
+      neighbor.owner.id === store.player.id &&
       !tile.owner &&
       !tile.isContested() &&
+      !tile.bedrock &&
       !game.selectedArmyTile
     ) {
       return true

@@ -1,4 +1,5 @@
 import game from '..'
+import store from '../../store'
 import getAttackDuration from './getAttackDuration'
 
 const getHoveredTileInfo = tile => {
@@ -7,14 +8,14 @@ const getHoveredTileInfo = tile => {
   if (!tile) return null
 
   let isNeighborToPlayer = false
-  let isOwnedByPlayer = tile.owner && tile.owner.id === game.playerId
+  let isOwnedByPlayer = tile.owner && tile.owner.id === store.player.id
 
   for (let i = 0; i < 6; i++) {
     const neighbor = tile.neighbors[i]
 
     if (!neighbor) continue
 
-    if (neighbor.owner && neighbor.owner.id === game.playerId) {
+    if (neighbor.owner && neighbor.owner.id === store.player.id) {
       isNeighborToPlayer = true
       break
     }
@@ -23,7 +24,7 @@ const getHoveredTileInfo = tile => {
   const structure = tile.getStructureName()
 
   // Cancel
-  if (tile.action && tile.action.ownerId === game.player.id) {
+  if (tile.action && tile.action.owner.id === store.player.id) {
     return {
       label: 'Cancel action',
       structure,
@@ -32,7 +33,7 @@ const getHoveredTileInfo = tile => {
 
   // Attack
   if (isNeighborToPlayer && !tile.owner && !tile.isContested()) {
-    const durationMs = getAttackDuration(game.playerId, tile)
+    const durationMs = getAttackDuration(store.player.id, tile)
 
     return {
       label: 'Capture',
@@ -67,7 +68,7 @@ const getHoveredTileInfo = tile => {
       label: 'Recruit army',
       structure,
       duration: `${window.gsConfig.RECRUIT_DURATION / 1000}s`,
-      notEnoughWood: game.wood < RECRUIT_COST,
+      notEnoughWood: store.wood < RECRUIT_COST,
       woodCost: RECRUIT_COST,
     }
   }
