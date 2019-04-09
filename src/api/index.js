@@ -1,23 +1,23 @@
-import actions from './config/actions'
-import armies from './config/armies'
-import id from './config/id'
-import players from './config/players'
-import serverTime from './config/serverTime'
-import status from './config/status'
-import tiles from './config/tiles'
-import time from './config/time'
-import villages from './config/villages'
-import wood from './config/wood'
+import actions from './messages/actions'
+import armies from './messages/armies'
+import gameTime from './messages/gameTime'
+import id from './messages/id'
+import players from './messages/players'
+import serverTime from './messages/serverTime'
+import status from './messages/status'
+import tiles from './messages/tiles'
+import villages from './messages/villages'
+import wood from './messages/wood'
 
 export default {
   actions,
   armies,
+  gameTime,
   id,
   players,
   serverTime,
   status,
   tiles,
-  time,
   villages,
   wood,
 }

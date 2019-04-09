@@ -4,7 +4,7 @@ import Header from '../../../shared/Header'
 import Label from '../../../shared/Label'
 import Hexagon from '../../../shared/Hexagon'
 import hexagonImagePath from '../../../../assets/icons/hexagon.svg'
-import useStore from '../../../hooks/useStore'
+import store from '../../../../store'
 import { observer } from 'mobx-react-lite'
 import { HUD_SCALE } from '../../../constants'
 
@@ -44,7 +44,7 @@ const Text = styled.p`
 `
 
 const PlayerInfo = () => {
-  const { player, villages } = useStore()
+  const { player, villages } = store
 
   if (!player || !villages) return null
 

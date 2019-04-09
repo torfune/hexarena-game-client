@@ -2,6 +2,9 @@ import React from 'react'
 import styled from 'styled-components'
 import ActionPreview from './ActionPreview'
 import StructurePreview from './StructurePreview'
+import store from '../../../../../store'
+import getHoveredTileInfo from '../../../../../game/functions/getHoveredTileInfo'
+import { observer } from 'mobx-react-lite'
 
 const Container = styled.div.attrs(({ x, y }) => ({
   style: {
@@ -15,77 +18,43 @@ const Container = styled.div.attrs(({ x, y }) => ({
   background: #fff;
   position: absolute;
   user-select: none;
-  opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
   box-shadow: 1px 1px 16px rgba(0, 0, 0, 0.2);
-  transition: opacity 0.1s;
-  transition-delay: ${({ isVisible }) => (isVisible ? '0.4s' : '0s')};
   overflow: hidden;
 `
 
-class HoveredTileinfo extends React.Component {
-  state = {
-    hoveredTileInfo: null,
-    x: null,
-    y: null,
-    isVisible: false,
+const HoveredTileinfo = () => {
+  const { hoveredTile } = store
+
+  const [cursor, setCursor] = React.useState({ x: 0, y: 0 })
+  const [hoveredTileInfo, setHoveredTileInfo] = React.useState(null)
+
+  const handleMouseMove = ({ clientX, clientY }) => {
+    setCursor({ x: clientX + 12, y: clientY + 12 })
   }
-  static getDerivedStateFromProps = ({ hoveredTileInfo }) => {
-    if (!hoveredTileInfo) {
-      return {
-        isVisible: false,
-      }
+
+  React.useEffect(() => {
+    document.addEventListener('mousemove', handleMouseMove)
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove)
     }
+  })
 
-    return {
-      isVisible: true,
-      hoveredTileInfo,
-    }
-  }
-  componentDidMount = () => {
-    document.addEventListener('mousemove', this.handleMouseMove)
-  }
-  componentWillUnmount = () => {
-    document.removeEventListener('mousemove', this.handleMouseMove)
-  }
-  handleMouseMove = ({ clientY, clientX }) => {
-    this.setState({
-      x: clientX + 12,
-      y: clientY + 12,
-    })
-  }
-  render() {
-    const { x, y, hoveredTileInfo, isVisible } = this.state
+  React.useEffect(() => {
+    setHoveredTileInfo(getHoveredTileInfo(hoveredTile))
+  }, [hoveredTile])
 
-    let label = null
-    let structure = null
-    let duration = null
-    let notEnoughWood = false
-    let woodCost = null
+  if (!hoveredTileInfo) return null
 
-    if (hoveredTileInfo) {
-      label = hoveredTileInfo.label
-      structure = hoveredTileInfo.structure
-      duration = hoveredTileInfo.duration
-      notEnoughWood = hoveredTileInfo.notEnoughWood
-      woodCost = hoveredTileInfo.woodCost
-    }
-
-    return (
-      <Container x={x} y={y} isVisible={isVisible}>
-        {label ? (
-          <ActionPreview
-            label={label}
-            structure={structure}
-            duration={duration}
-            notEnoughWood={notEnoughWood}
-            woodCost={woodCost}
-          />
-        ) : (
-          <StructurePreview structure={structure} />
-        )}
-      </Container>
-    )
-  }
+  return (
+    <Container x={cursor.x} y={cursor.y}>
+      {hoveredTileInfo.label ? (
+        <ActionPreview {...hoveredTileInfo} />
+      ) : (
+        <StructurePreview structure={hoveredTileInfo.structure} />
+      )}
+    </Container>
+  )
 }
 
-export default HoveredTileinfo
+export default observer(HoveredTileinfo)

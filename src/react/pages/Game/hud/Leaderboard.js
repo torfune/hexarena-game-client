@@ -1,10 +1,10 @@
-import React from 'react'
-import styled from 'styled-components'
-import Header from '../../../shared/Header'
-import crownImagePath from '../../../../assets/icons/crown.svg'
-import useStore from '../../../hooks/useStore'
-import { observer } from 'mobx-react-lite'
 import { HUD_SCALE } from '../../../constants'
+import { observer } from 'mobx-react-lite'
+import crownImagePath from '../../../../assets/icons/crown.svg'
+import Header from '../../../shared/Header'
+import React from 'react'
+import store from '../../../../store'
+import styled from 'styled-components'
 
 const Container = styled.div`
   background: rgba(255, 255, 255, 0.92);
@@ -18,6 +18,8 @@ const Container = styled.div`
   border-top: 1px solid #ddd;
   border-left: 1px solid #ddd;
   overflow: hidden;
+
+  /* Resolution scaling */
   transform-origin: right bottom;
   transform: scale(${HUD_SCALE});
 `
@@ -57,7 +59,7 @@ const TilesCount = styled.p`
 `
 
 const Leaderboard = () => {
-  const { players } = useStore()
+  const { players } = store
 
   if (!players.length) return null
 

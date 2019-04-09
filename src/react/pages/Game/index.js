@@ -1,21 +1,20 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
-// import Actions from './hud/Actions'
-// import HoverPreview from './hud/HoverPreview'
 import Leaderboard from './hud/Leaderboard'
-// import NamePreview from './hud/NamePreview'
-// import Time from './hud/Time'
+import GameTime from './hud/GameTime'
 import Wood from './hud/Wood'
-// import Diplomacy from './hud/Diplomacy'
 import YourEmpire from './hud/YourEmpire'
+import store from '../../../store'
+import game from '../../../game'
+import { observer } from 'mobx-react-lite'
+import HoverPreview from './hud/HoverPreview'
+// import NamePreview from './hud/NamePreview'
+// import Diplomacy from './hud/Diplomacy'
 // import DefeatScreen from './screens/DefeatScreen'
 // import ErrorScreen from './screens/ErrorScreen'
 // import TimesUpScreen from './screens/TimesUpScreen'
 // import WaitingScreen from './screens/WaitingScreen'
 // import WinScreen from './screens/WinScreen'
-import store from '../../../store'
-import game from '../../../game'
-import { observer } from 'mobx-react-lite'
 
 const Container = styled.div`
   width: 100vw;
@@ -50,6 +49,8 @@ const Game = observer(() => {
           <YourEmpire />
           <Leaderboard />
           <Wood />
+          <GameTime />
+          <HoverPreview />
         </HUD>
       )}
     </Container>
@@ -71,7 +72,6 @@ export default Game
 // <HoverPreview hoveredTileInfo={this.state.hoveredTileInfo} />
 // <NamePreview name={this.state.namePreview} />
 // <Actions actions={this.state.actionQueue} />
-// <Time time={this.state.time} />
 // {this.state.defeated && (
 //   <DefeatScreen
 //     killerName={this.state.killerName}

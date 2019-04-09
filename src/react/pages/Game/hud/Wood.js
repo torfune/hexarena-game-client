@@ -1,11 +1,11 @@
-import React from 'react'
-import styled from 'styled-components'
-import Header from '../../../shared/Header'
-import resourcesImagePath from '../../../../assets/icons/resources.svg'
-import woodImagePath from '../../../../assets/images/wood.png'
-import useStore from '../../../hooks/useStore'
-import { observer } from 'mobx-react-lite'
 import { HUD_SCALE } from '../../../constants'
+import { observer } from 'mobx-react-lite'
+import Header from '../../../shared/Header'
+import React from 'react'
+import resourcesImagePath from '../../../../assets/icons/resources.svg'
+import store from '../../../../store'
+import styled from 'styled-components'
+import woodImagePath from '../../../../assets/images/wood.png'
 
 const Container = styled.div`
   background: rgba(255, 255, 255, 0.92);
@@ -39,13 +39,11 @@ const Slot = styled.img`
 `
 
 const WoodSection = () => {
-  const { wood } = useStore()
-
-  if (wood === null) return null
+  if (store.wood === null) return null
 
   const woodIcons = []
   for (let i = 0; i < 6; i++) {
-    woodIcons.push(i < wood)
+    woodIcons.push(i < store.wood)
   }
 
   return (
