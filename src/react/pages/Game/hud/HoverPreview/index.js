@@ -5,11 +5,12 @@ import StructurePreview from './StructurePreview'
 import store from '../../../../../store'
 import getHoveredTileInfo from '../../../../../game/functions/getHoveredTileInfo'
 import { observer } from 'mobx-react-lite'
+import NamePreview from './NamePreview'
 
-const Container = styled.div.attrs(({ x, y }) => ({
+const Container = styled.div.attrs(({ cursor }) => ({
   style: {
-    left: `${x}px`,
-    top: `${y}px`,
+    left: `${cursor.x}px`,
+    top: `${cursor.y}px`,
   },
 }))`
   padding-top: 8px;
@@ -23,7 +24,7 @@ const Container = styled.div.attrs(({ x, y }) => ({
 `
 
 const HoveredTileinfo = () => {
-  const { hoveredTile } = store
+  const { hoveredTile, player } = store
 
   const [cursor, setCursor] = React.useState({ x: 0, y: 0 })
   const [hoveredTileInfo, setHoveredTileInfo] = React.useState(null)
@@ -44,10 +45,18 @@ const HoveredTileinfo = () => {
     setHoveredTileInfo(getHoveredTileInfo(hoveredTile))
   }, [hoveredTile])
 
+  if (hoveredTile && hoveredTile.owner && hoveredTile.owner.id !== player.id) {
+    return (
+      <Container cursor={cursor}>
+        <NamePreview name={hoveredTile.owner.name} />
+      </Container>
+    )
+  }
+
   if (!hoveredTileInfo) return null
 
   return (
-    <Container x={cursor.x} y={cursor.y}>
+    <Container cursor={cursor}>
       {hoveredTileInfo.label ? (
         <ActionPreview {...hoveredTileInfo} />
       ) : (

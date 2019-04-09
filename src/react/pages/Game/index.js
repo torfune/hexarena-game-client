@@ -1,14 +1,13 @@
-import React, { useEffect } from 'react'
-import styled from 'styled-components'
-import Leaderboard from './hud/Leaderboard'
+import { observer } from 'mobx-react-lite'
+import game from '../../../game'
 import GameTime from './hud/GameTime'
+import HoverPreview from './hud/HoverPreview'
+import Leaderboard from './hud/Leaderboard'
+import React, { useEffect } from 'react'
+import store from '../../../store'
+import styled from 'styled-components'
 import Wood from './hud/Wood'
 import YourEmpire from './hud/YourEmpire'
-import store from '../../../store'
-import game from '../../../game'
-import { observer } from 'mobx-react-lite'
-import HoverPreview from './hud/HoverPreview'
-// import NamePreview from './hud/NamePreview'
 // import Diplomacy from './hud/Diplomacy'
 // import DefeatScreen from './screens/DefeatScreen'
 // import ErrorScreen from './screens/ErrorScreen'
@@ -70,7 +69,6 @@ export default Game
 //   declineRequest={declineRequest}
 // />
 // <HoverPreview hoveredTileInfo={this.state.hoveredTileInfo} />
-// <NamePreview name={this.state.namePreview} />
 // <Actions actions={this.state.actionQueue} />
 // {this.state.defeated && (
 //   <DefeatScreen

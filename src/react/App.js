@@ -1,10 +1,10 @@
-import React, { Fragment } from 'react'
-import styled from 'styled-components'
 import { Router } from '@reach/router'
 import Game from './pages/Game'
-import Homepage from './pages/Homepage'
 import GamesOverview from './pages/GamesOverview'
 import GlobalStyle from './GlobalStyle'
+import Homepage from './pages/Homepage'
+import React, { Fragment } from 'react'
+import styled from 'styled-components'
 
 const BlackOverlay = styled.div`
   background: #000;
