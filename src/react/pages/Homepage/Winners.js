@@ -44,7 +44,7 @@ const Winners = props => {
 
   return (
     <Container>
-      <Heading>Winners of {version}</Heading>
+      <Heading>Winners of Alpha {version}</Heading>
       <List>
         {winners.map(({ name, color }, index) => (
           <Winner key={index}>

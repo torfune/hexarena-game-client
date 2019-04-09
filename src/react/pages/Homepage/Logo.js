@@ -47,7 +47,7 @@ const Logo = () => (
   <Container>
     <h1>
       HexArena.io
-      <Badge>{version}</Badge>
+      <Badge>Alpha {version}</Badge>
     </h1>
 
     <h2>Multiplayer strategy game</h2>

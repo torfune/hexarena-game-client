@@ -125,7 +125,7 @@ class Game {
     }
   }
   update() {
-    if (!store.actions) return
+    if (!store.actions || !store.armies) return
 
     // Animations
     if (this.animations.length > 0) {
