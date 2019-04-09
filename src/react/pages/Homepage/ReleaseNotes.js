@@ -54,6 +54,16 @@ const EditorCredits = styled.p`
 
 const updates = [
   {
+    version: 'Alpha 1.5.1',
+    points: [
+      'Alliance request timeout set to 20 seconds.',
+      'Dead players stay in the leaderboard.',
+      'Small bug fixes.',
+    ],
+    day: 5,
+    month: 4,
+  },
+  {
     version: 'Alpha 1.5.0',
     points: [
       'Added Alliances. You can only have one ally. If your ally wins, you win too.',
@@ -179,7 +189,7 @@ const updates = [
 
 const ReleaseNotes = () => (
   <Container>
-    <Heading>Release notes</Heading>
+    <Heading>What's new</Heading>
 
     {updates.map(update => (
       <UpdateContainer key={update.version}>
