@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import crossSrc from '../../../../../assets/icons/cross.svg'
 import checkSrc from '../../../../../assets/icons/check.svg'
+// import { observer } from 'mobx-react-lite'
 
 const Container = styled.div``
 
@@ -94,8 +95,8 @@ const NoPlayersText = styled.p`
 `
 
 const List = ({
-  requests,
   players,
+  requests,
   playerId,
   sendingRequest,
   onAccept,
@@ -103,7 +104,7 @@ const List = ({
   onCreate,
 }) => {
   if (sendingRequest) {
-    players = players.filter(p => p.id !== playerId && !p.allyId && !p.allyDied)
+    players = players.filter(p => p.id !== playerId && !p.allyId && p.alive)
 
     return (
       <Container>
@@ -126,12 +127,9 @@ const List = ({
       </Container>
     )
   } else {
-    const sent = requests.filter(r => r.sender.id === playerId)
-    const received = requests.filter(r => r.receiver.id === playerId)
-
     return (
       <Container>
-        {received.map(({ timeout, sender }) => (
+        {requests.received.map(({ timeout, sender }) => (
           <Item key={sender.id}>
             <Button
               iconSize="12px"
@@ -159,7 +157,7 @@ const List = ({
           </Item>
         ))}
 
-        {sent.map(({ timeout, receiver }) => (
+        {requests.sent.map(({ timeout, receiver }) => (
           <Item key={receiver.id}>
             <Waiting>request sent</Waiting>
 

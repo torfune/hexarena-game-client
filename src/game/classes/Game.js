@@ -558,13 +558,13 @@ class Game {
     }
   }
   acceptRequest(senderId) {
-    this.messenger.emit('request', { action: 'accept', senderId })
+    this.socket.send('request', `accept|${senderId}`)
   }
   declineRequest(senderId) {
-    this.messenger.emit('request', { action: 'decline', senderId })
+    this.socket.send('request', `decline|${senderId}`)
   }
   createRequest(receiverId) {
-    this.messenger.emit('request', { action: 'create', receiverId })
+    this.socket.send('request', `create|${receiverId}`)
   }
   updateBlackOverlays() {
     for (let i = 0; i < store.tiles.length; i++) {

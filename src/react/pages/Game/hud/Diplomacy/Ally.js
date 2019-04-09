@@ -41,20 +41,20 @@ const DiedText = styled.p`
   font-style: italic;
 `
 
-const Ally = ({ ally, died }) => (
+const Ally = ({ ally }) => (
   <Container>
     <AllyWrapper>
-      {died ? (
-        <Skull src={skullSrc} />
-      ) : (
+      {ally.alive ? (
         <Hexagon size="40px" color={ally.pattern} />
+      ) : (
+        <Skull src={skullSrc} />
       )}
       <Name>{ally.name}</Name>
 
-      <TilesCount>{died ? '0' : ally.tilesCount}</TilesCount>
+      <TilesCount>{ally.tilesCount}</TilesCount>
     </AllyWrapper>
 
-    <DiedText visible={died}>Your ally is dead.</DiedText>
+    <DiedText visible={!ally.alive}>Your ally is dead.</DiedText>
   </Container>
 )
 

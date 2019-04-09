@@ -11,7 +11,12 @@ class Store {
     this.showHUD = true
 
     for (const key of Object.keys(api)) {
-      this[key] = null
+      if (api[key].isArray) {
+        this[key] = []
+      } else {
+        this[key] = null
+      }
+
       this.previous[key] = null
       this[`id_map_${key}`] = {}
     }

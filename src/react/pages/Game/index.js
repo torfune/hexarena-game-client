@@ -1,4 +1,5 @@
 import { observer } from 'mobx-react-lite'
+import Diplomacy from './hud/Diplomacy'
 import game from '../../../game'
 import GameTime from './hud/GameTime'
 import HoverPreview from './hud/HoverPreview'
@@ -8,7 +9,7 @@ import store from '../../../store'
 import styled from 'styled-components'
 import Wood from './hud/Wood'
 import YourEmpire from './hud/YourEmpire'
-// import Diplomacy from './hud/Diplomacy'
+
 // import DefeatScreen from './screens/DefeatScreen'
 // import ErrorScreen from './screens/ErrorScreen'
 // import TimesUpScreen from './screens/TimesUpScreen'
@@ -45,11 +46,12 @@ const Game = observer(() => {
 
       {store.status === 'running' && store.showHUD && (
         <HUD>
-          <YourEmpire />
-          <Leaderboard />
-          <Wood />
+          <Diplomacy />
           <GameTime />
           <HoverPreview />
+          <Leaderboard />
+          <Wood />
+          <YourEmpire />
         </HUD>
       )}
     </Container>
@@ -57,41 +59,3 @@ const Game = observer(() => {
 })
 
 export default Game
-
-// <Diplomacy
-//   requests={this.state.requests}
-//   players={this.state.players}
-//   playerId={this.state.player ? this.state.player.id : null}
-//   ally={this.state.ally}
-//   allyDied={this.state.allyDied}
-//   createRequest={createRequest}
-//   acceptRequest={acceptRequest}
-//   declineRequest={declineRequest}
-// />
-// <HoverPreview hoveredTileInfo={this.state.hoveredTileInfo} />
-// <Actions actions={this.state.actionQueue} />
-// {this.state.defeated && (
-//   <DefeatScreen
-//     killerName={this.state.killerName}
-//     secondsSurvived={this.state.secondsSurvived}
-//   />
-// )}
-// {this.state.timesUp && (
-//   <TimesUpScreen
-//     players={this.state.timesUpPlayers}
-//     winnerId={this.state.timesUpWinnerId}
-//     playerId={this.state.player.id}
-//   />
-// )}
-// {this.state.waiting && this.state.players.length > 0 && (
-//   <WaitingScreen
-//     players={this.state.players}
-//     player={this.state.player}
-//     minPlayers={this.state.minPlayers}
-//     countdownSeconds={this.state.countdownSeconds}
-//     messages={this.state.messages}
-//     sendMessage={sendMessage}
-//     onPatternSelect={selectPattern}
-//   />
-// )}
-// {this.state.isWinner && <WinScreen />

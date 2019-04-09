@@ -1,11 +1,14 @@
-import React, { Fragment, useState, useEffect, useRef } from 'react'
-import styled from 'styled-components'
+import { observer } from 'mobx-react-lite'
+import { PRIMARY } from '../../../../constants'
 import Ally from './Ally'
-import List from './List'
+import game from '../../../../../game'
 import Header from '../../../../shared/Header'
 import Label from '../../../../shared/Label'
+import List from './List'
 import playerSrc from '../../../../../assets/icons/player.svg'
-import { PRIMARY } from '../../../../constants'
+import React, { Fragment, useState, useEffect, useRef } from 'react'
+import store from '../../../../../store'
+import styled from 'styled-components'
 
 const Container = styled.div`
   background: rgba(255, 255, 255, 0.92);
@@ -42,16 +45,9 @@ const ToggleButton = styled.div`
   }
 `
 
-const Diplomacy = ({
-  requests,
-  players,
-  playerId,
-  ally,
-  allyDied,
-  acceptRequest,
-  declineRequest,
-  createRequest,
-}) => {
+const Diplomacy = observer(() => {
+  const { players, player, allianceRequests } = store
+
   const [sendingRequest, setSendingRequest] = useState(false)
   const containerRef = useRef(null)
 
@@ -67,25 +63,38 @@ const Diplomacy = ({
     setSendingRequest(false)
   }
 
-  const handleCreate = id => {
-    createRequest(id)
-    setSendingRequest(false)
-  }
-
   const handleButtonClick = () => {
     setSendingRequest(!sendingRequest)
+  }
+
+  const handleCreate = id => {
+    setSendingRequest(false)
+    game.createRequest(id)
+  }
+
+  const handleAccept = id => {
+    game.acceptRequest(id)
+  }
+
+  const handleDecline = id => {
+    game.declineRequest(id)
+  }
+
+  const requests = {
+    sent: allianceRequests.filter(r => r.senderId === player.id),
+    received: allianceRequests.filter(r => r.receiverId === player.id),
   }
 
   return (
     <Container ref={containerRef}>
       <Header
-        text={ally ? 'Alliance' : 'Diplomacy'}
+        text={player.ally ? 'Alliance' : 'Diplomacy'}
         iconSrc={playerSrc}
         iconSize="24px"
       />
       <Content>
-        {ally ? (
-          <Ally ally={ally} died={allyDied} />
+        {player.ally ? (
+          <Ally ally={player.ally} />
         ) : (
           <Fragment>
             <Label>
@@ -93,13 +102,13 @@ const Diplomacy = ({
             </Label>
 
             <List
-              requests={requests}
+              playerId={player.id}
               players={players}
-              playerId={playerId}
+              requests={requests}
               sendingRequest={sendingRequest}
-              onAccept={acceptRequest}
-              onDecline={declineRequest}
+              onAccept={handleAccept}
               onCreate={handleCreate}
+              onDecline={handleDecline}
             />
 
             <ToggleButton
@@ -113,6 +122,6 @@ const Diplomacy = ({
       </Content>
     </Container>
   )
-}
+})
 
 export default Diplomacy

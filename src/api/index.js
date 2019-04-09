@@ -1,4 +1,5 @@
 import actions from './messages/actions'
+import allianceRequests from './messages/allianceRequests'
 import armies from './messages/armies'
 import gameTime from './messages/gameTime'
 import id from './messages/id'
@@ -11,6 +12,7 @@ import wood from './messages/wood'
 
 export default {
   actions,
+  allianceRequests,
   armies,
   gameTime,
   id,

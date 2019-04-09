@@ -32,14 +32,13 @@ class Socket {
     const config = api[message]
     const parsed = parse(payload, config)
 
-    if (!config.class) {
+    if (!config.class && !config.isArray) {
       store[message] = parsed
       return
     }
 
     if (!config.isArray) {
-      console.warn(`Cannot parse: ${message}`)
-      return
+      throw new Error(`Cannot parse: ${message}`)
     }
 
     if (parsed.length === 0 && !store[message]) {
@@ -47,6 +46,12 @@ class Socket {
       return
     }
 
+    if (!config.class) {
+      store[message] = parsed
+      return
+    }
+
+    let forceUpdate = false
     for (let i = 0; i < parsed.length; i++) {
       const fields = parsed[i]
       const keys = Object.keys(fields)
@@ -62,6 +67,7 @@ class Socket {
           if (oldValue !== newValue && oldValue !== undefined) {
             if (item.set) {
               item.set(keys[j], newValue)
+              forceUpdate = true
             } else {
               throw new Error(`Class for [${message}] needs a "set" method.`)
             }
@@ -90,6 +96,10 @@ class Socket {
           store[message].push(instance)
         }
       }
+    }
+
+    if (forceUpdate) {
+      store[message] = [...store[message]]
     }
 
     if (store.changeHandlers[message]) {
