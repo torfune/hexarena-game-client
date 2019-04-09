@@ -6,6 +6,7 @@ import HoverPreview from './hud/HoverPreview'
 import Leaderboard from './hud/Leaderboard'
 import React, { useEffect } from 'react'
 import store from '../../../store'
+import { navigate } from '@reach/router'
 import styled from 'styled-components'
 import Wood from './hud/Wood'
 import YourEmpire from './hud/YourEmpire'
@@ -26,11 +27,16 @@ const Container = styled.div`
 const HUD = styled.div``
 
 const Game = observer(() => {
+  if (store.alreadyPlaying) {
+    navigate('/nope')
+  }
+
   useEffect(() => {
     const element = document.getElementById('game')
     const name = window.localStorage.getItem('name')
+    const browserId = localStorage.getItem('browserId')
 
-    game.start(element, name)
+    game.start(element, name, browserId)
 
     window.addEventListener('resize', game.updateScreenSize.bind(game))
 

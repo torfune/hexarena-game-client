@@ -9,6 +9,7 @@ import status from './messages/status'
 import tiles from './messages/tiles'
 import villages from './messages/villages'
 import wood from './messages/wood'
+import alreadyPlaying from './messages/alreadyPlaying'
 
 export default {
   actions,
@@ -22,4 +23,5 @@ export default {
   tiles,
   villages,
   wood,
+  alreadyPlaying,
 }

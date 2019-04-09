@@ -60,7 +60,7 @@ class Game {
     document.addEventListener('keydown', this.handleKeyDown.bind(this))
     document.addEventListener('keyup', this.handleKeyUp.bind(this))
   }
-  async start(rootElement, name) {
+  async start(rootElement, name, browserId) {
     console.log('Starting game...')
 
     if (!this.imagesLoaded) {
@@ -94,7 +94,7 @@ class Game {
     this.setupStoreListeners()
 
     await this.socket.connect(GAMESERVER_HOST)
-    this.socket.send('start', name)
+    this.socket.send('start', `${name}|${browserId}`)
   }
   stop() {
     if (!this.isRunning) return
