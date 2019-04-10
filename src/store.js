@@ -5,6 +5,7 @@ class Store {
   hoveredTile = null
   showHud = true
   spectating = false
+  error = null
 
   constructor() {
     this.changeHandlers = {}
@@ -80,6 +81,7 @@ const toDecorate = {
   hoveredTile: observable,
   showHud: observable,
   spectating: observable,
+  error: observable,
   player: computed,
   addItem: action,
   getItem: action,

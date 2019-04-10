@@ -12,11 +12,10 @@ import Wood from './hud/Wood'
 import YourEmpire from './hud/YourEmpire'
 import DefeatModal from './screens/DefeatModal'
 import SpectateCloseButton from './screens/SpectateCloseButton'
+import ErrorScreen from './screens/ErrorScreen'
 
-// import ErrorScreen from './screens/ErrorScreen'
 // import TimesUpScreen from './screens/TimesUpScreen'
 // import WaitingScreen from './screens/WaitingScreen'
-// import WinScreen from './screens/WinScreen'
 
 const Container = styled.div`
   width: 100vw;
@@ -44,6 +43,10 @@ const Game = observer(() => {
       window.removeEventListener('resize', game.updateScreenSize)
     }
   }, [])
+
+  if (store.error) {
+    return <ErrorScreen message={store.error} />
+  }
 
   return (
     <Container>

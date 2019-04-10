@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { PRIMARY } from '../../../../constants'
+import { PRIMARY, HUD_SCALE } from '../../../../constants'
 import Ally from './Ally'
 import game from '../../../../../game'
 import Header from '../../../../shared/Header'
@@ -13,7 +13,7 @@ import styled from 'styled-components'
 const Container = styled.div`
   background: rgba(255, 255, 255, 0.92);
   bottom: 0;
-  right: 256px;
+  right: calc(256px * ${HUD_SCALE});
   width: 300px;
   position: absolute;
   user-select: none;
@@ -22,6 +22,10 @@ const Container = styled.div`
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
   overflow: hidden;
+
+  /* Resolution scaling */
+  transform-origin: right bottom;
+  transform: scale(${HUD_SCALE});
 `
 
 const Content = styled.div`

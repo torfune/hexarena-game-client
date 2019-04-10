@@ -15,7 +15,7 @@ const StyledText = styled.p`
 
 const ErrorMessage = () => (
   <Container>
-    <StyledText>Disconnected...</StyledText>
+    <StyledText>Disconnected.</StyledText>
   </Container>
 )
 
