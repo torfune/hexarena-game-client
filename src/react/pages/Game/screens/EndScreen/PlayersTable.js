@@ -1,18 +1,22 @@
 import React from 'react'
 import styled from 'styled-components'
+import store from '../../../../../store'
+import { observer } from 'mobx-react-lite'
 
 const Table = styled.table`
   text-align: left;
   border-collapse: collapse;
-  margin: 100px auto;
+  margin: 0 auto;
+  color: #222;
+  width: 256px;
 `
 
-const Row = styled.tr``
-
 const Field = styled.td`
-  padding: 16px;
-  border-bottom: 1px solid #666;
+  padding: 16px 0;
+  border-bottom: 1px solid #ccc;
   text-align: ${props => props.align};
+  font-weight: ${props => props.weight};
+  width: ${props => props.width};
 `
 
 const Pattern = styled.div`
@@ -26,8 +30,8 @@ const Pattern = styled.div`
   top: 2px;
 `
 
-const PlayersTable = ({ players }) => {
-  players.sort((a, b) => {
+const PlayersTable = () => {
+  const players = [...store.players].sort((a, b) => {
     if (a.tilesCount > b.tilesCount) {
       return -1
     } else if (a.tilesCount < b.tilesCount) {
@@ -40,29 +44,27 @@ const PlayersTable = ({ players }) => {
   return (
     <Table>
       <thead>
-        <Row>
-          <Field>Player</Field>
-          <Field />
-          <Field />
+        <tr>
+          <Field width="300px">Player</Field>
           <Field align="right">Tiles</Field>
-        </Row>
+        </tr>
       </thead>
 
       <tbody>
         {players.map(({ id, name, pattern, tilesCount }) => (
-          <Row key={id}>
-            <Field>
+          <tr key={id}>
+            <Field weight="600">
               <Pattern color={pattern} />
-              {name}
+              <span>{name}</span>
             </Field>
-            <Field />
-            <Field />
-            <Field align="right">{tilesCount}</Field>
-          </Row>
+            <Field align="right" weight="600">
+              {tilesCount}
+            </Field>
+          </tr>
         ))}
       </tbody>
     </Table>
   )
 }
 
-export default PlayersTable
+export default observer(PlayersTable)
