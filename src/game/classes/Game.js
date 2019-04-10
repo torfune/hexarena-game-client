@@ -539,21 +539,21 @@ class Game {
   updateCameraMove() {
     this.cameraMove = { x: 0, y: 0 }
 
-    if (this.keyDown['d']) {
-      this.cameraMove.x--
-    }
+    // if (this.keyDown['d']) {
+    //   this.cameraMove.x--
+    // }
 
-    if (this.keyDown['a']) {
-      this.cameraMove.x++
-    }
+    // if (this.keyDown['a']) {
+    //   this.cameraMove.x++
+    // }
 
-    if (this.keyDown['s']) {
-      this.cameraMove.y--
-    }
+    // if (this.keyDown['s']) {
+    //   this.cameraMove.y--
+    // }
 
-    if (this.keyDown['w']) {
-      this.cameraMove.y++
-    }
+    // if (this.keyDown['w']) {
+    //   this.cameraMove.y++
+    // }
   }
   acceptRequest(senderId) {
     this.socket.send('request', `accept|${senderId}`)
