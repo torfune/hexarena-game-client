@@ -17,7 +17,7 @@ const InputAndButtonContainer = styled.div`
   display: flex;
 `
 
-const PlaySection = ({ disabledUntil, countdownTime }) => {
+const PlaySection = ({ disabledUntil, countdownTime, alreadyPlaying }) => {
   const storageName = window.localStorage.getItem('name')
 
   const [name, setName] = useState(storageName || '')
