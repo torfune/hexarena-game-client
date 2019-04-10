@@ -1,7 +1,6 @@
 import store from '../store'
 import api from '../api'
 import parse from './parse'
-import getItemById from '../utils/getItemById'
 
 class Socket {
   constructor() {
@@ -22,98 +21,72 @@ class Socket {
     })
   }
   handleMessage = ({ data }) => {
-    const [message, payload] = data.split('/')
+    const [key, payload] = data.split('/')
 
-    if (store[message] === undefined) {
-      console.warn(`Unhandled message: ${message}`)
+    if (store[key] === undefined) {
+      console.warn(`Unhandled message: ${key}`)
       return
     }
 
-    const config = api[message]
+    const config = api[key]
     const parsed = parse(payload, config)
 
+    // Primitive value
     if (!config.class && !config.isArray) {
-      store[message] = parsed
+      store[key] = parsed
       return
     }
 
+    // Complex value
     if (!config.isArray) {
-      throw new Error(`Cannot parse: ${message}`)
+      throw new Error(`Cannot parse: ${key}`)
     }
 
-    if (parsed.length === 0 && !store[message]) {
-      store[message] = []
-      return
-    }
-
+    // Array of primitive values
     if (!config.class) {
-      store[message] = parsed
+      store[key] = parsed
       return
     }
 
-    let forceUpdate = false
+    // Array of complex values
     for (let i = 0; i < parsed.length; i++) {
       const fields = parsed[i]
       const keys = Object.keys(fields)
-      const item = store[message]
-        ? getItemById(store[message], fields.id)
-        : null
+      const item = store.getItem(key, fields.id)
 
       if (item) {
         for (let j = 0; j < keys.length; j++) {
-          const oldValue = item[keys[j]]
-          const newValue = fields[keys[j]]
-
-          if (oldValue !== newValue && oldValue !== undefined) {
-            if (item.set) {
-              item.set(keys[j], newValue)
-              forceUpdate = true
-            } else {
-              throw new Error(`Class for [${message}] needs a "set" method.`)
-            }
-          }
+          store.updateItem(key, fields.id, {
+            key: keys[j],
+            value: fields[keys[j]],
+          })
         }
       } else {
-        let validKeys = true
-
         for (let j = 0; j < keys.length; j++) {
           if (fields[keys[j]] === undefined) {
-            console.warn(`${message}: ${keys[j]} is undefined`)
-            validKeys = false
-            break
+            throw new Error(`${key}: ${keys[j]} is undefined`)
           }
         }
 
-        if (!validKeys) continue
+        const item = new config.class(parsed[i])
 
-        const instance = new config.class(parsed[i])
+        if (!item.id) continue
 
-        if (!instance.id) continue
-
-        if (!store[message]) {
-          store[message] = [instance]
-        } else {
-          store[message].push(instance)
-        }
+        store.addItem(key, item)
       }
     }
 
-    if (forceUpdate) {
-      store[message] = [...store[message]]
-    }
-
-    if (store.changeHandlers[message]) {
-      store.changeHandlers[message](store[message], store.previous[message])
-      store.previous[message] = store[message]
+    if (store.changeHandlers[key]) {
+      store.changeHandlers[key](store[key])
     }
   }
   handleError = event => {
-    console.log(`Messenger: error happened`)
-    console.log(event)
+    console.error(`Socket error!`)
+    console.error(event)
   }
   handleClose = () => {
     this.connected = false
-    console.log('Messenger: connection closed')
+    console.log('Socket closed.')
   }
   send = (message, payload) => {
     this.ws.send(`${message}/${payload}`)

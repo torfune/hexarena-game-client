@@ -7,8 +7,8 @@ class AllianceRequest {
     this.receiverId = receiverId
     this.timeout = timeout
 
-    this.sender = store.getItemById('players', senderId)
-    this.receiver = store.getItemById('players', receiverId)
+    this.sender = store.getItem('players', senderId)
+    this.receiver = store.getItem('players', receiverId)
   }
   set(key, value) {
     this[key] = value

@@ -9,8 +9,8 @@ const ACTION_RADIUS = 49
 
 class Action {
   constructor({ id, type, tileId, ownerId, status, duration, finishedAt }) {
-    const tile = store.getItemById('tiles', tileId)
-    const owner = store.getItemById('players', ownerId)
+    const tile = store.getItem('tiles', tileId)
+    const owner = store.getItem('players', ownerId)
 
     if (!tile || !owner) return
 
@@ -152,7 +152,7 @@ class Action {
     }
   }
   destroy() {
-    store.removeItemById('actions', this.id)
+    store.removeItem('actions', this.id)
 
     this.tile.action = null
 

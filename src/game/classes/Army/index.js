@@ -13,7 +13,7 @@ import store from '../../../store'
 
 class Army {
   constructor({ id, tileId, ownerId, isDestroyed }) {
-    const tile = store.getItemById('tiles', tileId)
+    const tile = store.getItem('tiles', tileId)
 
     if (!tile) {
       console.warn(`Cannot create Army on a non-existing tile: ${tileId}`)
@@ -119,7 +119,7 @@ class Army {
     this.lastScale = game.scale
   }
   moveOn(tileId) {
-    const tile = store.getItemById('tiles', tileId)
+    const tile = store.getItem('tiles', tileId)
 
     if (!tile) {
       this.destroy()

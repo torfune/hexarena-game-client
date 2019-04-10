@@ -10,8 +10,9 @@ import { navigate } from '@reach/router'
 import styled from 'styled-components'
 import Wood from './hud/Wood'
 import YourEmpire from './hud/YourEmpire'
+import DefeatModal from './screens/DefeatModal'
+import SpectateCloseButton from './screens/SpectateCloseButton'
 
-// import DefeatScreen from './screens/DefeatScreen'
 // import ErrorScreen from './screens/ErrorScreen'
 // import TimesUpScreen from './screens/TimesUpScreen'
 // import WaitingScreen from './screens/WaitingScreen'
@@ -23,8 +24,6 @@ const Container = styled.div`
   overflow: hidden;
   position: relative;
 `
-
-const HUD = styled.div``
 
 const Game = observer(() => {
   if (store.alreadyPlaying) {
@@ -50,15 +49,29 @@ const Game = observer(() => {
     <Container>
       <div id="game" />
 
-      {store.status === 'running' && store.showHUD && (
-        <HUD>
-          <Diplomacy />
-          <GameTime />
-          <HoverPreview />
-          <Leaderboard />
-          <Wood />
-          <YourEmpire />
-        </HUD>
+      {store.status === 'running' && (
+        <>
+          {store.showHud && store.player.alive && (
+            <>
+              <Diplomacy />
+              <GameTime />
+              <HoverPreview />
+              <Leaderboard />
+              <Wood />
+              <YourEmpire />
+            </>
+          )}
+
+          {!store.player.alive &&
+            (store.spectating ? (
+              <>
+                <SpectateCloseButton />
+                <Leaderboard />
+              </>
+            ) : (
+              <DefeatModal />
+            ))}
+        </>
       )}
     </Container>
   )

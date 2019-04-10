@@ -2,13 +2,13 @@ import { observable, decorate, computed, action } from 'mobx'
 import api from './api'
 
 class Store {
+  hoveredTile = null
+  showHud = true
+  spectating = false
+
   constructor() {
     this.changeHandlers = {}
-    this.previous = {}
-
-    // Custom store properties
-    this.hoveredTile = null
-    this.showHUD = true
+    this.map = {}
 
     for (const key of Object.keys(api)) {
       if (api[key].isArray) {
@@ -17,8 +17,7 @@ class Store {
         this[key] = null
       }
 
-      this.previous[key] = null
-      this[`id_map_${key}`] = {}
+      this.map[key] = {}
     }
   }
 
@@ -28,31 +27,39 @@ class Store {
       : null
   }
 
-  getItemById(key, id) {
-    if (!this[`id_map_${key}`][id]) {
-      const item = computed(() => {
-        for (let i = 0; i < this[key].length; i++) {
-          if (this[key][i].id === id) {
-            return this[key][i]
-          }
-        }
-
-        return null
-      })
-
-      this[`id_map_${key}`][id] = item
-    }
-
-    return this[`id_map_${key}`][id].get()
+  addItem(key, item) {
+    this[key].push(item)
   }
 
-  removeItemById(key, id) {
-    const collection = this[key]
+  getItem(key, id) {
+    if (!this.map[key][id]) {
+      let item = null
 
-    for (let i = 0; i < collection.length; i++) {
-      if (collection[i].id === id) {
-        collection.splice(i, 1)
-        delete this[`id_map_${key}`][id]
+      for (let i = 0; i < this[key].length; i++) {
+        if (this[key][i].id === id) {
+          item = this[key][i]
+        }
+      }
+
+      this.map[key][id] = item
+    }
+
+    return this.map[key][id]
+  }
+
+  updateItem(key, id, change) {
+    const item = this.getItem(key, id)
+
+    if (item && item[change.key] !== change.value) {
+      item.set(change.key, change.value)
+    }
+  }
+
+  removeItem(key, id) {
+    for (let i = 0; i < this[key].length; i++) {
+      if (this[key][i].id === id) {
+        this[key].splice(i, 1)
+        delete this.map[key][id]
         return
       }
     }
@@ -71,9 +78,13 @@ class Store {
 
 const toDecorate = {
   hoveredTile: observable,
-  showHUD: observable,
+  showHud: observable,
+  spectating: observable,
   player: computed,
-  removeItemById: action,
+  addItem: action,
+  getItem: action,
+  removeItem: action,
+  updateItem: action,
 }
 
 for (const key of Object.keys(api)) {

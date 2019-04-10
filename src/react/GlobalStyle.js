@@ -19,6 +19,10 @@ const GlobalStyle = createGlobalStyle`
     min-height: 100vh;
     overflow-x: hidden;
   }
+
+  a {
+    text-decoration: none;
+  }
   
   @supports (font-variation-settings: normal) {
     html {

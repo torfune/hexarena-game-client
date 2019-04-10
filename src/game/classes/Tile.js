@@ -46,7 +46,7 @@ class Tile {
     this.hitpoints = hitpoints
 
     this.previous = {}
-    this.owner = ownerId ? store.getItemById('players', ownerId) : null
+    this.owner = ownerId ? store.getItem('players', ownerId) : null
     this.army = null
     this.hitpointsVisible = false
     this.image = {}
@@ -512,7 +512,7 @@ class Tile {
     })
   }
   changeOwner(ownerId) {
-    const owner = ownerId ? store.getItemById('players', ownerId) : null
+    const owner = ownerId ? store.getItem('players', ownerId) : null
 
     if (owner) {
       if (this.image.pattern) {

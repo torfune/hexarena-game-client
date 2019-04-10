@@ -229,11 +229,9 @@ class Game {
     }
   }
   setupStoreListeners() {
-    store.onChange('tiles', (current, last) => {
-      if (!current) return
-
-      if (!last) {
-        this.setCameraToAxialPosition(current[0])
+    store.onChange('tiles', tiles => {
+      if (!this.camera) {
+        this.setCameraToAxialPosition(tiles[0])
       }
 
       this.updateBlackOverlays()
@@ -281,7 +279,7 @@ class Game {
     this.updateCameraMove()
 
     if (key === 'h') {
-      store.showHUD = !store.showHUD
+      store.showHud = !store.showHud
     }
   }
   handleMouseDown({ clientX: x, clientY: y }) {
