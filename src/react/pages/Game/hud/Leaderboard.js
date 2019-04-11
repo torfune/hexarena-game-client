@@ -5,6 +5,8 @@ import Header from '../../../shared/Header'
 import React from 'react'
 import store from '../../../../store'
 import styled from 'styled-components'
+import getPlayerGroups from '../../../../utils/getPlayerGroups'
+import skull from '../.../../../../../assets/icons/skull.svg'
 
 const Container = styled.div`
   background: rgba(255, 255, 255, 0.92);
@@ -25,64 +27,76 @@ const Container = styled.div`
 `
 
 const Content = styled.div`
-  padding: 8px 30px;
-`
-
-const Leader = styled.div`
-  display: flex;
-  opacity: ${props => props.opacity};
+  padding: 20px 24px;
 `
 
 const Pattern = styled.div`
   height: 16px;
   width: 16px;
   border-radius: 50%;
-  background: ${({ pattern }) => pattern};
-  align-self: center;
+  background: ${({ color }) => color};
   margin-right: 8px;
   position: relative;
   top: -1px;
 `
 
-const Name = styled.p`
-  color: #222;
-  font-weight: 500;
-  margin: 8px 0;
-  padding-right: 18px;
+const Skull = styled.img`
+  height: 16px;
+  width: 16px;
+  margin-right: 8px;
+  position: relative;
+  top: -1px;
 `
 
-const TilesCount = styled.p`
-  color: #222;
-  font-weight: 500;
-  width: 18px;
-  margin: 8px 0 8px auto;
+const Group = styled.div`
+  background: #eee;
+  margin-top: 10px;
+  border-radius: 4px;
+
+  :first-child {
+    margin-top: 0;
+  }
+`
+
+const Player = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  opacity: ${({ opacity }) => opacity};
+
+  p {
+    font-weight: 500;
+
+    :last-child {
+      margin-left: auto;
+    }
+  }
 `
 
 const Leaderboard = () => {
-  const { players } = store
+  if (!store.players.length) return null
 
-  if (!players.length) return null
-
-  const sortedPlayers = [...players].sort((a, b) => {
-    if (a.tilesCount > b.tilesCount) {
-      return -1
-    } else if (a.tilesCount < b.tilesCount) {
-      return 1
-    } else {
-      return 0
-    }
-  })
+  const groups = getPlayerGroups(store.players)
 
   return (
     <Container>
       <Header text="Players" iconSrc={crownImagePath} iconSize="24px" />
       <Content>
-        {sortedPlayers.map((l, i) => (
-          <Leader key={i} opacity={l.alive ? 1 : 0.2}>
-            <Pattern pattern={l.pattern} />
-            <Name>{l.name}</Name>
-            <TilesCount>{l.tilesCount}</TilesCount>
-          </Leader>
+        {groups.map((group, index) => (
+          <Group key={index}>
+            {group.players.map(player => (
+              <Player key={player.id} opacity={player.alive ? 1 : 0.5}>
+                {player.alive ? (
+                  <Pattern color={player.pattern} />
+                ) : (
+                  <Skull src={skull} />
+                )}
+
+                <p>{player.name}</p>
+                <p>{player.tilesCount}</p>
+              </Player>
+            ))}
+          </Group>
         ))}
       </Content>
     </Container>

@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import Hexagon from '../../../../shared/Hexagon'
 import skullSrc from '../../../../../assets/icons/skull.svg'
+import { observer } from 'mobx-react-lite'
 
 const Container = styled.div``
 
@@ -58,4 +59,4 @@ const Ally = ({ ally }) => (
   </Container>
 )
 
-export default Ally
+export default observer(Ally)

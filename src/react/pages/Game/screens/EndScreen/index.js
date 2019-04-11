@@ -6,7 +6,7 @@ import renderWinStatement from './renderWinStatement'
 import store from '../../../../../store'
 import styled from 'styled-components'
 import Table from './Table'
-import sortByKey from '../../../../../utils/sortByKey'
+import getPlayerGroups from '../../../../../utils/getPlayerGroups'
 
 const Container = styled(animated.div)`
   position: absolute;
@@ -87,35 +87,7 @@ const ContinueButton = styled.a`
 
 const EndScreen = () => {
   const spring = useSpring({ top: 0, from: { top: -4000 } })
-  let groups = []
-
-  // Put players to groups
-  for (const player of store.players) {
-    let groupFound = false
-
-    for (const group of groups) {
-      if (group.players[0].allyId === player.id) {
-        group.players.push(player)
-        group.score += player.tilesCount
-        groupFound = true
-      }
-    }
-
-    if (!groupFound) {
-      groups.push({
-        players: [player],
-        score: player.tilesCount,
-      })
-    }
-  }
-
-  // Sort groups
-  groups = sortByKey(groups, 'score')
-
-  // Sort players inside groups
-  for (const group of groups) {
-    group.players = sortByKey(group.players, 'tilesCount')
-  }
+  const groups = getPlayerGroups(store.players)
 
   return (
     <Container style={spring}>
