@@ -10,6 +10,8 @@ import tiles from './messages/tiles'
 import villages from './messages/villages'
 import wood from './messages/wood'
 import alreadyPlaying from './messages/alreadyPlaying'
+import countdownSeconds from './messages/countdown'
+import messages from './messages/messages'
 
 export default {
   actions,
@@ -24,4 +26,6 @@ export default {
   villages,
   wood,
   alreadyPlaying,
+  countdownSeconds,
+  messages,
 }

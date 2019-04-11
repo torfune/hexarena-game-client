@@ -2,6 +2,9 @@ import React from 'react'
 import styled from 'styled-components'
 import Player from './Player'
 import Chat from './Chat'
+import store from '../../../../../store'
+import { observer } from 'mobx-react-lite'
+import Game from '../../../Game'
 
 const Container = styled.div`
   position: absolute;
@@ -42,12 +45,12 @@ const getWaitingMessage = (numberOfPlayers, minPlayers) => {
   }
 }
 
-const WaitingScreen = props => {
+const WaitingScreen = observer(() => {
   const players = []
 
   for (let i = 0; i < playersPerRoom; i++) {
     players.push(
-      props.players[i] || {
+      store.players[i] || {
         id: null,
         name: null,
         pattern: null,
@@ -59,9 +62,9 @@ const WaitingScreen = props => {
     <Container>
       <div>
         <Heading>
-          {props.countdownSeconds !== null
-            ? `Game starts in ${props.countdownSeconds} seconds`
-            : getWaitingMessage(props.players.length, props.minPlayers)}
+          {store.countdownSeconds !== null
+            ? `Game starts in ${store.countdownSeconds} seconds`
+            : getWaitingMessage(store.players.length, 6)}
         </Heading>
         <Row>
           {players.slice(0, 3).map(({ id, name, pattern }, index) => (
@@ -69,9 +72,9 @@ const WaitingScreen = props => {
               key={index}
               name={name}
               pattern={pattern}
-              isThisPlayer={id === props.player.id}
-              players={props.players}
-              onPatternSelect={props.onPatternSelect}
+              isThisPlayer={id === store.player.id}
+              players={store.players}
+              onPatternSelect={Game.selectPattern}
             />
           ))}
         </Row>
@@ -81,16 +84,16 @@ const WaitingScreen = props => {
               key={index}
               name={name}
               pattern={pattern}
-              isThisPlayer={id === props.player.id}
-              players={props.players}
-              onPatternSelect={props.onPatternSelect}
+              isThisPlayer={id === store.player.id}
+              players={store.players}
+              onPatternSelect={Game.selectPattern}
             />
           ))}
         </Row>
       </div>
-      <Chat messages={props.messages} sendMessage={props.sendMessage} />
+      <Chat messages={store.messages} sendMessage={Game.sendMessage} />
     </Container>
   )
-}
+})
 
 export default WaitingScreen

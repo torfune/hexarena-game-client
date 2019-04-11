@@ -164,24 +164,26 @@ class Game {
     }
 
     // Zoom
-    if (this.scale !== this.targetScale) {
-      const pixel = {
-        x: window.innerWidth / 2 - this.camera.x,
-        y: window.innerHeight / 2 - this.camera.y,
+    if (store.status === 'running') {
+      if (this.scale !== this.targetScale) {
+        const pixel = {
+          x: window.innerWidth / 2 - this.camera.x,
+          y: window.innerHeight / 2 - this.camera.y,
+        }
+        const axial = pixelToAxial(pixel, this.scale)
+
+        this.scale = this.targetScale
+
+        for (let i = 0; i < store.tiles.length; i++) {
+          store.tiles[i].updateScale()
+        }
+
+        for (let i = 0; i < store.armies.length; i++) {
+          store.armies[i].updateScale()
+        }
+
+        this.setCameraToAxialPosition(axial)
       }
-      const axial = pixelToAxial(pixel, this.scale)
-
-      this.scale = this.targetScale
-
-      for (let i = 0; i < store.tiles.length; i++) {
-        store.tiles[i].updateScale()
-      }
-
-      for (let i = 0; i < store.armies.length; i++) {
-        store.armies[i].updateScale()
-      }
-
-      this.setCameraToAxialPosition(axial)
     }
 
     // Actions
@@ -250,13 +252,13 @@ class Game {
     })
   }
   sendMessage(message) {
-    this.messenger.emit('message', message)
+    this.socket.send('message', message)
   }
   updateScreenSize() {
     this.pixi.renderer.resize(window.innerWidth, window.innerHeight)
   }
   selectPattern(pattern) {
-    this.messenger.emit('select_pattern', pattern)
+    this.socket.send('select_pattern', pattern)
   }
   handleKeyDown({ key }) {
     this.keyDown[key] = true
