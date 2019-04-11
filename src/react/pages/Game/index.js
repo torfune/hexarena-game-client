@@ -14,8 +14,7 @@ import DefeatModal from './screens/DefeatModal'
 import SpectateCloseButton from './screens/SpectateCloseButton'
 import ErrorScreen from './screens/ErrorScreen'
 import EndScreen from './screens/EndScreen'
-
-// import WaitingScreen from './screens/WaitingScreen'
+import WaitingScreen from './screens/WaitingScreen'
 
 const Container = styled.div`
   width: 100vw;
@@ -51,6 +50,8 @@ const Game = observer(() => {
   return (
     <Container>
       <div id="game" />
+
+      {store.status === 'pending' && <WaitingScreen />}
 
       {store.status === 'running' && (
         <>
