@@ -77,7 +77,7 @@ const Game = observer(() => {
         </>
       )}
 
-      {store.status === 'running' && <EndScreen />}
+      {store.status === 'finished' && <EndScreen />}
     </Container>
   )
 })
