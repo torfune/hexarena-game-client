@@ -11,5 +11,6 @@ export default {
     status: 'string',
     duration: 'number',
     finishedAt: 'number',
+    order: 'number',
   },
 }

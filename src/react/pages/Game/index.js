@@ -13,9 +13,9 @@ import YourEmpire from './hud/YourEmpire'
 import DefeatModal from './screens/DefeatModal'
 import SpectateCloseButton from './screens/SpectateCloseButton'
 import ErrorScreen from './screens/ErrorScreen'
+// import WaitingScreen from './screens/WaitingScreen'
 
 // import TimesUpScreen from './screens/TimesUpScreen'
-// import WaitingScreen from './screens/WaitingScreen'
 
 const Container = styled.div`
   width: 100vw;

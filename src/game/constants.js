@@ -57,4 +57,5 @@ export const UNIT_DOOR_OFFSET = 48
 export const UNIT_MAX_DELAY = 0.4
 
 // COLORS
-export const BEDROCK_COLOR = '#999'
+export const BEDROCK_BACKGROUND = '#bbb'
+export const BEDROCK_BORDER = '#555'

@@ -8,7 +8,16 @@ import store from '../../store'
 const ACTION_RADIUS = 49
 
 class Action {
-  constructor({ id, type, tileId, ownerId, status, duration, finishedAt }) {
+  constructor({
+    id,
+    type,
+    tileId,
+    ownerId,
+    status,
+    duration,
+    finishedAt,
+    order,
+  }) {
     const tile = store.getItem('tiles', tileId)
     const owner = store.getItem('players', ownerId)
 
@@ -23,6 +32,7 @@ class Action {
     this.status = status
     this.duration = duration
     this.finishedAt = finishedAt
+    this.order = order
 
     this.fill = new PIXI.Graphics()
     this.background = createImage('actionBg')
@@ -36,7 +46,7 @@ class Action {
 
     if (this.status !== 'running') {
       this.number = new PIXI.Text(
-        1,
+        this.order,
         new PIXI.TextStyle({
           fontFamily: 'Montserrat',
           fontSize: 44,
@@ -72,6 +82,12 @@ class Action {
 
           default:
             break
+        }
+        break
+
+      case 'order':
+        if (this.number) {
+          this.number.text = this.order
         }
         break
 

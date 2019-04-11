@@ -15,10 +15,7 @@ class Army {
   constructor({ id, tileId, ownerId, isDestroyed }) {
     const tile = store.getItem('tiles', tileId)
 
-    if (!tile) {
-      console.warn(`Cannot create Army on a non-existing tile: ${tileId}`)
-      return
-    }
+    if (!tile || isDestroyed) return
 
     this.id = id
     this.tile = tile
@@ -64,7 +61,7 @@ class Army {
         break
 
       case 'isDestroyed':
-        if (value) {
+        if (this.isDestroyed) {
           this.destroy()
         }
         break
@@ -81,18 +78,14 @@ class Army {
         this.units[i].setAlpha(this.alpha)
       }
 
-      // if (this.alpha <= 0) {
-      //   for (let i = 0; i < UNIT_COUNT; i++) {
-      //     this.units[i].destroy()
-      //   }
+      if (this.alpha <= 0) {
+        for (let i = 0; i < UNIT_COUNT; i++) {
+          this.units[i].destroy()
+        }
 
-      //   const index = game.armies.indexOf(this)
-      //   if (index !== -1) {
-      //     game.armies.splice(index, 1)
-      //   }
-
-      //   return
-      // }
+        store.removeItem('armies', this.id)
+        return
+      }
     }
 
     if (!this.isMoving) return

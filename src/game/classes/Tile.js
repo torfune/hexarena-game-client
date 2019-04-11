@@ -14,7 +14,8 @@ import {
   ARMY_ICON_OFFSET_Y,
   HITPOINTS_OFFSET_Y,
   HEART_OFFSET_X,
-  BEDROCK_COLOR,
+  BEDROCK_BACKGROUND,
+  BEDROCK_BORDER,
 } from '../constants'
 
 class Tile {
@@ -110,7 +111,7 @@ class Tile {
     }
 
     if (bedrock) {
-      this.image.background.tint = hex(BEDROCK_COLOR)
+      this.image.background.tint = hex(BEDROCK_BACKGROUND)
     }
 
     if (hitpoints !== null) {
@@ -643,13 +644,13 @@ class Tile {
       // Bedrock -> !Bedrock
       if (this.bedrock && !n.bedrock) {
         showBorder = true
-        borderTint = '#444'
+        borderTint = BEDROCK_BORDER
       }
 
       // !Bedrock -> Bedrock
       if (!this.bedrock && n.bedrock) {
         showBorder = true
-        borderTint = '#444'
+        borderTint = BEDROCK_BORDER
       }
 
       // Owned -> Neutral
@@ -729,23 +730,23 @@ class Tile {
     return neighborPlayersIds.length >= 2
   }
   getStructureName() {
-    let structure = 'Plains'
-
-    if (this.mountain) {
-      structure = 'Mountains'
+    if (this.bedrock) {
+      return 'Edge of the World'
+    } else if (this.mountain) {
+      return 'Mountains'
     } else if (this.forest) {
-      structure = 'Forest'
+      return 'Forest'
     } else if (this.castle) {
-      structure = 'Castle'
+      return 'Castle'
     } else if (this.capital) {
-      structure = 'Capital'
+      return 'Capital'
     } else if (this.camp) {
-      structure = 'Camp'
+      return 'Camp'
     } else if (this.village) {
-      structure = 'Village'
+      return 'Village'
     }
 
-    return structure
+    return 'Plains'
   }
 }
 
