@@ -49,10 +49,13 @@ class Socket {
     }
 
     // Array of complex values
+    const ids = []
     for (let i = 0; i < parsed.length; i++) {
       const fields = parsed[i]
       const keys = Object.keys(fields)
       const item = store.getItem(key, fields.id)
+
+      ids.push(fields.id)
 
       if (item) {
         for (let j = 0; j < keys.length; j++) {
@@ -73,6 +76,15 @@ class Socket {
         if (!item.id) continue
 
         store.addItem(key, item)
+      }
+    }
+
+    // Auto destroy
+    if (config.autoDestroy) {
+      for (let i = store[key].length - 1; i >= 0; i--) {
+        if (!ids.includes(store[key][i].id)) {
+          store.removeItem(key, store[key][i].id)
+        }
       }
     }
 

@@ -1,14 +1,16 @@
 import store from '../../store'
+import { extendObservable } from 'mobx'
 
 class AllianceRequest {
   constructor({ id, senderId, receiverId, timeout }) {
-    this.id = id
-    this.senderId = senderId
-    this.receiverId = receiverId
-    this.timeout = timeout
-
-    this.sender = store.getItem('players', senderId)
-    this.receiver = store.getItem('players', receiverId)
+    extendObservable(this, {
+      id,
+      senderId,
+      sender: store.getItem('players', senderId),
+      receiverId,
+      receiver: store.getItem('players', receiverId),
+      timeout,
+    })
   }
   set(key, value) {
     this[key] = value

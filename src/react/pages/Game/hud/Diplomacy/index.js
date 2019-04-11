@@ -49,7 +49,7 @@ const ToggleButton = styled.div`
   }
 `
 
-const Diplomacy = observer(() => {
+const Diplomacy = () => {
   const { players, player, allianceRequests } = store
 
   const [sendingRequest, setSendingRequest] = useState(false)
@@ -126,6 +126,6 @@ const Diplomacy = observer(() => {
       </Content>
     </Container>
   )
-})
+}
 
-export default Diplomacy
+export default observer(Diplomacy)

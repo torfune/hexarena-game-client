@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import crossSrc from '../../../../../assets/icons/cross.svg'
 import checkSrc from '../../../../../assets/icons/check.svg'
-// import { observer } from 'mobx-react-lite'
+import { observer } from 'mobx-react-lite'
 
 const Container = styled.div``
 
@@ -174,4 +174,4 @@ const List = ({
   }
 }
 
-export default List
+export default observer(List)
