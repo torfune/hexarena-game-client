@@ -21,33 +21,35 @@ import {
 } from '../constants'
 
 const GAMESERVER_HOST = process.env.REACT_APP_GAMESERVER_HOST
+const LOCAL_STATE_MODEL = {
+  animations: [],
+  camera: null,
+  cameraMove: { x: 0, y: 0 },
+  cameraDrag: null,
+  cursor: null,
+  lastMouseMove: null,
+  selectedArmyTile: null,
+  selectedArmyTargetTiles: null,
+  tilesWithPatternPreview: [],
+  serverTimeDiff: null,
+  scale: DEFAULT_SCALE,
+  targetScale: DEFAULT_SCALE,
+  keyDown: {
+    a: false,
+    w: false,
+    d: false,
+    s: false,
+  },
+}
 
 class Game {
   constructor() {
     this.socket = new Socket()
-    this.animations = []
-    this.camera = null
-    this.cameraMove = { x: 0, y: 0 }
-    this.cameraDrag = null
-    this.cursor = null
-    this.lastMouseMove = null
     this.loop = null
     this.pixi = null
-    this.selectedArmyTile = null
-    this.selectedArmyTargetTiles = null
     this.stage = {}
     this.imagesLoaded = false
-    this.tilesWithPatternPreview = []
-    this.serverTimeDiff = null
-    this.keyDown = {
-      a: false,
-      w: false,
-      d: false,
-      s: false,
-    }
-
-    this.scale = DEFAULT_SCALE
-    this.targetScale = this.scale
+    this.running = false
 
     const wheelEvent = /Firefox/i.test(navigator.userAgent)
       ? 'DOMMouseScroll'
@@ -59,10 +61,15 @@ class Game {
     document.addEventListener('mouseup', this.handleMouseUp.bind(this))
     document.addEventListener('keydown', this.handleKeyDown.bind(this))
     document.addEventListener('keyup', this.handleKeyUp.bind(this))
+
+    this.setupStoreListeners()
   }
   async start(rootElement, name, browserId) {
-    console.log('Starting game...')
+    // Prepare clean local state
+    this.setupLocalState()
+    this.running = true
 
+    // Fetch assets & GameServer config
     if (!this.imagesLoaded) {
       await loadImages()
       this.imagesLoaded = true
@@ -78,6 +85,7 @@ class Game {
       }
     }
 
+    // Initialize PIXI
     if (!this.pixi) {
       this.loop = createGameLoop(this.update, this)
       this.pixi = createPixiApp()
@@ -90,39 +98,25 @@ class Game {
       this.pixi.start()
     }
 
+    // Mount PIXI renderer
     rootElement.appendChild(this.pixi.view)
-    this.setupStoreListeners()
 
+    // Connect to GameServer
+    this.socket = new Socket()
     await this.socket.connect(GAMESERVER_HOST)
     this.socket.send('start', `${name}|${browserId}`)
   }
   stop() {
-    if (!this.isRunning) return
-
     for (let i = 0; i < TILE_IMAGES.length; i++) {
       this.stage[TILE_IMAGES[i]].removeChildren()
     }
 
-    this.socket.close()
-    this.pixi.stop()
+    store.setDefaultValues()
 
-    this.socket = new Socket()
-    this.animations = []
-    this.camera = null
-    this.cameraMove = { x: 0, y: 0 }
-    this.cameraDrag = null
-    this.cursor = null
-    this.lastMouseMove = null
-    this.selectedArmyTile = null
-    this.selectedArmyTargetTiles = null
-    this.tilesWithPatternPreview = []
-    this.serverTimeDiff = null
-    this.keyDown = {
-      a: false,
-      w: false,
-      d: false,
-      s: false,
-    }
+    this.running = false
+    this.socket.close()
+    this.socket = null
+    this.pixi.stop()
   }
   update() {
     if (!store.actions || !store.armies || !this.camera) return
@@ -251,6 +245,12 @@ class Game {
       this.serverTimeDiff = Date.now() - current
     })
   }
+  setupLocalState() {
+    const keys = Object.keys(LOCAL_STATE_MODEL)
+    for (let i = 0; i < keys.length; i++) {
+      this[keys[i]] = LOCAL_STATE_MODEL[keys[i]]
+    }
+  }
   sendMessage(message) {
     this.socket.send('message', message)
   }
@@ -261,6 +261,8 @@ class Game {
     this.socket.send('pattern', pattern)
   }
   handleKeyDown({ key }) {
+    if (!this.running) return
+
     this.keyDown[key] = true
     this.updateCameraMove()
 
@@ -277,6 +279,8 @@ class Game {
     this.socket.send('debug', `${command}|${tile.x}|${tile.z}`)
   }
   handleKeyUp({ key }) {
+    if (!this.running) return
+
     this.keyDown[key] = false
     this.updateCameraMove()
 
@@ -291,7 +295,7 @@ class Game {
     }
   }
   handleMouseUp(event) {
-    if (!this.cameraDrag) return
+    if (!this.running || !this.cameraDrag) return
 
     const cursorDelta =
       Math.abs(this.cursor.x - this.cameraDrag.cursor.x) +
@@ -369,6 +373,8 @@ class Game {
     this.cursor = { x, y }
   }
   handleWheelMove({ deltaY, detail }) {
+    if (!this.running) return
+
     const delta = deltaY || detail
     const zoomDirection = (delta < 0 ? -1 : 1) * -1
     const scale = this.scale + zoomDirection * ZOOM_SPEED

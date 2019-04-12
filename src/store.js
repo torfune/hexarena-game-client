@@ -1,16 +1,24 @@
 import { observable, decorate, computed, action } from 'mobx'
 import api from './api'
 
-class Store {
-  hoveredTile = null
-  showHud = true
-  spectating = false
-  error = null
+const STORE_MODEL = {
+  hoveredTile: null,
+  showHud: true,
+  spectating: false,
+  error: null,
+}
 
+class Store {
   constructor() {
     this.changeHandlers = {}
+    this.setDefaultValues()
+  }
+
+  setDefaultValues() {
+    // ID Map
     this.map = {}
 
+    // GameServer data
     for (const key of Object.keys(api)) {
       if (api[key].isArray) {
         this[key] = []
@@ -19,6 +27,11 @@ class Store {
       }
 
       this.map[key] = {}
+    }
+
+    // Local data
+    for (const key of Object.keys(STORE_MODEL)) {
+      this[key] = STORE_MODEL[key]
     }
   }
 
