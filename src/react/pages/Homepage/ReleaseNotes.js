@@ -54,6 +54,18 @@ const EditorCredits = styled.p`
 
 const updates = [
   {
+    version: 'Alpha 1.6.0',
+    points: [
+      'Redesigned edge of the map.',
+      'Cutting trees takes more time but you get 2 wood instead of 1.',
+      'Spectators mode (on defeat).',
+      'Alliances are visible in Leaderboard.',
+      'Redesigned Game over screen.',
+    ],
+    day: 12,
+    month: 4,
+  },
+  {
     version: 'Alpha 1.5.1',
     points: [
       'Alliance request timeout set to 20 seconds.',
