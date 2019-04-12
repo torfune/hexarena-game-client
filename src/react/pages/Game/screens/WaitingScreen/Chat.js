@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react'
 import styled from 'styled-components'
 import { BOX_SHADOW } from '../../../../constants'
+import game from '../../../../../game'
+import store from '../../../../../store'
+import { observer } from 'mobx-react-lite'
 
 const Container = styled.div`
   border-left: 2px solid #333;
@@ -48,14 +51,14 @@ const Input = styled.input`
   color: #fff;
 `
 
-const Chat = ({ messages, sendMessage }) => {
+const Chat = () => {
   const [message, setMessage] = useState('')
   const elementRef = useRef()
 
   const handleKeyDown = ({ key }) => {
     if (key === 'Enter' && message !== '') {
       setMessage('')
-      sendMessage(message)
+      game.sendMessage(message)
     }
   }
 
@@ -80,10 +83,10 @@ const Chat = ({ messages, sendMessage }) => {
       <Heading>Chat</Heading>
 
       <MessagesContainer ref={elementRef}>
-        {messages.map(([author, content], index) => (
+        {store.messages.map(({ name, message }, index) => (
           <Message key={index}>
-            <MessageAuthor>{author}:</MessageAuthor>
-            <MessageContent>{content}</MessageContent>
+            <MessageAuthor>{name}:</MessageAuthor>
+            <MessageContent>{message}</MessageContent>
           </Message>
         ))}
       </MessagesContainer>
@@ -93,4 +96,4 @@ const Chat = ({ messages, sendMessage }) => {
   )
 }
 
-export default Chat
+export default observer(Chat)

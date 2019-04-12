@@ -47,15 +47,17 @@ const Game = observer(() => {
     return <ErrorScreen message={store.error} />
   }
 
+  const { status, showHud, player, spectating } = store
+
   return (
     <Container>
       <div id="game" />
 
-      {store.status === 'pending' && <WaitingScreen />}
+      {(status === 'pending' || status === 'starting') && <WaitingScreen />}
 
-      {store.status === 'running' && (
+      {status === 'running' && (
         <>
-          {store.showHud && store.player.alive && (
+          {showHud && player.alive && (
             <>
               <Diplomacy />
               <GameTime />
@@ -66,8 +68,8 @@ const Game = observer(() => {
             </>
           )}
 
-          {!store.player.alive &&
-            (store.spectating ? (
+          {!player.alive &&
+            (spectating ? (
               <>
                 <SpectateCloseButton />
                 <Leaderboard />
@@ -78,7 +80,7 @@ const Game = observer(() => {
         </>
       )}
 
-      {store.status === 'finished' && <EndScreen />}
+      {status === 'finished' && <EndScreen />}
     </Container>
   )
 })

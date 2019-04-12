@@ -4,7 +4,7 @@ import Player from './Player'
 import Chat from './Chat'
 import store from '../../../../../store'
 import { observer } from 'mobx-react-lite'
-import Game from '../../../Game'
+import game from '../../../../../game'
 
 const Container = styled.div`
   position: absolute;
@@ -45,26 +45,31 @@ const getWaitingMessage = (numberOfPlayers, minPlayers) => {
   }
 }
 
-const WaitingScreen = observer(() => {
+const WaitingScreen = () => {
   const players = []
 
   for (let i = 0; i < playersPerRoom; i++) {
-    players.push(
-      store.players[i] || {
+    if (i < store.players.length) {
+      players.push(store.players[i])
+    } else {
+      players.push({
         id: null,
         name: null,
         pattern: null,
-      }
-    )
+      })
+    }
   }
 
   return (
     <Container>
       <div>
         <Heading>
-          {store.countdownSeconds !== null
-            ? `Game starts in ${store.countdownSeconds} seconds`
-            : getWaitingMessage(store.players.length, 6)}
+          {store.countdown !== null
+            ? `Game starts in ${store.countdown} seconds`
+            : getWaitingMessage(
+                store.players.length,
+                window.gsConfig.MIN_PLAYERS
+              )}
         </Heading>
         <Row>
           {players.slice(0, 3).map(({ id, name, pattern }, index) => (
@@ -74,7 +79,7 @@ const WaitingScreen = observer(() => {
               pattern={pattern}
               isThisPlayer={id === store.player.id}
               players={store.players}
-              onPatternSelect={Game.selectPattern}
+              onPatternSelect={game.selectPattern}
             />
           ))}
         </Row>
@@ -86,14 +91,15 @@ const WaitingScreen = observer(() => {
               pattern={pattern}
               isThisPlayer={id === store.player.id}
               players={store.players}
-              onPatternSelect={Game.selectPattern}
+              onPatternSelect={game.selectPattern}
             />
           ))}
         </Row>
       </div>
-      <Chat messages={store.messages} sendMessage={Game.sendMessage} />
+
+      <Chat />
     </Container>
   )
-})
+}
 
-export default WaitingScreen
+export default observer(WaitingScreen)

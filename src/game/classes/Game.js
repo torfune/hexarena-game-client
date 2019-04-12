@@ -257,8 +257,8 @@ class Game {
   updateScreenSize() {
     this.pixi.renderer.resize(window.innerWidth, window.innerHeight)
   }
-  selectPattern(pattern) {
-    this.socket.send('select_pattern', pattern)
+  selectPattern = pattern => {
+    this.socket.send('pattern', pattern)
   }
   handleKeyDown({ key }) {
     this.keyDown[key] = true
