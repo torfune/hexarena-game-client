@@ -152,7 +152,7 @@ class Army {
       sameOwner &&
       !this.isDestroying &&
       (tile.capital || tile.castle || tile.camp) &&
-      tile.hitpoints === 2
+      (tile.hitpoints === 2 || tile.camp)
     ) {
       tile.addArmy(this)
     }

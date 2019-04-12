@@ -279,12 +279,12 @@ class Game {
     this.socket.send('debug', `${command}|${tile.x}|${tile.z}`)
   }
   handleKeyUp({ key }) {
-    if (!this.running) return
+    if (!this.running || store.status !== 'running') return
 
     this.keyDown[key] = false
     this.updateCameraMove()
 
-    if (key === 'h') {
+    if (key === 'h' && window.gsConfig.DEBUG_MODE) {
       store.showHud = !store.showHud
     }
   }

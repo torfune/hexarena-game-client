@@ -461,6 +461,9 @@ class Tile {
   showHitpoints() {
     if (this.hitpointsVisible) return
 
+    // TODO: temp fix of crash, investigate further
+    if (!this.image.hitpointsBg) return
+
     this.hitpointsVisible = true
 
     const position = getPixelPosition(this.x, this.z)
@@ -486,6 +489,9 @@ class Tile {
   }
   hideHitpoints() {
     if (!this.hitpointsVisible) return
+
+    // TODO: temp fix of crash, investigate further
+    if (!this.image.hitpointsBg) return
 
     this.hitpointsVisible = false
 
