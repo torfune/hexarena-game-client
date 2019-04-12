@@ -75,7 +75,7 @@ const Table = ({ groups }) => (
             )}
 
             <p>{player.name}</p>
-            <p>{player.tilesCount}</p>
+            <p>{player.alive ? player.tilesCount : '-'}</p>
           </Player>
         ))}
       </Group>
