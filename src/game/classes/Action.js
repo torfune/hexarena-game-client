@@ -21,7 +21,7 @@ class Action {
     const tile = store.getItem('tiles', tileId)
     const owner = store.getItem('players', ownerId)
 
-    if (!tile || !owner) return
+    if (!tile || !owner || status === 'done') return
 
     this.id = id
     this.type = type

@@ -59,3 +59,23 @@ export const UNIT_MAX_DELAY = 0.4
 // COLORS
 export const BEDROCK_BACKGROUND = '#bbb'
 export const BEDROCK_BORDER = '#555'
+
+// DEBUG COMMANDS
+export const DEBUG_COMMANDS = [
+  ['1', 'capture'],
+  ['2', 'add_army'],
+  ['3', 'lose_tile'],
+  ['4', 'add_forest'],
+  ['5', 'add_camp'],
+  ['6', 'add_player'],
+  ['7', 'send_army'],
+  ['8', 'add_wood'],
+  ['c', 'clear'],
+  ['e', 'add_castle'],
+  ['f', 'dummy_send_army'],
+  ['g', 'defeat'],
+  ['q', 'remove_hitpoint'],
+  ['r', 'dummy_capture'],
+  ['t', 'add_village'],
+  ['w', 'add_hitpoint'],
+]

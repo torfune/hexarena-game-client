@@ -441,7 +441,7 @@ class Tile {
       })
 
       setTimeout(() => {
-        if (!this.isHovered() && this.previous.hitpoints === 2) {
+        if (!this.isHovered()) {
           this.hideHitpoints()
         }
       }, 800)
