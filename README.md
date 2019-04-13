@@ -1,1 +1,1 @@
-hexagor.io browser client
+HexArena.io - Browser client

@@ -1,0 +1,26 @@
+{
+  "presets": ["next/babel"],
+  "plugins": [
+    [
+      "styled-components",
+      {
+        "ssr": true,
+        "displayName": true
+      }
+    ],
+    [
+      "module-resolver",
+      {
+        "root": "./",
+        "alias": {
+          // "game": "./game",
+          "websockets": "./websockets",
+          "constants": "./constants",
+          "components": "./components",
+          "utils": "./utils",
+          "store": "./store"
+        }
+      }
+    ]
+  ]
+}
