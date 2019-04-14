@@ -21,6 +21,10 @@ export default class MyDocument extends Document {
         <GlobalStyle />
         <Head>
           <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.5.1/pixi.min.js" />
+          <script
+            src="https://browser.sentry-cdn.com/5.0.7/bundle.min.js"
+            crossOrigin="anonymous"
+          />
           <link
             rel="icon"
             type="image/x-icon"
