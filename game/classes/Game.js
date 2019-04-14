@@ -9,6 +9,7 @@ import roundToDecimals from 'game/functions/roundToDecimals'
 import getDebugCommand from 'game/functions/getDebugCommand'
 import getHoveredTileInfo from 'game/functions/getHoveredTileInfo'
 import canAttack from 'game/functions/canAttack'
+import getGameserverHost from 'utils/getGameserverHost'
 import store from 'store'
 import {
   CAMERA_SPEED,
@@ -19,7 +20,7 @@ import {
   ZOOM_SPEED,
 } from 'constants/game'
 
-const GAMESERVER_HOST = process.env.APP_GAMESERVER_HOST
+const GAMESERVER_HOST = getGameserverHost(window.location.hostname)
 const LOCAL_STATE_MODEL = {
   animations: [],
   camera: null,

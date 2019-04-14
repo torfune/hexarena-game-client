@@ -7,8 +7,7 @@ import React from 'react'
 import ReleaseNotes from './ReleaseNotes'
 import styled from 'styled-components'
 import Winners from './Winners'
-
-const GAMESERVER_HOST = process.env.APP_GAMESERVER_HOST
+import getGameserverHost from 'utils/getGameserverHost.js'
 
 const Container = styled.div`
   width: 1300px;
@@ -57,6 +56,8 @@ class HomePage extends React.Component {
     errorMessage: null,
   }
   componentDidMount = async () => {
+    const GAMESERVER_HOST = getGameserverHost(window.location.hostname)
+
     const statusRes = await axios.get(`http://${GAMESERVER_HOST}/status`)
     const winnersRes = await axios.get(`http://${GAMESERVER_HOST}/winners`)
 
