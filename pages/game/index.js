@@ -24,7 +24,7 @@ const Container = styled.div`
 
 const Game = observer(() => {
   if (store.alreadyPlaying) {
-    navigate('/nope')
+    // navigate('/nope')
   }
 
   useEffect(() => {
