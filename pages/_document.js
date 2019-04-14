@@ -22,6 +22,11 @@ export default class MyDocument extends Document {
         <Head>
           <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.5.1/pixi.min.js" />
           <link
+            rel="icon"
+            type="image/x-icon"
+            href="/static/favicon/96x96.png"
+          />
+          <link
             href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700'"
             rel="stylesheet"
           />
