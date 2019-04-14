@@ -18,12 +18,6 @@ const OpeningTime = styled.p`
 `
 
 const Countdown = ({ time }) => {
-  const [language, setLanguage] = React.useState(null)
-
-  React.useEffect(() => {
-    setLanguage(navigator.language)
-  }, [])
-
   const date = new Date(time)
 
   let seconds = date.getUTCSeconds()
@@ -47,7 +41,7 @@ const Countdown = ({ time }) => {
         {days}:{hours.padStart(2, '0')}:{minutes.padStart(2, '0')}:
         {seconds.padStart(2, '0')}
       </CountdownTime>
-      <OpeningTime>{openingDate.toLocaleString(language)}</OpeningTime>
+      <OpeningTime>{openingDate.toLocaleString()}</OpeningTime>
     </Container>
   )
 }
