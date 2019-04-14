@@ -4,15 +4,28 @@ import GlobalStyle from '../components/GlobalStyle'
 
 export default class MyDocument extends Document {
   static getInitialProps({ renderPage }) {
+    const isProduction = process.env.NODE_ENV === 'production'
     const sheet = new ServerStyleSheet()
-
     const page = renderPage(App => props =>
       sheet.collectStyles(<App {...props} />)
     )
 
     const styleTags = sheet.getStyleElement()
 
-    return { ...page, styleTags }
+    return { ...page, styleTags, isProduction }
+  }
+
+  setGoogleTags() {
+    return {
+      __html: `
+        window.dataLayer = window.dataLayer || []
+        function gtag() {
+          dataLayer.push(arguments)
+        }
+        gtag('js', new Date())
+        gtag('config', 'UA-68180597-3')
+      `,
+    }
   }
 
   render() {
@@ -20,11 +33,11 @@ export default class MyDocument extends Document {
       <html>
         <GlobalStyle />
         <Head>
-          <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.5.1/pixi.min.js" />
           <script
             src="https://browser.sentry-cdn.com/5.0.7/bundle.min.js"
             crossOrigin="anonymous"
           />
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.5.1/pixi.min.js" />
           <link
             rel="icon"
             type="image/x-icon"
@@ -39,6 +52,16 @@ export default class MyDocument extends Document {
         <body>
           <Main />
           <NextScript />
+
+          {this.props.isProduction && (
+            <>
+              <script
+                async
+                src="https://www.googletagmanager.com/gtag/js?id=UA-68180597-2"
+              />
+              <script dangerouslySetInnerHTML={this.setGoogleTags()} />
+            </>
+          )}
         </body>
       </html>
     )

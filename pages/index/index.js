@@ -9,6 +9,7 @@ import ReleaseNotes from './ReleaseNotes'
 import styled from 'styled-components'
 import Winners from './Winners'
 import getGameserverHost from 'utils/getGameserverHost.js'
+import getEnvironment from 'utils/getEnvironment.js'
 
 const Container = styled.div`
   width: 1300px;
@@ -59,6 +60,7 @@ class HomePage extends React.Component {
   componentDidMount = async () => {
     Sentry.init({
       dsn: 'https://28bb77120c0b45a991f6c251a58ffa63@sentry.io/1438180',
+      environment: getEnvironment(),
     })
 
     const GAMESERVER_HOST = getGameserverHost(window.location.hostname)
