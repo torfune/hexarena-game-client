@@ -1,5 +1,6 @@
 import { version } from '../../package.json'
 import axios from 'axios'
+import Router from 'next/router'
 import Footer from './Footer'
 import Logo from './Logo'
 import PlaySection from './PlaySection'
@@ -100,7 +101,7 @@ class HomePage extends React.Component {
     if (this.state.disabledUntil !== false) return
 
     if (key === 'Enter') {
-      navigate('game')
+      Router.push('/game')
     }
   }
   updateCountdown = () => {

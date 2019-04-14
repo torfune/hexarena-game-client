@@ -20,7 +20,6 @@ import {
   ZOOM_SPEED,
 } from 'constants/game'
 
-const GAMESERVER_HOST = getGameserverHost(window.location.hostname)
 const LOCAL_STATE_MODEL = {
   animations: [],
   camera: null,
@@ -52,6 +51,9 @@ class Game {
     this.running = false
   }
   async start(rootElement, name, browserId) {
+    const GAMESERVER_HOST = getGameserverHost(window.location.hostname)
+
+    // Setup store listeners
     this.setupStoreListeners()
 
     // Setup event handlers
