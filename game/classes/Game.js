@@ -47,35 +47,22 @@ class Game {
     this.loop = null
     this.pixi = null
     this.stage = {}
-    this.imagesLoaded = false
+    this.initialized = false
     this.running = false
   }
   async start(rootElement, name, browserId) {
     const GAMESERVER_HOST = getGameserverHost(window.location.hostname)
 
-    // Setup store listeners
-    this.setupStoreListeners()
-
-    // Setup event handlers
-    document.addEventListener('mousemove', this.handleMouseMove.bind(this))
-    document.addEventListener('mousedown', this.handleMouseDown.bind(this))
-    document.addEventListener('mouseup', this.handleMouseUp.bind(this))
-    document.addEventListener('keydown', this.handleKeyDown.bind(this))
-    document.addEventListener('keyup', this.handleKeyUp.bind(this))
-    document.addEventListener('contextmenu', this.handleContextMenu, false)
-    document.addEventListener(
-      /Firefox/i.test(navigator.userAgent) ? 'DOMMouseScroll' : 'mousewheel',
-      this.handleWheelMove.bind(this)
-    )
-
     // Prepare clean local state
     this.setupLocalState()
     this.running = true
 
-    // Fetch assets & GameServer config
-    if (!this.imagesLoaded) {
+    // Initialize
+    if (!this.initialized) {
+      this.setupEventListeners()
+      this.setupStoreListeners()
+
       await loadImages()
-      this.imagesLoaded = true
 
       try {
         const response = await fetch(`http://${GAMESERVER_HOST}/config`)
@@ -86,6 +73,8 @@ class Game {
         console.error(`Can't connect to Gameserver: ${GAMESERVER_HOST}`)
         return
       }
+
+      this.initialized = true
     }
 
     // Initialize PIXI
@@ -247,6 +236,18 @@ class Game {
     store.onChange('serverTime', current => {
       this.serverTimeDiff = Date.now() - current
     })
+  }
+  setupEventListeners() {
+    document.addEventListener('mousemove', this.handleMouseMove.bind(this))
+    document.addEventListener('mousedown', this.handleMouseDown.bind(this))
+    document.addEventListener('mouseup', this.handleMouseUp.bind(this))
+    document.addEventListener('keydown', this.handleKeyDown.bind(this))
+    document.addEventListener('keyup', this.handleKeyUp.bind(this))
+    document.addEventListener('contextmenu', this.handleContextMenu, false)
+    document.addEventListener(
+      /Firefox/i.test(navigator.userAgent) ? 'DOMMouseScroll' : 'mousewheel',
+      this.handleWheelMove.bind(this)
+    )
   }
   setupLocalState() {
     const keys = Object.keys(LOCAL_STATE_MODEL)

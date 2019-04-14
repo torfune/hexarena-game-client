@@ -56,10 +56,11 @@ const Game = observer(() => {
 
       {status === 'running' && (
         <>
+          <GameTime />
+
           {showHud && player.alive && (
             <>
               <Diplomacy />
-              <GameTime />
               <HoverPreview />
               <Leaderboard />
               <Wood />
