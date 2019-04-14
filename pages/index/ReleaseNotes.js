@@ -53,6 +53,12 @@ const EditorCredits = styled.p`
 
 const updates = [
   {
+    version: 'Alpha 1.7.0',
+    points: ['Shared alliance vision.', 'Several bugs were fixed.'],
+    day: 12,
+    month: 4,
+  },
+  {
     version: 'Alpha 1.6.0',
     points: [
       'Redesigned edge of the map.',
