@@ -11,8 +11,6 @@ const GlobalStyle = createGlobalStyle`
   }
   
   html {
-    background: url('/static/images/screenshot.png');
-    background-position-x: center;
     font-family: 'Montserrat', sans-serif;
     min-height: 100vh;
     overflow-x: hidden;

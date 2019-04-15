@@ -55,24 +55,23 @@ class Game {
 
     // Prepare clean local state
     this.setupLocalState()
-    this.running = true
 
     // Initialize
     if (!this.initialized) {
-      this.setupEventListeners()
-      this.setupStoreListeners()
-
-      await loadImages()
-
       try {
         const response = await fetch(`http://${GAMESERVER_HOST}/config`)
         const gsConfig = await response.json()
 
         window.gsConfig = gsConfig
       } catch (err) {
-        console.error(`Can't connect to Gameserver: ${GAMESERVER_HOST}`)
+        store.error = 'Something went wrong'
         return
       }
+
+      this.setupEventListeners()
+      this.setupStoreListeners()
+
+      await loadImages()
 
       this.initialized = true
     }
@@ -97,8 +96,12 @@ class Game {
     this.socket = new Socket()
     await this.socket.connect(GAMESERVER_HOST)
     this.socket.send('start', `${name}|${browserId}`)
+
+    this.running = true
   }
   stop() {
+    if (!this.running) return
+
     for (let i = 0; i < TILE_IMAGES.length; i++) {
       this.stage[TILE_IMAGES[i]].removeChildren()
     }

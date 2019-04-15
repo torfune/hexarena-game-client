@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import DefeatModal from './screens/DefeatModal'
 import Diplomacy from './hud/Diplomacy'
 import EndScreen from './screens/EndScreen'
-import ErrorScreen from './screens/ErrorScreen'
+import ErrorModal from './screens/ErrorModal'
 import game from 'game'
 import GameTime from './hud/GameTime'
 import HoverPreview from './hud/HoverPreview'
@@ -42,11 +42,7 @@ const Game = observer(() => {
     }
   }, [])
 
-  if (store.error) {
-    return <ErrorScreen message={store.error} />
-  }
-
-  const { status, showHud, player, spectating } = store
+  const { status, showHud, player, spectating, error } = store
 
   return (
     <Container>
@@ -81,6 +77,8 @@ const Game = observer(() => {
       )}
 
       {status === 'finished' && <EndScreen />}
+
+      {error && <ErrorModal message={error} />}
     </Container>
   )
 })

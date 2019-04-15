@@ -32,12 +32,12 @@ const Container = styled.div`
 const Badge = styled.div`
   background: ${PRIMARY};
   font-size: 14px;
-  padding: 4px 0;
+  padding: 6px 16px;
   border-radius: 50px;
   font-weight: 500;
   position: absolute;
   right: 0;
-  width: 110px;
+  /* width: 110px; */
   margin-left: auto;
   text-align: center;
   box-shadow: ${BOX_SHADOW};

@@ -99,6 +99,7 @@ class Socket {
   handleClose = () => {
     this.connected = false
     console.log('Socket closed.')
+    store.error = 'Disconnected'
   }
   send = (message, payload) => {
     this.ws.send(`${message}/${payload}`)

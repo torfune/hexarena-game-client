@@ -9,7 +9,6 @@ import ReleaseNotes from './ReleaseNotes'
 import styled from 'styled-components'
 import Winners from './Winners'
 import getGameserverHost from 'utils/getGameserverHost.js'
-import getEnvironment from 'utils/getEnvironment.js'
 
 const Container = styled.div`
   width: 1300px;
@@ -38,6 +37,17 @@ const Error = styled.div`
   padding: 32px;
 `
 
+const GameScreenshot = styled.div`
+  background: url('/static/images/screenshot.png');
+  background-position-x: center;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  z-index: -1;
+`
+
 const BlackOverlay = styled.div`
   background: #000;
   position: fixed;
@@ -58,11 +68,6 @@ class HomePage extends React.Component {
     errorMessage: null,
   }
   componentDidMount = async () => {
-    Sentry.init({
-      dsn: 'https://28bb77120c0b45a991f6c251a58ffa63@sentry.io/1438180',
-      environment: getEnvironment(),
-    })
-
     const GAMESERVER_HOST = getGameserverHost(window.location.hostname)
 
     const statusRes = await axios.get(`http://${GAMESERVER_HOST}/status`)
@@ -142,6 +147,8 @@ class HomePage extends React.Component {
           <Winners winners={winners} />
         </Grid>
         <Footer />
+
+        <GameScreenshot />
         <BlackOverlay />
       </Container>
     )
