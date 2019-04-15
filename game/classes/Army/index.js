@@ -14,13 +14,15 @@ import store from 'store'
 class Army {
   constructor({ id, tileId, ownerId, isDestroyed }) {
     const tile = store.getItem('tiles', tileId)
+    const owner = store.getItem('players', ownerId)
 
-    if (!tile || isDestroyed) return
+    if (!tile || !owner || isDestroyed) return
 
     this.id = id
-    this.tile = tile
     this.tileId = tileId
+    this.tile = tile
     this.ownerId = ownerId
+    this.owner = owner
     this.isDestroyed = isDestroyed
 
     this.alpha = 1
@@ -64,6 +66,10 @@ class Army {
         if (this.isDestroyed) {
           this.destroy()
         }
+        break
+
+      case 'ownerId':
+        this.owner = store.getItem('players', this.ownerId)
         break
 
       default:
@@ -128,6 +134,8 @@ class Army {
     this.animationFraction = 0
 
     const sameOwner = tile.owner && tile.owner.id === this.ownerId
+    const allyOwner = tile.owner && tile.owner.id === this.owner.allyId
+
     const position = getPixelPosition(tile.x, tile.z)
     const doorPosition = {
       x: position.x,
@@ -149,7 +157,7 @@ class Army {
     }
 
     if (
-      sameOwner &&
+      (sameOwner || allyOwner) &&
       !this.isDestroying &&
       (tile.capital || tile.castle || tile.camp) &&
       (tile.hitpoints === 2 || tile.camp)
