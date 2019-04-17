@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { PRIMARY, HUD_SCALE } from 'constants/react'
+import { PRIMARY, HUD_SCALE, BLUE } from 'constants/react'
 import Ally from './Ally'
 import game from 'game'
 import Header from 'components/Header'
@@ -48,17 +48,24 @@ const ToggleButton = styled.div`
   }
 `
 
+let flashInterval = null
+
 const Diplomacy = () => {
   const { players, player, allianceRequests } = store
 
   const [sendingRequest, setSendingRequest] = useState(false)
+  const [blueHeader, setBlueHeader] = useState(false)
   const containerRef = useRef(null)
+  const blueHeaderRef = useRef(blueHeader)
+  blueHeaderRef.current = blueHeader
 
   useEffect(() => {
     containerRef.current.addEventListener('mouseleave', handleMouseLeave)
+    flashInterval = setInterval(handleFlash, 500)
 
     return () => {
       containerRef.current.removeEventListener('mouseleave', handleMouseLeave)
+      clearInterval(flashInterval)
     }
   }, [])
 
@@ -77,6 +84,7 @@ const Diplomacy = () => {
 
   const handleAccept = id => {
     game.acceptRequest(id)
+    setBlueHeader(false)
   }
 
   const handleDecline = id => {
@@ -88,12 +96,29 @@ const Diplomacy = () => {
     received: allianceRequests.filter(r => r.receiverId === player.id),
   }
 
+  const handleFlash = () => {
+    let flash = false
+    for (let i = 0; i < store.allianceRequests.length; i++) {
+      if (store.allianceRequests[i].receiverId === store.player.id) {
+        flash = true
+        break
+      }
+    }
+
+    if (flash) {
+      setBlueHeader(!blueHeaderRef.current)
+    } else {
+      setBlueHeader(false)
+    }
+  }
+
   return (
     <Container ref={containerRef}>
       <Header
         text={player.ally ? 'Alliance' : 'Diplomacy'}
         iconSrc="/static/icons/player.svg"
         iconSize="24px"
+        color={blueHeader ? BLUE : null}
       />
       <Content>
         {player.ally ? (
@@ -116,7 +141,7 @@ const Diplomacy = () => {
 
             <ToggleButton
               onClick={handleButtonClick}
-              color={sendingRequest ? PRIMARY : '#0097e6'}
+              color={sendingRequest ? PRIMARY : BLUE}
             >
               {sendingRequest ? 'Cancel' : 'Send request'}
             </ToggleButton>

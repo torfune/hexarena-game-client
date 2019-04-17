@@ -50,7 +50,6 @@ const WoodSection = () => {
         text="Wood"
         iconSrc="/static/icons/resources.svg"
         iconSize="22px"
-        red={false}
       />
       <Content>
         <Slots>

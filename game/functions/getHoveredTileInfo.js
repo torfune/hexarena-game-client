@@ -48,7 +48,7 @@ const getHoveredTileInfo = tile => {
       label: 'Build tower',
       structure,
       duration: `${window.gsConfig.BUILD_DURATION / 1000}s`,
-      notEnoughWood: game.wood < BUILD_COST,
+      notEnoughWood: store.wood < BUILD_COST,
       woodCost: BUILD_COST,
     }
   }

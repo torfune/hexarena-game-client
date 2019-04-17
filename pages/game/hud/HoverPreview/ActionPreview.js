@@ -31,7 +31,7 @@ const Value = styled.div`
   text-align: center;
   font-weight: 500;
   font-size: 18px;
-  color: ${props => (props.red ? PRIMARY : '#000')};
+  color: ${props => props.color || '#000'};
   grid-column: ${props => props.column};
 `
 
@@ -112,7 +112,7 @@ const ActionPreview = ({
             <IconWrapper column="5">
               <Icon src="/static/images/wood.png" />
             </IconWrapper>
-            <Value column="5" red={notEnoughWood}>
+            <Value column="5" color={notEnoughWood ? PRIMARY : null}>
               {woodCost}
             </Value>
           </React.Fragment>
