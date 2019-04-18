@@ -3,7 +3,7 @@ import axios from 'axios'
 import Router from 'next/router'
 import Footer from './Footer'
 import Logo from './Logo'
-import PlaySection from './PlaySection'
+import MainSection from './MainSection'
 import React from 'react'
 import ReleaseNotes from './ReleaseNotes'
 import styled from 'styled-components'
@@ -70,7 +70,6 @@ class HomePage extends React.Component {
   componentDidMount = async () => {
     const GAMESERVER_HOST = getGameserverHost(window.location.hostname)
 
-    const statusRes = await axios.get(`http://${GAMESERVER_HOST}/status`)
     const winnersRes = await axios.get(`http://${GAMESERVER_HOST}/winners`)
 
     const winners = winnersRes.data
@@ -79,29 +78,6 @@ class HomePage extends React.Component {
       .reverse()
 
     this.setState({ winners })
-
-    const { timeRemaining, version: gsVersion } = statusRes.data
-
-    if (timeRemaining) {
-      const now = Date.now()
-      const disabledUntil = now + Number(timeRemaining)
-
-      if (disabledUntil > now) {
-        this.setState({ disabledUntil })
-        this.interval = setInterval(this.updateCountdown, 100)
-      } else {
-        this.setState({ disabledUntil: false })
-      }
-    } else {
-      this.setState({ disabledUntil: false })
-    }
-
-    if (gsVersion !== version) {
-      console.log(`Versions not matched! GS: ${gsVersion}, FE: ${version}`)
-      this.setState({
-        errorMessage: `GameServer version is not same as client version.`,
-      })
-    }
 
     document.addEventListener('keydown', this.handleKeyDown)
   }
@@ -129,23 +105,19 @@ class HomePage extends React.Component {
     }
   }
   render() {
-    const { disabledUntil, countdownTime, winners, errorMessage } = this.state
-
-    if (errorMessage) {
-      return <Error>{errorMessage}</Error>
-    }
+    const { winners } = this.state
 
     return (
       <Container>
         <Logo />
-        <PlaySection
-          disabledUntil={disabledUntil}
-          countdownTime={countdownTime}
-        />
+
+        <MainSection />
+
         <Grid>
           <ReleaseNotes />
           <Winners winners={winners} />
         </Grid>
+
         <Footer />
 
         <GameScreenshot />

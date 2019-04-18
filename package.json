@@ -3,10 +3,10 @@
   "version": "1.8.0-dev",
   "private": true,
   "scripts": {
-    "dev": "next",
+    "dev": "PORT=3000 node server.js",
     "build": "next build",
-    "start-dev": "next start -p 3000",
-    "start-live": "next start -p 3001"
+    "start-dev": "NODE_ENV=production PORT=3000 node server.js",
+    "start-live": "NODE_ENV=production PORT=3001 node server.js"
   },
   "dependencies": {
     "axios": "^0.18.0",

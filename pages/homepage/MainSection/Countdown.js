@@ -17,8 +17,8 @@ const OpeningTime = styled.p`
   margin-top: 18px;
 `
 
-const Countdown = ({ time }) => {
-  const date = new Date(time)
+const Countdown = ({ openingTime }) => {
+  const date = new Date(openingTime)
 
   let seconds = date.getUTCSeconds()
   let minutes = date.getUTCMinutes()
@@ -29,7 +29,7 @@ const Countdown = ({ time }) => {
   minutes = String(minutes)
   hours = String(hours)
 
-  const openingDate = new Date(new Date().getTime() + time)
+  const openingDate = new Date(new Date().getTime() + openingTime)
 
   if (openingDate.getSeconds() > 50) {
     openingDate.setHours(openingDate.getHours() + 1, 0, 0)
