@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
+import Router from 'next/router'
 import Heading from '../Heading'
 import { PRIMARY, BOX_SHADOW, SECONDARY, TEXT_SHADOW } from 'constants/react'
 
@@ -15,7 +16,7 @@ const Label = styled.p`
   font-size: 14px;
   color: #eee;
   font-weight: 300;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 `
 
 const NameInput = styled.input.attrs({
@@ -23,14 +24,21 @@ const NameInput = styled.input.attrs({
   maxLength: 12,
 })`
   padding: 8px 16px;
-  border-radius: 2px;
+  border-radius: 4px;
   box-shadow: ${BOX_SHADOW};
-  font-size: 16px;
+  font-size: 24px;
   background: #eee;
+  font-weight: 500;
+  color: #333;
+  width: 240px;
 
   :hover,
   :focus {
     background: #fff;
+  }
+
+  ::placeholder {
+    color: #aaa;
   }
 `
 
@@ -40,10 +48,10 @@ const PlayButton = styled.a`
   color: #fff;
   padding: 8px 64px;
   font-weight: 500;
+  font-size: 24px;
   box-shadow: ${BOX_SHADOW};
-  margin-left: 16px;
-  height: 35px;
-  border-radius: 2px;
+  margin-left: 20px;
+  border-radius: 4px;
   transition: 200ms;
 
   :hover {
@@ -59,11 +67,23 @@ const PlaySection = () => {
     if (savedName) {
       setName(savedName)
     }
+
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
   }, [])
 
   const handleNameChange = event => {
     setName(event.target.value)
     localStorage.setItem('name', event.target.value)
+  }
+
+  const handleKeyDown = ({ key }) => {
+    if (key === 'Enter') {
+      Router.push('/game')
+    }
   }
 
   return (

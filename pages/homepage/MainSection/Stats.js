@@ -6,6 +6,7 @@ import { PRIMARY, TEXT_SHADOW } from '../../../constants/react'
 const Container = styled.div`
   display: flex;
   justify-content: flex-end;
+  align-items: flex-end;
 `
 
 const Column = styled.div`
@@ -28,9 +29,9 @@ const Label = styled.p``
 
 const Number = styled.p`
   margin-top: 8px;
-  font-size: 56px;
+  font-size: 50px;
   color: ${PRIMARY};
-  font-weight: 600;
+  font-weight: 300;
   text-shadow: ${TEXT_SHADOW};
 `
 

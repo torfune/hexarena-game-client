@@ -10,7 +10,7 @@ import Spinner from 'components/Spinner'
 const Container = styled.div`
   margin-top: 80px;
   height: 256px;
-  padding: 80px 128px;
+  padding: 64px 128px;
   background: #383838;
   display: grid;
   box-shadow: 0px 1px 24px 0px rgba(0, 0, 0, 0.05);
@@ -27,27 +27,17 @@ const MainSection = () => {
 
   const fetchData = async () => {
     const GAMESERVER_HOST = getGameserverHost(window.location.hostname)
-
     const status = await axios.get(`http://${GAMESERVER_HOST}/status`)
 
-    if (status.data.timeRemaining) {
-      const now = Date.now()
-      const openingTime = now + Number(status.data.timeRemaining)
-
-      if (openingTime > now) {
-        setOpeningTime(openingTime)
-      }
+    if (status.data.timeRemaining && status.data.timeRemaining > 0) {
+      setOpeningTime(status.data.timeRemaining + Date.now())
     }
 
     setLoading(false)
   }
 
   if (loading) {
-    return (
-      <Container>
-        <Spinner />
-      </Container>
-    )
+    return <Container />
   }
 
   return (
@@ -57,7 +47,7 @@ const MainSection = () => {
       ) : (
         <>
           <PlaySection />
-          <Stats />
+          {/* <Stats /> */}
         </>
       )}
     </Container>

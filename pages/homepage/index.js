@@ -1,6 +1,4 @@
-import { version } from '../../package.json'
 import axios from 'axios'
-import Router from 'next/router'
 import Footer from './Footer'
 import Logo from './Logo'
 import MainSection from './MainSection'
@@ -29,14 +27,6 @@ const Grid = styled.div`
   grid-gap: 64px;
 `
 
-const Error = styled.div`
-  color: #fff;
-  text-align: center;
-  background: #444;
-  margin-top: 128px;
-  padding: 32px;
-`
-
 const GameScreenshot = styled.div`
   background: url('/static/images/screenshot.png');
   background-position-x: center;
@@ -60,49 +50,18 @@ const BlackOverlay = styled.div`
 `
 
 class HomePage extends React.Component {
-  interval = null
   state = {
-    disabledUntil: null,
-    countdownTime: null,
     winners: null,
-    errorMessage: null,
   }
   componentDidMount = async () => {
     const GAMESERVER_HOST = getGameserverHost(window.location.hostname)
-
-    const winnersRes = await axios.get(`http://${GAMESERVER_HOST}/winners`)
-
-    const winners = winnersRes.data
+    const response = await axios.get(`http://${GAMESERVER_HOST}/winners`)
+    const winners = response.data
       .split('\n')
       .filter(l => l !== '')
       .reverse()
 
     this.setState({ winners })
-
-    document.addEventListener('keydown', this.handleKeyDown)
-  }
-  componentWillUnmount = () => {
-    document.removeEventListener('keydown', this.handleKeyDown)
-  }
-  handleKeyDown = ({ key }) => {
-    if (this.state.disabledUntil !== false) return
-
-    if (key === 'Enter') {
-      Router.push('/game')
-    }
-  }
-  updateCountdown = () => {
-    const { disabledUntil } = this.state
-
-    const now = Date.now()
-
-    if (now >= disabledUntil) {
-      this.setState({ disabledUntil: false })
-      clearInterval(this.interval)
-      this.interval = null
-    } else {
-      this.setState({ countdownTime: disabledUntil - now })
-    }
   }
   render() {
     const { winners } = this.state
