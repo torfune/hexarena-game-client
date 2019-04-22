@@ -16,6 +16,7 @@ const Container = styled.div`
   transform: translateX(-${WIDTH / 2}px);
   box-shadow: ${BOX_SHADOW};
   border-radius: 16px;
+  z-index: 10;
 
   h2 {
     font-size: 24px;
@@ -41,18 +42,33 @@ const StyledButton = styled.div`
   }
 `
 
-const ErrorModal = ({ message }) => (
-  <Container>
-    <h2>{message}</h2>
+const BlackOverlay = styled.div`
+  background: #000;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  position: fixed;
+  opacity: 0.6;
+  z-index: 9;
+`
 
-    <StyledButton
-      onClick={() => {
-        window.location.reload()
-      }}
-    >
-      Reload
-    </StyledButton>
-  </Container>
+const ErrorModal = ({ message }) => (
+  <>
+    <BlackOverlay />
+
+    <Container>
+      <h2>{message}</h2>
+
+      <StyledButton
+        onClick={() => {
+          window.location.reload()
+        }}
+      >
+        Reload
+      </StyledButton>
+    </Container>
+  </>
 )
 
 export default ErrorModal
