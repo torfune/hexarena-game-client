@@ -687,6 +687,15 @@ class Tile {
         showBorder = true
       }
 
+      // Preview -> Owned
+      if (
+        game.tilesWithPatternPreview.includes(this) &&
+        n.owner &&
+        !game.tilesWithPatternPreview.includes(n)
+      ) {
+        showBorder = true
+      }
+
       this.image.border[i].visible = showBorder
       this.image.border[i].tint = borderTint ? hex(borderTint) : hex('#fff')
     }

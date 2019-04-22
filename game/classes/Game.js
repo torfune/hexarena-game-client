@@ -97,6 +97,10 @@ class Game {
     await this.socket.connect(GAMESERVER_HOST)
     this.socket.send('start', `${name}|${browserId}`)
 
+    // Add debug global variables
+    window.g = this
+    window.s = store
+
     this.running = true
   }
   stop() {
@@ -459,11 +463,52 @@ class Game {
       }
     }
 
+    // C : Army
+    if (playerId === store.player.id && this.selectedArmyTile) {
+      let direction = null
+
+      for (let i = 0; i < 6; i++) {
+        if (this.selectedArmyTargetTiles[i].includes(tile)) {
+          direction = i
+          break
+        }
+      }
+
+      if (direction !== null) {
+        for (let i = 0; i < 4; i++) {
+          const t = this.selectedArmyTargetTiles[direction][i]
+
+          if (t && t.ownerId !== playerId && !t.bedrock) {
+            tilesToCapture.push(t)
+
+            if (t.camp || t.mountain || t.village) break
+          }
+        }
+      }
+    }
+
     // Mountains
     for (let i = tilesToCapture.length - 1; i >= 0; i--) {
       const t = tilesToCapture[i]
 
-      if (t.mountain || t.village) {
+      if (t.mountain) {
+        for (let j = 0; j < 6; j++) {
+          const n = t.neighbors[j]
+
+          if (!n) continue
+
+          if (!n.owner && !n.bedrock && !tilesToCapture.includes(n)) {
+            tilesToCapture.push(n)
+          }
+        }
+      }
+    }
+
+    // Villages
+    for (let i = tilesToCapture.length - 1; i >= 0; i--) {
+      const t = tilesToCapture[i]
+
+      if (t.village) {
         for (let j = 0; j < 6; j++) {
           const n = t.neighbors[j]
 
@@ -511,7 +556,7 @@ class Game {
     }
 
     // Hovered tile
-    if (store.hoveredTile && !store.hoveredTile.owner) {
+    if (store.hoveredTile) {
       const tilesToCapture = this.getTilesToCapture(store.hoveredTile, store.id)
 
       for (let i = 0; i < tilesToCapture.length; i++) {
