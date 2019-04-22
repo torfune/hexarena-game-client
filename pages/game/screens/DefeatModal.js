@@ -61,7 +61,7 @@ const DefeatModal = () => {
       <h2>You have lost your Capital!</h2>
 
       <ButtonRow>
-        <Link href="/">
+        <Link href="/game">
           <a>
             <Button color={PRIMARY}>Play again</Button>
           </a>
