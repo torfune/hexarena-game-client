@@ -14,11 +14,15 @@ const List = styled.div`
 const Winner = styled.div`
   background: #383838;
   box-shadow: 0px 1px 24px 0px rgba(0, 0, 0, 0.05);
-  padding: 16px 32px;
+  padding: 8px 32px;
   border-radius: 8px;
+  margin-bottom: 8px;
+`
+
+const Row = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 8px;
+  margin: 4px 0;
 `
 
 const Name = styled.p`
@@ -37,19 +41,26 @@ const Pattern = styled.div`
 
 const Winners = () => {
   const winners = store.winners.map(winner => {
-    const [name, color] = winner.split(';')
+    const players = winner.split('|').map(player => {
+      const [name, pattern] = player.split(';')
+      return { name, pattern }
+    })
 
-    return { name, color }
+    return { players }
   })
 
   return (
     <Container>
       <Heading>Alpha {version.replace('-dev', '')} winners</Heading>
       <List>
-        {winners.map(({ name, color }, index) => (
+        {winners.map((winner, index) => (
           <Winner key={index}>
-            <Pattern color={color} />
-            <Name>{name}</Name>
+            {winner.players.map(player => (
+              <Row key={player.name}>
+                <Pattern color={player.pattern} />
+                <Name>{player.name}</Name>
+              </Row>
+            ))}
           </Winner>
         ))}
       </List>
