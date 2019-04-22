@@ -669,7 +669,12 @@ class Tile {
       }
 
       // Owned -> Owned
-      if (this.owner && n.owner && this.owner.id !== n.owner.id) {
+      if (
+        this.owner &&
+        n.owner &&
+        this.owner.id !== n.owner.id &&
+        this.owner.allyId !== n.owner.id
+      ) {
         showBorder = true
       }
 
