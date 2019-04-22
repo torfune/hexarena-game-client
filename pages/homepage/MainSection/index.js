@@ -47,7 +47,7 @@ const MainSection = () => {
       ) : (
         <>
           <PlaySection />
-          {/* <Stats /> */}
+          <Stats />
         </>
       )}
     </Container>

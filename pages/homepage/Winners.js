@@ -1,7 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
 import Heading from './Heading'
+import store from 'store'
 import { version } from '../../package.json'
+import { observer } from 'mobx-react-lite'
 
 const Container = styled.div``
 
@@ -33,10 +35,8 @@ const Pattern = styled.div`
   background: ${props => props.color};
 `
 
-const Winners = props => {
-  if (!props.winners) return null
-
-  const winners = props.winners.map(winner => {
+const Winners = () => {
+  const winners = store.winners.map(winner => {
     const [name, color] = winner.split(';')
 
     return { name, color }
@@ -57,4 +57,4 @@ const Winners = props => {
   )
 }
 
-export default Winners
+export default observer(Winners)

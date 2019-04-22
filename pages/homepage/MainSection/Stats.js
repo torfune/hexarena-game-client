@@ -1,7 +1,10 @@
-import React from 'react'
-import Heading from '../Heading'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { PRIMARY, TEXT_SHADOW } from '../../../constants/react'
+import getGameserverHost from 'utils/getGameserverHost'
+import axios from 'axios'
+import store from 'store'
+import { observer } from 'mobx-react-lite'
 
 const Container = styled.div`
   display: flex;
@@ -35,44 +38,86 @@ const Number = styled.p`
   text-shadow: ${TEXT_SHADOW};
 `
 
-const Stats = () => (
-  <Container>
-    <Column>
-      <Label>
-        In-game
-        <br />
-        players
-      </Label>
-      <Number>14</Number>
-    </Column>
+let interval = null
 
-    <Column>
-      <Label>
-        Running
-        <br />
-        games
-      </Label>
-      <Number>2</Number>
-    </Column>
+const Stats = () => {
+  const [stats, setStats] = useState(null)
 
-    <Column>
-      <Label>
-        Finished
-        <br />
-        games
-      </Label>
-      <Number>12</Number>
-    </Column>
+  useEffect(() => {
+    fetchData()
+    interval = setInterval(fetchData, 2000)
 
-    <Column>
-      <Label>
-        Waiting
-        <br />
-        players
-      </Label>
-      <Number>4</Number>
-    </Column>
-  </Container>
-)
+    return () => {
+      clearInterval(interval)
+      interval = null
+    }
+  }, [])
 
-export default Stats
+  const fetchData = async () => {
+    const GAMESERVER_HOST = getGameserverHost(window.location.hostname)
+    const { data: games } = await axios.get(`http://${GAMESERVER_HOST}/games`)
+
+    let ingamePlayers = 0
+    let waitingPlayers = 0
+    let runningGames = 0
+
+    for (const game of games) {
+      if (game.status === 'running') {
+        runningGames++
+        ingamePlayers += game.players.length
+      } else if (game.status === 'pending' || game.status === 'starting') {
+        waitingPlayers += game.players.length
+      }
+    }
+
+    setStats({
+      ingamePlayers,
+      waitingPlayers,
+      runningGames,
+    })
+  }
+
+  if (!stats) return null
+
+  return (
+    <Container>
+      <Column>
+        <Label>
+          In game
+          <br />
+          players
+        </Label>
+        <Number>{stats.ingamePlayers}</Number>
+      </Column>
+
+      <Column>
+        <Label>
+          Running
+          <br />
+          games
+        </Label>
+        <Number>{stats.runningGames}</Number>
+      </Column>
+
+      <Column>
+        <Label>
+          Finished
+          <br />
+          games
+        </Label>
+        <Number>{store.winners.length}</Number>
+      </Column>
+
+      <Column>
+        <Label>
+          Waiting
+          <br />
+          players
+        </Label>
+        <Number>{stats.waitingPlayers}</Number>
+      </Column>
+    </Container>
+  )
+}
+
+export default observer(Stats)
