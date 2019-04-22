@@ -479,6 +479,7 @@ class Game {
           const t = this.selectedArmyTargetTiles[direction][i]
 
           if (
+            t &&
             t.mountain &&
             t.owner &&
             t.ownerId !== playerId &&
