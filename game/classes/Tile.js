@@ -741,7 +741,12 @@ class Tile {
     for (let i = 0; i < 6; i++) {
       const n = this.neighbors[i]
 
-      if (n && n.owner && !neighborPlayersIds.includes(n.owner.id)) {
+      if (
+        n &&
+        n.owner &&
+        n.ownerId !== store.player.allyId &&
+        !neighborPlayersIds.includes(n.owner.id)
+      ) {
         neighborPlayersIds.push(n.owner.id)
       }
     }

@@ -478,10 +478,21 @@ class Game {
         for (let i = 0; i < 4; i++) {
           const t = this.selectedArmyTargetTiles[direction][i]
 
+          if (
+            t.mountain &&
+            t.owner &&
+            t.ownerId !== playerId &&
+            t.ownerId !== store.player.allyId
+          ) {
+            break
+          }
+
           if (t && t.ownerId !== playerId && !t.bedrock) {
             tilesToCapture.push(t)
 
-            if (t.camp || t.mountain || t.village) break
+            if (t.camp || t.mountain || t.village || t.castle || t.capital) {
+              break
+            }
           }
         }
       }
@@ -514,10 +525,23 @@ class Game {
 
           if (!n) continue
 
-          if (!n.owner && !n.bedrock && !tilesToCapture.includes(n)) {
+          if (
+            (!n.owner || n.ownerId !== playerId) &&
+            !n.bedrock &&
+            !tilesToCapture.includes(n)
+          ) {
             tilesToCapture.push(n)
           }
         }
+      }
+    }
+
+    // Allied tiles
+    for (let i = tilesToCapture.length - 1; i >= 0; i--) {
+      const t = tilesToCapture[i]
+
+      if (t.owner && t.owner.id === store.player.allyId) {
+        tilesToCapture.splice(i, 1)
       }
     }
 
