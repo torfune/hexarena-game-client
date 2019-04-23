@@ -1,6 +1,5 @@
 import React from 'react'
 import styled from 'styled-components'
-import Link from 'next/link'
 import { observer } from 'mobx-react-lite'
 import { BOX_SHADOW, PRIMARY, BLUE } from 'constants/react'
 import store from 'store'
@@ -61,11 +60,9 @@ const DefeatModal = () => {
       <h2>You have lost your Capital!</h2>
 
       <ButtonRow>
-        <Link href="/game">
-          <a>
-            <Button color={PRIMARY}>Play again</Button>
-          </a>
-        </Link>
+        <a href="/game">
+          <Button color={PRIMARY}>Play again</Button>
+        </a>
 
         <Button color={BLUE} onClick={handleSpectateClick}>
           Spectate
