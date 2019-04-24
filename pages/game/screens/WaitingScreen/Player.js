@@ -4,6 +4,7 @@ import { useTransition } from 'react-spring'
 import PatternSelector from './PatternSelector'
 import Hexagon from 'components/Hexagon'
 import { BOX_SHADOW } from 'constants/react'
+import store from 'store'
 
 const Container = styled.div`
   margin: 0 32px;
@@ -81,7 +82,7 @@ const Player = ({ name, pattern, isThisPlayer, players, onPatternSelect }) => {
     )
   }
 
-  const { PATTERNS } = window.gsConfig
+  const { PATTERNS } = store.config
   const lockedPatterns = players
     .filter(player => player.pattern !== pattern)
     .map(({ pattern }) => pattern)

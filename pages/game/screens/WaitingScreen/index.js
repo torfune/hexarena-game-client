@@ -66,10 +66,7 @@ const WaitingScreen = () => {
         <Heading>
           {store.countdown !== null
             ? `Game starts in ${store.countdown} seconds`
-            : getWaitingMessage(
-                store.players.length,
-                window.gsConfig.MIN_PLAYERS
-              )}
+            : getWaitingMessage(store.players.length, store.config.MIN_PLAYERS)}
         </Heading>
         <Row>
           {players.slice(0, 3).map(({ id, name, pattern }, index) => (

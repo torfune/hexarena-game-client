@@ -6,6 +6,7 @@ const STORE_MODEL = {
   showHud: true,
   spectating: false,
   error: null,
+  config: null,
   winners: [],
 }
 
@@ -89,6 +90,7 @@ const toDecorate = {
   showHud: observable,
   spectating: observable,
   error: observable,
+  config: observable,
   winners: observable,
   player: computed,
   addItem: action,

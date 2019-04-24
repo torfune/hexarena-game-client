@@ -7,6 +7,7 @@ import invertHexDirection from 'game/functions/invertHexDirection'
 import hex from 'game/functions/hex'
 import getRotationBySide from 'game/functions/getRotationBySide'
 import store from 'store'
+import { lighten } from 'utils/color'
 import {
   NEIGHBOR_DIRECTIONS,
   TILE_IMAGES,
@@ -58,7 +59,7 @@ class Tile {
     this.image.background.tint = hex('#eee')
 
     this.image.blackOverlay = createImage('blackOverlay')
-    this.image.blackOverlay.alpha = 0.2
+    this.image.blackOverlay.alpha = 0.18
     this.image.blackOverlay.visible = false
 
     this.image.contested = createImage('contested')
@@ -117,9 +118,8 @@ class Tile {
       this.addHitpoints(hitpoints)
     }
 
-    if (this.owner) {
-      this.image.pattern = createImage('pattern')
-      this.image.pattern.tint = hex(this.owner.pattern)
+    if (ownerId) {
+      this.changeOwner(ownerId)
     }
 
     for (let i = 0; i < TILE_IMAGES.length; i++) {
@@ -191,10 +191,18 @@ class Tile {
     if (this.hitpoints === 2 && !this.army) {
       this.showHitpoints()
     }
+
+    if (this.canPlayerCreateAction() && game.selectedArmyTile !== this) {
+      this.image.pattern.tint = hex(lighten(this.owner.pattern, 10))
+    }
   }
   endHover() {
     if (this.hitpoints === 2 && !this.army && this.hitpointsVisible) {
       this.hideHitpoints()
+    }
+
+    if (this.owner && game.selectedArmyTile !== this) {
+      this.image.pattern.tint = hex(this.owner.pattern)
     }
   }
   updateScale() {
@@ -528,16 +536,18 @@ class Tile {
       const position = getPixelPosition(this.x, this.z)
 
       this.image.pattern = createImage('pattern')
-      this.image.pattern.tint = hex(owner.pattern)
       this.image.pattern.x = position.x
       this.image.pattern.y = position.y
       this.image.pattern.scale.x = game.scale
       this.image.pattern.scale.y = game.scale
       this.image.pattern.alpha = 0
+      this.image.pattern.tint = hex(owner.pattern)
 
       game.animations.push(
         new Animation({
           image: this.image.pattern,
+          speed: 0.01,
+          initialFraction: 0.4,
           onUpdate: (image, fraction) => {
             image.alpha = fraction
           },
@@ -771,6 +781,39 @@ class Tile {
     }
 
     return 'Plains'
+  }
+  canPlayerCreateAction() {
+    if (
+      !this.owner ||
+      this.owner.id !== store.player.id ||
+      this.mountain ||
+      this.village
+    ) {
+      return false
+    }
+
+    // Recruit
+    if (
+      (this.castle || this.capital) &&
+      store.wood >= store.config.RECRUIT_COST
+    ) {
+      return true
+    }
+
+    // Build
+    if (this.isEmpty() && store.wood >= store.config.BUILD_COST) {
+      return true
+    }
+
+    // Send army
+    if (this.army) {
+      return true
+    }
+
+    // Cut wood
+    if (this.forest) {
+      return true
+    }
   }
 }
 

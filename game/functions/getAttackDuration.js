@@ -1,10 +1,12 @@
+import store from 'store'
+
 const getAttackDuration = (playerId, tile) => {
   const {
     DEFAULT_ATTACK_POWER,
     DEFAULT_DEFEND_POWER,
     MS_PER_POWER,
     POWER_PER_NEIGHBOR,
-  } = window.gsConfig
+  } = store.config
 
   let defendPower = DEFAULT_DEFEND_POWER
   let attackPower = DEFAULT_ATTACK_POWER

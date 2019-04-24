@@ -7,6 +7,7 @@ import getPixelPosition from 'game/functions/getPixelPosition'
 import pixelToAxial from 'game/functions/pixelToAxial'
 import roundToDecimals from 'game/functions/roundToDecimals'
 import getDebugCommand from 'game/functions/getDebugCommand'
+import axios from 'axios'
 import getHoveredTileInfo from 'game/functions/getHoveredTileInfo'
 import canAttack from 'game/functions/canAttack'
 import getGameserverHost from 'utils/getGameserverHost'
@@ -59,12 +60,11 @@ class Game {
     // Initialize
     if (!this.initialized) {
       try {
-        const response = await fetch(`http://${GAMESERVER_HOST}/config`)
-        const gsConfig = await response.json()
-
-        window.gsConfig = gsConfig
+        const response = await axios(`http://${GAMESERVER_HOST}/config`)
+        store.config = response.data
       } catch (err) {
         store.error = 'Something went wrong'
+        console.error(err)
         return
       }
 
@@ -295,7 +295,7 @@ class Game {
     this.keyDown[key] = false
     this.updateCameraMove()
 
-    if (key === 'h' && window.gsConfig.DEBUG_MODE) {
+    if (key === 'h' && store.config.DEBUG_MODE) {
       store.showHud = !store.showHud
     }
   }

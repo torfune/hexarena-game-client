@@ -42,28 +42,20 @@ const renderIconByLabel = label => {
     case 'Capture':
       src = '/static/icons/swords.svg'
       break
-    case 'Build tower':
+    case 'Build castle':
       src = '/static/icons/resources.svg'
       break
     case 'Get wood':
       src = '/static/icons/axe.svg'
       break
     case 'Recruit army':
+    case 'Send army':
       src = '/static/icons/army.svg'
       break
     default:
   }
 
   if (!src) return null
-
-  if (label === 'Recruit') {
-    return (
-      <div>
-        <Plus>+</Plus>
-        <Icon src={src} />
-      </div>
-    )
-  }
 
   return <Icon src={src} />
 }

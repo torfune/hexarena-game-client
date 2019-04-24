@@ -1,9 +1,9 @@
-import game from 'game'
 import store from 'store'
+import game from 'game'
 import getAttackDuration from './getAttackDuration'
 
 const getHoveredTileInfo = tile => {
-  const { BUILD_COST, RECRUIT_COST } = window.gsConfig
+  const { BUILD_COST, RECRUIT_COST } = store.config
 
   if (!tile) return null
 
@@ -22,6 +22,14 @@ const getHoveredTileInfo = tile => {
   }
 
   const structure = tile.getStructureName()
+
+  // Army send
+  if (game.selectedArmyTile) {
+    return {
+      label: 'Send army',
+      structure,
+    }
+  }
 
   // Cancel
   if (tile.action && tile.action.owner.id === store.player.id) {
@@ -45,9 +53,9 @@ const getHoveredTileInfo = tile => {
   // Build
   if (isOwnedByPlayer && tile.isEmpty()) {
     return {
-      label: 'Build tower',
+      label: 'Build castle',
       structure,
-      duration: `${window.gsConfig.BUILD_DURATION / 1000}s`,
+      duration: `${store.config.BUILD_DURATION / 1000}s`,
       notEnoughWood: store.wood < BUILD_COST,
       woodCost: BUILD_COST,
     }
@@ -58,7 +66,7 @@ const getHoveredTileInfo = tile => {
     return {
       label: 'Get wood',
       structure,
-      duration: `${window.gsConfig.CUT_DURATION / 1000}s`,
+      duration: `${store.config.CUT_DURATION / 1000}s`,
     }
   }
 
@@ -67,7 +75,7 @@ const getHoveredTileInfo = tile => {
     return {
       label: 'Recruit army',
       structure,
-      duration: `${window.gsConfig.RECRUIT_DURATION / 1000}s`,
+      duration: `${store.config.RECRUIT_DURATION / 1000}s`,
       notEnoughWood: store.wood < RECRUIT_COST,
       woodCost: RECRUIT_COST,
     }
