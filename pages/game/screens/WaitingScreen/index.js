@@ -5,6 +5,7 @@ import Chat from './Chat'
 import store from '../../../../store'
 import { observer } from 'mobx-react-lite'
 import game from '../../../../game'
+import { FadeDown, FadeUp } from '../../../../components/Animations'
 
 const Container = styled.div`
   position: absolute;
@@ -15,6 +16,7 @@ const Container = styled.div`
   padding: 128px;
   display: grid;
   grid-template-columns: 2fr 450px;
+  z-index: 1;
 `
 
 const Heading = styled.h2`
@@ -62,7 +64,7 @@ const WaitingScreen = () => {
 
   return (
     <Container>
-      <div>
+      <FadeDown>
         <Heading>
           {store.countdown !== null
             ? `Game starts in ${store.countdown} seconds`
@@ -92,9 +94,11 @@ const WaitingScreen = () => {
             />
           ))}
         </Row>
-      </div>
+      </FadeDown>
 
-      <Chat />
+      <FadeUp>
+        <Chat />
+      </FadeUp>
     </Container>
   )
 }

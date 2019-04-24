@@ -4,6 +4,7 @@ import { PRIMARY, TEXT_SHADOW } from '../../../constants/react'
 import getGameserverHost from 'utils/getGameserverHost'
 import axios from 'axios'
 import store from 'store'
+import { FadeDown } from '../../../components/Animations'
 import { observer } from 'mobx-react-lite'
 
 const Container = styled.div`
@@ -80,43 +81,45 @@ const Stats = () => {
   if (!stats) return null
 
   return (
-    <Container>
-      <Column>
-        <Label>
-          In game
-          <br />
-          players
-        </Label>
-        <Number>{stats.ingamePlayers}</Number>
-      </Column>
+    <FadeDown>
+      <Container>
+        <Column>
+          <Label>
+            In game
+            <br />
+            players
+          </Label>
+          <Number>{stats.ingamePlayers}</Number>
+        </Column>
 
-      <Column>
-        <Label>
-          Running
-          <br />
-          games
-        </Label>
-        <Number>{stats.runningGames}</Number>
-      </Column>
+        <Column>
+          <Label>
+            Running
+            <br />
+            games
+          </Label>
+          <Number>{stats.runningGames}</Number>
+        </Column>
 
-      <Column>
-        <Label>
-          Finished
-          <br />
-          games
-        </Label>
-        <Number>{store.winners.length}</Number>
-      </Column>
+        <Column>
+          <Label>
+            Finished
+            <br />
+            games
+          </Label>
+          <Number>{store.winners.length}</Number>
+        </Column>
 
-      <Column>
-        <Label>
-          Waiting
-          <br />
-          players
-        </Label>
-        <Number>{stats.waitingPlayers}</Number>
-      </Column>
-    </Container>
+        <Column>
+          <Label>
+            Waiting
+            <br />
+            players
+          </Label>
+          <Number>{stats.waitingPlayers}</Number>
+        </Column>
+      </Container>
+    </FadeDown>
   )
 }
 

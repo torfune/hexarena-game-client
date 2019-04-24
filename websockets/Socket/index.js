@@ -1,6 +1,7 @@
 import store from 'store'
 import messages from 'websockets/messages'
 import parse from './parse'
+import game from 'game'
 
 class Socket {
   constructor() {
@@ -99,7 +100,10 @@ class Socket {
   handleClose = () => {
     this.connected = false
     console.log('Socket closed.')
-    store.error = 'Disconnected'
+
+    if (game.running) {
+      store.error = 'Disconnected'
+    }
   }
   send = (message, payload) => {
     this.ws.send(`${message}/${payload}`)

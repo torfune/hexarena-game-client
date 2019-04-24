@@ -55,8 +55,8 @@ const Winners = () => {
       <List>
         {winners.map((winner, index) => (
           <Winner key={index}>
-            {winner.players.map(player => (
-              <Row key={player.name}>
+            {winner.players.map((player, index) => (
+              <Row key={index}>
                 <Pattern color={player.pattern} />
                 <Name>{player.name}</Name>
               </Row>

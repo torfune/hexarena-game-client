@@ -7,13 +7,14 @@ import game from 'game'
 import GameTime from './hud/GameTime'
 import HoverPreview from './hud/HoverPreview'
 import Leaderboard from './hud/Leaderboard'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import SpectateCloseButton from './screens/SpectateCloseButton'
 import store from 'store'
 import styled from 'styled-components'
 import WaitingScreen from './screens/WaitingScreen'
 import Wood from './hud/Wood'
 import YourEmpire from './hud/YourEmpire'
+import { animated, useTransition, config } from 'react-spring'
 
 const Container = styled.div`
   width: 100vw;
@@ -22,10 +23,19 @@ const Container = styled.div`
   position: relative;
 `
 
+const GameCanvas = styled.div`
+  visibility: ${props => (props.visible ? 'visible' : 'hidden')};
+`
+
+let timeout
+
 const Game = observer(() => {
-  if (store.alreadyPlaying) {
-    // navigate('/nope')
-  }
+  const [showWaitingScreen, setShowWaitingScreen] = useState(false)
+  const transitions = useTransition(showWaitingScreen, null, {
+    config: config.slow,
+    from: { opacity: 1 },
+    leave: { opacity: 0 },
+  })
 
   useEffect(() => {
     const element = document.getElementById('game')
@@ -42,13 +52,36 @@ const Game = observer(() => {
     }
   }, [])
 
+  useEffect(() => {
+    const show = store.status === 'pending' || store.status === 'starting'
+
+    if (timeout) {
+      clearTimeout(timeout)
+    }
+
+    if (show) {
+      setShowWaitingScreen(true)
+    } else {
+      timeout = setTimeout(() => {
+        setShowWaitingScreen(false)
+      }, 500)
+    }
+  }, [store.status])
+
   const { status, showHud, player, spectating, error } = store
 
   return (
     <Container>
-      <div id="game" />
+      <GameCanvas id="game" visible={status === 'running'} />
 
-      {(status === 'pending' || status === 'starting') && <WaitingScreen />}
+      {transitions.map(
+        ({ item, key, props }) =>
+          item && (
+            <animated.div key={key} style={props}>
+              <WaitingScreen />
+            </animated.div>
+          )
+      )}
 
       {status === 'running' && (
         <>

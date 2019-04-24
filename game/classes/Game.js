@@ -57,17 +57,17 @@ class Game {
     // Prepare clean local state
     this.setupLocalState()
 
+    // Fetch GS config
+    try {
+      const response = await axios(`http://${GAMESERVER_HOST}/config`)
+      store.config = response.data
+    } catch (err) {
+      store.error = 'Connection failed.'
+      throw err
+    }
+
     // Initialize
     if (!this.initialized) {
-      try {
-        const response = await axios(`http://${GAMESERVER_HOST}/config`)
-        store.config = response.data
-      } catch (err) {
-        store.error = 'Something went wrong'
-        console.error(err)
-        return
-      }
-
       this.setupEventListeners()
       this.setupStoreListeners()
 

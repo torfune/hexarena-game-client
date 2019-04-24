@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import Router from 'next/router'
 import Heading from '../Heading'
-import { PRIMARY, BOX_SHADOW, SECONDARY, TEXT_SHADOW } from 'constants/react'
+import { PRIMARY, BOX_SHADOW } from 'constants/react'
+import { FadeUp } from '../../../components/Animations'
 
 const Container = styled.div``
 
@@ -87,22 +88,24 @@ const PlaySection = () => {
   }
 
   return (
-    <Container>
-      <Heading>
-        <span>Alpha</span> test is running
-      </Heading>
+    <FadeUp>
+      <Container>
+        <Heading>
+          <span>Alpha</span> test is running
+        </Heading>
 
-      <Row>
-        <div>
-          <Label>Nickname</Label>
-          <NameInput value={name} onChange={handleNameChange} />
-        </div>
+        <Row>
+          <div>
+            <Label>Nickname</Label>
+            <NameInput value={name} onChange={handleNameChange} />
+          </div>
 
-        <Link href="/game">
-          <PlayButton>Play</PlayButton>
-        </Link>
-      </Row>
-    </Container>
+          <Link href="/game">
+            <PlayButton>Play</PlayButton>
+          </Link>
+        </Row>
+      </Container>
+    </FadeUp>
   )
 }
 
