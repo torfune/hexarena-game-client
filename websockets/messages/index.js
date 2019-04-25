@@ -4,7 +4,6 @@ import armies from './armies'
 import gameTime from './gameTime'
 import id from './id'
 import players from './players'
-import serverTime from './serverTime'
 import status from './status'
 import tiles from './tiles'
 import villages from './villages'
@@ -20,7 +19,6 @@ export default {
   gameTime,
   id,
   players,
-  serverTime,
   status,
   tiles,
   villages,

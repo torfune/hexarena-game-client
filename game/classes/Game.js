@@ -32,6 +32,7 @@ const LOCAL_STATE_MODEL = {
   selectedArmyTargetTiles: null,
   tilesWithPatternPreview: [],
   serverTimeDiff: null,
+  predictedActionTile: null,
   scale: DEFAULT_SCALE,
   targetScale: DEFAULT_SCALE,
   keyDown: {
@@ -240,9 +241,9 @@ class Game {
       this.updatePatternPreviews()
     })
 
-    store.onChange('serverTime', current => {
-      this.serverTimeDiff = Date.now() - current
-    })
+    // store.onChange('serverTime', current => {
+    //   this.serverTimeDiff = Date.now() - current
+    // })
   }
   setupEventListeners() {
     document.addEventListener('mousemove', this.handleMouseMove.bind(this))
@@ -378,6 +379,19 @@ class Game {
 
     if (button) {
       this.socket.send('click', `${tile.x}|${tile.z}|${button}`)
+
+      if (canAttack(tile)) {
+        this.predictedActionTile = tile
+
+        setTimeout(
+          (() => {
+            if (this.predictedActionTile === tile) {
+              this.predictedActionTile = null
+            }
+          }).bind(this),
+          500
+        )
+      }
     }
   }
   handleMouseMove({ clientX: x, clientY: y }) {
@@ -583,6 +597,24 @@ class Game {
     // Hovered tile
     if (store.hoveredTile) {
       const tilesToCapture = this.getTilesToCapture(store.hoveredTile, store.id)
+
+      for (let i = 0; i < tilesToCapture.length; i++) {
+        const t = tilesToCapture[i]
+
+        if (this.tilesWithPatternPreview.includes(t)) continue
+
+        this.tilesWithPatternPreview.push(t)
+
+        pattern[`${t.x}|${t.z}`] = store.player.pattern
+      }
+    }
+
+    // Predicted action tile
+    if (this.predictedActionTile) {
+      const tilesToCapture = this.getTilesToCapture(
+        this.predictedActionTile,
+        store.id
+      )
 
       for (let i = 0; i < tilesToCapture.length; i++) {
         const t = tilesToCapture[i]

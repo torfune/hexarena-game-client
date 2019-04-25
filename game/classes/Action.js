@@ -38,6 +38,7 @@ class Action {
     this.cancelIcon = createImage('actionIcon', 'actionIconCancel')
     this.cancelIcon.visible = false
     this.mouseLeft = false
+    this.hidden = false
     this.icon = createImage(
       'actionIcon',
       this.status === 'running' ? getActionTexture(type) : 'actionIconEmpty'
@@ -96,8 +97,7 @@ class Action {
   }
   update() {
     const { finishedAt, duration } = this
-    const now = Date.now() + game.serverTimeDiff
-    const timeDelta = finishedAt - now
+    const timeDelta = finishedAt - Date.now()
 
     let fraction = Math.round((1 - timeDelta / duration) * 100) / 100
 
@@ -165,11 +165,36 @@ class Action {
         this.cancelIcon.visible = false
       }
     }
+
+    if (this.hidden) {
+      const images = ['fill', 'background', 'icon', 'cancelIcon', 'number']
+      for (const image of images) {
+        if (this[image]) {
+          this[image].visible = false
+        }
+      }
+    }
+
+    if (fraction === 1 && !this.hidden) {
+      setTimeout(
+        (() => {
+          this.hidden = true
+        }).bind(this),
+        80
+      )
+    }
   }
   destroy() {
     store.removeItem('actions', this.id)
 
     this.tile.action = null
+
+    if (
+      game.predictedActionTile &&
+      game.predictedActionTile.id === this.tile.id
+    ) {
+      game.predictedActionTile = null
+    }
 
     game.stage.actionBg.removeChild(this.background)
     game.stage.actionFill.removeChild(this.fill)
