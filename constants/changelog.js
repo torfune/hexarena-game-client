@@ -1,5 +1,23 @@
 const changelog = [
   {
+    version: 'Alpha 1.10.0',
+    points: ['UI improvements.', 'Bug fixes.'],
+    day: null,
+    month: null,
+  },
+  {
+    version: 'Alpha 1.9.0',
+    points: ['UI improvements.', 'More colors.', 'Bug fixes.'],
+    day: null,
+    month: null,
+  },
+  {
+    version: 'Alpha 1.8.0',
+    points: ['Alliance request notifications.', 'Bug fixes.'],
+    day: null,
+    month: null,
+  },
+  {
     version: 'Alpha 1.7.0',
     points: ['Shared vision in an alliance.', 'Several bugs were fixed.'],
     day: 14,
