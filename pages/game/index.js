@@ -11,10 +11,10 @@ import React, { useEffect, useState } from 'react'
 import SpectateCloseButton from './screens/SpectateCloseButton'
 import store from 'store'
 import styled from 'styled-components'
-import WaitingScreen from './screens/WaitingScreen'
+import Lobby from './screens/Lobby'
 import Wood from './hud/Wood'
 import YourEmpire from './hud/YourEmpire'
-import { animated, useTransition, config } from 'react-spring'
+import { animated, useTransition } from 'react-spring'
 
 const Container = styled.div`
   width: 100vw;
@@ -30,9 +30,8 @@ const GameCanvas = styled.div`
 let timeout
 
 const Game = observer(() => {
-  const [showWaitingScreen, setShowWaitingScreen] = useState(false)
-  const transitions = useTransition(showWaitingScreen, null, {
-    config: config.slow,
+  const [showLobby, setShowLobby] = useState(false)
+  const transitions = useTransition(showLobby, null, {
     from: { opacity: 1 },
     leave: { opacity: 0 },
   })
@@ -60,10 +59,10 @@ const Game = observer(() => {
     }
 
     if (show) {
-      setShowWaitingScreen(true)
+      setShowLobby(true)
     } else {
       timeout = setTimeout(() => {
-        setShowWaitingScreen(false)
+        setShowLobby(false)
       }, 500)
     }
   }, [store.status])
@@ -78,7 +77,7 @@ const Game = observer(() => {
         ({ item, key, props }) =>
           item && (
             <animated.div key={key} style={props}>
-              <WaitingScreen />
+              <Lobby />
             </animated.div>
           )
       )}

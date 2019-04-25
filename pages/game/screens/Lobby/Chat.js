@@ -8,6 +8,7 @@ import { observer } from 'mobx-react-lite'
 const Container = styled.div`
   border-left: 2px solid #333;
   padding-left: 64px;
+  margin-top: 64px;
 `
 
 const Heading = styled.h2`
@@ -16,7 +17,7 @@ const Heading = styled.h2`
 `
 
 const MessagesContainer = styled.div`
-  height: 512px;
+  height: 350px;
   overflow-y: scroll;
   overflow-x: hidden;
   margin-top: 32px;
@@ -49,6 +50,11 @@ const Input = styled.input`
   margin-top: 32px;
   box-shadow: ${BOX_SHADOW};
   color: #fff;
+
+  :hover,
+  :focus {
+    background: #777;
+  }
 `
 
 const Chat = () => {

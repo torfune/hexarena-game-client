@@ -21,6 +21,20 @@ const Container = styled.div`
   box-shadow: 0px 0px 72px 0px rgba(0, 0, 0, 0.5);
 `
 
+const Header = styled.div`
+  display: flex;
+  padding: 0 128px;
+  justify-content: space-between;
+  align-items: center;
+`
+
+const Description = styled.h2`
+  color: #fff;
+  font-weight: 300;
+  font-size: 32px;
+  margin-top: 16px;
+`
+
 const Grid = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -68,7 +82,10 @@ const HomePage = () => {
 
   return (
     <Container>
-      <Logo />
+      <Header>
+        <Logo />
+        <Description>Multiplayer strategy game</Description>
+      </Header>
 
       <MainSection />
 
