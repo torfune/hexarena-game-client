@@ -100,7 +100,7 @@ const Stats = () => {
           </Label>
           <Number>{stats.runningGames}</Number>
         </Column>
-
+        {/* 
         <Column>
           <Label>
             Finished
@@ -108,7 +108,7 @@ const Stats = () => {
             games
           </Label>
           <Number>{store.winners.length}</Number>
-        </Column>
+        </Column> */}
 
         <Column>
           <Label>
