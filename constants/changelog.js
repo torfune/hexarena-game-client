@@ -1,5 +1,16 @@
 const changelog = [
   {
+    version: 'Alpha 1.11.0',
+    points: [
+      'Wood is replaced with Gold, it works the same way.',
+      'Surrender button (when playing 1 vs 2).',
+      'UI improvements.',
+      'Bug fixes.',
+    ],
+    day: null,
+    month: null,
+  },
+  {
     version: 'Alpha 1.10.0',
     points: ['UI improvements.', 'Bug fixes.'],
     day: null,
