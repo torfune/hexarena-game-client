@@ -15,6 +15,7 @@ import Lobby from './screens/Lobby'
 import Gold from './hud/Gold'
 import YourEmpire from './hud/YourEmpire'
 import { animated, useTransition } from 'react-spring'
+import SurrenderButton from './hud/SurrenderButton'
 
 const Container = styled.div`
   width: 100vw;
@@ -67,7 +68,26 @@ const Game = observer(() => {
     }
   }, [store.status])
 
-  const { status, showHud, player, spectating, error } = store
+  const { status, showHud, players, player, spectating, error } = store
+
+  let showSurrender = false
+  let alivePlayers = 0
+
+  for (let i = 0; i < players.length; i++) {
+    if (players[i].alive) {
+      alivePlayers++
+    }
+  }
+
+  if (alivePlayers === 3 && (!player.ally || !player.ally.alive)) {
+    for (let i = 0; i < players.length; i++) {
+      const p = players[i]
+      if (p.id !== player.id && p.ally && p.ally.alive) {
+        showSurrender = true
+        break
+      }
+    }
+  }
 
   return (
     <Container>
@@ -98,6 +118,8 @@ const Game = observer(() => {
               <YourEmpire />
             </>
           )}
+
+          {showSurrender && <SurrenderButton />}
 
           {!player.alive &&
             (spectating ? (

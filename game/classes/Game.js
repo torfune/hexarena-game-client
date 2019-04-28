@@ -767,6 +767,9 @@ class Game {
       }
     }
   }
+  surrender() {
+    this.socket.send('surrender')
+  }
 }
 
 export default Game

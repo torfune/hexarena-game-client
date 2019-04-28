@@ -1,4 +1,5 @@
 import React from 'react'
+import game from '../../../game'
 import styled from 'styled-components'
 import { PRIMARY, SECONDARY } from 'constants/react'
 
@@ -13,7 +14,7 @@ const Container = styled.div`
   margin: 0 16px;
   transition: 100ms;
   position: absolute;
-  bottom: 128px;
+  bottom: 96px;
   left: 50vw;
   transform: translateX(-130px);
   text-align: center;
@@ -24,10 +25,8 @@ const Container = styled.div`
   }
 `
 
-const SpectateCloseButton = () => (
-  <a href="/game">
-    <Container>Play again</Container>
-  </a>
+const SurrenderButton = () => (
+  <Container onClick={game.surrender.bind(game)}>Surrender</Container>
 )
 
-export default SpectateCloseButton
+export default SurrenderButton
