@@ -7,6 +7,7 @@ import invertHexDirection from 'game/functions/invertHexDirection'
 import hex from 'game/functions/hex'
 import getRotationBySide from 'game/functions/getRotationBySide'
 import store from 'store'
+import GoldAnimation from 'game/classes/GoldAnimation'
 import { lighten } from 'utils/color'
 import {
   NEIGHBOR_DIRECTIONS,
@@ -153,6 +154,11 @@ class Tile {
       case 'village':
       case 'forest':
         this.updateImage(key)
+
+        if (key === 'forest' && !value && this.ownerId === store.player.id) {
+          new GoldAnimation(this, 2)
+        }
+
         break
 
       case 'ownerId':

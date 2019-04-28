@@ -56,7 +56,7 @@ const GoldSection = () => {
           {goldIcons.map((isFilled, index) => (
             <Slot
               key={index}
-              src="/static/images/gold.svg"
+              src="/static/icons/gold.svg"
               isFilled={isFilled}
             />
           ))}

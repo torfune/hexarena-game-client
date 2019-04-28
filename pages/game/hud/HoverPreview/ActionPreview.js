@@ -110,7 +110,7 @@ const ActionPreview = ({
             <VerticalLine column="4" />
 
             <IconWrapper column="5">
-              <Icon src="/static/images/gold.svg" />
+              <Icon src="/static/icons/gold.svg" />
             </IconWrapper>
             <Value column="5" color={notEnoughGold ? PRIMARY : null}>
               {goldCost}

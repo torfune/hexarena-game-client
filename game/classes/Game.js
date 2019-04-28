@@ -20,6 +20,7 @@ import {
   TILE_IMAGES,
   ZOOM_SPEED,
 } from 'constants/game'
+import GoldAnimation from './GoldAnimation'
 
 const LOCAL_STATE_MODEL = {
   animations: [],
@@ -190,6 +191,12 @@ class Game {
 
         for (let i = 0; i < store.armies.length; i++) {
           store.armies[i].updateScale()
+        }
+
+        for (let i = 0; i < this.animations.length; i++) {
+          if (this.animations[i] instanceof GoldAnimation) {
+            this.animations[i].updateScale()
+          }
         }
 
         this.setCameraToAxialPosition(axial)
