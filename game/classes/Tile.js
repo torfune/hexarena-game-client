@@ -806,13 +806,13 @@ class Tile {
     // Recruit
     if (
       (this.castle || this.capital) &&
-      store.wood >= store.config.RECRUIT_COST
+      store.gold >= store.config.RECRUIT_COST
     ) {
       return true
     }
 
     // Build
-    if (this.isEmpty() && store.wood >= store.config.BUILD_COST) {
+    if (this.isEmpty() && store.gold >= store.config.BUILD_COST) {
       return true
     }
 
@@ -821,7 +821,7 @@ class Tile {
       return true
     }
 
-    // Cut wood
+    // Cut gold
     if (this.forest) {
       return true
     }
