@@ -34,7 +34,7 @@ const Logo = styled.h2`
 const MainSection = styled.div`
   padding: 32px 64px;
   display: grid;
-  grid-template-columns: 340px auto 380px;
+  grid-template-columns: 340px 2fr 1fr;
   grid-gap: 48px;
   margin-top: 32px;
 `
