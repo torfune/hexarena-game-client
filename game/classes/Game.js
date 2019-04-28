@@ -60,10 +60,26 @@ class Game {
 
     // Fetch GS config
     try {
-      const response = await axios(`http://${GAMESERVER_HOST}/config`)
-      store.config = response.data
+      const [{ data: config }, { data: status }] = await Promise.all([
+        axios(`http://${GAMESERVER_HOST}/config`),
+        axios(`http://${GAMESERVER_HOST}/status`),
+      ])
+
+      store.config = config
+
+      if (status.timeRemaining && status.timeRemaining > 0) {
+        store.error = {
+          message: 'Server is closed.',
+          goHome: true,
+        }
+
+        return
+      }
     } catch (err) {
-      store.error = 'Connection failed.'
+      store.error = {
+        message: 'Connection failed.',
+      }
+
       throw err
     }
 

@@ -53,7 +53,7 @@ const BlackOverlay = styled.div`
   z-index: 9;
 `
 
-const ErrorModal = ({ message }) => (
+const ErrorModal = ({ message, goHome }) => (
   <>
     <BlackOverlay />
 
@@ -62,10 +62,14 @@ const ErrorModal = ({ message }) => (
 
       <StyledButton
         onClick={() => {
-          window.location.reload()
+          if (!goHome) {
+            window.location.reload()
+          } else {
+            window.location.href = '/'
+          }
         }}
       >
-        Reload
+        {goHome ? 'Continue' : 'Reload'}
       </StyledButton>
     </Container>
   </>

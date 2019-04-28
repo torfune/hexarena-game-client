@@ -110,7 +110,7 @@ const Game = observer(() => {
 
       {status === 'finished' && <EndScreen />}
 
-      {error && <ErrorModal message={error} />}
+      {error && <ErrorModal message={error.message} goHome={error.goHome} />}
     </Container>
   )
 })

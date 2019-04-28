@@ -102,7 +102,9 @@ class Socket {
     console.log('Socket closed.')
 
     if (game.running) {
-      store.error = 'Disconnected'
+      store.error = {
+        message: 'Disconnected.',
+      }
     }
   }
   send = (message, payload) => {
