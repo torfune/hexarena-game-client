@@ -39,7 +39,7 @@ const HoveredTileinfo = () => {
     return () => {
       document.removeEventListener('mousemove', handleMouseMove)
     }
-  })
+  }, [])
 
   React.useEffect(() => {
     setHoveredTileInfo(getHoveredTileInfo(hoveredTile))
