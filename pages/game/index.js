@@ -71,7 +71,10 @@ const Game = observer(() => {
 
   return (
     <Container>
-      <GameCanvas id="game" visible={status === 'running'} />
+      <GameCanvas
+        id="game"
+        visible={status === 'running' || status === 'finished'}
+      />
 
       {transitions.map(
         ({ item, key, props }) =>

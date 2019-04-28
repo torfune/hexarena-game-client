@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { PopIn } from '../../../components/Animations'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { BOX_SHADOW, PRIMARY, BLUE } from 'constants/react'
@@ -50,25 +51,58 @@ const Button = styled.div`
   }
 `
 
+const ScreenOverlay = styled.div`
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  position: fixed;
+  background: #000000;
+  opacity: 0.2;
+`
+
+let showTimeout = null
+
 const DefeatModal = () => {
+  const [show, setShow] = useState(false)
+
+  useEffect(() => {
+    showTimeout = setTimeout(() => {
+      setShow(true)
+    }, 1000)
+
+    return () => {
+      if (showTimeout) {
+        clearTimeout(showTimeout)
+        showTimeout = null
+      }
+    }
+  }, [])
+
   const handleSpectateClick = () => {
     store.spectating = true
   }
 
+  if (!show) return null
+
   return (
-    <Container>
-      <h2>You have lost your Capital!</h2>
+    <PopIn>
+      <ScreenOverlay />
 
-      <ButtonRow>
-        <a href="/game">
-          <Button color={PRIMARY}>Play again</Button>
-        </a>
+      <Container>
+        <h2>You have lost your Capital!</h2>
 
-        <Button color={BLUE} onClick={handleSpectateClick}>
-          Spectate
-        </Button>
-      </ButtonRow>
-    </Container>
+        <ButtonRow>
+          <a href="/game">
+            <Button color={PRIMARY}>Play again</Button>
+          </a>
+
+          <Button color={BLUE} onClick={handleSpectateClick}>
+            Spectate
+          </Button>
+        </ButtonRow>
+      </Container>
+    </PopIn>
   )
 }
 

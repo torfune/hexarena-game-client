@@ -25,7 +25,6 @@ const getHoveredTileInfo = tile => {
 
   // Army send
   if (game.selectedArmyTile) {
-    console.log('Army send..')
     return {
       label: 'Send army',
       structure,

@@ -27,3 +27,17 @@ export const FadeDown = ({ children }) => {
     </animated.div>
   ))
 }
+
+export const PopIn = ({ children }) => {
+  const transitions = useTransition(true, null, {
+    // config: config.stiff,
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+  })
+
+  return transitions.map(({ key, props }) => (
+    <animated.div key={key} style={props}>
+      {children}
+    </animated.div>
+  ))
+}

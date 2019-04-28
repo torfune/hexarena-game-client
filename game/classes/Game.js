@@ -286,13 +286,15 @@ class Game {
     }
   }
   handleMouseDown({ clientX: x, clientY: y }) {
+    if (store.status !== 'running' || !this.cursor) return
+
     this.cameraDrag = {
       cursor: { x, y },
       camera: { ...this.camera },
     }
   }
   handleMouseUp(event) {
-    if (!this.running || !this.cameraDrag) return
+    if (!this.running || !this.cameraDrag || !this.cursor) return
 
     const cursorDelta =
       Math.abs(this.cursor.x - this.cameraDrag.cursor.x) +
@@ -737,6 +739,8 @@ class Game {
           armyTiles[j].removeHighlight()
         }
       }
+
+      return
     }
 
     for (let i = 0; i < 6; i++) {
