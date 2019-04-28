@@ -88,11 +88,12 @@ const ContinueButton = styled.a`
 const EndScreen = () => {
   const spring = useSpring({ top: 0, from: { top: -4000 } })
   const groups = getPlayerGroups(store.players)
+  const message = store.gameTime <= 0 ? `Time's up!` : 'The game has finished!'
 
   return (
     <Container style={spring}>
       <Box>
-        <Heading>The game has finished!</Heading>
+        <Heading>{message}</Heading>
         <WinStatement>{renderWinStatement(groups[0])}</WinStatement>
 
         <Table groups={groups} />
