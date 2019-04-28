@@ -45,7 +45,7 @@ const renderIconByLabel = label => {
     case 'Build castle':
       src = '/static/icons/resources.svg'
       break
-    case 'Get wood':
+    case 'Get gold':
       src = '/static/icons/axe.svg'
       break
     case 'Recruit army':

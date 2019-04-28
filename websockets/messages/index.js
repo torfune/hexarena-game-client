@@ -7,7 +7,7 @@ import players from './players'
 import status from './status'
 import tiles from './tiles'
 import villages from './villages'
-import wood from './wood'
+import gold from './gold'
 import alreadyPlaying from './alreadyPlaying'
 import countdown from './countdown'
 import messages from './messages'
@@ -22,7 +22,7 @@ export default {
   status,
   tiles,
   villages,
-  wood,
+  gold,
   alreadyPlaying,
   countdown,
   messages,

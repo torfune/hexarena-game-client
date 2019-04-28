@@ -3,10 +3,10 @@ import styled from 'styled-components'
 import ActionType from './ActionLabel'
 import { PRIMARY } from 'constants/react'
 
-const getColumns = ({ showWood, showDuration }) => {
+const getColumns = ({ showGold, showDuration }) => {
   let columns = 'auto'
 
-  if (showWood) {
+  if (showGold) {
     columns += ' 1px 52px'
   }
 
@@ -67,7 +67,7 @@ const Structure = styled.div`
   top: 2px;
   padding-bottom: 4px;
 `
-const NotEnoughWood = styled.div`
+const NotEnoughGold = styled.div`
   background: #333;
   color: #fff;
   padding: 4px 12px;
@@ -79,15 +79,15 @@ const Icon = styled.img`
 `
 
 const ActionPreview = ({
-  woodCost,
+  goldCost,
   label,
   structure,
   duration,
-  notEnoughWood,
+  notEnoughGold,
 }) => {
   return (
     <Fragment>
-      <Grid showWood={!!woodCost} showDuration={!!duration}>
+      <Grid showGold={!!goldCost} showDuration={!!duration}>
         <HorizontalLine />
 
         <ActionType label={label} />
@@ -105,21 +105,21 @@ const ActionPreview = ({
           </React.Fragment>
         )}
 
-        {woodCost && (
+        {goldCost && (
           <React.Fragment>
             <VerticalLine column="4" />
 
             <IconWrapper column="5">
-              <Icon src="/static/images/wood.png" />
+              <Icon src="/static/images/gold.svg" />
             </IconWrapper>
-            <Value column="5" color={notEnoughWood ? PRIMARY : null}>
-              {woodCost}
+            <Value column="5" color={notEnoughGold ? PRIMARY : null}>
+              {goldCost}
             </Value>
           </React.Fragment>
         )}
       </Grid>
 
-      {notEnoughWood && <NotEnoughWood>Not enough wood</NotEnoughWood>}
+      {notEnoughGold && <NotEnoughGold>Not enough gold</NotEnoughGold>}
     </Fragment>
   )
 }

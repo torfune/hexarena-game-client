@@ -69,7 +69,7 @@ export const DEBUG_COMMANDS = [
   ['5', 'add_camp'],
   ['6', 'add_player'],
   ['7', 'send_army'],
-  ['8', 'add_wood'],
+  ['8', 'add_gold'],
   ['c', 'clear'],
   ['e', 'add_castle'],
   ['f', 'dummy_send_army'],

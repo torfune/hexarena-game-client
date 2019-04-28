@@ -20,7 +20,7 @@ const Container = styled.div`
 `
 
 const Content = styled.div`
-  padding: 0 30px;
+  padding: 0 40px;
   padding-bottom: 16px;
 `
 
@@ -31,32 +31,32 @@ const Slots = styled.div`
 `
 
 const Slot = styled.img`
-  height: 28px;
+  height: 32px;
   filter: ${props => (!props.isFilled ? 'grayscale(1)' : null)};
   opacity: ${props => (!props.isFilled ? '0.4' : null)};
 `
 
-const WoodSection = () => {
-  if (store.wood === null) return null
+const GoldSection = () => {
+  if (store.gold === null) return null
 
-  const woodIcons = []
+  const goldIcons = []
   for (let i = 0; i < 6; i++) {
-    woodIcons.push(i < store.wood)
+    goldIcons.push(i < store.gold)
   }
 
   return (
     <Container>
       <Header
-        text="Wood"
+        text="Gold"
         iconSrc="/static/icons/resources.svg"
         iconSize="22px"
       />
       <Content>
         <Slots>
-          {woodIcons.map((isFilled, index) => (
+          {goldIcons.map((isFilled, index) => (
             <Slot
               key={index}
-              src="/static/images/wood.png"
+              src="/static/images/gold.svg"
               isFilled={isFilled}
             />
           ))}
@@ -66,4 +66,4 @@ const WoodSection = () => {
   )
 }
 
-export default observer(WoodSection)
+export default observer(GoldSection)

@@ -12,7 +12,7 @@ import SpectateCloseButton from './screens/SpectateCloseButton'
 import store from 'store'
 import styled from 'styled-components'
 import Lobby from './screens/Lobby'
-import Wood from './hud/Wood'
+import Gold from './hud/Gold'
 import YourEmpire from './hud/YourEmpire'
 import { animated, useTransition } from 'react-spring'
 
@@ -91,7 +91,7 @@ const Game = observer(() => {
               <Diplomacy />
               <HoverPreview />
               <Leaderboard />
-              <Wood />
+              <Gold />
               <YourEmpire />
             </>
           )}

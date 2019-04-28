@@ -57,15 +57,15 @@ const getHoveredTileInfo = tile => {
       label: 'Build castle',
       structure,
       duration: `${store.config.BUILD_DURATION / 1000}s`,
-      notEnoughWood: store.wood < BUILD_COST,
-      woodCost: BUILD_COST,
+      notEnoughGold: store.gold < BUILD_COST,
+      goldCost: BUILD_COST,
     }
   }
 
   // Cut
   if (isOwnedByPlayer && tile.forest) {
     return {
-      label: 'Get wood',
+      label: 'Get gold',
       structure,
       duration: `${store.config.CUT_DURATION / 1000}s`,
     }
@@ -77,8 +77,8 @@ const getHoveredTileInfo = tile => {
       label: 'Recruit army',
       structure,
       duration: `${store.config.RECRUIT_DURATION / 1000}s`,
-      notEnoughWood: store.wood < RECRUIT_COST,
-      woodCost: RECRUIT_COST,
+      notEnoughGold: store.gold < RECRUIT_COST,
+      goldCost: RECRUIT_COST,
     }
   }
 
