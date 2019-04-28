@@ -97,7 +97,12 @@ const Chat = () => {
         ))}
       </MessagesContainer>
 
-      <Input autoFocus value={message} onChange={handleMessageChange} />
+      <Input
+        autoFocus
+        maxLength="64"
+        value={message}
+        onChange={handleMessageChange}
+      />
     </Container>
   )
 }

@@ -233,7 +233,7 @@ class Game {
     }
   }
   sendMessage(message) {
-    this.socket.send('message', message)
+    this.socket.send('message', message.slice(0, 64))
   }
   updateScreenSize() {
     this.pixi.renderer.resize(window.innerWidth, window.innerHeight)
