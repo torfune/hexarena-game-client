@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import getGameserverHost from 'utils/getGameserverHost'
+import axios from 'axios'
 import styled from 'styled-components'
 import Player from './Player'
+import Winners from '../../../homepage/Winners'
 import Chat from './Chat'
 import store from '../../../../store'
 import { observer } from 'mobx-react-lite'
-import Stats from '../../../homepage/MainSection/Stats'
 import game from '../../../../game'
 import { FadeDown, FadeUp } from '../../../../components/Animations'
 
@@ -20,7 +22,7 @@ const Container = styled.div`
 const Header = styled.div`
   display: flex;
   background: #333;
-  padding: 16px 128px;
+  padding: 16px 64px;
   box-shadow: 0 4px 8px #00000022;
 `
 
@@ -30,17 +32,30 @@ const Logo = styled.h2`
 `
 
 const MainSection = styled.div`
-  padding: 32px 128px;
+  padding: 32px 64px;
   display: grid;
-  grid-template-columns: 2fr 450px;
+  grid-template-columns: 340px auto 380px;
+  grid-gap: 48px;
   margin-top: 32px;
+`
+
+const Players = styled.div`
+  width: 852px;
+  margin: 0 auto;
+`
+
+const WinnersContainer = styled.div`
+  overflow-y: scroll;
+  height: 600px;
+  padding-right: 32px;
 `
 
 const Heading = styled.h2`
   color: #fff;
-  font-size: 30px;
-  font-weight: 500;
+  font-size: 32px;
+  font-weight: 600;
   margin-bottom: ${props => props.marginBottom};
+  text-align: ${props => (props.center ? 'center' : 'left')};
 `
 
 const Row = styled.div`
@@ -54,11 +69,11 @@ const getWaitingMessage = (numberOfPlayers, minPlayers) => {
   const n = minPlayers - numberOfPlayers
 
   if (n <= 0 || numberOfPlayers === 0) {
-    return '...'
+    return ''
   }
 
   if (n === 1) {
-    return 'Waiting for 1 more player'
+    return 'Waiting for the last player'
   } else {
     return `Waiting for ${n} more players`
   }
@@ -66,6 +81,21 @@ const getWaitingMessage = (numberOfPlayers, minPlayers) => {
 
 const Lobby = () => {
   const players = []
+
+  useEffect(() => {
+    fetchWinners()
+  }, [])
+
+  const fetchWinners = async () => {
+    const GAMESERVER_HOST = getGameserverHost(window.location.hostname)
+    const response = await axios.get(`http://${GAMESERVER_HOST}/winners`)
+    const winners = response.data
+      .split('\n')
+      .filter(l => l !== '')
+      .reverse()
+
+    store.winners = winners
+  }
 
   for (let i = 0; i < playersPerRoom; i++) {
     if (i < store.players.length) {
@@ -88,43 +118,53 @@ const Lobby = () => {
       </Header>
 
       <MainSection>
-        <FadeDown>
-          <Heading marginBottom="-16px">
-            {store.countdown !== null
-              ? `Game starts in ${store.countdown} seconds`
-              : getWaitingMessage(
-                  store.players.length,
-                  store.config.MIN_PLAYERS
-                )}
-          </Heading>
-          <Row>
-            {players.slice(0, 3).map(({ id, name, pattern }, index) => (
-              <Player
-                key={index}
-                name={name}
-                pattern={pattern}
-                isThisPlayer={id === store.player.id}
-                players={store.players}
-                onPatternSelect={game.selectPattern}
-              />
-            ))}
-          </Row>
-          <Row>
-            {players.slice(3, 6).map(({ id, name, pattern }, index) => (
-              <Player
-                key={index}
-                name={name}
-                pattern={pattern}
-                isThisPlayer={id === store.player.id}
-                players={store.players}
-                onPatternSelect={game.selectPattern}
-              />
-            ))}
-          </Row>
-        </FadeDown>
+        <div>
+          <Heading>Winners</Heading>
+
+          <WinnersContainer>
+            <Winners />
+          </WinnersContainer>
+        </div>
+
+        <Players>
+          <FadeDown>
+            <Heading marginBottom="-16px" center>
+              {store.countdown !== null
+                ? `Game starts in ${store.countdown} seconds`
+                : getWaitingMessage(
+                    store.players.length,
+                    store.config.MIN_PLAYERS
+                  )}
+            </Heading>
+            <Row>
+              {players.slice(0, 3).map(({ id, name, pattern }, index) => (
+                <Player
+                  key={index}
+                  name={name}
+                  pattern={pattern}
+                  isThisPlayer={id === store.player.id}
+                  players={store.players}
+                  onPatternSelect={game.selectPattern}
+                />
+              ))}
+            </Row>
+            <Row>
+              {players.slice(3, 6).map(({ id, name, pattern }, index) => (
+                <Player
+                  key={index}
+                  name={name}
+                  pattern={pattern}
+                  isThisPlayer={id === store.player.id}
+                  players={store.players}
+                  onPatternSelect={game.selectPattern}
+                />
+              ))}
+            </Row>
+          </FadeDown>
+        </Players>
 
         <FadeUp>
-          <Stats />
+          <Heading>Chat</Heading>
           <Chat />
         </FadeUp>
       </MainSection>

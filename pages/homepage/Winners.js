@@ -1,13 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
-import Heading from './Heading'
 import store from 'store'
-import { version } from '../../package.json'
 import { observer } from 'mobx-react-lite'
 
-const Container = styled.div``
-
-const List = styled.div`
+const Container = styled.div`
   margin-top: 32px;
 `
 
@@ -51,19 +47,16 @@ const Winners = () => {
 
   return (
     <Container>
-      <Heading>Alpha {version.replace('-dev', '')} winners</Heading>
-      <List>
-        {winners.map((winner, index) => (
-          <Winner key={index}>
-            {winner.players.map((player, index) => (
-              <Row key={index}>
-                <Pattern color={player.pattern} />
-                <Name>{player.name}</Name>
-              </Row>
-            ))}
-          </Winner>
-        ))}
-      </List>
+      {winners.map((winner, index) => (
+        <Winner key={index}>
+          {winner.players.map((player, index) => (
+            <Row key={index}>
+              <Pattern color={player.pattern} />
+              <Name>{player.name}</Name>
+            </Row>
+          ))}
+        </Winner>
+      ))}
     </Container>
   )
 }

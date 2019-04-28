@@ -1,6 +1,8 @@
 import axios from 'axios'
 import Footer from './Footer'
+import Heading from './Heading'
 import Logo from './Logo'
+import { version } from '../../package.json'
 import MainSection from './MainSection'
 import React, { useEffect } from 'react'
 import Winners from './Winners'
@@ -66,10 +68,10 @@ const BlackOverlay = styled.div`
 
 const HomePage = () => {
   useEffect(() => {
-    fetchData()
+    fetchWinners()
   }, [])
 
-  const fetchData = async () => {
+  const fetchWinners = async () => {
     const GAMESERVER_HOST = getGameserverHost(window.location.hostname)
     const response = await axios.get(`http://${GAMESERVER_HOST}/winners`)
     const winners = response.data
@@ -91,7 +93,10 @@ const HomePage = () => {
 
       <Grid>
         <ReleaseNotes />
-        <Winners />
+        <div>
+          <Heading>Alpha {version.replace('-dev', '')} winners</Heading>
+          <Winners />
+        </div>
       </Grid>
 
       <Footer />

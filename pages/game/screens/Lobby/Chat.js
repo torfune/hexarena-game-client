@@ -5,19 +5,10 @@ import game from 'game'
 import store from 'store'
 import { observer } from 'mobx-react-lite'
 
-const Container = styled.div`
-  border-left: 2px solid #333;
-  padding-left: 64px;
-  margin-top: 64px;
-`
-
-const Heading = styled.h2`
-  color: #fff;
-  font-size: 32px;
-`
+const Container = styled.div``
 
 const MessagesContainer = styled.div`
-  height: 350px;
+  height: 480px;
   overflow-y: scroll;
   overflow-x: hidden;
   margin-top: 32px;
@@ -86,8 +77,6 @@ const Chat = () => {
 
   return (
     <Container>
-      <Heading>Chat</Heading>
-
       <MessagesContainer ref={elementRef}>
         {store.messages.map(({ name, message }, index) => (
           <Message key={index}>
