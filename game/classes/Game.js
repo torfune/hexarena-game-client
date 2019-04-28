@@ -191,38 +191,7 @@ class Game {
     }
 
     // Hovered tile
-    const newHoveredTile = this.getHoveredTile()
-
-    // existing -> non-existing
-    if (store.hoveredTile && !newHoveredTile) {
-      store.hoveredTile.endHover()
-      store.hoveredTile = null
-    }
-
-    // non-existing -> existing
-    if (!store.hoveredTile && newHoveredTile) {
-      store.hoveredTile = newHoveredTile
-      store.hoveredTile.startHover()
-
-      this.updateHoveredTileInfo()
-      this.updateContested()
-      this.updatePatternPreviews()
-    }
-
-    // existing[A] -> existing[B]
-    if (
-      store.hoveredTile &&
-      newHoveredTile &&
-      store.hoveredTile.id !== newHoveredTile.id
-    ) {
-      store.hoveredTile.endHover()
-      store.hoveredTile = newHoveredTile
-      store.hoveredTile.startHover()
-
-      this.updateHoveredTileInfo()
-      this.updateContested()
-      this.updatePatternPreviews()
-    }
+    this.updateHoveredTile()
   }
   setupStoreListeners() {
     store.onChange('tiles', tiles => {
@@ -338,6 +307,7 @@ class Game {
 
       this.selectedArmyTile.unselectArmy()
       this.selectedArmyTile = null
+      this.updateArmyTileHighlights()
 
       return
     }
@@ -492,8 +462,10 @@ class Game {
         for (let i = 0; i < 4; i++) {
           const t = this.selectedArmyTargetTiles[direction][i]
 
+          if (!t) continue
+
+          // Owned Mountain
           if (
-            t &&
             t.mountain &&
             t.owner &&
             t.ownerId !== playerId &&
@@ -502,7 +474,12 @@ class Game {
             break
           }
 
-          if (t && t.ownerId !== playerId && !t.bedrock) {
+          // Owned Castle & Capital
+          if (t.ownerId === playerId && (t.castle || t.capital)) {
+            break
+          }
+
+          if (t.ownerId !== playerId && !t.bedrock) {
             tilesToCapture.push(t)
 
             if (t.camp || t.mountain || t.village || t.castle || t.capital) {
@@ -687,6 +664,80 @@ class Game {
   updateBlackOverlays() {
     for (let i = 0; i < store.tiles.length; i++) {
       store.tiles[i].updateBlackOverlay()
+    }
+  }
+  updateHoveredTile() {
+    const newHoveredTile = this.getHoveredTile()
+
+    // existing -> non-existing
+    if (store.hoveredTile && !newHoveredTile) {
+      store.hoveredTile.endHover()
+      store.hoveredTile = null
+    }
+
+    // non-existing -> existing
+    if (!store.hoveredTile && newHoveredTile) {
+      store.hoveredTile = newHoveredTile
+      store.hoveredTile.startHover()
+
+      this.updatePatternPreviews()
+
+      if (this.selectedArmyTile) {
+        this.updateArmyTileHighlights()
+      } else {
+        this.updateHoveredTileInfo()
+        this.updateContested()
+      }
+    }
+
+    // existing[A] -> existing[B]
+    if (
+      store.hoveredTile &&
+      newHoveredTile &&
+      store.hoveredTile.id !== newHoveredTile.id
+    ) {
+      store.hoveredTile.endHover()
+      store.hoveredTile = newHoveredTile
+      store.hoveredTile.startHover()
+
+      this.updatePatternPreviews()
+
+      if (this.selectedArmyTile) {
+        this.updateArmyTileHighlights()
+      } else {
+        this.updateHoveredTileInfo()
+        this.updateContested()
+      }
+    }
+  }
+  updateArmyTileHighlights() {
+    let direction = null
+
+    if (!this.selectedArmyTile && this.selectedArmyTargetTiles) {
+      for (let i = 0; i < 6; i++) {
+        const armyTiles = this.selectedArmyTargetTiles[i]
+
+        for (let j = 0; j < armyTiles.length; j++) {
+          armyTiles[j].removeHighlight()
+        }
+      }
+    }
+
+    for (let i = 0; i < 6; i++) {
+      if (this.selectedArmyTargetTiles[i].includes(store.hoveredTile)) {
+        direction = i
+        break
+      }
+    }
+
+    if (direction !== null) {
+      for (let i = 0; i < 4; i++) {
+        const t = this.selectedArmyTargetTiles[direction][i]
+
+        if (!t || !t.owner || t.owner.id !== store.player.id) continue
+
+        t.addHighlight()
+      }
     }
   }
 }

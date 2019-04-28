@@ -193,7 +193,7 @@ class Tile {
     }
 
     if (this.canPlayerCreateAction() && game.selectedArmyTile !== this) {
-      this.image.pattern.tint = hex(lighten(this.owner.pattern, 10))
+      this.addHighlight()
     }
   }
   endHover() {
@@ -202,7 +202,7 @@ class Tile {
     }
 
     if (this.owner && game.selectedArmyTile !== this) {
-      this.image.pattern.tint = hex(this.owner.pattern)
+      this.removeHighlight()
     }
   }
   updateScale() {
@@ -244,6 +244,11 @@ class Tile {
         image.scale.y = game.scale
       }
     }
+  }
+  addHighlight() {
+    if (!this.owner) return
+
+    this.image.pattern.tint = hex(lighten(this.owner.pattern, 10))
   }
   addImage(imageName) {
     const position = getPixelPosition(this.x, this.z)
@@ -337,6 +342,11 @@ class Tile {
   }
   addContested() {
     this.image.contested.visible = true
+  }
+  removeHighlight() {
+    if (!this.owner) return
+
+    this.image.pattern.tint = hex(this.owner.pattern)
   }
   removeContested() {
     this.image.contested.visible = false
@@ -787,7 +797,8 @@ class Tile {
       !this.owner ||
       this.owner.id !== store.player.id ||
       this.mountain ||
-      this.village
+      this.village ||
+      game.selectedArmyTile
     ) {
       return false
     }
