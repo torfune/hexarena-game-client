@@ -5,6 +5,7 @@ import Header from 'components/Header'
 import React, { useState, useEffect, useRef } from 'react'
 import store from 'store'
 import styled from 'styled-components'
+import uuid from 'uuid/v4'
 
 const Container = styled.div`
   background: rgba(255, 255, 255, 0.92);
@@ -15,63 +16,52 @@ const Container = styled.div`
   position: absolute;
   top: 0;
   user-select: none;
-  width: 360px;
+  width: 256px;
   transform-origin: left top;
   transform: scale(${HUD_SCALE});
   height: 128px;
 `
 
 const Content = styled.div`
-  padding: 0 40px;
+  padding: 0 30px;
   padding-bottom: 16px;
 `
 
-const Slots = styled.div`
+const Coins = styled.div`
   margin-top: 24px;
-  display: flex;
 `
 
-const Slot = styled(animated.img)`
+const Coin = styled(animated.img)`
   height: 32px;
-  margin-right: 8px;
-  /* filter: ${props => (!props.isFilled ? 'grayscale(1)' : null)};
-  opacity: ${props => (!props.isFilled ? '0.4' : null)}; */
 `
 
 const GoldSection = () => {
-  // if (store.gold === null) return null
-
-  // const goldIcons = []
-
-  // if (store.gold) {
-  //   for (let i = 0; i < store.gold; i++) {
-  //     goldIcons.push(true)
-  //   }
-  //   setGold(goldIcons)
-  // }
-
   const [gold, setGold] = useState([])
-  const goldRef = useRef(gold)
-  goldRef.current = gold
-
   const transitions = useTransition(gold, item => item.key, {
-    from: { transform: 'translate3d(10px,40,10px)' },
-    enter: { transform: 'translate3d(10px,-40,10px)' },
-    leave: { transform: 'translate3d(-10px,-40,-10px)' },
+    from: { transform: 'scale(2, 2)', opacity: 0 },
+    enter: { transform: 'scale(1.2, 1.2)', opacity: 1 },
+    leave: { transform: 'scale(2, 2)', opacity: 0 },
   })
 
   useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown)
-  }, [])
+    const diff = store.gold - gold.length
 
-  const handleKeyDown = e => {
-    if (e.key === 'ArrowUp') {
-      setGold([...goldRef.current, { key: Date.now() }])
+    if (diff > 0) {
+      const newGold = [...gold]
+
+      for (let i = 0; i < diff; i++) {
+        newGold.push({ key: newGold.length })
+      }
+
+      setGold(newGold)
+    } else if (diff < 0) {
+      for (let i = 0; i < Math.abs(diff); i++) {
+        const newGold = gold
+        newGold.pop()
+        setGold(newGold)
+      }
     }
-    if (e.key === 'ArrowDown') {
-      setGold(goldRef.current.slice(0, goldRef.current.length - 1))
-    }
-  }
+  }, [store.gold])
 
   return (
     <Container>
@@ -81,14 +71,17 @@ const GoldSection = () => {
         iconSize="22px"
       />
       <Content>
-        <Slots>
-          {transitions.map(({ props }, key) => (
-            <Slot key={key} style={props} src="/static/icons/gold.svg" />
-          ))}
-        </Slots>
+        <Coins>
+          {transitions.map(
+            ({ item, props, key }) =>
+              item && (
+                <Coin key={key} style={props} src="/static/icons/gold.svg" />
+              )
+          )}
+        </Coins>
       </Content>
     </Container>
   )
 }
 
-export default GoldSection
+export default observer(GoldSection)
