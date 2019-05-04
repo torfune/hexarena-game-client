@@ -327,7 +327,7 @@ class Game {
 
       if (index !== null) {
         const { x, z } = this.selectedArmyTile
-        this.socket.send('send_army', `${x}|${z}|${index}`)
+        this.socket.send('sendArmy', `${x}|${z}|${index}`)
       }
 
       this.selectedArmyTile.unselectArmy()
