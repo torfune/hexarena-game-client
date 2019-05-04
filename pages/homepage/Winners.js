@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import store from 'store'
 import { observer } from 'mobx-react-lite'
+import axios from 'axios'
 
 const Container = styled.div`
   margin-top: 32px;
@@ -36,25 +37,20 @@ const Pattern = styled.div`
 `
 
 const Winners = () => {
-  const winners = store.winners.map(winner => {
-    const players = winner.split('|').map(player => {
-      const [name, pattern] = player.split(';')
-      return { name, pattern }
+  useEffect(() => {
+    axios.get(`http://localhost:5000/winners`).then(response => {
+      store.winners = response.data
     })
-
-    return { players }
-  })
+  }, [])
 
   return (
     <Container>
-      {winners.map((winner, index) => (
+      {store.winners.map((winner, index) => (
         <Winner key={index}>
-          {winner.players.map((player, index) => (
-            <Row key={index}>
-              <Pattern color={player.pattern} />
-              <Name>{player.name}</Name>
-            </Row>
-          ))}
+          <Row key={index}>
+            <Pattern color={winner.pattern} />
+            <Name>{winner.name}</Name>
+          </Row>
         </Winner>
       ))}
     </Container>
