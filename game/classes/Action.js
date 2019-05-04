@@ -20,7 +20,7 @@ class Action {
     const tile = store.getItem('tiles', tileId)
     const owner = store.getItem('players', ownerId)
 
-    if (!tile || !owner || status === 'done') return
+    if (!tile || !owner || status === 'finished') return
 
     this.id = id
     this.type = type
@@ -70,7 +70,7 @@ class Action {
     switch (key) {
       case 'status':
         switch (this.status) {
-          case 'done':
+          case 'finished':
             this.destroy()
             break
 
@@ -105,7 +105,7 @@ class Action {
       fraction = 0
     }
 
-    if (fraction > 1 || this.status === 'done') {
+    if (fraction > 1 || this.status === 'finished') {
       fraction = 1
     }
 
