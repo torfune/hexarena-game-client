@@ -18,6 +18,7 @@ const Container = styled.div`
   width: 360px;
   transform-origin: left top;
   transform: scale(${HUD_SCALE});
+  height: 128px;
 `
 
 const Content = styled.div`
@@ -54,9 +55,9 @@ const GoldSection = () => {
   goldRef.current = gold
 
   const transitions = useTransition(gold, item => item.key, {
-    from: { transform: 'translate3d(0,-40px,0)' },
-    enter: { transform: 'translate3d(0,0px,0)' },
-    leave: { transform: 'translate3d(0,-40px,0)' },
+    from: { transform: 'translate3d(10px,40,10px)' },
+    enter: { transform: 'translate3d(10px,-40,10px)' },
+    leave: { transform: 'translate3d(-10px,-40,-10px)' },
   })
 
   useEffect(() => {
@@ -82,7 +83,7 @@ const GoldSection = () => {
       <Content>
         <Slots>
           {transitions.map(({ props }, key) => (
-            <Slot key={key} style={props} src="/static/images/gold.svg" />
+            <Slot key={key} style={props} src="/static/icons/gold.svg" />
           ))}
         </Slots>
       </Content>
