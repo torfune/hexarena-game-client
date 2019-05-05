@@ -1,15 +1,12 @@
-import axios from 'axios'
 import Footer from './Footer'
 import Heading from './Heading'
 import Logo from './Logo'
 import { version } from '../../package.json'
 import MainSection from './MainSection'
-import React, { useEffect } from 'react'
+import React from 'react'
 import Winners from './Winners'
 import ReleaseNotes from './ReleaseNotes'
 import styled from 'styled-components'
-import getGameserverHost from 'utils/getGameserverHost.js'
-import store from 'store'
 
 const Container = styled.div`
   width: 1300px;
@@ -67,21 +64,6 @@ const BlackOverlay = styled.div`
 `
 
 const HomePage = () => {
-  useEffect(() => {
-    fetchWinners()
-  }, [])
-
-  const fetchWinners = async () => {
-    const GAMESERVER_HOST = getGameserverHost(window.location.hostname)
-    const response = await axios.get(`http://${GAMESERVER_HOST}/winners`)
-    const winners = response.data
-      .split('\n')
-      .filter(l => l !== '')
-      .reverse()
-
-    store.winners = winners
-  }
-
   return (
     <Container>
       <Header>
@@ -100,7 +82,6 @@ const HomePage = () => {
       </Grid>
 
       <Footer />
-
       <GameScreenshot />
       <BlackOverlay />
     </Container>
