@@ -3,6 +3,7 @@ import App, { Container } from 'next/app'
 import Router from 'next/router'
 import trackPageView from 'utils/trackPageView'
 import getEnvironment from 'utils/getEnvironment'
+import { AuthProvider } from '../auth'
 
 class MyApp extends App {
   static async getInitialProps({ Component, ctx }) {
@@ -33,7 +34,9 @@ class MyApp extends App {
 
     return (
       <Container>
-        <Component {...pageProps} />
+        <AuthProvider>
+          <Component {...pageProps} />
+        </AuthProvider>
       </Container>
     )
   }

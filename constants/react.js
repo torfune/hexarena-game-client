@@ -11,8 +11,7 @@ export const LOGO_SHADOW = '0px 2px 16px rgba(0, 0, 0, 0.3)'
 // HUD SCALE
 export const HUD_SCALE = 1
 
-// let HUD_SCALE = (window.innerHeight / 1180) * 1.1
-
-// if (HUD_SCALE > 1) {
-//   HUD_SCALE = 1
-// }
+// WEBSERVER & AUTH
+export const WS_URL = 'http://localhost:5000'
+export const GOOGLE_CLIENT_ID =
+  '110619057119-agls5l4ghp08pmdbfj7mspsf55stoddh.apps.googleusercontent.com'
