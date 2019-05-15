@@ -13,7 +13,7 @@
     "mobx": "^5.9.4",
     "mobx-react-devtools": "^6.1.1",
     "mobx-react-lite": "^1.2.0",
-    "next": "^8.0.4",
+    "next": "^8.1.0",
     "pixi.js": "^4.8.5",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
