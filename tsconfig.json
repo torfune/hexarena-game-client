@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "outDir": "./build",
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "experimentalDecorators": true,
+    "sourceMap": true,
+    "jsx": "preserve",
+    "lib": ["dom", "es2017"]
+  },
+  "include": [
+    "components",
+    "constants",
+    "game",
+    "pages",
+    "types",
+    "utils",
+    "websockets",
+    "server.js"
+  ]
+}
