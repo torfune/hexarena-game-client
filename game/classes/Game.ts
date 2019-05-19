@@ -515,21 +515,21 @@ class Game {
     }
 
     // Mountains
-    for (let i = tilesToCapture.length - 1; i >= 0; i--) {
-      const t: Tile = tilesToCapture[i]
+    // for (let i = tilesToCapture.length - 1; i >= 0; i--) {
+    //   const t: Tile = tilesToCapture[i]
 
-      if (t.mountain) {
-        for (let j = 0; j < 6; j++) {
-          const n = t.neighbors[j]
+    //   if (t.mountain) {
+    //     for (let j = 0; j < 6; j++) {
+    //       const n = t.neighbors[j]
 
-          if (!n) continue
+    //       if (!n) continue
 
-          if (!n.owner && !n.bedrock && !tilesToCapture.includes(n)) {
-            tilesToCapture.push(n)
-          }
-        }
-      }
-    }
+    //       if (!n.owner && !n.bedrock && !tilesToCapture.includes(n)) {
+    //         tilesToCapture.push(n)
+    //       }
+    //     }
+    //   }
+    // }
 
     // Villages
     for (let i = tilesToCapture.length - 1; i >= 0; i--) {
