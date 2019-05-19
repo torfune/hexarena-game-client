@@ -6,10 +6,11 @@ import {
   GoogleLoginResponseOffline,
 } from 'react-google-login'
 import axios from 'axios'
-import { WS_URL, GOOGLE_CLIENT_ID } from '../constants/react'
+import { GOOGLE_CLIENT_ID } from '../constants/react'
 import authHeader from '../utils/authHeader'
 import { useAuth } from '../auth'
 import User from '../models/User'
+import getServerHost from '../utils/getServerHost'
 
 const Container = styled.div`
   color: #111;
@@ -62,9 +63,11 @@ const Login = () => {
   ) => {
     if (!('getAuthResponse' in loginResponse)) return
 
+    const { WS_HOST } = getServerHost(window.location.hostname)
+
     try {
       axios
-        .get(`${WS_URL}/auth/google`, {
+        .get(`http://${WS_HOST}/auth/google`, {
           params: {
             idToken: loginResponse.getAuthResponse().id_token,
           },
@@ -83,8 +86,9 @@ const Login = () => {
   }
 
   const fetchUser = async (accessToken: string) => {
+    const { WS_HOST } = getServerHost(window.location.hostname)
     const response = await axios.get(
-      `${WS_URL}/users/${userId}`,
+      `http://${WS_HOST}/users/${userId}`,
       authHeader(accessToken)
     )
 

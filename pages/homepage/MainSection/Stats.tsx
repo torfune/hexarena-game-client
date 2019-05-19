@@ -4,8 +4,8 @@ import { PRIMARY, TEXT_SHADOW } from '../../../constants/react'
 import axios from 'axios'
 import { FadeDown } from '../../../components/Animations'
 import { observer } from 'mobx-react-lite'
-import getGameserverHost from '../../../utils/getGameserverHost'
 import store from '../../../store'
+import getServerHost from '../../../utils/getServerHost'
 
 const Container = styled.div`
   display: flex;
@@ -61,8 +61,8 @@ const Stats = () => {
   }, [])
 
   const fetchData = async () => {
-    const GAMESERVER_HOST = getGameserverHost(window.location.hostname)
-    const { data: games } = await axios.get(`http://${GAMESERVER_HOST}/games`)
+    const { GS_HOST } = getServerHost(window.location.hostname)
+    const { data: games } = await axios.get(`http://${GS_HOST}/games`)
 
     let ingamePlayers = 0
     let waitingPlayers = 0

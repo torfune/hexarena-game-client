@@ -8,7 +8,7 @@ import store from '../../../../store'
 import { observer } from 'mobx-react-lite'
 import game from '../../../../game'
 import { FadeDown, FadeUp } from '../../../../components/Animations'
-import getGameserverHost from '../../../../utils/getGameserverHost'
+import getGameserverHost from '../../../../utils/getServerHost'
 import PlayerAvatar from './PlayerAvatar'
 
 const Container = styled.div`

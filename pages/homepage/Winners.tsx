@@ -1,9 +1,6 @@
-import { useEffect } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import axios from 'axios'
 import store from '../../store'
-import { WS_URL } from '../../constants/shared'
 
 const Container = styled.div`
   margin-top: 32px;
@@ -38,11 +35,11 @@ const Pattern = styled.div`
 `
 
 const Winners = () => {
-  useEffect(() => {
-    axios.get(`${WS_URL}/winners`).then(response => {
-      store.winners = response.data
-    })
-  }, [])
+  // useEffect(() => {
+  //   axios.get(`${WS_URL}/winners`).then(response => {
+  //     store.winners = response.data
+  //   })
+  // }, [])
 
   return (
     <Container>

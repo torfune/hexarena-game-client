@@ -4,7 +4,7 @@ import axios from 'axios'
 import styled from 'styled-components'
 import PlaySection from './PlaySection'
 import Stats from './Stats'
-import getGameserverHost from '../../../utils/getGameserverHost'
+import getServerHost from '../../../utils/getServerHost'
 
 const Container = styled.div`
   margin-top: 80px;
@@ -25,8 +25,8 @@ const MainSection: React.FC = () => {
   }, [])
 
   const fetchData = async () => {
-    const GAMESERVER_HOST = getGameserverHost(window.location.hostname)
-    const { data } = await axios.get(`http://${GAMESERVER_HOST}/status`)
+    const { GS_HOST } = getServerHost(window.location.hostname)
+    const { data } = await axios.get(`http://${GS_HOST}/status`)
 
     if (data.timeRemaining && data.timeRemaining > 0) {
       setOpeningTime(data.timeRemaining + Date.now())

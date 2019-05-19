@@ -1,8 +1,8 @@
 import { useState, useEffect, createContext, useContext } from 'react'
 import axios from 'axios'
 import authHeader from './utils/authHeader'
-import { WS_URL } from './constants/shared'
 import Credentials from './types/Credentials'
+import getServerHost from './utils/getServerHost'
 
 interface Auth {
   loggedIn: boolean | null
@@ -46,6 +46,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     }
 
     const expiresIn = Number(accessTokenExp) - Math.floor(Date.now() / 1000)
+    const { WS_HOST } = getServerHost(window.location.hostname)
 
     if (expiresIn > 0) {
       const expiresInDays = Math.floor(expiresIn / 60 / 60 / 24)
@@ -54,7 +55,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
       if (expiresInDays < 4) {
         try {
           axios
-            .get(`${WS_URL}/auth/extend`, authHeader(accessToken))
+            .get(`http://${WS_HOST}/auth/extend`, authHeader(accessToken))
             .then(({ data }) => {
               login(userId, data.accessToken, data.accessTokenExp)
               console.log(`Token extended.`)

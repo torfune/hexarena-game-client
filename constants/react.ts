@@ -12,6 +12,5 @@ export const LOGO_SHADOW = '0px 2px 16px rgba(0, 0, 0, 0.3)'
 export const HUD_SCALE = 1
 
 // WEBSERVER & AUTH
-export const WS_URL = 'http://dev.hexarena.io:5000'
 export const GOOGLE_CLIENT_ID =
   '110619057119-agls5l4ghp08pmdbfj7mspsf55stoddh.apps.googleusercontent.com'

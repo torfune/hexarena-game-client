@@ -11,7 +11,6 @@ import Socket from '../../websockets/Socket'
 import Tile from './Tile'
 import createGameLoop from '../functions/createGameLoop'
 import loadImages from '../functions/loadImages'
-import getGameserverHost from '../../utils/getGameserverHost'
 import createPixiApp from '../functions/createPixiApp'
 import axios from 'axios'
 import store from '../../store'
@@ -24,6 +23,7 @@ import getDebugCommand from '../functions/getDebugCommand'
 import canAttack from '../functions/canAttack'
 import getHoveredTileInfo from '../functions/getHoveredTileInfo'
 import getTileByAxial from '../functions/getTileByAxial'
+import getServerHost from '../../utils/getServerHost'
 
 class Game {
   scale: number = DEFAULT_SCALE
@@ -53,15 +53,15 @@ class Game {
     name: string | null,
     browserId: string | null
   ) {
-    const GAMESERVER_HOST = getGameserverHost(window.location.hostname)
+    const { GS_HOST } = getServerHost(window.location.hostname)
 
     console.log('Starting game ...')
 
     // Fetch GS config
     try {
       const [{ data: gsConfig }, { data: status }] = await Promise.all([
-        axios(`http://${GAMESERVER_HOST}/config`),
-        axios(`http://${GAMESERVER_HOST}/status`),
+        axios(`http://${GS_HOST}/config`),
+        axios(`http://${GS_HOST}/status`),
       ])
 
       store.gsConfig = gsConfig
