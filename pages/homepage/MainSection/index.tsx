@@ -16,8 +16,15 @@ const Container = styled.div`
   grid-template-columns: 1fr 1fr;
 `
 
+const ConnectionError = styled.p`
+  color: #fff;
+  font-size: 20px;
+  margin-top: 32px;
+`
+
 const MainSection: React.FC = () => {
   const [loading, setLoading] = useState(true)
+  const [connectionError, setConnectionError] = useState(false)
   const [openingTime, setOpeningTime] = useState(null)
 
   useEffect(() => {
@@ -25,14 +32,28 @@ const MainSection: React.FC = () => {
   }, [])
 
   const fetchData = async () => {
-    const { GS_HOST } = getServerHost(window.location.hostname)
-    const { data } = await axios.get(`http://${GS_HOST}/status`)
+    try {
+      const { GS_HOST } = getServerHost(window.location.hostname)
 
-    if (data.timeRemaining && data.timeRemaining > 0) {
-      setOpeningTime(data.timeRemaining + Date.now())
+      const { data } = await axios.get(`http://${GS_HOST}/status`)
+
+      if (data.timeRemaining && data.timeRemaining > 0) {
+        setOpeningTime(data.timeRemaining + Date.now())
+      }
+
+      setLoading(false)
+    } catch {
+      console.error(`Can't connect to the GameServer.`)
+      setConnectionError(true)
     }
+  }
 
-    setLoading(false)
+  if (connectionError) {
+    return (
+      <Container>
+        <ConnectionError>Can't connect to the GameSever :(</ConnectionError>
+      </Container>
+    )
   }
 
   if (loading) {
