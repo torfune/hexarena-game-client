@@ -123,7 +123,7 @@ const LoginSection = () => {
     const { WS_HOST } = getServerHost(window.location.hostname)
 
     axios
-      .get(`http://${WS_HOST}/users/validate-name/${name}`)
+      .get(`http://${WS_HOST}/users/validate-name/${name.toLowerCase()}`)
       .then(response => {
         setNameValid(response.data)
       })
