@@ -27,7 +27,7 @@ const ChooseNameSection = styled.div`
 const LoginButton = styled.div`
   width: 250px;
   background: ${PRIMARY};
-  padding: 16px 0;
+  height: 45px;
   margin-top: 32px;
   text-align: center;
   display: flex;
