@@ -111,7 +111,7 @@ class Game {
 
     // Connect to GameServer
     await this.socket.connect(GS_HOST)
-    this.socket.send('start', `${name}|${browserId}`)
+    this.socket.send('start', `${name}|`)
 
     // Add debug global variables
     ;(window as any).g = this
