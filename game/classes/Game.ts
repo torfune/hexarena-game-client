@@ -51,7 +51,7 @@ class Game {
   async start(
     rootElement: HTMLElement,
     name: string | null,
-    browserId: string | null
+    accessToken: string | null
   ) {
     const { GS_HOST } = getServerHost(window.location.hostname)
 
@@ -110,7 +110,7 @@ class Game {
     rootElement.appendChild(this.pixi.view)
 
     // Connect to GameServer
-    await this.socket.connect(GAMESERVER_HOST)
+    await this.socket.connect(GS_HOST)
     this.socket.send('start', `${name}|${browserId}`)
 
     // Add debug global variables

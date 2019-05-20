@@ -2,9 +2,10 @@ import Countdown from './Countdown'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import styled from 'styled-components'
-import PlaySection from './PlaySection'
-import Stats from './Stats'
 import getServerHost from '../../../utils/getServerHost'
+import GuestSection from './GuestSection'
+import LoginSection from './LoginSection'
+import { useAuth } from '../../../auth'
 
 const Container = styled.div`
   margin-top: 80px;
@@ -26,6 +27,7 @@ const MainSection: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [connectionError, setConnectionError] = useState(false)
   const [openingTime, setOpeningTime] = useState(null)
+  const { loggedIn } = useAuth()
 
   useEffect(() => {
     fetchData()
@@ -66,8 +68,8 @@ const MainSection: React.FC = () => {
         <Countdown openingTime={openingTime} />
       ) : (
         <>
-          <PlaySection />
-          <Stats />
+          <LoginSection />
+          {!loggedIn && <GuestSection />}
         </>
       )}
     </Container>

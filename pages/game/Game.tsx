@@ -16,6 +16,7 @@ import { animated, useTransition } from 'react-spring'
 import SurrenderButton from './hud/SurrenderButton'
 import game from '../../game'
 import store from '../../store'
+import { useAuth } from '../../auth'
 
 const Container = styled.div`
   width: 100vw;
@@ -35,6 +36,7 @@ let timeout: NodeJS.Timeout
 
 const Game = observer(() => {
   const [showLobby, setShowLobby] = useState(false)
+  const { loggedIn, accessToken } = useAuth()
   const transitions = useTransition(showLobby, null, {
     from: { opacity: 1 },
     leave: { opacity: 0 },
@@ -43,11 +45,10 @@ const Game = observer(() => {
   useEffect(() => {
     const element = document.getElementById('game')
     const name = window.localStorage.getItem('name')
-    const browserId = localStorage.getItem('browserId')
 
     if (!element) throw Error('Cannot find Game canvas element.')
 
-    game.start(element, name, browserId)
+    game.start(element, name, loggedIn ? accessToken : null)
 
     window.addEventListener('resize', game.updateScreenSize.bind(game))
 

@@ -3,9 +3,9 @@ import styled from 'styled-components'
 const Container = styled.div`
   display: inline-block;
   position: relative;
-  width: 64px;
-  height: 64px;
-  margin: 0 auto;
+  width: 32px;
+  height: 32px;
+  margin-left: 16px;
 
   @keyframes lds-ring {
     0% {
@@ -20,10 +20,10 @@ const Container = styled.div`
     box-sizing: border-box;
     display: block;
     position: absolute;
-    width: 51px;
-    height: 51px;
+    width: 32px;
+    height: 32px;
     margin: 6px;
-    border: 6px solid #fed;
+    border: 4px solid #fed;
     border-radius: 50%;
     animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
     border-color: #fed transparent transparent transparent;
