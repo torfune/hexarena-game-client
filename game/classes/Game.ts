@@ -49,9 +49,13 @@ class Game {
   readonly keyDown: { [key: string]: boolean } = {}
 
   async start(
-    rootElement: HTMLElement,
-    name: string | null,
-    accessToken: string | null
+    canvas: HTMLElement,
+    browserId: string,
+    authOptions: {
+      userId: string | null
+      accessToken: string | null
+      guestName: string | null
+    }
   ) {
     const { GS_HOST } = getServerHost(window.location.hostname)
 
@@ -107,11 +111,16 @@ class Game {
     }
 
     // Mount PIXI renderer
-    rootElement.appendChild(this.pixi.view)
+    canvas.appendChild(this.pixi.view)
 
     // Connect to GameServer
+    const { userId, accessToken, guestName } = authOptions
     await this.socket.connect(GS_HOST)
-    this.socket.send('start', `${name}|`)
+    if (userId && accessToken) {
+      this.socket.send('startAsUser', `${browserId}|${userId}|${accessToken}`)
+    } else {
+      this.socket.send('startAsGuest', `${browserId}|${guestName}`)
+    }
 
     // Add debug global variables
     ;(window as any).g = this

@@ -17,6 +17,7 @@ import SurrenderButton from './hud/SurrenderButton'
 import game from '../../game'
 import store from '../../store'
 import { useAuth } from '../../auth'
+import getBrowserId from '../../utils/getBrowserId'
 
 const Container = styled.div`
   width: 100vw;
@@ -36,19 +37,27 @@ let timeout: NodeJS.Timeout
 
 const Game = observer(() => {
   const [showLobby, setShowLobby] = useState(false)
-  const { loggedIn, accessToken } = useAuth()
+  const { loggedIn, userId, accessToken } = useAuth()
   const transitions = useTransition(showLobby, null, {
     from: { opacity: 1 },
     leave: { opacity: 0 },
   })
 
   useEffect(() => {
-    const element = document.getElementById('game')
-    const name = window.localStorage.getItem('name')
+    const canvas = document.getElementById('game-canvas')
+    if (!canvas) throw Error('Cannot find canvas.')
 
-    if (!element) throw Error('Cannot find Game canvas element.')
-
-    game.start(element, name, loggedIn ? accessToken : null)
+    game.start(
+      canvas,
+      getBrowserId(),
+      loggedIn
+        ? { userId, accessToken, guestName: null }
+        : {
+            userId: null,
+            accessToken: null,
+            guestName: window.localStorage.getItem('guestName'),
+          }
+    )
 
     window.addEventListener('resize', game.updateScreenSize.bind(game))
 
@@ -98,7 +107,7 @@ const Game = observer(() => {
   return (
     <Container>
       <GameCanvas
-        id="game"
+        id="game-canvas"
         visible={status === 'running' || status === 'finished'}
       />
 

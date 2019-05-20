@@ -28,9 +28,9 @@ const GuestSection = () => {
   const [invalidName, setInvalidName] = useState(false)
 
   useEffect(() => {
-    const savedName = localStorage.getItem('name')
-    if (savedName) {
-      setName(savedName)
+    const guestName = localStorage.getItem('guestName')
+    if (guestName) {
+      setName(guestName)
     }
   }, [])
 
@@ -45,7 +45,7 @@ const GuestSection = () => {
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value)
     setInvalidName(false)
-    localStorage.setItem('name', event.target.value)
+    localStorage.setItem('guestName', event.target.value)
   }
 
   const handleKeyDown = ({ key }: KeyboardEvent) => {
@@ -56,8 +56,6 @@ const GuestSection = () => {
 
   const play = async () => {
     const { WS_HOST } = getServerHost(window.location.hostname)
-
-    console.log(`name: ${name}`)
 
     if (!name) {
       Router.push('/game')
