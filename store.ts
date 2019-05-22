@@ -6,6 +6,7 @@ import Action from './game/classes/Action'
 import AllianceRequest from './game/classes/AllianceRequest'
 import Army from './game/classes/Army'
 import ChatMessage from './types/ChatMessage'
+import TopPlayer from './types/TopPlayer'
 
 type EntityName = 'action' | 'allianceRequest' | 'army' | 'player' | 'tile'
 type Entity = Action | AllianceRequest | Army | Player | Tile
@@ -21,7 +22,7 @@ class Store {
   @observable chatMessages: ChatMessage[] = []
   @observable players: Player[] = []
   @observable tiles: Tile[] = []
-  @observable winners: Player[] = []
+  @observable topPlayers: TopPlayer[] = []
   @observable hoveredTile: Tile | null = null
   @observable startCountdown: number | null = null
   @observable showHud: boolean = true
@@ -225,26 +226,6 @@ class Store {
     this.changeHandlers[key] = callback
   }
 }
-
-// const toDecorate = {
-//   hoveredTile: observable,
-//   showHud: observable,
-//   spectating: observable,
-//   error: observable,
-//   config: observable,
-//   winners: observable,
-//   player: computed,
-//   addItem: action,
-//   getItem: action,
-//   removeItem: action,
-//   updateItem: action,
-// }
-
-// for (const key of Object.keys(messages)) {
-//   toDecorate[key] = observable
-// }
-
-// decorate(Store, toDecorate)
 
 const store = new Store()
 

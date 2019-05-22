@@ -2,10 +2,9 @@ import Footer from './Footer'
 import Heading from './Heading'
 import Logo from './Logo'
 import MainSection from './MainSection'
-import Winners from './Winners'
 import ReleaseNotes from './ReleaseNotes'
 import styled from 'styled-components'
-import { version } from '../../package.json'
+import TopPlayers from './TopPlayers'
 
 const Container = styled.div`
   width: 1300px;
@@ -75,8 +74,8 @@ const HomePage = () => {
       <Grid>
         <ReleaseNotes />
         <div>
-          <Heading>Alpha {version.replace('-dev', '')} winners</Heading>
-          <Winners />
+          <Heading>Top 20 players</Heading>
+          <TopPlayers />
         </div>
       </Grid>
 

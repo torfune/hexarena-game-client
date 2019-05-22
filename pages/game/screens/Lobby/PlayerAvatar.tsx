@@ -136,7 +136,7 @@ const PlayerAvatar: React.FC<Props> = ({
   return (
     <Container empty={!name} zIndex={2}>
       <PatternWrapper onClick={handlePatternClick}>
-        <Hexagon color={pattern || '#3f3f3f'} size="140px" />
+        <Hexagon color={pattern || '#222'} size="140px" />
         <ChangePatternLabel>Change</ChangePatternLabel>
       </PatternWrapper>
 

@@ -2,19 +2,18 @@ import { useEffect } from 'react'
 import axios from 'axios'
 import styled from 'styled-components'
 import Player from './PlayerAvatar'
-import Winners from '../../../homepage/Winners'
+import Winners from '../../../homepage/TopPlayers'
 import Chat from './Chat'
 import store from '../../../../store'
 import { observer } from 'mobx-react-lite'
 import game from '../../../../game'
 import { FadeDown, FadeUp } from '../../../../components/Animations'
-import getGameserverHost from '../../../../utils/getServerHost'
 import PlayerAvatar from './PlayerAvatar'
 
 const Container = styled.div`
   position: absolute;
   top: 0;
-  background: #444;
+  background: #333;
   width: 100vw;
   height: 100vh;
   z-index: 1;
@@ -22,7 +21,7 @@ const Container = styled.div`
 
 const Header = styled.div`
   display: flex;
-  background: #333;
+  background: #282828;
   padding: 16px 64px;
   box-shadow: 0 4px 8px #00000022;
 `
@@ -46,7 +45,6 @@ const Players = styled.div`
 `
 
 const WinnersContainer = styled.div`
-  overflow-y: scroll;
   height: 600px;
   padding-right: 32px;
 `
@@ -126,7 +124,7 @@ const Lobby = () => {
 
       <MainSection>
         <div>
-          <Heading>Winners</Heading>
+          <Heading>Top 20 players</Heading>
 
           <WinnersContainer>
             <Winners />
