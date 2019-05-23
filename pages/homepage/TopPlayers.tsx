@@ -11,6 +11,9 @@ const Container = styled.div`
   margin-top: 32px;
   background: #383838;
   box-shadow: 0px 1px 24px 0px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  padding-bottom: 4px;
+  min-height: 500px;
 `
 
 const Heading = styled.div`
@@ -21,16 +24,15 @@ const Heading = styled.div`
   background: #444;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
+  margin-bottom: 4px;
 `
 
 const HeadingValue = styled.p`
   color: #fff;
 `
 
-const Row = styled.div`
-  padding: 12px 24px;
-  border-radius: 8px;
-  margin-bottom: 8px;
+const PlayerRow = styled.div`
+  padding: 10px 24px;
   display: grid;
   grid-template-columns: 32px 1fr auto;
 `
@@ -59,11 +61,11 @@ const TopPlayers = () => {
         </Heading>
 
         {store.topPlayers.map((player, index) => (
-          <Row key={player.id}>
+          <PlayerRow key={player.id}>
             <Value>{index + 1}.</Value>
             <Value>{player.name}</Value>
             <Value>{player.elo.toLocaleString()}</Value>
-          </Row>
+          </PlayerRow>
         ))}
       </Container>
     </FadeUp>

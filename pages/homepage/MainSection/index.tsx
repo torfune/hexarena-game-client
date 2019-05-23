@@ -25,7 +25,7 @@ const ConnectionError = styled.p`
 
 const MainSection: React.FC = () => {
   const [loading, setLoading] = useState(true)
-  const [connectionError, setConnectionError] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [openingTime, setOpeningTime] = useState(null)
   const { loggedIn } = useAuth()
 
@@ -34,26 +34,30 @@ const MainSection: React.FC = () => {
   }, [])
 
   const fetchData = async () => {
+    const { GS_HOST, WS_HOST } = getServerHost(window.location.hostname)
+
     try {
-      const { GS_HOST } = getServerHost(window.location.hostname)
-
       const { data } = await axios.get(`http://${GS_HOST}/status`)
-
       if (data.timeRemaining && data.timeRemaining > 0) {
         setOpeningTime(data.timeRemaining + Date.now())
       }
 
       setLoading(false)
     } catch {
-      console.error(`Can't connect to the GameServer.`)
-      setConnectionError(true)
+      setError(`Can't connect to the game server. Please try again.`)
+    }
+
+    try {
+      await axios.get(`http://${WS_HOST}/status`)
+    } catch {
+      setError(`Can't connect to the web server. Please try again.`)
     }
   }
 
-  if (connectionError) {
+  if (error) {
     return (
       <Container>
-        <ConnectionError>Can't connect to the GameSever :(</ConnectionError>
+        <ConnectionError>{error}</ConnectionError>
       </Container>
     )
   }
