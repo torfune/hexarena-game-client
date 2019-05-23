@@ -22,6 +22,9 @@ jobs:
           name: Reload
           command: |
             ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@hexarena.io "pm2 reload live-hexarena-fe"
+      - run:
+          name: Fetch website
+          command: curl http://hexarena.io
 
   deploy-dev:
     working_directory: ~/hexarena-fe
@@ -45,6 +48,9 @@ jobs:
           name: Reload
           command: |
             ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@hexarena.io "pm2 reload dev-hexarena-fe"
+      - run:
+          name: Fetch website
+          command: curl http://dev.hexarena.io
 
 workflows:
   version: 2
