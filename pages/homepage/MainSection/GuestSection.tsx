@@ -55,18 +55,17 @@ const GuestSection = () => {
   }
 
   const play = async () => {
-    const { WS_HOST } = getServerHost(window.location.hostname)
-
     if (!name) {
-      Router.push('/game')
+      window.location.href = '/game'
       return
     }
 
+    const { WS_HOST } = getServerHost(window.location.hostname)
     axios
       .get(`http://${WS_HOST}/users/validate-name/${name.toLowerCase()}`)
       .then(response => {
         if (response.data) {
-          Router.push('/game')
+          window.location.href = '/game'
         } else {
           setInvalidName(true)
           setName('')

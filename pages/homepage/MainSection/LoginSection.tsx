@@ -96,6 +96,14 @@ const LoginSection = () => {
   const { userId, accessToken, login, logout, loggedIn } = useAuth()
 
   useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  })
+
+  useEffect(() => {
     if (userId && accessToken) {
       fetchUser(accessToken)
     }
@@ -118,6 +126,16 @@ const LoginSection = () => {
       validateName(name)
     }, 1000)
   }, [name])
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key !== 'Enter' || !loggedIn) return
+
+    if (user && !user.name) {
+      handleNameSave()
+    } else {
+      window.location.href = '/game'
+    }
+  }
 
   const validateName = (name: string) => {
     const { WS_HOST } = getServerHost(window.location.hostname)
@@ -196,9 +214,7 @@ const LoginSection = () => {
           <Container>
             <Heading>Logged in as {user.name}</Heading>
             <PlayButtonWrapper>
-              <Link href="/game">
-                <PlayButton>Play</PlayButton>
-              </Link>
+              <PlayButton href="/game">Play</PlayButton>
             </PlayButtonWrapper>
             <LogoutButton onClick={logout}>Logout</LogoutButton>
           </Container>
