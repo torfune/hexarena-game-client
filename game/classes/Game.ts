@@ -251,7 +251,20 @@ class Game {
         this.serverTimeDiff = Math.round(sum / this.serverTimeDiffs.length)
       }
     })
+
+    store.onChange('goldAnimation', () => {
+      const { goldAnimation } = store
+
+      if (!goldAnimation) return
+
+      const tile = store.getTile(goldAnimation.tileId)
+
+      if (!tile) return
+
+      new GoldAnimation(tile, goldAnimation.count)
+    })
   }
+
   setupEventListeners() {
     document.addEventListener('mousemove', this.handleMouseMove.bind(this))
     document.addEventListener('mousedown', this.handleMouseDown.bind(this))

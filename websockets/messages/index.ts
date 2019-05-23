@@ -6,6 +6,7 @@ import chatMessages from './chatMessages'
 import GameServerMessage from '../../types/GameServerMessage'
 import gameTime from './gameTime'
 import gold from './gold'
+import goldAnimation from './goldAnimation'
 import playerId from './playerId'
 import players from './players'
 import serverTime from './serverTime'
@@ -24,6 +25,7 @@ const messages: {
   chatMessages,
   gameTime,
   gold,
+  goldAnimation,
   playerId,
   players,
   serverTime,

@@ -248,6 +248,12 @@ const setStoreValue = (key: string, value: any) => {
       }
       store.serverTime = value
       break
+    case 'goldAnimation':
+      if (typeof value !== 'object') {
+        throw Error(typeError(key, value))
+      }
+      store.goldAnimation = value
+      break
     case 'playerId':
       if (typeof value !== 'string') {
         throw Error(typeError(key, value))
@@ -294,6 +300,10 @@ const setStoreValue = (key: string, value: any) => {
     switch (key) {
       case 'serverTime':
         store.changeHandlers[key](store.serverTime)
+        break
+
+      case 'goldAnimation':
+        store.changeHandlers[key](store.goldAnimation)
         break
     }
   }
