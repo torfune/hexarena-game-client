@@ -62,7 +62,7 @@ const HoveredTileinfo = () => {
     }
   }, [hoveredTile])
 
-  if (!hoveredTileInfo || !player) return null
+  if (!player) return null
 
   if (hoveredTile && hoveredTile.owner && hoveredTile.owner.id !== player.id) {
     return (
@@ -71,6 +71,8 @@ const HoveredTileinfo = () => {
       </Container>
     )
   }
+
+  if (!hoveredTileInfo) return null
 
   return (
     <Container cursor={cursor}>
