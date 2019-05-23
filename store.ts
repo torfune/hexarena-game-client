@@ -1,4 +1,4 @@
-import { observable, decorate, computed, action } from 'mobx'
+import { observable, computed } from 'mobx'
 import Tile from './game/classes/Tile'
 import GameServerConfig from './types/GameServerConfig'
 import Player from './game/classes/Player'
@@ -32,6 +32,7 @@ class Store {
   @observable playerId?: string
   @observable status?: 'pending' | 'starting' | 'running' | 'finished'
   @observable gameTime?: number
+  @observable serverTime?: number
   @observable error?: {
     message: string
     goHome: boolean
@@ -219,7 +220,7 @@ class Store {
 
   // Change Listeners
   onChange = (key: string, callback: (current: any) => void) => {
-    if (key !== 'tiles' && key !== 'actions') {
+    if (key !== 'tiles' && key !== 'actions' && key !== 'serverTime') {
       throw Error(`Unsupported change listener: ${key}`)
     }
 

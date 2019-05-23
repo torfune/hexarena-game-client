@@ -18,7 +18,7 @@ export type ActionStatus = 'pending' | 'running' | 'finished'
 interface Image {
   background: PIXI.Sprite
   fill: PIXI.Graphics
-  order: Text
+  order: PIXI.Text
   icon: PIXI.Sprite
   cancelIcon: PIXI.Sprite
 }
@@ -104,7 +104,7 @@ class Action {
   }
   update() {
     const { finishedAt, duration, status } = this
-    const timeDelta = finishedAt - Date.now()
+    const timeDelta = finishedAt + game.serverTimeDiff - Date.now()
 
     let fraction = Math.round((1 - timeDelta / duration) * 100) / 100
 

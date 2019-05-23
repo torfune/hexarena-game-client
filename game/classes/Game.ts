@@ -35,6 +35,8 @@ class Game {
   readonly stage: { [key: string]: PIXI.Container } = {}
   initialized: boolean = false
   running: boolean = false
+  private serverTimeDiffs: number[] = []
+  serverTimeDiff: number = 0
   readonly animations: Array<Animation | GoldAnimation> = []
   camera: Pixel | null = null
   cameraMove: Pixel = { x: 0, y: 0 }
@@ -237,9 +239,18 @@ class Game {
       this.updatePatternPreviews()
     })
 
-    // store.onChange('serverTime', current => {
-    //   this.serverTimeDiff = Date.now() - current
-    // })
+    store.onChange('serverTime', () => {
+      if (store.serverTime) {
+        this.serverTimeDiffs.push(Date.now() - store.serverTime)
+
+        if (this.serverTimeDiffs.length > 20) {
+          this.serverTimeDiffs.shift()
+        }
+
+        const sum = this.serverTimeDiffs.reduce((item, acc) => acc + item, 0)
+        this.serverTimeDiff = Math.round(sum / this.serverTimeDiffs.length)
+      }
+    })
   }
   setupEventListeners() {
     document.addEventListener('mousemove', this.handleMouseMove.bind(this))

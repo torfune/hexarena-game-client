@@ -242,6 +242,12 @@ const setStoreValue = (key: string, value: any) => {
       }
       store.gameTime = value
       break
+    case 'serverTime':
+      if (typeof value !== 'number') {
+        throw Error(typeError(key, value))
+      }
+      store.serverTime = value
+      break
     case 'playerId':
       if (typeof value !== 'string') {
         throw Error(typeError(key, value))
@@ -282,6 +288,14 @@ const setStoreValue = (key: string, value: any) => {
       break
     default:
       throw Error(`Can't set store property ${key}`)
+  }
+
+  if (store.changeHandlers[key]) {
+    switch (key) {
+      case 'serverTime':
+        store.changeHandlers[key](store.serverTime)
+        break
+    }
   }
 }
 
