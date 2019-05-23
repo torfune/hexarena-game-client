@@ -8,7 +8,6 @@ import {
   MAX_SCALE,
 } from '../../constants/game'
 import Socket from '../../websockets/Socket'
-import Tile from './Tile'
 import createGameLoop from '../functions/createGameLoop'
 import loadImages from '../functions/loadImages'
 import createPixiApp from '../functions/createPixiApp'
@@ -24,6 +23,7 @@ import canAttack from '../functions/canAttack'
 import getHoveredTileInfo from '../functions/getHoveredTileInfo'
 import getTileByAxial from '../functions/getTileByAxial'
 import getServerHost from '../../utils/getServerHost'
+import Tile from './Tile'
 
 class Game {
   scale: number = DEFAULT_SCALE
@@ -332,24 +332,7 @@ class Game {
     if (!tile) return
 
     if (this.selectedArmyTile) {
-      let index = null
-
-      for (let i = 0; i < 6; i++) {
-        if (this.selectedArmyTargetTiles[i].includes(tile)) {
-          index = i
-          break
-        }
-      }
-
-      if (index !== null) {
-        const { x, z } = this.selectedArmyTile.axial
-        this.socket.send('sendArmy', `${x}|${z}|${index}`)
-      }
-
-      this.selectedArmyTile.unselectArmy()
-      this.selectedArmyTile = null
-      this.updateArmyTileHighlights()
-
+      this.sendArmy(tile)
       return
     }
 
@@ -765,16 +748,12 @@ class Game {
   updateArmyTileHighlights() {
     let direction = null
 
-    if (!this.selectedArmyTile && this.selectedArmyTargetTiles) {
-      for (let i = 0; i < 6; i++) {
-        const armyTiles = this.selectedArmyTargetTiles[i]
+    for (let i = 0; i < 6; i++) {
+      const armyTiles = this.selectedArmyTargetTiles[i]
 
-        for (let j = 0; j < armyTiles.length; j++) {
-          armyTiles[j].removeHighlight()
-        }
+      for (let j = 0; j < armyTiles.length; j++) {
+        armyTiles[j].removeHighlight()
       }
-
-      return
     }
 
     if (!store.hoveredTile) return
@@ -793,11 +772,42 @@ class Game {
         if (!t || !t.owner || t.owner.id !== store.playerId) continue
 
         t.addHighlight()
+
+        if (t.castle || t.base) break
       }
     }
   }
   surrender() {
     this.socket.send('surrender')
+  }
+  sendArmy(tile: Tile) {
+    if (!this.selectedArmyTile) return
+
+    let index = null
+
+    for (let i = 0; i < 6; i++) {
+      if (this.selectedArmyTargetTiles[i].includes(tile)) {
+        index = i
+        break
+      }
+    }
+
+    if (index !== null) {
+      const { x, z } = this.selectedArmyTile.axial
+      this.socket.send('sendArmy', `${x}|${z}|${index}`)
+    }
+
+    this.updateArmyTileHighlights()
+    this.selectedArmyTile.unselectArmy()
+    this.selectedArmyTile = null
+
+    for (let i = 0; i < 6; i++) {
+      const armyTiles = this.selectedArmyTargetTiles[i]
+
+      for (let j = 0; j < armyTiles.length; j++) {
+        armyTiles[j].removeHighlight()
+      }
+    }
   }
 }
 
