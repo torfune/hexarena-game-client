@@ -21,11 +21,13 @@ const Message = styled.div`
 const MessageAuthor = styled.p`
   font-weight: 600;
   color: #fff;
+  user-select: text;
 `
 
 const MessageContent = styled.p`
   margin-left: 10px;
   color: #eee;
+  user-select: text;
 `
 
 const Input = styled.input`
