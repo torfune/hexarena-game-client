@@ -1,12 +1,9 @@
-import { useEffect } from 'react'
-import axios from 'axios'
 import styled from 'styled-components'
-import Player from './PlayerAvatar'
-import Winners from '../../../homepage/TopPlayers'
+import TopPlayers from '../../../homepage/TopPlayers'
 import Chat from './Chat'
 import store from '../../../../store'
-import { observer } from 'mobx-react-lite'
 import game from '../../../../game'
+import { observer } from 'mobx-react-lite'
 import { FadeDown, FadeUp } from '../../../../components/Animations'
 import PlayerAvatar from './PlayerAvatar'
 
@@ -44,7 +41,7 @@ const Players = styled.div`
   margin: 0 auto;
 `
 
-const WinnersContainer = styled.div`
+const TopPlayersContainer = styled.div`
   height: 600px;
   padding-right: 32px;
 `
@@ -85,21 +82,6 @@ const getWaitingMessage = (numberOfPlayers: number, minPlayers: number) => {
 const Lobby = () => {
   const players = []
 
-  // useEffect(() => {
-  //   fetchWinners()
-  // }, [])
-
-  // const fetchWinners = async () => {
-  //   const GAMESERVER_HOST = getGameserverHost(window.location.hostname)
-  //   const response = await axios.get(`http://${GAMESERVER_HOST}/winners`)
-  //   const winners = response.data
-  //     .split('\n')
-  //     .filter(l => l !== '')
-  //     .reverse()
-
-  //   store.winners = winners
-  // }
-
   for (let i = 0; i < playersPerRoom; i++) {
     if (i < store.players.length) {
       players.push(store.players[i])
@@ -126,9 +108,9 @@ const Lobby = () => {
         <div>
           <Heading>Top 20 players</Heading>
 
-          <WinnersContainer>
-            <Winners />
-          </WinnersContainer>
+          <TopPlayersContainer>
+            <TopPlayers fixedHeight />
+          </TopPlayersContainer>
         </div>
 
         <Players>

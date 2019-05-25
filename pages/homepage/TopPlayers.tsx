@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import store from '../../store'
 import getServerHost from '../../utils/getServerHost'
@@ -12,8 +12,19 @@ const Container = styled.div`
   background: #383838;
   box-shadow: 0px 1px 24px 0px rgba(0, 0, 0, 0.05);
   border-radius: 8px;
-  padding-bottom: 4px;
   min-height: 500px;
+`
+
+const List = styled.div<{ fixedHeight?: boolean }>`
+  padding-top: 4px;
+  padding-bottom: 4px;
+
+  ${props =>
+    props.fixedHeight &&
+    css`
+      height: 500px;
+      overflow: auto;
+    `}
 `
 
 const Heading = styled.div`
@@ -24,7 +35,6 @@ const Heading = styled.div`
   background: #444;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
-  margin-bottom: 4px;
 `
 
 const HeadingValue = styled.p`
@@ -43,7 +53,10 @@ const Value = styled.p`
   font-size: 20px;
 `
 
-const TopPlayers = () => {
+interface Props {
+  fixedHeight?: boolean
+}
+const TopPlayers: React.FC<Props> = ({ fixedHeight }) => {
   useEffect(() => {
     const { WS_HOST } = getServerHost(window.location.hostname)
     Axios.get(`http://${WS_HOST}/users/top-players`).then(response => {
@@ -60,13 +73,15 @@ const TopPlayers = () => {
           <HeadingValue>ELO</HeadingValue>
         </Heading>
 
-        {store.topPlayers.map((player, index) => (
-          <PlayerRow key={player.id}>
-            <Value>{index + 1}.</Value>
-            <Value>{player.name}</Value>
-            <Value>{player.elo.toLocaleString()}</Value>
-          </PlayerRow>
-        ))}
+        <List fixedHeight={fixedHeight}>
+          {store.topPlayers.map((player, index) => (
+            <PlayerRow key={player.id}>
+              <Value>{index + 1}.</Value>
+              <Value>{player.name}</Value>
+              <Value>{player.elo.toLocaleString()}</Value>
+            </PlayerRow>
+          ))}
+        </List>
       </Container>
     </FadeUp>
   )
