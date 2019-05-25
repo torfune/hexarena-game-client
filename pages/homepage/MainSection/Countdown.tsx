@@ -28,7 +28,14 @@ const Countdown: React.FC<Props> = ({ openingTime }) => {
 
   useEffect(() => {
     interval = setInterval(updateCountdown, 100)
-  })
+
+    return () => {
+      if (interval) {
+        clearInterval(interval)
+        interval = null
+      }
+    }
+  }, [])
 
   const openingDate = new Date(openingTime)
   if (openingDate.getSeconds() > 50) {
@@ -42,6 +49,7 @@ const Countdown: React.FC<Props> = ({ openingTime }) => {
       setRemainingDate(null)
       if (interval) {
         clearInterval(interval)
+        interval = null
       }
       Router.push('/')
     } else {
