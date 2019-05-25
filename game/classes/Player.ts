@@ -22,7 +22,7 @@ class Player {
 
   readonly id: string
   readonly name: string
-  ally: Player | null = null
+  @observable ally: Player | null = null
 
   constructor(id: string, name: string, pattern: string) {
     this.id = id
