@@ -519,6 +519,11 @@ class Game {
             break
           }
 
+          // Ally tile
+          if (t.ownerId && t.ownerId === store.player.allyId) {
+            break
+          }
+
           if (t.ownerId !== playerId && !t.bedrock) {
             tilesToCapture.push(t)
 
