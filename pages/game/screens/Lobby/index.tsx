@@ -6,6 +6,7 @@ import game from '../../../../game'
 import { observer } from 'mobx-react-lite'
 import { FadeDown, FadeUp } from '../../../../components/Animations'
 import PlayerAvatar from './PlayerAvatar'
+import LoginBar from './LoginBar'
 
 const Container = styled.div`
   position: absolute;
@@ -21,6 +22,8 @@ const Header = styled.div`
   background: #282828;
   padding: 16px 64px;
   box-shadow: 0 4px 8px #00000022;
+  justify-content: space-between;
+  align-items: center;
 `
 
 const Logo = styled.h2`
@@ -102,6 +105,8 @@ const Lobby = () => {
         <a href="/">
           <Logo>HexArena.io</Logo>
         </a>
+
+        <LoginBar />
       </Header>
 
       <MainSection>
