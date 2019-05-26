@@ -254,6 +254,9 @@ const setStoreValue = (key: string, value: any) => {
       }
       store.goldAnimation = value
       break
+    case 'flash':
+      store.flash = value
+      break
     case 'playerId':
       if (typeof value !== 'string') {
         throw Error(typeError(key, value))

@@ -14,6 +14,7 @@ import startCountdown from './startCountdown'
 import status from './status'
 import tiles from './tiles'
 import villages from './villages'
+import flash from './flash'
 
 const messages: {
   [key: string]: GameServerMessage
@@ -33,6 +34,7 @@ const messages: {
   status,
   tiles,
   villages,
+  flash,
 }
 
 export default messages

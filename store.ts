@@ -30,6 +30,7 @@ class Store {
   @observable gold: number = 0
   @observable fps: number = 0
   @observable ping: number = 0
+  @observable flash: number = 0
   @observable goldAnimation?: { tileId: string; count: number }
   @observable gsConfig?: GameServerConfig
   @observable playerId?: string

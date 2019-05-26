@@ -20,6 +20,7 @@ import store from '../../store'
 import { useAuth } from '../../auth'
 import getBrowserId from '../../utils/getBrowserId'
 import Spinner from '../../components/Spinner'
+import Flasher from './hud/Flasher'
 
 const Container = styled.div`
   width: 100vw;
@@ -127,6 +128,8 @@ const Game = observer(() => {
         id="game-canvas"
         visible={status === 'running' || status === 'finished'}
       />
+
+      <Flasher />
 
       {status !== 'running' && status !== 'finished' && (
         <SpinnerContainer>
