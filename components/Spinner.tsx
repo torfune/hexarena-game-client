@@ -1,11 +1,13 @@
 import styled from 'styled-components'
 
-const Container = styled.div`
-  display: inline-block;
+interface ContainerProps {
+  size: string
+  thickness: string
+}
+const Container = styled.div<ContainerProps>`
   position: relative;
-  width: 32px;
-  height: 32px;
-  margin-left: 16px;
+  width: ${props => props.size};
+  height: ${props => props.size};
 
   @keyframes lds-ring {
     0% {
@@ -20,10 +22,9 @@ const Container = styled.div`
     box-sizing: border-box;
     display: block;
     position: absolute;
-    width: 32px;
-    height: 32px;
-    margin: 6px;
-    border: 4px solid #fed;
+    width: ${props => props.size};
+    height: ${props => props.size};
+    border: ${props => props.thickness} solid #fed;
     border-radius: 50%;
     animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
     border-color: #fed transparent transparent transparent;
@@ -42,8 +43,12 @@ const Container = styled.div`
   }
 `
 
-const Spinner = () => (
-  <Container>
+interface Props {
+  size: string
+  thickness: string
+}
+const Spinner: React.FC<Props> = ({ size, thickness }) => (
+  <Container size={size} thickness={thickness}>
     <div />
     <div />
     <div />

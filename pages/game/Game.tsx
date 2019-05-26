@@ -19,12 +19,28 @@ import game from '../../game'
 import store from '../../store'
 import { useAuth } from '../../auth'
 import getBrowserId from '../../utils/getBrowserId'
+import Spinner from '../../components/Spinner'
 
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
   overflow: hidden;
   position: relative;
+`
+
+const SpinnerContainer = styled.div`
+  color: #fff;
+  position: absolute;
+  top: 256px;
+  width: 128px;
+  transform: translateX(calc(50vw - 64px));
+
+  p {
+    text-align: center;
+    margin-top: 32px;
+    font-size: 20px;
+    font-weight: 500;
+  }
 `
 
 interface GameCanvasProps {
@@ -111,6 +127,11 @@ const Game = observer(() => {
         id="game-canvas"
         visible={status === 'running' || status === 'finished'}
       />
+
+      <SpinnerContainer>
+        <Spinner size="128px" thickness="12px" />
+        <p>Connecting</p>
+      </SpinnerContainer>
 
       {transitions.map(
         ({ item, key, props }) =>

@@ -87,6 +87,11 @@ const NameTaken = styled.p<{ visible: boolean }>`
   font-weight: 500;
 `
 
+const SpinnerContainer = styled.div`
+  margin-top: 6px;
+  margin-left: 8px;
+`
+
 let nameValidationTimeout: NodeJS.Timeout | null = null
 
 const LoginSection = () => {
@@ -237,7 +242,9 @@ const LoginSection = () => {
                 onChange={handleNameChange}
               />
               {nameValid === null ? (
-                <Spinner />
+                <SpinnerContainer>
+                  <Spinner size="32px" thickness="4px" />
+                </SpinnerContainer>
               ) : (
                 <SaveButton disabled={!nameValid} onClick={handleNameSave}>
                   Save
