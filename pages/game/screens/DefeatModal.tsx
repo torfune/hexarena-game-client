@@ -19,6 +19,7 @@ const Container = styled.div`
   transform: translateX(-${WIDTH / 2}px);
   box-shadow: ${BOX_SHADOW};
   border-radius: 16px;
+  z-index: 10;
 
   h2 {
     font-size: 32px;

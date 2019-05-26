@@ -10,7 +10,7 @@ interface ContainerProps {
 }
 const Container = styled.div<ContainerProps>`
   position: absolute;
-  z-index: 999;
+  z-index: 1;
   background: red;
   width: 100vw;
   height: 100vh;

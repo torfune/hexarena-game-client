@@ -129,7 +129,7 @@ const Game = observer(() => {
         visible={status === 'running' || status === 'finished'}
       />
 
-      <Flasher />
+      {status === 'running' && <Flasher />}
 
       {status !== 'running' && status !== 'finished' && (
         <SpinnerContainer>

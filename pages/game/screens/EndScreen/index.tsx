@@ -15,6 +15,7 @@ const Container = styled(animated.div)`
   height: 100vh;
   background: #00000088;
   border-bottom: 1px solid #222;
+  z-index: 10;
 `
 
 const Box = styled.div`

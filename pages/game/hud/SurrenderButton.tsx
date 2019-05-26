@@ -17,6 +17,7 @@ const Container = styled.div`
   left: 50vw;
   transform: translateX(-130px);
   text-align: center;
+  z-index: 10;
   box-shadow: 0px 4px 16px #00000022;
 
   :hover {

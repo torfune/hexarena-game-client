@@ -17,6 +17,7 @@ const Container = styled.div`
   transform: translateX(-130px);
   text-align: center;
   box-shadow: 0px 4px 16px #00000022;
+  z-index: 10;
 
   :hover {
     background: ${SECONDARY};
