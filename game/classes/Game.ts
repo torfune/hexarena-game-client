@@ -35,8 +35,8 @@ class Game {
   readonly stage: { [key: string]: PIXI.Container } = {}
   initialized: boolean = false
   running: boolean = false
-  private serverTimeDiffs: number[] = []
-  serverTimeDiff: number = 0
+  private pingArray: number[] = []
+  private fpsArray: number[] = []
   readonly animations: Array<Animation | GoldAnimation> = []
   camera: Pixel | null = null
   cameraMove: Pixel = { x: 0, y: 0 }
@@ -49,6 +49,8 @@ class Game {
   tilesWithPatternPreview: Tile[] = []
   predictedActionTile: Tile | null = null
   readonly keyDown: { [key: string]: boolean } = {}
+  private lastUpdatedAt: number = Date.now()
+  private fpsLastUpdatedAt: number = Date.now()
 
   async start(
     canvas: HTMLElement,
@@ -143,6 +145,20 @@ class Game {
   }
   update() {
     if (!store.actions || !store.armies || !this.camera || !this.pixi) return
+
+    const now = Date.now()
+    const fraction = 16.66 / (now - this.lastUpdatedAt)
+    this.lastUpdatedAt = now
+    this.fpsArray.push(Math.round(fraction * 60))
+    if (this.fpsArray.length > 20) {
+      this.fpsArray.shift()
+    }
+
+    if (now - this.fpsLastUpdatedAt > 2000) {
+      const sum = this.fpsArray.reduce((item, acc) => acc + item, 0)
+      store.fps = Math.round(sum / this.fpsArray.length)
+      this.fpsLastUpdatedAt = now
+    }
 
     // Animations
     if (this.animations.length > 0) {
@@ -241,14 +257,14 @@ class Game {
 
     store.onChange('serverTime', () => {
       if (store.serverTime) {
-        this.serverTimeDiffs.push(Date.now() - store.serverTime)
+        this.pingArray.push(Date.now() - store.serverTime)
 
-        if (this.serverTimeDiffs.length > 20) {
-          this.serverTimeDiffs.shift()
+        if (this.pingArray.length > 20) {
+          this.pingArray.shift()
         }
 
-        const sum = this.serverTimeDiffs.reduce((item, acc) => acc + item, 0)
-        this.serverTimeDiff = Math.round(sum / this.serverTimeDiffs.length)
+        const sum = this.pingArray.reduce((item, acc) => acc + item, 0)
+        store.ping = Math.round(sum / this.pingArray.length)
       }
     })
 
@@ -264,7 +280,6 @@ class Game {
       new GoldAnimation(tile, goldAnimation.count)
     })
   }
-
   setupEventListeners() {
     document.addEventListener('mousemove', this.handleMouseMove.bind(this))
     document.addEventListener('mousedown', this.handleMouseDown.bind(this))
@@ -273,11 +288,6 @@ class Game {
     document.addEventListener('keyup', this.handleKeyUp.bind(this))
     document.addEventListener('contextmenu', this.handleContextMenu, false)
     document.addEventListener('wheel', this.handleWheelMove.bind(this))
-    // document.addEventListener(
-    //   // /Firefox/i.test(navigator.userAgent) ? 'DOMMouseScroll' : 'mousewheel',
-    //   'mousewheel',
-    //   this.handleWheelMove.bind(this)
-    // )
   }
   sendChatMessage(message: string) {
     this.socket.send('chatMessage', message.slice(0, 64))

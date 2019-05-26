@@ -28,6 +28,8 @@ class Store {
   @observable showHud: boolean = true
   @observable spectating: boolean = false
   @observable gold: number = 0
+  @observable fps: number = 0
+  @observable ping: number = 0
   @observable goldAnimation?: { tileId: string; count: number }
   @observable gsConfig?: GameServerConfig
   @observable playerId?: string

@@ -104,7 +104,7 @@ class Action {
   }
   update() {
     const { finishedAt, duration, status } = this
-    const timeDelta = finishedAt + game.serverTimeDiff - Date.now()
+    const timeDelta = finishedAt + store.ping - Date.now()
 
     let fraction = Math.round((1 - timeDelta / duration) * 100) / 100
 

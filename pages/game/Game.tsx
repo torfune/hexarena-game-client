@@ -12,6 +12,7 @@ import styled from 'styled-components'
 import Lobby from './screens/Lobby'
 import Gold from './hud/Gold'
 import YourEmpire from './hud/YourEmpire'
+import Performance from './hud/Performance'
 import { animated, useTransition } from 'react-spring'
 import SurrenderButton from './hud/SurrenderButton'
 import game from '../../game'
@@ -131,6 +132,7 @@ const Game = observer(() => {
               <Leaderboard />
               <Gold />
               <YourEmpire />
+              <Performance />
             </>
           )}
 
