@@ -128,10 +128,12 @@ const Game = observer(() => {
         visible={status === 'running' || status === 'finished'}
       />
 
-      <SpinnerContainer>
-        <Spinner size="128px" thickness="12px" />
-        <p>Connecting</p>
-      </SpinnerContainer>
+      {status !== 'running' && status !== 'finished' && (
+        <SpinnerContainer>
+          <Spinner size="128px" thickness="12px" />
+          <p>Connecting</p>
+        </SpinnerContainer>
+      )}
 
       {transitions.map(
         ({ item, key, props }) =>
