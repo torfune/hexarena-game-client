@@ -72,8 +72,18 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
     }
   }
 
-  // Recruit
+  // Recruit / Heal
   if (isOwnedByPlayer && (tile.castle || tile.base) && !tile.army) {
+    if (tile.hitpoints && tile.hitpoints === 1) {
+      return {
+        label: 'Repair building',
+        structure,
+        duration: `${store.gsConfig.HEAL_DURATION / 1000}s`,
+        notEnoughGold: store.gold < RECRUIT_COST,
+        goldCost: RECRUIT_COST,
+      }
+    }
+
     return {
       label: 'Recruit army',
       structure,
