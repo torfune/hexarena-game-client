@@ -1,5 +1,35 @@
 const changelog = [
   {
+    version: 'Alpha 1.14.0',
+    points: [
+      'Repairing is faster than recruiting.',
+      'Captured neutral villages join your empire.',
+      'Forests block vision.',
+      'Game tempo is a bit slower now.',
+      'FPS and PING values ingame.',
+    ],
+  },
+  {
+    version: 'Alpha 1.13.0',
+    points: [
+      'Unlimited gold capacity.',
+      'Villages generate gold every 30 seconds.',
+      'Disabled connection through an ally.',
+      'Bug fixes.',
+    ],
+  },
+  {
+    version: 'Alpha 1.12.0',
+    points: [
+      'Google login.',
+      'ELO rating system.',
+      'Improved world generator.',
+      'Mountains are no longer capturing adjacent tiles.',
+      'Gold animations.',
+      'Bug fixes.',
+    ],
+  },
+  {
     version: 'Alpha 1.11.0',
     points: [
       'Wood is replaced with Gold, it works the same way.',
@@ -7,32 +37,22 @@ const changelog = [
       'UI improvements.',
       'Bug fixes.',
     ],
-    day: null,
-    month: null,
   },
   {
     version: 'Alpha 1.10.0',
     points: ['UI improvements.', 'Bug fixes.'],
-    day: null,
-    month: null,
   },
   {
     version: 'Alpha 1.9.0',
     points: ['UI improvements.', 'More colors.', 'Bug fixes.'],
-    day: null,
-    month: null,
   },
   {
     version: 'Alpha 1.8.0',
     points: ['Alliance request notifications.', 'Bug fixes.'],
-    day: null,
-    month: null,
   },
   {
     version: 'Alpha 1.7.0',
     points: ['Shared vision in an alliance.', 'Several bugs were fixed.'],
-    day: 14,
-    month: 4,
   },
   {
     version: 'Alpha 1.6.0',
@@ -43,8 +63,6 @@ const changelog = [
       'Alliances are visible in the leaderboard.',
       'Redesigned "Game over" screen.',
     ],
-    day: 12,
-    month: 4,
   },
   {
     version: 'Alpha 1.5.1',
@@ -53,8 +71,6 @@ const changelog = [
       'Dead players stay in the leaderboard.',
       'Small bug fixes.',
     ],
-    day: 5,
-    month: 4,
   },
   {
     version: 'Alpha 1.5.0',
@@ -63,8 +79,6 @@ const changelog = [
       'Villages are no longer spawning in range of enemy Castles.',
       'Added neutral Villages and Camps.',
     ],
-    day: 31,
-    month: 3,
   },
   {
     version: 'Alpha 1.4.1',
@@ -72,8 +86,6 @@ const changelog = [
       'Camps are spawning less frequently.',
       'The game automatically finishes after 10 minutes. The player with most tiles wins.',
     ],
-    day: 17,
-    month: 3,
   },
   {
     version: 'Alpha 1.4.0',
@@ -85,8 +97,6 @@ const changelog = [
       'Improved hover descriptions, it now shows wood costs.',
       'Small graphics improvements & bug fixes.',
     ],
-    day: 15,
-    month: 3,
   },
   {
     version: 'Alpha 1.3.2',
@@ -94,8 +104,6 @@ const changelog = [
       'The leaderboard is now sorted correctly.',
       'Fixed some small bugs and glitches.',
     ],
-    day: 10,
-    month: 3,
   },
   {
     version: 'Alpha 1.3.1',
@@ -104,8 +112,6 @@ const changelog = [
       'Added capture previews.',
       'Fixed many small bugs and glitches.',
     ],
-    day: 9,
-    month: 3,
   },
   {
     version: 'Alpha 1.3.0',
@@ -117,14 +123,10 @@ const changelog = [
       'In-game action icons.',
       "Window resize doesn't break the game.",
     ],
-    day: 7,
-    month: 3,
   },
   {
     version: 'Alpha 1.2.1',
     points: ['Added waiting screen chat.', 'Game is more stable.'],
-    day: 3,
-    month: 3,
   },
   {
     version: 'Alpha 1.2.0',
@@ -138,8 +140,6 @@ const changelog = [
       'Manual attacks are a little bit slower.',
       'Several army bugs are fixed.',
     ],
-    day: 2,
-    month: 3,
   },
   {
     version: 'Alpha 1.1.0',
@@ -150,8 +150,6 @@ const changelog = [
       'Added contested tiles icons.',
       'Improved Village spawning algorithm, they never spawn on empire border.',
     ],
-    day: 24,
-    month: 2,
   },
   {
     version: 'Alpha 1.0.0',
@@ -173,8 +171,7 @@ const changelog = [
       'Improved graphics & animations.',
       'Lots of other various changes.',
     ],
-    day: 22,
-    month: 2,
+
     editedBy: 'Joeyjojo',
   },
 ]
