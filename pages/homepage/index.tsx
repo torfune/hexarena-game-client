@@ -5,6 +5,7 @@ import MainSection from './MainSection'
 import ReleaseNotes from './ReleaseNotes'
 import styled from 'styled-components'
 import TopPlayers from './TopPlayers'
+import Community from './Community'
 
 const Container = styled.div`
   width: 1300px;
@@ -72,7 +73,10 @@ const HomePage = () => {
       <MainSection />
 
       <Grid>
-        <ReleaseNotes />
+        <div>
+          <Community />
+          <ReleaseNotes />
+        </div>
         <div>
           <Heading>Top 20 players</Heading>
           <TopPlayers />

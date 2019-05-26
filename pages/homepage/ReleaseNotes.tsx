@@ -3,7 +3,9 @@ import Heading from './Heading'
 import styled from 'styled-components'
 import changelog from '../../constants/changelog'
 
-const Container = styled.div``
+const Container = styled.div`
+  margin-top: 64px;
+`
 
 const UpdateContainer = styled.div`
   color: #fff;
