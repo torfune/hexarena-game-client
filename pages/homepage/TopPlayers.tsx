@@ -1,30 +1,23 @@
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import store from '../../store'
 import getServerHost from '../../utils/getServerHost'
 import { useEffect } from 'react'
 import Axios from 'axios'
 import TopPlayer from '../../types/TopPlayer'
-import { FadeUp } from '../../components/Animations'
 
 const Container = styled.div`
-  margin-top: 32px;
-  background: #383838;
-  box-shadow: 0px 1px 24px 0px rgba(0, 0, 0, 0.05);
-  border-radius: 8px;
-  min-height: 500px;
+  height: 100%;
 `
 
-const List = styled.div<{ fixedHeight?: boolean }>`
+const List = styled.div`
+  background: #383838;
+  box-shadow: 0px 1px 24px 0px rgba(0, 0, 0, 0.05);
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  min-height: 500px;
   padding-top: 4px;
-  padding-bottom: 4px;
-
-  ${props =>
-    props.fixedHeight &&
-    css`
-      height: 500px;
-      overflow: auto;
-    `}
+  padding-bottom: 16px;
 `
 
 const Heading = styled.div`
@@ -42,7 +35,7 @@ const HeadingValue = styled.p`
 `
 
 const PlayerRow = styled.div`
-  padding: 10px 24px;
+  padding: 8px 24px;
   display: grid;
   grid-template-columns: 32px 1fr auto;
 `
@@ -53,10 +46,7 @@ const Value = styled.p`
   font-size: 20px;
 `
 
-interface Props {
-  fixedHeight?: boolean
-}
-const TopPlayers: React.FC<Props> = ({ fixedHeight }) => {
+const TopPlayers: React.FC = () => {
   useEffect(() => {
     const { WS_HOST } = getServerHost(window.location.hostname)
     Axios.get(`http://${WS_HOST}/users/top-players`).then(response => {
@@ -65,25 +55,23 @@ const TopPlayers: React.FC<Props> = ({ fixedHeight }) => {
   }, [])
 
   return (
-    <FadeUp>
-      <Container>
-        <Heading>
-          <HeadingValue>#</HeadingValue>
-          <HeadingValue>Name</HeadingValue>
-          <HeadingValue>ELO</HeadingValue>
-        </Heading>
+    <Container>
+      <Heading>
+        <HeadingValue>#</HeadingValue>
+        <HeadingValue>Name</HeadingValue>
+        <HeadingValue>ELO</HeadingValue>
+      </Heading>
 
-        <List fixedHeight={fixedHeight}>
-          {store.topPlayers.map((player, index) => (
-            <PlayerRow key={player.id}>
-              <Value>{index + 1}.</Value>
-              <Value>{player.name}</Value>
-              <Value>{player.elo.toLocaleString()}</Value>
-            </PlayerRow>
-          ))}
-        </List>
-      </Container>
-    </FadeUp>
+      <List>
+        {store.topPlayers.map((player, index) => (
+          <PlayerRow key={player.id}>
+            <Value>{index + 1}.</Value>
+            <Value>{player.name}</Value>
+            <Value>{player.elo.toLocaleString()}</Value>
+          </PlayerRow>
+        ))}
+      </List>
+    </Container>
   )
 }
 

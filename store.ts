@@ -37,6 +37,7 @@ class Store {
   @observable status?: 'pending' | 'starting' | 'running' | 'finished'
   @observable gameTime?: number
   @observable serverTime?: number
+  @observable hudScale: number = 1
   @observable error?: {
     message: string
     goHome: boolean

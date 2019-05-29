@@ -27,7 +27,7 @@ const Content = styled.div`
 
   /* Resolution scaling */
   transform-origin: center top;
-  transform: scale(${HUD_SCALE});
+  transform: scale(${store.hudScale});
 `
 
 const GameTime = observer(() => {

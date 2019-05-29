@@ -3,17 +3,17 @@ import Ally from './Ally'
 import List from './List'
 import { Fragment, useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
-import { HUD_SCALE, BLUE, PRIMARY } from '../../../../constants/react'
 import Header from '../../../../components/Header'
 import Label from '../../../../components/Label'
 import store from '../../../../store'
 import game from '../../../../game'
+import { BLUE, PRIMARY } from '../../../../constants/react'
 
 const Container = styled.div`
   z-index: 2;
   background: rgba(255, 255, 255, 0.92);
   bottom: 0;
-  right: calc(256px * ${HUD_SCALE});
+  right: calc(256px * ${store.hudScale});
   width: 300px;
   position: absolute;
   user-select: none;
@@ -25,7 +25,7 @@ const Container = styled.div`
 
   /* Resolution scaling */
   transform-origin: right bottom;
-  transform: scale(${HUD_SCALE});
+  transform: scale(${store.hudScale});
 `
 
 const Content = styled.div`

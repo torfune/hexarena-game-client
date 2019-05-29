@@ -24,6 +24,7 @@ import getHoveredTileInfo from '../functions/getHoveredTileInfo'
 import getTileByAxial from '../functions/getTileByAxial'
 import getServerHost from '../../utils/getServerHost'
 import Tile from './Tile'
+import Player from './Player'
 
 class Game {
   scale: number = DEFAULT_SCALE
@@ -308,6 +309,22 @@ class Game {
 
     if (key === 'Escape') {
       this.socket.send('cancel')
+      return
+    }
+
+    if (key === ' ') {
+      const keys = Object.keys(this.stage)
+      let sum = 0
+      console.log('')
+      console.log('---- ----')
+      for (const k of keys) {
+        const amount = this.stage[k].children.length
+        console.log(`${k}: ${amount}`)
+        sum += amount
+      }
+      console.log('---- ----')
+      console.log(`TOTAL: ${sum}`)
+      console.log('---- ----')
       return
     }
 

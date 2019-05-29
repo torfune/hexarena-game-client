@@ -6,9 +6,10 @@ import ReleaseNotes from './ReleaseNotes'
 import styled from 'styled-components'
 import TopPlayers from './TopPlayers'
 import Community from './Community'
+import { MIN_SCREEN_WIDTH } from '../../constants/react'
 
 const Container = styled.div`
-  width: 1300px;
+  width: ${MIN_SCREEN_WIDTH}px;
   margin: 0 auto;
   background: #333;
   padding-top: 64px;

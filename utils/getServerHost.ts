@@ -15,7 +15,7 @@ const getServerHost = (hostname: string) => {
     case 'localhost':
       return {
         GS_HOST: GS.LOCAL,
-        WS_HOST: WS.LOCAL,
+        WS_HOST: WS.LIVE,
       }
 
     case 'dev.hexarena.io':
@@ -31,7 +31,10 @@ const getServerHost = (hostname: string) => {
       }
 
     default:
-      throw Error(`Invalid hostname: ${hostname}`)
+      return {
+        GS_HOST: `${hostname}:8000`,
+        WS_HOST: `${hostname}:5000`,
+      }
   }
 }
 

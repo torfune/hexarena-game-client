@@ -2,11 +2,14 @@ import styled from 'styled-components'
 import TopPlayers from '../../../homepage/TopPlayers'
 import Chat from './Chat'
 import store from '../../../../store'
-import game from '../../../../game'
 import { observer } from 'mobx-react-lite'
-import { FadeDown, FadeUp } from '../../../../components/Animations'
-import PlayerAvatar from './PlayerAvatar'
 import LoginBar from './LoginBar'
+import Players from './Players'
+import { useTransition } from 'react-spring'
+import { useState } from 'react'
+import game from '../../../../game'
+
+const HEADER_HEIGHT = 80
 
 const Container = styled.div`
   position: absolute;
@@ -19,8 +22,9 @@ const Container = styled.div`
 
 const Header = styled.div`
   display: flex;
-  background: #282828;
+  background: #222;
   padding: 16px 64px;
+  height: ${HEADER_HEIGHT}px;
   box-shadow: 0 4px 8px #00000022;
   justify-content: space-between;
   align-items: center;
@@ -31,22 +35,24 @@ const Logo = styled.h2`
   color: #fff;
 `
 
-const MainSection = styled.div`
-  padding: 32px 64px;
+const Grid = styled.div`
   display: grid;
-  grid-template-columns: 340px 2fr 1fr;
-  grid-gap: 48px;
-  margin-top: 32px;
+  grid-template-columns: 450px 3fr 2fr;
+  position: relative;
 `
 
-const Players = styled.div`
-  width: 852px;
-  margin: 0 auto;
+const WaitingMessage = styled.span`
+  font-size: 24px;
+  color: #eee;
+  font-weight: 200;
 `
 
-const TopPlayersContainer = styled.div`
-  height: 600px;
-  padding-right: 32px;
+const ScrollableContainer = styled.div`
+  padding-right: 24px;
+  position: relative;
+  height: calc(100vh - ${HEADER_HEIGHT}px - 96px - 58px);
+  width: 100%;
+  overflow: auto;
 `
 
 interface HeadingProps {
@@ -55,18 +61,35 @@ interface HeadingProps {
 }
 const Heading = styled.h2<HeadingProps>`
   color: #fff;
-  font-size: 32px;
-  font-weight: 600;
-  margin-bottom: ${props => props.marginBottom};
+  font-size: 28px;
+  font-weight: 500;
+  padding-bottom: 24px;
+  display: block;
   text-align: ${props => (props.center ? 'center' : 'left')};
 `
 
-const Row = styled.div`
-  margin-top: 64px;
-  display: flex;
-`
+const Column = styled.div`
+  padding: 32px 0;
+  height: calc(100vh - ${HEADER_HEIGHT}px);
+  padding-left: 64px;
+  padding-right: 64px;
 
-const playersPerRoom = 6
+  @media (max-width: 1600px) {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+
+  :first-child {
+    border-right: 1px solid #242424;
+    padding-left: 64px;
+    padding-right: 32px;
+    background: #2b2b2b;
+  }
+
+  :last-child {
+    border-left: 1px solid #2c2c2c;
+  }
+`
 
 const getWaitingMessage = (numberOfPlayers: number, minPlayers: number) => {
   const n = minPlayers - numberOfPlayers
@@ -76,28 +99,19 @@ const getWaitingMessage = (numberOfPlayers: number, minPlayers: number) => {
   }
 
   if (n === 1) {
-    return 'Waiting for 1 more player'
+    return 'waiting for 1 more player'
   } else {
-    return `Waiting for ${n} more players`
+    return `waiting for ${n} more players`
   }
 }
 
 const Lobby = () => {
-  const players = []
+  if (!store.gsConfig || !store.player) return null
 
-  for (let i = 0; i < playersPerRoom; i++) {
-    if (i < store.players.length) {
-      players.push(store.players[i])
-    } else {
-      players.push({
-        id: null,
-        name: null,
-        pattern: null,
-      })
-    }
-  }
-
-  if (!store.gsConfig) return null
+  const waitingMessage = getWaitingMessage(
+    store.players.length,
+    store.gsConfig.MIN_PLAYERS
+  )
 
   return (
     <Container>
@@ -109,57 +123,29 @@ const Lobby = () => {
         <LoginBar />
       </Header>
 
-      <MainSection>
-        <div>
+      <Grid>
+        <Column>
           <Heading>Top 20 players</Heading>
+          <ScrollableContainer>
+            <TopPlayers />
+          </ScrollableContainer>
+        </Column>
 
-          <TopPlayersContainer>
-            <TopPlayers fixedHeight />
-          </TopPlayersContainer>
-        </div>
+        <Column>
+          <Heading>Lobby </Heading>
+          <WaitingMessage>
+            {store.startCountdown !== null
+              ? `Game starts in ${store.startCountdown} seconds`
+              : waitingMessage}
+          </WaitingMessage>
+          <Players />
+        </Column>
 
-        <Players>
-          <FadeDown>
-            <Heading marginBottom="-16px" center>
-              {store.startCountdown !== null
-                ? `Game starts in ${store.startCountdown} seconds`
-                : getWaitingMessage(
-                    store.players.length,
-                    store.gsConfig.MIN_PLAYERS
-                  )}
-            </Heading>
-            <Row>
-              {players.slice(0, 3).map(({ id, name, pattern }, index) => (
-                <PlayerAvatar
-                  key={index}
-                  name={name}
-                  pattern={pattern}
-                  isThisPlayer={id === store.playerId}
-                  players={store.players}
-                  onPatternSelect={game.selectPattern}
-                />
-              ))}
-            </Row>
-            <Row>
-              {players.slice(3, 6).map(({ id, name, pattern }, index) => (
-                <PlayerAvatar
-                  key={index}
-                  name={name}
-                  pattern={pattern}
-                  isThisPlayer={id === store.playerId}
-                  players={store.players}
-                  onPatternSelect={game.selectPattern}
-                />
-              ))}
-            </Row>
-          </FadeDown>
-        </Players>
-
-        <FadeUp>
+        <Column>
           <Heading>Chat</Heading>
           <Chat />
-        </FadeUp>
-      </MainSection>
+        </Column>
+      </Grid>
     </Container>
   )
 }

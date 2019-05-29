@@ -55,7 +55,7 @@ export default class extends Document<{
             href="/static/favicon/96x96.png"
           />
           <link
-            href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700'"
+            href="https://fonts.googleapis.com/css?family=Montserrat:200,300,400,500,600,700'"
             rel="stylesheet"
           />
           {this.props.styleTags}

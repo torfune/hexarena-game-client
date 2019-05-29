@@ -20,7 +20,7 @@ const Container = styled.div`
 
   /* Resolution scaling */
   transform-origin: right bottom;
-  transform: scale(${HUD_SCALE});
+  transform: scale(${store.hudScale});
 `
 
 const Content = styled.div`

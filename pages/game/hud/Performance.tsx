@@ -13,6 +13,10 @@ const Container = styled.div`
   border-left: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   border-bottom-left-radius: 8px;
+
+  /* Resolution scaling */
+  transform-origin: right top;
+  transform: scale(${store.hudScale});
 `
 
 const Label = styled.p`

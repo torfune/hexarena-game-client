@@ -4,8 +4,8 @@ import { BOX_SHADOW } from '../../../../constants/react'
 import Hexagon from '../../../../components/Hexagon'
 
 const Container = styled(animated.div)`
-  top: 40px;
-  left: calc(-150px + 110px);
+  top: -70px;
+  left: calc(-150px + 40px - 8px);
   box-shadow: ${BOX_SHADOW};
   background: #fff;
   position: absolute;

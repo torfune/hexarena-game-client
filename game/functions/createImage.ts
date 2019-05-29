@@ -8,6 +8,7 @@ const createImage = (imageName: string, textureName?: string) => {
   const image = new PIXI.Sprite(texture)
 
   image.anchor.set(0.5, 0.5)
+
   game.stage[imageName].addChild(image)
 
   return image

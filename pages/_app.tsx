@@ -3,6 +3,7 @@ import Router from 'next/router'
 import { AuthProvider } from '../auth'
 import getEnvironment from '../utils/getEnvironment'
 import trackPageView from '../utils/trackPageView'
+import store from '../store'
 
 declare const Sentry: any
 
@@ -18,6 +19,8 @@ class MyApp extends App {
         environment: getEnvironment(),
       })
     }
+
+    store.hudScale = window.innerHeight / 1160
   }
 
   render() {

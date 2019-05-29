@@ -19,7 +19,7 @@ const Container = styled.div`
   border-right: 1px solid #ddd;
   overflow: hidden;
   transform-origin: left bottom;
-  transform: scale(${HUD_SCALE});
+  transform: scale(${store.hudScale});
 `
 
 const Content = styled.div`

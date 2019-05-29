@@ -3,6 +3,7 @@ import Primitive from '../../types/Primitive'
 import Prop from '../../types/Prop'
 import createProp from '../../utils/createProp'
 import { computed, observable } from 'mobx'
+import Tile from './Tile'
 
 interface Props {
   [key: string]: Prop<Primitive>

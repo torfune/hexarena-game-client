@@ -14,12 +14,13 @@
     "lib": ["dom", "es2017"]
   },
   "include": [
-    "components",
-    "constants",
-    "game",
-    "pages",
-    "types",
-    "utils",
-    "websockets"
+    "./components",
+    "./constants",
+    "./constants",
+    "./game",
+    "./pages",
+    "./types",
+    "./utils",
+    "./websockets"
   ]
 }

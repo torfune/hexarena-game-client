@@ -5,13 +5,14 @@ import { BOX_SHADOW } from '../../../../constants/react'
 import game from '../../../../game'
 import store from '../../../../store'
 
-const Container = styled.div``
+const Container = styled.div`
+  height: calc(100% - 58px);
+  position: relative;
+`
 
 const MessagesContainer = styled.div`
-  height: 480px;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  margin-top: 32px;
+  height: calc(100% - 39px - 16px);
+  overflow: auto;
 `
 
 const Message = styled.div`
@@ -32,21 +33,23 @@ const MessageContent = styled.p`
 
 const Input = styled.input`
   display: block;
-  background: #666;
+  width: 100%;
+  background: transparent;
   outline: none;
   border: none;
   border-radius: 4px;
   font-size: 16px;
-  padding-left: 12px;
   height: 40px;
-  width: 100%;
-  margin-top: 32px;
-  box-shadow: ${BOX_SHADOW};
+  border: 1px solid #555;
   color: #fff;
+  position: relative;
+  padding: 0 8px;
+  margin-top: 16px;
 
   :hover,
   :focus {
-    background: #777;
+    background: #383838;
+    border-color: #888;
   }
 `
 
@@ -92,6 +95,7 @@ const Chat = () => {
 
       <Input
         autoFocus
+        placeholder="Type your message ..."
         maxLength={64}
         value={message}
         onChange={handleMessageChange}

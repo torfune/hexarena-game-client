@@ -8,7 +8,10 @@ export const BOX_SHADOW = '0px 2px 16px 0px rgba(0, 0, 0, 0.2)'
 export const TEXT_SHADOW = '0px 1px 4px rgba(0, 0, 0, 0.2)'
 export const LOGO_SHADOW = '0px 2px 16px rgba(0, 0, 0, 0.3)'
 
-// HUD SCALE
+// DIMENSIONS
+export const MIN_SCREEN_WIDTH = 1366
+export const MIN_SCREEN_HEIGHT = 768
+
 export const HUD_SCALE = 1
 
 // WEBSERVER & AUTH

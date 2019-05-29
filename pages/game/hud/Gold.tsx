@@ -1,10 +1,9 @@
 import { observer } from 'mobx-react-lite'
-import { useTransition, animated } from 'react-spring'
-import { useState, useEffect } from 'react'
+import { animated } from 'react-spring'
 import styled from 'styled-components'
-import { HUD_SCALE } from '../../../constants/react'
 import store from '../../../store'
 import Header from '../../../components/Header'
+import { HUD_SCALE } from '../../../constants/react'
 
 const Container = styled.div`
   background: rgba(255, 255, 255, 0.92);
@@ -17,7 +16,7 @@ const Container = styled.div`
   user-select: none;
   width: 180px;
   transform-origin: left top;
-  transform: scale(${HUD_SCALE});
+  transform: scale(${store.hudScale});
   height: 128px;
 `
 
