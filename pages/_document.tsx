@@ -64,7 +64,7 @@ export default class extends Document<{
           <Main />
           <NextScript />
 
-          {/* {this.props.isProduction && (
+          {this.props.isProduction && (
             <>
               <script
                 async
@@ -72,7 +72,7 @@ export default class extends Document<{
               />
               <script dangerouslySetInnerHTML={this.setGoogleTags()} />
             </>
-          )} */}
+          )}
         </body>
       </html>
     )

@@ -3,7 +3,6 @@ import Router from 'next/router'
 import { AuthProvider } from '../auth'
 import getEnvironment from '../utils/getEnvironment'
 import trackPageView from '../utils/trackPageView'
-import store from '../store'
 import { MIN_SCREEN_HEIGHT, MIN_SCREEN_WIDTH } from '../constants/react'
 import NotEnoughScreenSize from '../components/NotEnoughScreenSize'
 
