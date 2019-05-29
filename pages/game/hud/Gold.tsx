@@ -1,9 +1,9 @@
 import { observer } from 'mobx-react-lite'
-import { animated } from 'react-spring'
+import { animated, useTransition } from 'react-spring'
 import styled from 'styled-components'
 import store from '../../../store'
 import Header from '../../../components/Header'
-import { HUD_SCALE } from '../../../constants/react'
+import { useState, useEffect } from 'react'
 
 const Container = styled.div`
   background: rgba(255, 255, 255, 0.92);
@@ -32,43 +32,40 @@ const Coin = styled(animated.img)`
   height: 38px;
 `
 
-const Count = styled.p`
-  margin-left: 12px;
+const Count = styled.p<{ top: number }>`
   font-size: 40px;
   color: #444;
+  position: absolute;
+  top: ${props => props.top}px;
+  text-align: center;
+  transition: 500ms;
+  width: 64px;
+  line-height: 80px;
 `
 
-// interface GoldItem {
-//   key: string
-// }
+const CountMask = styled.div`
+  position: relative;
+  top: 0px;
+  height: 80px;
+  width: 64px;
+  overflow: hidden;
+`
+
+const numbers: number[] = []
+for (let i = 0; i <= 64; i++) {
+  numbers.push(i)
+}
+
+const BASE_TOP = 0
+const ROW_HEIGHT = 80
 
 const GoldSection = () => {
-  // const [gold, setGold] = useState<GoldItem[]>([])
-  // const transitions = useTransition(gold, (item: { key: string }) => item.key, {
-  //   from: { transform: 'scale(2, 2)', opacity: 0 },
-  //   enter: { transform: 'scale(1.2, 1.2)', opacity: 1 },
-  //   leave: { transform: 'scale(2, 2)', opacity: 0 },
-  // })
+  const [top, setTop] = useState(BASE_TOP)
 
-  // useEffect(() => {
-  //   const diff = store.gold - gold.length
-
-  //   if (diff > 0) {
-  //     const newGold = [...gold]
-
-  //     for (let i = 0; i < diff; i++) {
-  //       newGold.push({ key: String(newGold.length) })
-  //     }
-
-  //     setGold(newGold)
-  //   } else if (diff < 0) {
-  //     for (let i = 0; i < Math.abs(diff); i++) {
-  //       const newGold = gold
-  //       newGold.pop()
-  //       setGold(newGold)
-  //     }
-  //   }
-  // }, [store.gold])
+  useEffect(() => {
+    const top = BASE_TOP + store.gold * ROW_HEIGHT * -1
+    setTop(top)
+  }, [store.gold])
 
   return (
     <Container>
@@ -79,15 +76,13 @@ const GoldSection = () => {
       />
       <Content>
         <Coin src="/static/icons/gold.svg " />
-        <Count>{store.gold}</Count>
-        {/* <Coins>
-          {transitions.map(
-            ({ item, props, key }) =>
-              item && (
-                <Coin key={key} style={props} src="/static/icons/gold.svg" />
-              )
-          )}
-        </Coins> */}
+        <CountMask>
+          <Count top={top}>
+            {numbers.map(number => (
+              <p>{number}</p>
+            ))}
+          </Count>
+        </CountMask>
       </Content>
     </Container>
   )
