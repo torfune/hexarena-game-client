@@ -4,10 +4,18 @@ import { AuthProvider } from '../auth'
 import getEnvironment from '../utils/getEnvironment'
 import trackPageView from '../utils/trackPageView'
 import store from '../store'
+import { MIN_SCREEN_HEIGHT, MIN_SCREEN_WIDTH } from '../constants/react'
+import NotEnoughScreenSize from '../components/NotEnoughScreenSize'
 
 declare const Sentry: any
 
 class MyApp extends App {
+  state = {
+    notEnoughScreenSize: false,
+    width: 0,
+    height: 0,
+  }
+
   componentDidMount() {
     Router.onRouteChangeComplete = url => {
       trackPageView(url)
@@ -20,11 +28,28 @@ class MyApp extends App {
       })
     }
 
-    store.hudScale = window.innerHeight / 1160
+    const notEnoughScreenSize =
+      window.innerHeight < MIN_SCREEN_HEIGHT ||
+      window.innerWidth < MIN_SCREEN_WIDTH
+
+    this.setState({
+      width: window.innerWidth,
+      height: window.innerHeight,
+      notEnoughScreenSize,
+    })
   }
 
   render() {
     const { Component, pageProps } = this.props
+
+    if (this.state.notEnoughScreenSize) {
+      return (
+        <NotEnoughScreenSize
+          width={this.state.width}
+          height={this.state.height}
+        />
+      )
+    }
 
     return (
       <Container>
