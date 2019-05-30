@@ -24,7 +24,6 @@ import getHoveredTileInfo from '../functions/getHoveredTileInfo'
 import getTileByAxial from '../functions/getTileByAxial'
 import getServerHost from '../../utils/getServerHost'
 import Tile from './Tile'
-import Player from './Player'
 
 class Game {
   scale: number = DEFAULT_SCALE
@@ -63,8 +62,6 @@ class Game {
     }
   ) {
     const { GS_HOST } = getServerHost(window.location.hostname)
-
-    console.log('Starting game ...')
 
     // Fetch GS config
     try {
@@ -144,7 +141,7 @@ class Game {
     this.socket.close()
     this.pixi.stop()
   }
-  update() {
+  update(delta: number) {
     if (!store.actions || !store.armies || !this.camera || !this.pixi) return
 
     const now = Date.now()
@@ -183,18 +180,30 @@ class Game {
 
       this.pixi.stage.x = this.camera.x
       this.pixi.stage.y = this.camera.y
-    } else if (this.cameraMove.x !== 0 && this.cameraMove.y !== 0) {
-      this.camera.x += this.cameraMove.x * (CAMERA_SPEED * (2 / 3) * this.scale)
-      this.camera.y += this.cameraMove.y * (CAMERA_SPEED * (2 / 3) * this.scale)
+    } else {
+      const speed = CAMERA_SPEED
+      let cameraChange: Pixel = {x: 0, y: 0}
 
-      this.pixi.stage.x = this.camera.x
-      this.pixi.stage.y = this.camera.y
-    } else if (this.cameraMove.x !== 0 || this.cameraMove.y !== 0) {
-      this.camera.x += this.cameraMove.x * CAMERA_SPEED * this.scale
-      this.camera.y += this.cameraMove.y * CAMERA_SPEED * this.scale
+      if (this.keyDown['w']) {
+        cameraChange.y += speed * (2 / 3) * delta
+      }
+      if (this.keyDown['s']) {
+        cameraChange.y -= speed * (2 / 3) * delta
+      }
+      if (this.keyDown['a']) {
+        cameraChange.x += speed * (2 / 3) * delta
+      }
+      if (this.keyDown['d']) {
+        cameraChange.x -= speed * (2 / 3) * delta
+      }
 
-      this.pixi.stage.x = this.camera.x
-      this.pixi.stage.y = this.camera.y
+      if (cameraChange.x || cameraChange.y) {
+        this.camera.x += cameraChange.x
+        this.camera.y += cameraChange.y
+
+        this.pixi.stage.x = this.camera.x
+        this.pixi.stage.y = this.camera.y
+      }
     }
 
     // Zoom
@@ -562,42 +571,39 @@ class Game {
       }
     }
 
-    // Mountains
-    // for (let i = tilesToCapture.length - 1; i >= 0; i--) {
-    //   const t: Tile = tilesToCapture[i]
-
-    //   if (t.mountain) {
-    //     for (let j = 0; j < 6; j++) {
-    //       const n = t.neighbors[j]
-
-    //       if (!n) continue
-
-    //       if (!n.owner && !n.bedrock && !tilesToCapture.includes(n)) {
-    //         tilesToCapture.push(n)
-    //       }
-    //     }
-    //   }
-    // }
-
     // Villages
+    const villageTiles: Tile[] = []
     for (let i = tilesToCapture.length - 1; i >= 0; i--) {
       const t: Tile = tilesToCapture[i]
 
       if (t.village) {
-        for (let j = 0; j < 6; j++) {
-          const n = t.neighbors[j]
+        villageTiles.push(t)
+      }
+    }
+    while (villageTiles.length > 0) {
+      const t = villageTiles[0]
+      for (let j = 0; j < 6; j++) {
+        const n = t.neighbors[j]
 
-          if (!n) continue
+        if (
+          !n ||
+          n.bedrock ||
+          n.castle ||
+          n.base ||
+          n.mountain ||
+          tilesToCapture.includes(n)
+        ) {
+          continue
+        }
 
-          if (
-            (!n.owner || n.ownerId !== playerId) &&
-            !n.bedrock &&
-            !tilesToCapture.includes(n)
-          ) {
-            tilesToCapture.push(n)
+        if (n.ownerId !== playerId && n.ownerId === t.ownerId) {
+          tilesToCapture.push(n)
+          if (n.village) {
+            villageTiles.push(n)
           }
         }
       }
+      villageTiles.shift()
     }
 
     // Allied tiles
