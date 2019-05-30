@@ -36,10 +36,10 @@ const Performance = () => (
       <Label>FPS</Label>
       <Value>{store.fps}</Value>
     </div>
-    <div>
-      <Label>PING</Label>
-      <Value>{store.ping}</Value>
-    </div>
+    {/*<div>*/}
+    {/*  <Label>PING</Label>*/}
+    {/*  <Value>{store.ping}</Value>*/}
+    {/*</div>*/}
   </Container>
 )
 

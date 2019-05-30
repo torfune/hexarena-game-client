@@ -182,7 +182,7 @@ class Game {
       this.pixi.stage.y = this.camera.y
     } else {
       const speed = CAMERA_SPEED
-      let cameraChange: Pixel = {x: 0, y: 0}
+      let cameraChange: Pixel = { x: 0, y: 0 }
 
       if (this.keyDown['w']) {
         cameraChange.y += speed * (2 / 3) * delta
