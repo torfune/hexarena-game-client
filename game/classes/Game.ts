@@ -181,29 +181,29 @@ class Game {
       this.pixi.stage.x = this.camera.x
       this.pixi.stage.y = this.camera.y
     } else {
-      const speed = CAMERA_SPEED
-      let cameraChange: Pixel = { x: 0, y: 0 }
-
-      if (this.keyDown['w']) {
-        cameraChange.y += speed * (2 / 3) * delta
-      }
-      if (this.keyDown['s']) {
-        cameraChange.y -= speed * (2 / 3) * delta
-      }
-      if (this.keyDown['a']) {
-        cameraChange.x += speed * (2 / 3) * delta
-      }
-      if (this.keyDown['d']) {
-        cameraChange.x -= speed * (2 / 3) * delta
-      }
-
-      if (cameraChange.x || cameraChange.y) {
-        this.camera.x += cameraChange.x
-        this.camera.y += cameraChange.y
-
-        this.pixi.stage.x = this.camera.x
-        this.pixi.stage.y = this.camera.y
-      }
+      // const speed = CAMERA_SPEED
+      // let cameraChange: Pixel = { x: 0, y: 0 }
+      //
+      // if (this.keyDown['w']) {
+      //   cameraChange.y += speed * (2 / 3) * delta
+      // }
+      // if (this.keyDown['s']) {
+      //   cameraChange.y -= speed * (2 / 3) * delta
+      // }
+      // if (this.keyDown['a']) {
+      //   cameraChange.x += speed * (2 / 3) * delta
+      // }
+      // if (this.keyDown['d']) {
+      //   cameraChange.x -= speed * (2 / 3) * delta
+      // }
+      //
+      // if (cameraChange.x || cameraChange.y) {
+      //   this.camera.x += cameraChange.x
+      //   this.camera.y += cameraChange.y
+      //
+      //   this.pixi.stage.x = this.camera.x
+      //   this.pixi.stage.y = this.camera.y
+      // }
     }
 
     // Zoom
