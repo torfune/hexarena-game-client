@@ -15,6 +15,7 @@ import status from './status'
 import tiles from './tiles'
 import villages from './villages'
 import flash from './flash'
+import notification from './notification'
 
 const messages: {
   [key: string]: GameServerMessage
@@ -35,6 +36,7 @@ const messages: {
   tiles,
   villages,
   flash,
+  notification
 }
 
 export default messages

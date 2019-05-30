@@ -32,7 +32,7 @@ const Coin = styled(animated.img)`
   height: 38px;
 `
 
-const Count = styled.p<{ top: number }>`
+const Count = styled.div<{ top: number }>`
   font-size: 40px;
   color: #444;
   position: absolute;
@@ -52,7 +52,7 @@ const CountMask = styled.div`
 `
 
 const numbers: number[] = []
-for (let i = 0; i <= 64; i++) {
+for (let i = 0; i <= 50; i++) {
   numbers.push(i)
 }
 
@@ -79,7 +79,7 @@ const GoldSection = () => {
         <CountMask>
           <Count top={top}>
             {numbers.map(number => (
-              <p>{number}</p>
+              <p key={number}>{number}</p>
             ))}
           </Count>
         </CountMask>

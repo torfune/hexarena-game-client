@@ -21,6 +21,8 @@ import { useAuth } from '../../auth'
 import getBrowserId from '../../utils/getBrowserId'
 import Spinner from '../../components/Spinner'
 import Flasher from './hud/Flasher'
+import * as React from 'react'
+import NotificationManager from './hud/NotificationManager'
 
 const Container = styled.div`
   width: 100vw;
@@ -129,7 +131,12 @@ const Game = observer(() => {
         visible={status === 'running' || status === 'finished'}
       />
 
-      {status === 'running' && <Flasher />}
+      {status === 'running' && (
+        <>
+          <Flasher />
+          <NotificationManager />
+        </>
+      )}
 
       {status !== 'running' && status !== 'finished' && (
         <SpinnerContainer>

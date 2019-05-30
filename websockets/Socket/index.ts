@@ -257,6 +257,9 @@ const setStoreValue = (key: string, value: any) => {
     case 'flash':
       store.flash = value
       break
+    case 'notification':
+      store.notification = value
+      break
     case 'playerId':
       if (typeof value !== 'string') {
         throw Error(typeError(key, value))

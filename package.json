@@ -14,6 +14,7 @@
     "mobx": "^5.9.4",
     "mobx-react-lite": "^1.2.0",
     "next": "^8.1.0",
+    "prettier": "^1.17.1",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
     "react-google-login": "^5.0.4",

@@ -88,7 +88,9 @@ const NotEnoughGold = styled.div`
   background: #333;
   color: #fff;
   padding: 4px 12px;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
 `
 
 const Icon = styled.img`
