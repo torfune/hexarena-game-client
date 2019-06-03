@@ -48,7 +48,7 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
     return {
       label: 'Capture',
       structure,
-      duration: `${durationMs / 1000}s`,
+      duration: `${Math.round(durationMs / 100) / 10}s`,
     }
   }
 
