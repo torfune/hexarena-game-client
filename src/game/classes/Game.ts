@@ -846,10 +846,14 @@ class Game {
     }
   }
   updateStageScale() {
+    if (!this.pixi) return
+
     this.pixi.stage.scale.x = this.scale
     this.pixi.stage.scale.y = this.scale
   }
   updateStagePosition() {
+    if (!this.pixi || !this.camera) return
+
     this.pixi.stage.x = this.camera.x
     this.pixi.stage.y = this.camera.y
   }
