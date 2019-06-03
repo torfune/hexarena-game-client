@@ -9,6 +9,7 @@ import {
   HITPOINTS_OFFSET_Y,
   NEIGHBOR_DIRECTIONS,
   BEDROCK_BORDER,
+  BEDROCK_BACKGROUND,
 } from '../../constants/game'
 import game from '..'
 import GoldAnimation from './GoldAnimation'
@@ -281,47 +282,50 @@ class Tile {
   removeContested() {
     // this.image.contested.visible = false
   }
-  addImage(key: keyof TileImage) {
+  addImage(key: keyof TileImage, animate = true) {
     const texture = key === 'background' ? 'pattern' : key
     const pixel = getPixelPosition(this.axial)
     const image = createImage(key, texture)
 
     image.x = pixel.x
     image.y = pixel.y
-    // image.alpha = 0
-
     this.image[key] = image
 
-    // new Animation(image, (image: Sprite, fraction: number) => {
-    //   image.alpha = fraction
-    // })
+    if (animate) {
+      image.alpha = 0
+      new Animation(image, (image: Sprite, fraction: number) => {
+        image.alpha = fraction
+      })
+    }
 
     return image
   }
-  removeImage(key: keyof TileImage) {
+  removeImage(key: keyof TileImage, animate = true) {
     const image = this.image[key]
 
     if (!image) return
 
     delete this.image[key]
 
-    game.stage[key].removeChild(image)
-
-    // new Animation(
-    //   image,
-    //   (image, fraction) => {
-    //     image.alpha = 1 - fraction
-    //   },
-    //   {
-    //     context: {
-    //       stage: game.stage[key],
-    //     },
-    //     onFinish: (image, context) => {
-    //       context.stage.removeChild(image)
-    //     },
-    //     speed: 0.05,
-    //   }
-    // )
+    if (animate) {
+      new Animation(
+        image,
+        (image, fraction) => {
+          image.alpha = 1 - fraction
+        },
+        {
+          context: {
+            stage: game.stage[key],
+          },
+          onFinish: (image, context) => {
+            context.stage.removeChild(image)
+          },
+          speed: 0.05,
+        }
+      )
+    } else {
+      game.stage[key].removeChild(image)
+    }
   }
   removeArmy() {
     if (!this.army || !this.image.armyIcon) {
@@ -463,30 +467,34 @@ class Tile {
         this.removeImage('background')
       }
 
-      const image = this.addImage('pattern')
-
-      // image.alpha = 0
+      const image = this.addImage('pattern', false)
+      image.alpha = 0
       image.tint = hex(newOwner.pattern)
 
-      // game.animations.push(
-      //   new Animation(
-      //     this.image.pattern,
-      //     (image, fraction) => {
-      //       image.alpha = fraction
-      //     },
-      //     {
-      //       initialFraction: 0.4,
-      //       speed: 0.01,
-      //     }
-      //   )
-      // )
+      game.animations.push(
+        new Animation(
+          image,
+          (image, fraction) => {
+            image.alpha = fraction
+          },
+          {
+            initialFraction: 0.4,
+            speed: 0.01,
+          }
+        )
+      )
     } else {
       if (this.image.pattern) {
         this.removeImage('pattern')
       }
 
+      // Create Background
       if (!this.image.background) {
-        this.addImage('background')
+        const image = this.addImage('background')
+
+        if (this.bedrock) {
+          image.tint = hex(BEDROCK_BACKGROUND)
+        }
       }
     }
 
@@ -497,14 +505,23 @@ class Tile {
 
     this.image.pattern.tint = hex('#fff')
 
-    // for (let i = 0; i < 6; i++) {
-    //   const n = this.neighbors[i]
-    //   const direction = invertHexDirection(i)
+    for (let i = 0; i < 6; i++) {
+      const n = this.neighbors[i]
 
-    //   if (n) {
-    //     n.imageSet.arrow[direction].visible = true
-    //   }
-    // }
+      if (!n) continue
+
+      const direction = invertHexDirection(i)
+      const image = n.imageSet.arrow[direction]
+
+      if (!image) {
+        const pixel = getPixelPosition(n.axial)
+        const newImage = createImage('arrow')
+        newImage.x = pixel.x
+        newImage.y = pixel.y
+        newImage.rotation = getRotationBySide(direction)
+        n.imageSet.arrow[direction] = newImage
+      }
+    }
 
     const armyTargetTiles: Tile[][] = []
     for (let i = 0; i < 6; i++) {
@@ -532,14 +549,19 @@ class Tile {
 
     this.image.pattern.tint = hex(this.owner.pattern)
 
-    // for (let i = 0; i < 6; i++) {
-    //   const n = this.neighbors[i]
-    //   const direction = invertHexDirection(i)
+    for (let i = 0; i < 6; i++) {
+      const n = this.neighbors[i]
 
-    //   if (n) {
-    //     n.imageSet.arrow[direction].visible = false
-    //   }
-    // }
+      if (!n) continue
+
+      const direction = invertHexDirection(i)
+      const image = n.imageSet.arrow[direction]
+
+      if (image) {
+        destroyImage('arrow', image)
+        n.imageSet.arrow[direction] = null
+      }
+    }
   }
   updateNeighbors() {
     let missingNeighbors = []
