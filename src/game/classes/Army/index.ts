@@ -157,6 +157,7 @@ class Army {
       x: position.x,
       y: position.y + UNIT_DOOR_OFFSET,
     }
+
     const randomizedPositions = getUniqueRandomizedPositions(
       UNIT_COUNT,
       UNIT_RADIUS,

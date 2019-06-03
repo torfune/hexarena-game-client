@@ -2,7 +2,7 @@ import getRandomizedPosition from './getRandomizedPosition'
 import { Pixel } from '../../types/coordinates'
 import Circle from '../../types/Circle'
 
-const maxIterations = 1000
+const maxIterations = 100
 
 const getUniqueRandomizedPositions = (
   count: number,
