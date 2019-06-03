@@ -1,9 +1,9 @@
 import { Sprite } from 'pixi.js'
 
 interface TileImageArray {
-  arrow: Sprite[]
-  border: Sprite[]
-  fog: Sprite[]
+  arrow: Array<Sprite | null>
+  border: Array<Sprite | null>
+  fog: Array<Sprite | null>
 }
 
 export default TileImageArray

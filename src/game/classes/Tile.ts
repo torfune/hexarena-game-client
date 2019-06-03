@@ -256,8 +256,8 @@ class Tile {
     this.image.hitpointsBg = createImage('hitpointsBg')
     this.image.hitpointsBg.x = pixel.x
     this.image.hitpointsBg.y = pixel.y
-    this.image.hitpointsBg.scale.x = game.scale
-    this.image.hitpointsBg.scale.y = game.scale
+    // this.image.hitpointsBg.scale.x = game.scale
+    // this.image.hitpointsBg.scale.y = game.scale
     this.image.hitpointsBg.alpha = 0
 
     this.image.heartLeft = new Sprite(fillTexture)
@@ -295,6 +295,8 @@ class Tile {
     // new Animation(image, (image: Sprite, fraction: number) => {
     //   image.alpha = fraction
     // })
+
+    return image
   }
   removeImage(key: keyof TileImage) {
     const image = this.image[key]
@@ -408,7 +410,7 @@ class Tile {
       this.image.hitpointsBg,
       (image, fraction, context) => {
         image.alpha = fraction
-        image.y = context.baseY - HITPOINTS_OFFSET_Y * game.scale * fraction
+        image.y = context.baseY - HITPOINTS_OFFSET_Y * fraction
       },
       {
         context: { baseY: pixel.y },
@@ -440,7 +442,7 @@ class Tile {
         fraction = 1 - fraction
 
         image.alpha = fraction
-        image.y = context.baseY - HITPOINTS_OFFSET_Y * game.scale * fraction
+        image.y = context.baseY - HITPOINTS_OFFSET_Y * fraction
       },
       {
         context: { baseY: pixel.y },
@@ -461,10 +463,10 @@ class Tile {
         this.removeImage('background')
       }
 
-      this.addImage('pattern')
+      const image = this.addImage('pattern')
 
-      // this.image.pattern.alpha = 0
-      this.image.pattern.tint = hex(newOwner.pattern)
+      // image.alpha = 0
+      image.tint = hex(newOwner.pattern)
 
       // game.animations.push(
       //   new Animation(
@@ -530,14 +532,14 @@ class Tile {
 
     this.image.pattern.tint = hex(this.owner.pattern)
 
-    for (let i = 0; i < 6; i++) {
-      const n = this.neighbors[i]
-      const direction = invertHexDirection(i)
+    // for (let i = 0; i < 6; i++) {
+    //   const n = this.neighbors[i]
+    //   const direction = invertHexDirection(i)
 
-      if (n) {
-        n.imageSet.arrow[direction].visible = false
-      }
-    }
+    //   if (n) {
+    //     n.imageSet.arrow[direction].visible = false
+    //   }
+    // }
   }
   updateNeighbors() {
     let missingNeighbors = []
@@ -583,7 +585,7 @@ class Tile {
         this.imageSet.fog[i] = newImage
       } else if (this.neighbors[i] && image) {
         destroyImage('fog', image)
-        this.imageSet.fog[i] = undefined
+        this.imageSet.fog[i] = null
       }
     }
   }
@@ -644,6 +646,22 @@ class Tile {
         !game.tilesWithPatternPreview.includes(n)
       ) {
         showBorder = true
+      }
+
+      const image = this.imageSet.border[i]
+      if (showBorder && !image) {
+        const pixel = getPixelPosition(this.axial)
+        const newImage = createImage('border')
+
+        newImage.x = pixel.x
+        newImage.y = pixel.y
+        newImage.rotation = getRotationBySide(i)
+        newImage.tint = borderTint ? hex(borderTint) : hex('#fff')
+
+        this.imageSet.border[i] = newImage
+      } else if (!showBorder && image) {
+        destroyImage('border', image)
+        this.imageSet.border[i] = null
       }
 
       // this.imageSet.border[i].visible = showBorder
