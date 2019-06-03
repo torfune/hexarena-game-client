@@ -569,11 +569,11 @@ class Tile {
   updateFogs() {
     // const { fog } = this.imageSet
     // for (let i = 0; i < 6; i++) {
-    //     if (!this.neighbors[i]) {
-    //       this.fog.fog[i].visible = true
-    //     } else {
-    //       this.fog.fog[i].visible = false
-    //     }
+    //   if (!this.neighbors[i]) {
+    //     this.fog.fog[i].visible = true
+    //   } else {
+    //     this.fog.fog[i].visible = false
+    //   }
     // }
   }
   updateBorders() {
