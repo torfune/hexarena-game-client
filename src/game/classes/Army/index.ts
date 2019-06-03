@@ -37,7 +37,6 @@ class Army {
   animationFraction: number | null = null
   isDestroying: boolean = false
   isMoving: boolean = false
-  lastScale: number = game.scale
   units: Unit[] = []
 
   constructor(id: string, tile: Tile, owner: Player) {
@@ -51,9 +50,9 @@ class Army {
     const position = getPixelPosition(tile.axial)
     const randomizedPositions = getUniqueRandomizedPositions(
       UNIT_COUNT,
-      UNIT_RADIUS * game.scale,
+      UNIT_RADIUS,
       position,
-      UNIT_POSITION_OFFSET * game.scale
+      UNIT_POSITION_OFFSET
     )
 
     const isInside = tile.base || tile.castle || tile.camp
@@ -133,13 +132,6 @@ class Army {
       this.animationFraction = null
     }
   }
-  updateScale() {
-    for (let i = 0; i < UNIT_COUNT; i++) {
-      this.units[i].updateScale(this.lastScale, game.scale)
-    }
-
-    this.lastScale = game.scale
-  }
   moveOn(tileId: string) {
     const tile = store.getTile(tileId)
 
@@ -163,13 +155,13 @@ class Army {
     const position = getPixelPosition(tile.axial)
     const doorPosition = {
       x: position.x,
-      y: position.y + UNIT_DOOR_OFFSET * game.scale,
+      y: position.y + UNIT_DOOR_OFFSET,
     }
     const randomizedPositions = getUniqueRandomizedPositions(
       UNIT_COUNT,
-      UNIT_RADIUS * game.scale,
+      UNIT_RADIUS,
       position,
-      UNIT_POSITION_OFFSET * game.scale
+      UNIT_POSITION_OFFSET
     )
 
     for (let i = 0; i < UNIT_COUNT; i++) {

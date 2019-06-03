@@ -9,7 +9,9 @@ import Primitive from '../../types/Primitive'
 import Prop from '../../types/Prop'
 import createProp from '../../utils/createProp'
 import createText from '../functions/createText'
-import { Sprite, Graphics, Text, loader } from 'pixi.js'
+import { Sprite, Graphics, Text, Loader } from 'pixi.js'
+
+const loader = Loader.shared
 
 const ACTION_RADIUS = 49
 
@@ -118,7 +120,7 @@ class Action {
     }
 
     const pixel = getPixelPosition(this.tile.axial)
-    const radius = Math.round(ACTION_RADIUS * game.scale)
+    const radius = Math.round(ACTION_RADIUS)
 
     const startAngle = -Math.PI / 2
     const arcSize = Math.PI * 2 * fraction
@@ -132,23 +134,15 @@ class Action {
 
     this.image.background.x = pixel.x
     this.image.background.y = pixel.y
-    this.image.background.scale.x = game.scale
-    this.image.background.scale.y = game.scale
 
     this.image.icon.x = pixel.x
     this.image.icon.y = pixel.y
-    this.image.icon.scale.x = game.scale
-    this.image.icon.scale.y = game.scale
 
     this.image.cancelIcon.x = pixel.x
     this.image.cancelIcon.y = pixel.y
-    this.image.cancelIcon.scale.x = game.scale
-    this.image.cancelIcon.scale.y = game.scale
 
     this.image.order.x = pixel.x
     this.image.order.y = pixel.y
-    this.image.order.scale.x = game.scale
-    this.image.order.scale.y = game.scale
 
     if (store.hoveredTile !== this.tile) {
       this.mouseLeft = true

@@ -24,7 +24,9 @@ import Primitive from '../../types/Primitive'
 import Prop from '../../types/Prop'
 import createProp from '../../utils/createProp'
 import TileImageArray from '../../types/TileImageArray'
-import { Sprite, loader } from 'pixi.js'
+import { Sprite, Loader } from 'pixi.js'
+
+const loader = Loader.shared
 
 interface Props {
   [key: string]: Prop<Primitive>
@@ -71,7 +73,7 @@ class Tile {
     this.mountain = mountain
 
     // this.image.background = createImage('background', 'pattern')
-    // this.image.background.tint = hex('#eee')
+
     // this.image.blackOverlay.alpha = 0.18
     // this.image.blackOverlay.visible = false
     // this.image.contested.visible = false
@@ -79,10 +81,6 @@ class Tile {
     if (mountain) {
       this.addImage('mountain')
     }
-
-    // if (bedrock) {
-    //   this.image.background.tint = hex(BEDROCK_BACKGROUND)
-    // }
 
     // this.imageSet.fog = []
     // for (let i = 0; i < 6; i++) {
@@ -105,6 +103,7 @@ class Tile {
     //   this.imageSet.arrow[i].visible = false
     // }
 
+    this.updateOwner()
     this.updateScale()
   }
 
@@ -178,71 +177,48 @@ class Tile {
     }
   }
   updateScale() {
-    const pixel = getPixelPosition(this.axial)
-
-    const imageKeys = Object.keys(this.image) as Array<keyof TileImage>
-    for (let i = 0; i < imageKeys.length; i++) {
-      const key = imageKeys[i]
-      const image = this.image[key]
-
-      if (!image) continue
-
-      if (key === 'armyIcon' || key === 'hitpointsBg') {
-        image.x = pixel.x
-        image.scale.x = game.scale
-        image.scale.y = game.scale
-
-        const animation = getImageAnimation(image)
-        if (animation && animation instanceof Animation) {
-          animation.context.baseY = pixel.y
-        } else {
-          image.y = pixel.y - ARMY_ICON_OFFSET_Y * game.scale
-        }
-
-        continue
-      }
-
-      image.x = pixel.x
-      image.y = pixel.y
-      image.scale.x = game.scale
-      image.scale.y = game.scale
-    }
-
-    const imageSetKeys = Object.keys(this.imageSet) as Array<
-      keyof TileImageArray
-    >
-    for (let i = 0; i < imageSetKeys.length; i++) {
-      const key = imageSetKeys[i]
-      const imageSet = this.imageSet[key]
-
-      for (let j = 0; j < 6; j++) {
-        imageSet[j].x = pixel.x
-        imageSet[j].y = pixel.y
-        imageSet[j].scale.x = game.scale
-        imageSet[j].scale.y = game.scale
-      }
-    }
+    // const pixel = getPixelPosition(this.axial)
+    // const imageKeys = Object.keys(this.image) as Array<keyof TileImage>
+    // for (let i = 0; i < imageKeys.length; i++) {
+    //   const key = imageKeys[i]
+    //   const image = this.image[key]
+    //   if (!image) continue
+    //   if (key === 'armyIcon' || key === 'hitpointsBg') {
+    //     image.x = pixel.x
+    //     image.scale.x = game.scale
+    //     image.scale.y = game.scale
+    //     const animation = getImageAnimation(image)
+    //     if (animation && animation instanceof Animation) {
+    //       animation.context.baseY = pixel.y
+    //     } else {
+    //       image.y = pixel.y - ARMY_ICON_OFFSET_Y * game.scale
+    //     }
+    //     continue
+    //   }
+    //   image.x = pixel.x
+    //   image.y = pixel.y
+    //   image.scale.x = game.scale
+    //   image.scale.y = game.scale
+    // }
+    // const imageSetKeys = Object.keys(this.imageSet) as Array<
+    //   keyof TileImageArray
+    // >
+    // for (let i = 0; i < imageSetKeys.length; i++) {
+    //   const key = imageSetKeys[i]
+    //   const imageSet = this.imageSet[key]
+    //   for (let j = 0; j < 6; j++) {
+    //     if (!imageSet[j]) continue
+    //     imageSet[j].x = pixel.x
+    //     imageSet[j].y = pixel.y
+    //     imageSet[j].scale.x = game.scale
+    //     imageSet[j].scale.y = game.scale
+    //   }
+    // }
   }
   addHighlight() {
     if (!this.owner || !this.image.pattern) return
 
     this.image.pattern.tint = hex(shade(this.owner.pattern, 10))
-  }
-  addImage(key: keyof TileImage) {
-    const pixel = getPixelPosition(this.axial)
-    const image = createImage(key)
-
-    image.x = pixel.x
-    image.y = pixel.y
-    image.scale.x = game.scale
-    image.scale.y = game.scale
-    image.alpha = 0
-
-    this.image[key] = image
-
-    new Animation(image, (image: Sprite, fraction: number) => {
-      image.alpha = fraction
-    })
   }
   addArmy(army: Army) {
     if (this.army) return
@@ -258,15 +234,15 @@ class Tile {
     this.image.armyIcon = createImage('armyIcon')
     this.image.armyIcon.x = pixel.x
     this.image.armyIcon.y = pixel.y
-    this.image.armyIcon.scale.x = game.scale
-    this.image.armyIcon.scale.y = game.scale
+    // this.image.armyIcon.scale.x = game.scale
+    // this.image.armyIcon.scale.y = game.scale
     this.image.armyIcon.alpha = 0
 
     new Animation(
       this.image.armyIcon,
       (image, fraction, context) => {
         image.alpha = fraction
-        image.y = context.baseY - ARMY_ICON_OFFSET_Y * game.scale * fraction
+        image.y = context.baseY - ARMY_ICON_OFFSET_Y * /*game.scale **/ fraction
       },
       { context: { baseY: pixel.y }, speed: 0.05 }
     )
@@ -303,28 +279,45 @@ class Tile {
   removeContested() {
     // this.image.contested.visible = false
   }
+  addImage(key: keyof TileImage) {
+    const texture = key === 'background' ? 'pattern' : key
+    const pixel = getPixelPosition(this.axial)
+    const image = createImage(key, texture)
+
+    image.x = pixel.x
+    image.y = pixel.y
+    // image.alpha = 0
+
+    this.image[key] = image
+
+    // new Animation(image, (image: Sprite, fraction: number) => {
+    //   image.alpha = fraction
+    // })
+  }
   removeImage(key: keyof TileImage) {
     const image = this.image[key]
 
-    if (!image || !(image instanceof Sprite)) return
+    if (!image) return
 
     delete this.image[key]
 
-    new Animation(
-      image,
-      (image, fraction) => {
-        image.alpha = 1 - fraction
-      },
-      {
-        context: {
-          stage: game.stage[key],
-        },
-        onFinish: (image, context) => {
-          context.stage.removeChild(image)
-        },
-        speed: 0.05,
-      }
-    )
+    game.stage[key].removeChild(image)
+
+    // new Animation(
+    //   image,
+    //   (image, fraction) => {
+    //     image.alpha = 1 - fraction
+    //   },
+    //   {
+    //     context: {
+    //       stage: game.stage[key],
+    //     },
+    //     onFinish: (image, context) => {
+    //       context.stage.removeChild(image)
+    //     },
+    //     speed: 0.05,
+    //   }
+    // )
   }
   removeArmy() {
     if (!this.army || !this.image.armyIcon) {
@@ -455,55 +448,59 @@ class Tile {
     )
   }
   updateOwner() {
-    const owner = this.ownerId ? store.getPlayer(this.ownerId) : null
+    const newOwner = this.ownerId ? store.getPlayer(this.ownerId) : null
 
-    if (owner) {
+    if (newOwner) {
       if (this.image.pattern) {
-        game.stage['pattern'].removeChild(this.image.pattern)
+        this.removeImage('pattern')
       }
 
-      const pixel = getPixelPosition(this.axial)
+      if (this.image.background) {
+        this.removeImage('background')
+      }
 
-      this.image.pattern = createImage('pattern')
-      this.image.pattern.x = pixel.x
-      this.image.pattern.y = pixel.y
-      this.image.pattern.scale.x = game.scale
-      this.image.pattern.scale.y = game.scale
-      this.image.pattern.alpha = 0
-      this.image.pattern.tint = hex(owner.pattern)
+      this.addImage('pattern')
 
-      game.animations.push(
-        new Animation(
-          this.image.pattern,
-          (image, fraction) => {
-            image.alpha = fraction
-          },
-          {
-            initialFraction: 0.4,
-            speed: 0.01,
-          }
-        )
-      )
-    } else if (this.owner && this.image.pattern) {
-      game.stage['pattern'].removeChild(this.image.pattern)
-      delete this.image.pattern
+      // this.image.pattern.alpha = 0
+      this.image.pattern.tint = hex(newOwner.pattern)
+
+      // game.animations.push(
+      //   new Animation(
+      //     this.image.pattern,
+      //     (image, fraction) => {
+      //       image.alpha = fraction
+      //     },
+      //     {
+      //       initialFraction: 0.4,
+      //       speed: 0.01,
+      //     }
+      //   )
+      // )
+    } else {
+      if (this.image.pattern) {
+        this.removeImage('pattern')
+      }
+
+      if (!this.image.background) {
+        this.addImage('background')
+      }
     }
 
-    this.owner = owner
+    this.owner = newOwner
   }
   selectArmy() {
     if (!this.image.pattern) return
 
     this.image.pattern.tint = hex('#fff')
 
-    for (let i = 0; i < 6; i++) {
-      const n = this.neighbors[i]
-      const direction = invertHexDirection(i)
+    // for (let i = 0; i < 6; i++) {
+    //   const n = this.neighbors[i]
+    //   const direction = invertHexDirection(i)
 
-      if (n) {
-        n.imageSet.arrow[direction].visible = true
-      }
-    }
+    //   if (n) {
+    //     n.imageSet.arrow[direction].visible = true
+    //   }
+    // }
 
     const armyTargetTiles: Tile[][] = []
     for (let i = 0; i < 6; i++) {
@@ -570,13 +567,14 @@ class Tile {
     this.updateFogs()
   }
   updateFogs() {
-    for (let i = 0; i < 6; i++) {
-      if (!this.neighbors[i]) {
-        this.imageSet.fog[i].visible = true
-      } else {
-        this.imageSet.fog[i].visible = false
-      }
-    }
+    // const { fog } = this.imageSet
+    // for (let i = 0; i < 6; i++) {
+    //     if (!this.neighbors[i]) {
+    //       this.fog.fog[i].visible = true
+    //     } else {
+    //       this.fog.fog[i].visible = false
+    //     }
+    // }
   }
   updateBorders() {
     for (let i = 0; i < 6; i++) {
@@ -637,8 +635,8 @@ class Tile {
         showBorder = true
       }
 
-      this.imageSet.border[i].visible = showBorder
-      this.imageSet.border[i].tint = borderTint ? hex(borderTint) : hex('#fff')
+      // this.imageSet.border[i].visible = showBorder
+      // this.imageSet.border[i].tint = borderTint ? hex(borderTint) : hex('#fff')
     }
   }
   isHovered() {
@@ -665,8 +663,8 @@ class Tile {
     this.image.patternPreview.x = pixel.x
     this.image.patternPreview.y = pixel.y
     this.image.patternPreview.tint = hex(pattern)
-    this.image.patternPreview.scale.x = game.scale
-    this.image.patternPreview.scale.y = game.scale
+    // this.image.patternPreview.scale.x = game.scale
+    // this.image.patternPreview.scale.y = game.scale
     this.image.patternPreview.alpha = 0.5
   }
   removePatternPreview() {

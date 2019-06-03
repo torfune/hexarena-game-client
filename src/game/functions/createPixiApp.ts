@@ -2,7 +2,10 @@ import hex from './hex'
 import { Application } from 'pixi.js'
 
 const createPixiApp = () => {
-  const pixi = new Application({ resolution: window.devicePixelRatio })
+  const pixi = new Application({
+    resolution: window.devicePixelRatio,
+    autoDensity: true,
+  })
 
   pixi.renderer.backgroundColor = hex('#fff')
   pixi.renderer.autoResize = true

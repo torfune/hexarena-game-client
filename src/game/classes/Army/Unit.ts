@@ -17,7 +17,8 @@ class Unit {
     this.image.x = x
     this.image.y = y
 
-    this.updateScale()
+    this.image.scale.x = UNIT_IMAGE_SCALE
+    this.image.scale.y = UNIT_IMAGE_SCALE
   }
   update(fraction: number) {
     if (!this.delay || !this.originalPosition || !this.targetPosition) return
@@ -34,40 +35,6 @@ class Unit {
 
     this.image.x = this.originalPosition.x + delta.x * easedFraction
     this.image.y = this.originalPosition.y + delta.y * easedFraction
-  }
-  updateScale(oldScale?: number, newScale?: number) {
-    this.image.scale.x = game.scale * UNIT_IMAGE_SCALE
-    this.image.scale.y = game.scale * UNIT_IMAGE_SCALE
-
-    if (!oldScale || !newScale) return
-
-    const fullScaleCurrentPosition = {
-      x: calculateFullScaleNumber(this.image.x, oldScale),
-      y: calculateFullScaleNumber(this.image.y, oldScale),
-    }
-
-    this.image.x = fullScaleCurrentPosition.x * newScale
-    this.image.y = fullScaleCurrentPosition.y * newScale
-
-    if (this.originalPosition) {
-      const fullScaleOriginalPosition = {
-        x: calculateFullScaleNumber(this.originalPosition.x, oldScale),
-        y: calculateFullScaleNumber(this.originalPosition.y, oldScale),
-      }
-
-      this.originalPosition.x = fullScaleOriginalPosition.x * newScale
-      this.originalPosition.y = fullScaleOriginalPosition.y * newScale
-    }
-
-    if (this.targetPosition) {
-      const fullScaleTargetPosition = {
-        x: calculateFullScaleNumber(this.targetPosition.x, oldScale),
-        y: calculateFullScaleNumber(this.targetPosition.y, oldScale),
-      }
-
-      this.targetPosition.x = fullScaleTargetPosition.x * newScale
-      this.targetPosition.y = fullScaleTargetPosition.y * newScale
-    }
   }
   moveOn(x: number, y: number) {
     this.targetPosition = { x, y }

@@ -89,14 +89,14 @@ class Coin {
   updateScale() {
     this.updatePosition()
 
-    this.image.scale.x = game.scale * SCALE
-    this.image.scale.y = game.scale * SCALE
+    this.image.scale.x = SCALE
+    this.image.scale.y = SCALE
   }
   updatePosition() {
     const position = getPixelPosition(this.tile.axial)
 
-    this.image.x = position.x + this.offsetX * game.scale
-    this.image.y = position.y - this.offsetY * game.scale
+    this.image.x = position.x + this.offsetX
+    this.image.y = position.y - this.offsetY
   }
   destroy() {
     this.destroyed = true

@@ -1,4 +1,6 @@
-import { loader } from 'pixi.js'
+import { Loader } from 'pixi.js'
+
+const loader = Loader.shared
 
 const loadImages = () => {
   return new Promise(resolve => {

@@ -1,9 +1,9 @@
 import { TILE_RADIUS } from '../../constants/game'
 import { Pixel, Cube, Axial } from '../../types/coordinates'
+import game from '..'
 
-const pixelToAxial = (pixel: Pixel, scale: number) => {
-  const size = TILE_RADIUS * scale * 2
-
+const pixelToAxial = (pixel: Pixel) => {
+  const size = TILE_RADIUS * 2 * game.scale
   const x = ((Math.sqrt(3) / 3) * pixel.x - (1 / 3) * pixel.y) / size
   const z = ((2 / 3) * pixel.y) / size
 

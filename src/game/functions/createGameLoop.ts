@@ -1,15 +1,17 @@
 import Game from '../classes/Game'
-import { ticker } from 'pixi.js'
+import { Ticker } from 'pixi.js'
+
+const ticker = Ticker.shared
 
 const createGameLoop = (
   updateFunction: () => void,
   gameInstanceReference: Game
 ) => {
-  const loop = ticker.shared
+  // const loop = ticker.shared
 
-  loop.add(updateFunction, gameInstanceReference)
+  ticker.add(updateFunction, gameInstanceReference)
 
-  return loop
+  return ticker
 }
 
 export default createGameLoop

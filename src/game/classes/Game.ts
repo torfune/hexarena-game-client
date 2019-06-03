@@ -24,6 +24,7 @@ import getTileByAxial from '../functions/getTileByAxial'
 import getServerHost from '../../utils/getServerHost'
 import Tile from './Tile'
 import { ticker, Application, Container } from 'pixi.js'
+import { CLIENT_RENEG_WINDOW } from 'tls'
 
 class Game {
   scale: number = DEFAULT_SCALE
@@ -178,8 +179,7 @@ class Game {
         y: camera.y - (cursor.y - this.cursor.y),
       }
 
-      this.pixi.stage.x = this.camera.x
-      this.pixi.stage.y = this.camera.y
+      this.updateStagePosition()
     } else {
       // const speed = CAMERA_SPEED
       // let cameraChange: Pixel = { x: 0, y: 0 }
@@ -213,25 +213,27 @@ class Game {
           x: window.innerWidth / 2 - this.camera.x,
           y: window.innerHeight / 2 - this.camera.y,
         }
-        const axial = pixelToAxial(pixel, this.scale)
+        const axial = pixelToAxial(pixel)
+        console.log(axial)
 
         this.scale = this.targetScale
 
-        for (let i = 0; i < store.tiles.length; i++) {
-          store.tiles[i].updateScale()
-        }
+        // for (let i = 0; i < store.tiles.length; i++) {
+        //   store.tiles[i].updateScale()
+        // }
 
-        for (let i = 0; i < store.armies.length; i++) {
-          store.armies[i].updateScale()
-        }
+        // for (let i = 0; i < store.armies.length; i++) {
+        //   store.armies[i].updateScale()
+        // }
 
-        for (let i = 0; i < this.animations.length; i++) {
-          if (this.animations[i] instanceof GoldAnimation) {
-            this.animations[i].updateScale()
-          }
-        }
+        // for (let i = 0; i < this.animations.length; i++) {
+        //   if (this.animations[i] instanceof GoldAnimation) {
+        //     this.animations[i].updateScale()
+        //   }
+        // }
 
         this.setCameraToAxialPosition(axial)
+        // this.updateStageScale()
       }
     }
 
@@ -496,7 +498,7 @@ class Game {
       y: this.cursor.y - this.camera.y,
     }
 
-    const axial = pixelToAxial(pixel, this.scale)
+    const axial = pixelToAxial(pixel)
 
     return getTileByAxial(axial)
   }
@@ -709,15 +711,15 @@ class Game {
   setCameraToAxialPosition(axial: Axial) {
     if (!this.pixi) return
 
+    const { innerWidth, innerHeight } = window
     const pixel = getPixelPosition(axial)
-
     this.camera = {
-      x: window.innerWidth / 2 - pixel.x,
-      y: window.innerHeight / 2 - pixel.y,
+      x: innerWidth / 2 - pixel.x * this.scale,
+      y: innerHeight / 2 - pixel.y * this.scale,
     }
 
-    this.pixi.stage.x = this.camera.x
-    this.pixi.stage.y = this.camera.y
+    this.updateStageScale()
+    this.updateStagePosition()
   }
   updateCameraMove() {
     this.cameraMove = { x: 0, y: 0 }
@@ -859,6 +861,14 @@ class Game {
         armyTiles[j].removeHighlight()
       }
     }
+  }
+  updateStageScale() {
+    this.pixi.stage.scale.x = this.scale
+    this.pixi.stage.scale.y = this.scale
+  }
+  updateStagePosition() {
+    this.pixi.stage.x = this.camera.x
+    this.pixi.stage.y = this.camera.y
   }
 }
 
