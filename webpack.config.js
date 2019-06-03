@@ -1,33 +1,30 @@
 const path = require('path')
-const HtmlPlugin = require('html-webpack-plugin')
 const CopyPlugin = require('copy-webpack-plugin')
 
 module.exports = {
-  entry: ['@babel/polyfill', './src/index'],
+  entry: './src/index.tsx',
   output: {
-    path: path.join(__dirname, '/build'),
     filename: 'bundle.js',
+    path: path.join(__dirname, '/build'),
   },
-  resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.json'],
-  },
+  devtool: 'inline-source-map',
   module: {
     rules: [
       {
-        test: /\.(ts|js)x?$/,
+        test: /\.tsx?$/,
+        use: 'ts-loader',
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-        },
       },
     ],
   },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
   plugins: [
-    new HtmlPlugin({
-      template: './src/index.html',
-      hash: true,
-    }),
-    new CopyPlugin([{ from: './static', to: './static' }]),
+    new CopyPlugin([
+      { from: './static', to: './static' },
+      { from: './public', to: './' },
+    ]),
   ],
   devServer: {
     historyApiFallback: true,

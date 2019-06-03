@@ -1,7 +1,9 @@
+import { Sprite } from 'pixi.js'
+
 interface TileImageArray {
-  arrow: PIXI.Sprite[]
-  border: PIXI.Sprite[]
-  fog: PIXI.Sprite[]
+  arrow: Sprite[]
+  border: Sprite[]
+  fog: Sprite[]
 }
 
 export default TileImageArray

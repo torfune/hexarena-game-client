@@ -1,6 +1,8 @@
+import { loader } from 'pixi.js'
+
 const loadImages = () => {
   return new Promise(resolve => {
-    PIXI.loader
+    loader
       .add('actionBg', '/static/images/action-bg.png')
       .add('actionIconAttack', '/static/images/action-icon-attack.png')
       .add('actionIconBuild', '/static/images/action-icon-build.png')

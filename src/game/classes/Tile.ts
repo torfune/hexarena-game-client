@@ -2,16 +2,13 @@ import getPixelPosition from '../functions/getPixelPosition'
 import Army from './Army'
 import store from '../../store'
 import createImage from '../functions/createImage'
-import getRotationBySide from '../functions/getRotationBySide'
 import hex from '../functions/hex'
 import {
-  TILE_IMAGES,
   ARMY_ICON_OFFSET_Y,
   HEART_OFFSET_X,
   HITPOINTS_OFFSET_Y,
   NEIGHBOR_DIRECTIONS,
   BEDROCK_BORDER,
-  BEDROCK_BACKGROUND,
 } from '../../constants/game'
 import game from '..'
 import GoldAnimation from './GoldAnimation'
@@ -27,6 +24,7 @@ import Primitive from '../../types/Primitive'
 import Prop from '../../types/Prop'
 import createProp from '../../utils/createProp'
 import TileImageArray from '../../types/TileImageArray'
+import { Sprite, loader } from 'pixi.js'
 
 interface Props {
   [key: string]: Prop<Primitive>
@@ -59,24 +57,8 @@ class Tile {
   army: Army | null = null
   hitpointsVisible: boolean = false
   neighbors: Tile[] = []
-  image: TileImage = {
-    armyIcon: null,
-    background: null,
-    base: null,
-    blackOverlay: createImage('blackOverlay'),
-    camp: null,
-    castle: null,
-    contested: createImage('contested'),
-    forest: null,
-    heartLeft: null,
-    heartRight: null,
-    hitpointsBg: null,
-    mountain: null,
-    pattern: null,
-    patternPreview: null,
-    village: null,
-  }
-  imageArray: TileImageArray = {
+  image: TileImage = {}
+  imageSet: TileImageArray = {
     arrow: [],
     border: [],
     fog: [],
@@ -88,40 +70,40 @@ class Tile {
     this.bedrock = bedrock
     this.mountain = mountain
 
-    this.image.background = createImage('background', 'pattern')
-    this.image.background.tint = hex('#eee')
-    this.image.blackOverlay.alpha = 0.18
-    this.image.blackOverlay.visible = false
-    this.image.contested.visible = false
+    // this.image.background = createImage('background', 'pattern')
+    // this.image.background.tint = hex('#eee')
+    // this.image.blackOverlay.alpha = 0.18
+    // this.image.blackOverlay.visible = false
+    // this.image.contested.visible = false
 
     if (mountain) {
       this.addImage('mountain')
     }
 
-    if (bedrock) {
-      this.image.background.tint = hex(BEDROCK_BACKGROUND)
-    }
+    // if (bedrock) {
+    //   this.image.background.tint = hex(BEDROCK_BACKGROUND)
+    // }
 
-    this.imageArray.fog = []
-    for (let i = 0; i < 6; i++) {
-      this.imageArray.fog[i] = createImage('fog')
-      this.imageArray.fog[i].rotation = getRotationBySide(i)
-      this.imageArray.fog[i].visible = false
-    }
+    // this.imageSet.fog = []
+    // for (let i = 0; i < 6; i++) {
+    //   this.imageSet.fog[i] = createImage('fog')
+    //   this.imageSet.fog[i].rotation = getRotationBySide(i)
+    //   this.imageSet.fog[i].visible = false
+    // }
 
-    this.imageArray.border = []
-    for (let i = 0; i < 6; i++) {
-      this.imageArray.border[i] = createImage('border')
-      this.imageArray.border[i].rotation = getRotationBySide(i)
-      this.imageArray.border[i].visible = false
-    }
+    // this.imageSet.border = []
+    // for (let i = 0; i < 6; i++) {
+    //   this.imageSet.border[i] = createImage('border')
+    //   this.imageSet.border[i].rotation = getRotationBySide(i)
+    //   this.imageSet.border[i].visible = false
+    // }
 
-    this.imageArray.arrow = []
-    for (let i = 0; i < 6; i++) {
-      this.imageArray.arrow[i] = createImage('arrow')
-      this.imageArray.arrow[i].rotation = getRotationBySide(i)
-      this.imageArray.arrow[i].visible = false
-    }
+    // this.imageSet.arrow = []
+    // for (let i = 0; i < 6; i++) {
+    //   this.imageSet.arrow[i] = createImage('arrow')
+    //   this.imageSet.arrow[i].rotation = getRotationBySide(i)
+    //   this.imageSet.arrow[i].visible = false
+    // }
 
     this.updateScale()
   }
@@ -171,11 +153,11 @@ class Tile {
     }
   }
   updateBlackOverlay() {
-    if (this.mountain && this.owner) {
-      this.image.blackOverlay.visible = true
-    } else {
-      this.image.blackOverlay.visible = false
-    }
+    // if (this.mountain && this.owner) {
+    //   this.image.blackOverlay.visible = true
+    // } else {
+    //   this.image.blackOverlay.visible = false
+    // }
   }
   startHover() {
     if (this.hitpoints === 2 && !this.army) {
@@ -226,23 +208,23 @@ class Tile {
       image.scale.y = game.scale
     }
 
-    const imageArrayKeys = Object.keys(this.imageArray) as Array<
+    const imageSetKeys = Object.keys(this.imageSet) as Array<
       keyof TileImageArray
     >
-    for (let i = 0; i < imageArrayKeys.length; i++) {
-      const key = imageArrayKeys[i]
-      const imageArray = this.imageArray[key]
+    for (let i = 0; i < imageSetKeys.length; i++) {
+      const key = imageSetKeys[i]
+      const imageSet = this.imageSet[key]
 
       for (let j = 0; j < 6; j++) {
-        imageArray[j].x = pixel.x
-        imageArray[j].y = pixel.y
-        imageArray[j].scale.x = game.scale
-        imageArray[j].scale.y = game.scale
+        imageSet[j].x = pixel.x
+        imageSet[j].y = pixel.y
+        imageSet[j].scale.x = game.scale
+        imageSet[j].scale.y = game.scale
       }
     }
   }
   addHighlight() {
-    if (!this.owner || this.image.pattern === null) return
+    if (!this.owner || !this.image.pattern) return
 
     this.image.pattern.tint = hex(shade(this.owner.pattern, 10))
   }
@@ -258,7 +240,7 @@ class Tile {
 
     this.image[key] = image
 
-    new Animation(image, (image: PIXI.Sprite, fraction: number) => {
+    new Animation(image, (image: Sprite, fraction: number) => {
       image.alpha = fraction
     })
   }
@@ -291,7 +273,7 @@ class Tile {
   }
   addHitpoints() {
     const pixel = getPixelPosition(this.axial)
-    const fillTexture = PIXI.loader.resources['hitpointsFill'].texture
+    const fillTexture = loader.resources['hitpointsFill'].texture
 
     this.image.hitpointsBg = createImage('hitpointsBg')
     this.image.hitpointsBg.x = pixel.x
@@ -300,8 +282,8 @@ class Tile {
     this.image.hitpointsBg.scale.y = game.scale
     this.image.hitpointsBg.alpha = 0
 
-    this.image.heartLeft = new PIXI.Sprite(fillTexture)
-    this.image.heartRight = new PIXI.Sprite(fillTexture)
+    this.image.heartLeft = new Sprite(fillTexture)
+    this.image.heartRight = new Sprite(fillTexture)
     this.image.heartRight.x += HEART_OFFSET_X
 
     this.image.heartLeft.anchor.set(0.5, 0.5)
@@ -311,20 +293,20 @@ class Tile {
     this.image.hitpointsBg.addChild(this.image.heartRight)
   }
   addContested() {
-    this.image.contested.visible = true
+    // this.image.contested.visible = true
   }
   removeHighlight() {
-    if (!this.owner || this.image.pattern === null) return
+    if (!this.owner || !this.image.pattern) return
 
     this.image.pattern.tint = hex(this.owner.pattern)
   }
   removeContested() {
-    this.image.contested.visible = false
+    // this.image.contested.visible = false
   }
   removeImage(key: keyof TileImage) {
     const image = this.image[key]
 
-    if (!image || !(image instanceof PIXI.Sprite)) return
+    if (!image || !(image instanceof Sprite)) return
 
     delete this.image[key]
 
@@ -504,7 +486,7 @@ class Tile {
       )
     } else if (this.owner && this.image.pattern) {
       game.stage['pattern'].removeChild(this.image.pattern)
-      this.image.pattern = null
+      delete this.image.pattern
     }
 
     this.owner = owner
@@ -519,7 +501,7 @@ class Tile {
       const direction = invertHexDirection(i)
 
       if (n) {
-        n.imageArray.arrow[direction].visible = true
+        n.imageSet.arrow[direction].visible = true
       }
     }
 
@@ -554,7 +536,7 @@ class Tile {
       const direction = invertHexDirection(i)
 
       if (n) {
-        n.imageArray.arrow[direction].visible = false
+        n.imageSet.arrow[direction].visible = false
       }
     }
   }
@@ -590,9 +572,9 @@ class Tile {
   updateFogs() {
     for (let i = 0; i < 6; i++) {
       if (!this.neighbors[i]) {
-        this.imageArray.fog[i].visible = true
+        this.imageSet.fog[i].visible = true
       } else {
-        this.imageArray.fog[i].visible = false
+        this.imageSet.fog[i].visible = false
       }
     }
   }
@@ -655,10 +637,8 @@ class Tile {
         showBorder = true
       }
 
-      this.imageArray.border[i].visible = showBorder
-      this.imageArray.border[i].tint = borderTint
-        ? hex(borderTint)
-        : hex('#fff')
+      this.imageSet.border[i].visible = showBorder
+      this.imageSet.border[i].tint = borderTint ? hex(borderTint) : hex('#fff')
     }
   }
   isHovered() {

@@ -1,4 +1,4 @@
-import uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 
 const getBrowserId = () => {
   let browserId = window.localStorage.getItem('browserId')

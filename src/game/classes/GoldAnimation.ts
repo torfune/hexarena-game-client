@@ -2,6 +2,7 @@ import createImage from '../functions/createImage'
 import getPixelPosition from '../functions/getPixelPosition'
 import game from '..'
 import Tile from './Tile'
+import { Sprite } from 'pixi.js'
 
 const SCALE = 0.2
 const SPEED = 0.6
@@ -59,7 +60,7 @@ class GoldAnimation {
 class Coin {
   baseOffsetY: number = 0
   speed: number = 0
-  image: PIXI.Sprite
+  image: Sprite
   destroyed: boolean = false
 
   constructor(

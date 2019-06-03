@@ -23,15 +23,16 @@ import getHoveredTileInfo from '../functions/getHoveredTileInfo'
 import getTileByAxial from '../functions/getTileByAxial'
 import getServerHost from '../../utils/getServerHost'
 import Tile from './Tile'
+import { ticker, Application, Container } from 'pixi.js'
 
 class Game {
   scale: number = DEFAULT_SCALE
   targetScale: number = DEFAULT_SCALE
   selectedArmyTile: Tile | null = null
   socket: Socket = new Socket()
-  loop: PIXI.ticker.Ticker | null = null
-  pixi: PIXI.Application | null = null
-  readonly stage: { [key: string]: PIXI.Container } = {}
+  loop: ticker.Ticker | null = null
+  pixi: Application | null = null
+  readonly stage: { [key: string]: Container } = {}
   initialized: boolean = false
   running: boolean = false
   private pingArray: number[] = []
@@ -104,7 +105,7 @@ class Game {
       this.pixi = createPixiApp()
 
       for (let i = 0; i < TILE_IMAGES.length; i++) {
-        this.stage[TILE_IMAGES[i]] = new PIXI.Container()
+        this.stage[TILE_IMAGES[i]] = new Container()
         this.pixi.stage.addChild(this.stage[TILE_IMAGES[i]])
       }
     } else {

@@ -1,5 +1,6 @@
 import game from '..'
 import { easeInOutQuad } from '../functions/easing'
+import { Sprite } from 'pixi.js'
 
 class Animation {
   updateScale(): any {
@@ -10,17 +11,17 @@ class Animation {
   readonly ease: (t: number) => number = easeInOutQuad
   readonly context: any = {}
   fraction: number = 0
-  readonly onFinish?: (image: PIXI.Sprite, context: any) => void
+  readonly onFinish?: (image: Sprite, context: any) => void
   finished: boolean = false
 
   constructor(
-    readonly image: PIXI.Sprite,
-    readonly onUpdate: (image: PIXI.Sprite, ease: number, context: any) => void,
+    readonly image: Sprite,
+    readonly onUpdate: (image: Sprite, ease: number, context: any) => void,
     options?: {
       context?: any
       ease?: (t: number) => number
       initialFraction?: number
-      onFinish?: (image: PIXI.Sprite, context: any) => void
+      onFinish?: (image: Sprite, context: any) => void
       speed?: number
     }
   ) {

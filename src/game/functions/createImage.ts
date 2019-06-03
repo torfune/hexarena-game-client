@@ -1,11 +1,12 @@
 import game from '..'
+import { loader, Sprite } from 'pixi.js'
 
 const createImage = (imageName: string, textureName?: string) => {
   const texture = textureName
-    ? PIXI.loader.resources[textureName].texture
-    : PIXI.loader.resources[imageName].texture
+    ? loader.resources[textureName].texture
+    : loader.resources[imageName].texture
 
-  const image = new PIXI.Sprite(texture)
+  const image = new Sprite(texture)
 
   image.anchor.set(0.5, 0.5)
 

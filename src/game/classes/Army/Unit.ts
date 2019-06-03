@@ -5,9 +5,10 @@ import { UNIT_IMAGE_SCALE, UNIT_MAX_DELAY } from '../../../constants/game'
 import calculateFullScaleNumber from '../../functions/calculateFullScaleNumber'
 import roundToDecimals from '../../functions/roundToDecimals'
 import { Pixel } from '../../../types/coordinates'
+import { Sprite } from 'pixi.js'
 
 class Unit {
-  image: PIXI.Sprite = createImage('army')
+  image: Sprite = createImage('army')
   targetPosition: Pixel | null = null
   originalPosition: Pixel | null = null
   delay: number | null = null

@@ -9,6 +9,7 @@ import Primitive from '../../types/Primitive'
 import Prop from '../../types/Prop'
 import createProp from '../../utils/createProp'
 import createText from '../functions/createText'
+import { Sprite, Graphics, Text, loader } from 'pixi.js'
 
 const ACTION_RADIUS = 49
 
@@ -16,11 +17,11 @@ export type ActionType = 'attack' | 'cut' | 'build' | 'recruit'
 export type ActionStatus = 'pending' | 'running' | 'finished'
 
 interface Image {
-  background: PIXI.Sprite
-  fill: PIXI.Graphics
-  order: PIXI.Text
-  icon: PIXI.Sprite
-  cancelIcon: PIXI.Sprite
+  background: Sprite
+  fill: Graphics
+  order: Text
+  icon: Sprite
+  cancelIcon: Sprite
 }
 
 interface Props {
@@ -46,7 +47,7 @@ class Action {
   mouseLeft: boolean = false
   image: Image = {
     background: createImage('actionBg'),
-    fill: new PIXI.Graphics(),
+    fill: new Graphics(),
     icon: createImage('actionIcon', 'actionIconEmpty'),
     cancelIcon: createImage('actionIcon', 'actionIconCancel'),
     order: createText('#', 'actionIcon'),
@@ -81,7 +82,7 @@ class Action {
           case 'running':
             this.image.order.visible = false
 
-            const { texture } = PIXI.loader.resources[this.getTexture()]
+            const { texture } = loader.resources[this.getTexture()]
             this.image.icon.texture = texture
             break
 
