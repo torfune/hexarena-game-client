@@ -214,26 +214,9 @@ class Game {
           y: window.innerHeight / 2 - this.camera.y,
         }
         const axial = pixelToAxial(pixel)
-        console.log(axial)
 
         this.scale = this.targetScale
-
-        // for (let i = 0; i < store.tiles.length; i++) {
-        //   store.tiles[i].updateScale()
-        // }
-
-        // for (let i = 0; i < store.armies.length; i++) {
-        //   store.armies[i].updateScale()
-        // }
-
-        // for (let i = 0; i < this.animations.length; i++) {
-        //   if (this.animations[i] instanceof GoldAnimation) {
-        //     this.animations[i].updateScale()
-        //   }
-        // }
-
         this.setCameraToAxialPosition(axial)
-        // this.updateStageScale()
       }
     }
 

@@ -25,6 +25,8 @@ import Prop from '../../types/Prop'
 import createProp from '../../utils/createProp'
 import TileImageArray from '../../types/TileImageArray'
 import { Sprite, Loader } from 'pixi.js'
+import getRotationBySide from '../functions/getRotationBySide'
+import destroyImage from '../functions/destroyImage'
 
 const loader = Loader.shared
 
@@ -567,14 +569,23 @@ class Tile {
     this.updateFogs()
   }
   updateFogs() {
-    // const { fog } = this.imageSet
-    // for (let i = 0; i < 6; i++) {
-    //   if (!this.neighbors[i]) {
-    //     this.fog.fog[i].visible = true
-    //   } else {
-    //     this.fog.fog[i].visible = false
-    //   }
-    // }
+    for (let i = 0; i < 6; i++) {
+      const image = this.imageSet.fog[i]
+
+      if (!this.neighbors[i] && !image) {
+        const pixel = getPixelPosition(this.axial)
+        const newImage = createImage('fog')
+
+        newImage.x = pixel.x
+        newImage.y = pixel.y
+        newImage.rotation = getRotationBySide(i)
+
+        this.imageSet.fog[i] = newImage
+      } else if (this.neighbors[i] && image) {
+        destroyImage('fog', image)
+        this.imageSet.fog[i] = undefined
+      }
+    }
   }
   updateBorders() {
     for (let i = 0; i < 6; i++) {
