@@ -5,6 +5,7 @@ import {
   ZOOM_SPEED,
   MIN_SCALE,
   MAX_SCALE,
+  CAMERA_SPEED,
 } from '../../constants/game'
 import Socket from '../../websockets/Socket'
 import createGameLoop from '../functions/createGameLoop'
@@ -181,29 +182,29 @@ class Game {
 
       this.updateStagePosition()
     } else {
-      // const speed = CAMERA_SPEED
-      // let cameraChange: Pixel = { x: 0, y: 0 }
-      //
-      // if (this.keyDown['w']) {
-      //   cameraChange.y += speed * (2 / 3) * delta
-      // }
-      // if (this.keyDown['s']) {
-      //   cameraChange.y -= speed * (2 / 3) * delta
-      // }
-      // if (this.keyDown['a']) {
-      //   cameraChange.x += speed * (2 / 3) * delta
-      // }
-      // if (this.keyDown['d']) {
-      //   cameraChange.x -= speed * (2 / 3) * delta
-      // }
-      //
-      // if (cameraChange.x || cameraChange.y) {
-      //   this.camera.x += cameraChange.x
-      //   this.camera.y += cameraChange.y
-      //
-      //   this.pixi.stage.x = this.camera.x
-      //   this.pixi.stage.y = this.camera.y
-      // }
+      const speed = CAMERA_SPEED
+      let cameraChange: Pixel = { x: 0, y: 0 }
+
+      if (this.keyDown['w']) {
+        cameraChange.y += speed * (2 / 3)
+      }
+      if (this.keyDown['s']) {
+        cameraChange.y -= speed * (2 / 3)
+      }
+      if (this.keyDown['a']) {
+        cameraChange.x += speed * (2 / 3)
+      }
+      if (this.keyDown['d']) {
+        cameraChange.x -= speed * (2 / 3)
+      }
+
+      if (cameraChange.x || cameraChange.y) {
+        this.camera.x += cameraChange.x
+        this.camera.y += cameraChange.y
+
+        this.pixi.stage.x = this.camera.x
+        this.pixi.stage.y = this.camera.y
+      }
     }
 
     // Zoom
@@ -296,7 +297,7 @@ class Game {
     this.socket.send('pattern', pattern)
   }
   handleKeyDown({ key }: KeyboardEvent) {
-    if (!this.running) return
+    if (!this.running || store.status !== 'running') return
 
     this.keyDown[key] = true
     this.updateCameraMove()
