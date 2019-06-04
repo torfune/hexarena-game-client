@@ -22,12 +22,15 @@ class Player {
 
   readonly id: string
   readonly name: string
+  readonly registred: boolean
   @observable ally: Player | null = null
 
-  constructor(id: string, name: string, pattern: string) {
+  constructor(id: string, name: string, pattern: string, registred: boolean) {
     this.id = id
     this.name = name
     this.props.pattern = createProp(pattern)
+    this.registred = registred
+    console.log(this.registred)
   }
 
   setProp(key: keyof Props, value: Primitive) {

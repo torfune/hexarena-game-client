@@ -112,6 +112,17 @@ const DarkOverlay = styled.div`
   opacity: 0.5;
 `
 
+const Status = styled.p`
+  font-weight: 600;
+  font-size: 14px;
+  color: #666;
+  margin-left: auto;
+  margin-right: 16px;
+  text-transform: uppercase;
+  position: relative;
+  top: 1px;
+`
+
 const Players: React.FC = () => {
   const otherPlayers: Array<{
     name?: string
@@ -170,6 +181,7 @@ const Players: React.FC = () => {
       <You color={store.player.pattern}>
         <Pattern color={store.player.pattern} onClick={handlePatternClick} />
         <Name>{store.player.name}</Name>
+        <Status>{store.player.registred ? 'Registered User' : 'Guest'}</Status>
         {transitions.map(
           ({ item, key, props }) =>
             item && (
