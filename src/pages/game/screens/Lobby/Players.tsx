@@ -7,6 +7,7 @@ import { useState } from 'react'
 import game from '../../../../game'
 import PatternSelector from './PatternSelector'
 import React from 'react'
+import shadeColor from '../../../../utils/shade'
 
 const Container = styled.div`
   margin-top: 64px;
@@ -24,10 +25,12 @@ interface PatternProps {
   color?: string
 }
 const Pattern = styled.div<PatternProps>`
+  visibility: ${props => (props.color ? 'visible' : 'hidden')};
   margin-left: -8px;
   border-radius: 8px;
   background: ${props => props.color || '#444'};
   box-shadow: ${props => (props.color ? BOX_SHADOW : null)};
+  transition: 200ms;
 `
 
 const Name = styled.p`
@@ -37,7 +40,7 @@ const Name = styled.p`
   margin-left: 24px;
 `
 
-const You = styled.div<{ color?: string }>`
+const You = styled.div<{ color: string }>`
   display: flex;
   background: #fff;
   border-radius: 4px;
@@ -53,12 +56,17 @@ const You = styled.div<{ color?: string }>`
   ${Pattern} {
     width: 80px;
     height: 80px;
+
+    :hover {
+      transform: scale(1.1);
+      background: ${props => shadeColor(props.color, -10)};
+    }
   }
 `
 
 const Player = styled.div<{ color?: string }>`
   display: flex;
-  background: ${props => (props.color ? '#fff' : '#4f4f4f')};
+  background: ${props => (props.color ? '#fff' : '#444')};
   opacity: ${props => (props.color ? 1 : 0.5)};
   border-radius: 4px;
   margin-top: 32px;
