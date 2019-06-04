@@ -12,14 +12,14 @@ const Container = styled.div`
 
 const Content = styled.div`
   margin: 0 auto;
-  background: #555;
+  background: rgba(255, 255, 255, 0.92);
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
   border-top: none;
-  box-shadow: 0px 2px 6px #00000022;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 500;
+  border: 1px solid #ddd;
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
   padding: 4px 0;
   text-align: center;
   user-select: none;
