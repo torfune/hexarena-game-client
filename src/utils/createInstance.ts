@@ -107,19 +107,19 @@ const createArmy = (data: Data) => {
 }
 
 const createPlayer = (data: Data) => {
-  const { id, name, pattern } = data
+  const { id, name, pattern, registred } = data
 
   // Type check
   if (
     typeof id !== 'string' ||
     typeof name !== 'string' ||
-    typeof pattern !== 'string'
+    typeof pattern !== 'string' ||
+    typeof registred !== 'boolean'
   ) {
-    console.log(`id: ${id}, name: ${name}, pattern: ${pattern}`)
     return null
   }
 
-  return new Player(id, name, pattern)
+  return new Player(id, name, pattern, registred)
 }
 
 const createTile = (data: Data) => {
