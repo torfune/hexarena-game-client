@@ -7,6 +7,8 @@ import GuestSection from './GuestSection'
 import LoginSection from './LoginSection'
 import { useAuth } from '../../../auth'
 import React from 'react'
+import { PRIMARY, BOX_SHADOW } from '../../../constants/react'
+import shadeColor from '../../../utils/shade'
 
 const Container = styled.div`
   margin-top: 80px;
@@ -22,6 +24,22 @@ const ConnectionError = styled.p`
   color: #fff;
   font-size: 20px;
   margin-top: 32px;
+`
+
+const ReloadButton = styled.div`
+  background: ${PRIMARY};
+  padding: 12px 16px;
+  color: #fff;
+  margin-top: 16px;
+  border-radius: 4px;
+  text-align: center;
+  width: 200px;
+  box-shadow: ${BOX_SHADOW};
+  font-weight: 500;
+
+  :hover {
+    background: ${shadeColor(PRIMARY, -10)};
+  }
 `
 
 const MainSection: React.FC = () => {
@@ -45,20 +63,29 @@ const MainSection: React.FC = () => {
 
       setLoading(false)
     } catch {
-      setError(`Can't connect to the game server. Please try again.`)
+      setError(`Can't connect to the game server.`)
     }
 
     try {
       await axios.get(`http://${WS_HOST}/status`)
     } catch {
-      setError(`Can't connect to the web server. Please try again.`)
+      setError(`Can't connect to the web server.`)
     }
   }
 
   if (error) {
     return (
       <Container>
-        <ConnectionError>{error}</ConnectionError>
+        <div>
+          <ConnectionError>{error}</ConnectionError>
+          <ReloadButton
+            onClick={() => {
+              window.location.reload()
+            }}
+          >
+            Try again
+          </ReloadButton>
+        </div>
       </Container>
     )
   }
