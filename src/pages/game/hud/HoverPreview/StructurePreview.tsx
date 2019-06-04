@@ -9,7 +9,7 @@ const Container = styled.div`
 
 const Structure = styled.div`
   font-size: 16px;
-  font-style: italic;
+  font-weight: 500;
 `
 
 interface Props {

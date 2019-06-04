@@ -80,7 +80,7 @@ const Structure = styled.div`
   grid-column: 1;
   grid-row: 3;
   font-size: 16px;
-  font-style: italic;
+  color: #444;
   position: relative;
   top: 2px;
   padding-bottom: 4px;

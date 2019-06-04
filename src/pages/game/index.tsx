@@ -11,7 +11,6 @@ import SpectateCloseButton from './screens/SpectateCloseButton'
 import styled from 'styled-components'
 import Lobby from './screens/Lobby'
 import Gold from './hud/Gold'
-import YourEmpire from './hud/YourEmpire'
 import Performance from './hud/Performance'
 import { animated, useTransition } from 'react-spring'
 import SurrenderButton from './hud/SurrenderButton'
@@ -137,13 +136,6 @@ const Game: React.FC<RouteComponentProps> = observer(() => {
         visible={status === 'running' || status === 'finished'}
       />
 
-      {status === 'running' && (
-        <>
-          <Flasher />
-          <NotificationManager />
-        </>
-      )}
-
       {status !== 'running' && status !== 'finished' && (
         <SpinnerContainer>
           <Spinner size="128px" thickness="12px" />
@@ -170,7 +162,6 @@ const Game: React.FC<RouteComponentProps> = observer(() => {
               <HoverPreview />
               <Leaderboard />
               <Gold />
-              <YourEmpire />
               <Performance />
             </>
           )}
@@ -186,6 +177,13 @@ const Game: React.FC<RouteComponentProps> = observer(() => {
             ) : (
               <DefeatModal />
             ))}
+        </>
+      )}
+
+      {status === 'running' && (
+        <>
+          {/* <Flasher /> */}
+          <NotificationManager />
         </>
       )}
 

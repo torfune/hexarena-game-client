@@ -39,7 +39,7 @@ const renderIconByLabel = (label: string) => {
       src = '/static/icons/swords.svg'
       break
     case 'Build castle':
-      src = '/static/icons/resources.svg'
+      src = '/static/icons/castle.svg'
       break
     case 'Get gold':
       src = '/static/icons/axe.svg'

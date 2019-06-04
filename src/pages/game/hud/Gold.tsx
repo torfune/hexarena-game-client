@@ -1,8 +1,6 @@
 import { observer } from 'mobx-react-lite'
-import { animated } from 'react-spring'
 import styled from 'styled-components'
 import store from '../../../store'
-import Header from '../../../components/Header'
 import { useState, useEffect } from 'react'
 import React from 'react'
 
@@ -15,41 +13,53 @@ const Container = styled.div`
   position: absolute;
   top: 0;
   user-select: none;
-  width: 180px;
+  /* width: 270px; */
   transform-origin: left top;
   transform: scale(${store.hudScale});
-  height: 128px;
+  padding: 12px 16px;
+  display: grid;
+  grid-template-columns: 40px 100px 40px auto;
+  grid-column-gap: 8px;
+  grid-row-gap: 12px;
 `
 
-const Content = styled.div`
-  display: flex;
-  padding: 0 30px;
-  align-items: center;
-  height: 80px;
-  justify-content: space-between;
+const Label = styled.p<{ column: string }>`
+  text-transform: uppercase;
+  font-size: 16px;
+  font-weight: 600;
+  grid-row: 1;
+  color: #444;
+  grid-column: ${props => props.column} / span 2;
 `
 
-const Coin = styled(animated.img)`
-  height: 38px;
+const Icon = styled.img<{ column: string; size?: string; marginTop?: string }>`
+  height: ${props => props.size || '38px'};
+  grid-column: ${props => props.column};
+  margin-top: ${props => props.marginTop};
 `
 
 const Count = styled.div<{ top: number }>`
-  font-size: 40px;
-  color: #444;
+  font-size: 38px;
+  color: #222;
   position: absolute;
   top: ${props => props.top}px;
-  text-align: center;
   transition: 500ms;
   width: 64px;
-  line-height: 80px;
+  line-height: 44px;
 `
 
 const CountMask = styled.div`
   position: relative;
-  top: 0px;
-  height: 80px;
+  height: 44px;
   width: 64px;
   overflow: hidden;
+`
+
+const VillageCount = styled.p`
+  font-size: 38px;
+  color: #222;
+  position: relative;
+  top: -2px;
 `
 
 const numbers: number[] = []
@@ -58,33 +68,41 @@ for (let i = 0; i <= 50; i++) {
 }
 
 const BASE_TOP = 0
-const ROW_HEIGHT = 80
+const ROW_HEIGHT = 44
 
 const GoldSection = () => {
-  const [top, setTop] = useState(BASE_TOP)
+  const [goldTop, setGoldTop] = useState(BASE_TOP)
 
   useEffect(() => {
     const top = BASE_TOP + store.gold * ROW_HEIGHT * -1
-    setTop(top)
+    setGoldTop(top)
   }, [store.gold])
+
+  if (!store.villages) return null
 
   return (
     <Container>
-      <Header
-        text="Gold"
-        iconSrc="/static/icons/resources.svg"
-        iconSize="22px"
+      <Label column="1">Villages</Label>
+      <Label column="3">Gold</Label>
+
+      <Icon column="1" src="/static/icons/village.svg " />
+      <VillageCount>
+        {store.villages.current}/{store.villages.limit}
+      </VillageCount>
+
+      <Icon
+        column="3"
+        size="34px"
+        marginTop="4px"
+        src="/static/icons/gold.svg "
       />
-      <Content>
-        <Coin src="/static/icons/gold.svg " />
-        <CountMask>
-          <Count top={top}>
-            {numbers.map(number => (
-              <p key={number}>{number}</p>
-            ))}
-          </Count>
-        </CountMask>
-      </Content>
+      <CountMask>
+        <Count top={goldTop}>
+          {numbers.map(number => (
+            <p key={number}>{number}</p>
+          ))}
+        </Count>
+      </CountMask>
     </Container>
   )
 }
