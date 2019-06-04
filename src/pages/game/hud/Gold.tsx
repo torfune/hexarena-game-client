@@ -13,12 +13,11 @@ const Container = styled.div`
   position: absolute;
   top: 0;
   user-select: none;
-  /* width: 270px; */
   transform-origin: left top;
   transform: scale(${store.hudScale});
   padding: 12px 16px;
   display: grid;
-  grid-template-columns: 40px 100px 40px auto;
+  grid-template-columns: 40px 80px 40px 100px 40px auto;
   grid-column-gap: 8px;
   grid-row-gap: 12px;
 `
@@ -36,6 +35,7 @@ const Icon = styled.img<{ column: string; size?: string; marginTop?: string }>`
   height: ${props => props.size || '38px'};
   grid-column: ${props => props.column};
   margin-top: ${props => props.marginTop};
+  opacity: 0.8;
 `
 
 const Count = styled.div<{ top: number }>`
@@ -78,20 +78,36 @@ const GoldSection = () => {
     setGoldTop(top)
   }, [store.gold])
 
-  if (!store.villages) return null
+  if (!store.villages || !store.player) return null
 
   return (
     <Container>
-      <Label column="1">Villages</Label>
-      <Label column="3">Gold</Label>
+      <Label column="1">Tiles</Label>
+      <Label column="3">Villages</Label>
+      <Label column="5">Gold</Label>
 
-      <Icon column="1" src="/static/icons/village.svg " />
-      <VillageCount>
-        {store.villages.current}/{store.villages.limit}
-      </VillageCount>
+      <Icon
+        column="1"
+        size="34px"
+        marginTop="3px"
+        src="/static/icons/hexagon.svg "
+      />
+      <VillageCount>{store.player.tilesCount}</VillageCount>
 
       <Icon
         column="3"
+        size="34px"
+        marginTop="3px"
+        src="/static/icons/village.svg "
+      />
+      <VillageCount>
+        {!store.villages.current && !store.villages.limit
+          ? '0'
+          : `${store.villages.current}/${store.villages.limit}`}
+      </VillageCount>
+
+      <Icon
+        column="5"
         size="34px"
         marginTop="4px"
         src="/static/icons/gold.svg "

@@ -8,6 +8,7 @@ const SCALE = 0.2
 const SPEED = 0.6
 const OFFSET_X = 48
 const OFFSET_Y = 48
+const MIN_Y = 80
 
 class GoldAnimation {
   coins: Coin[] = []
@@ -31,7 +32,7 @@ class GoldAnimation {
         }
       }
 
-      this.coins.push(new Coin(tile, offsetX, offsetY))
+      this.coins.push(new Coin(tile, offsetX, offsetY + MIN_Y))
     }
 
     this.updateScale()
