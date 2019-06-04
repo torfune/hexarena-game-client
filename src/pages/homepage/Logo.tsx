@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { LOGO_SHADOW, PRIMARY, BOX_SHADOW } from '../../constants/react'
 import React from 'react'
 // import { version } from '../../package.json'
-const version = '#'
+const version = '1.16.0'
 
 const Container = styled.h1`
   color: #fff;

@@ -1,5 +1,25 @@
 const changelog = [
   {
+    version: 'Alpha 1.16.0',
+    points: [
+      'Performance optimizations.',
+      'Keyboard camera movement (WASD).',
+      'HUD improvements.',
+      'Bug fixes.',
+    ],
+  },
+  {
+    version: 'Alpha 1.15.0',
+    points: [
+      'Initial gold set to 4.',
+      'Faster manual attacks.',
+      'Random neutral castles.',
+      'Gold for capturing villages.',
+      'UI improvementes.',
+      'Bug fixes.',
+    ],
+  },
+  {
     version: 'Alpha 1.14.0',
     points: [
       'Repairing is faster than recruiting.',
