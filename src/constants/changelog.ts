@@ -1,5 +1,15 @@
 const changelog = [
   {
+    version: 'Alpha 1.17.0',
+    points: [
+      'Gold and Village counts are visible in leaderboard.',
+      'Cutting forests is faster.',
+      'Forest gold yield set to 3.',
+      'UI/HUD improvements.',
+      'Bug fixes.',
+    ],
+  },
+  {
     version: 'Alpha 1.16.0',
     points: [
       'Performance optimizations.',

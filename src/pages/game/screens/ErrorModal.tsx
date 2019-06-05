@@ -16,7 +16,7 @@ const Container = styled.div`
   transform: translateX(-${WIDTH / 2}px);
   box-shadow: ${BOX_SHADOW};
   border-radius: 16px;
-  z-index: 10;
+  z-index: 12;
 
   h2 {
     font-size: 24px;
@@ -50,7 +50,7 @@ const BlackOverlay = styled.div`
   left: 0;
   position: fixed;
   opacity: 0.6;
-  z-index: 9;
+  z-index: 11;
 `
 
 interface Props {
