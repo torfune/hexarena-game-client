@@ -8,6 +8,7 @@ import game from '../../../../game'
 import PatternSelector from './PatternSelector'
 import React from 'react'
 import shadeColor from '../../../../utils/shade'
+import Tooltip from '../../../../components/Tooltip'
 
 const Container = styled.div`
   margin-top: 64px;
@@ -39,6 +40,33 @@ const Name = styled.p`
   color: #222;
   margin-left: 24px;
   white-space: nowrap;
+`
+
+const UserTypeContainer = styled.div<{ background?: string }>`
+  border-radius: 100%;
+  width: 32px;
+  height: 32px;
+  margin-left: auto;
+  margin-right: 16px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: ${props => props.background};
+
+  :hover {
+    > :first-child {
+      display: block;
+    }
+  }
+`
+
+const UserType = styled.p`
+  font-weight: 800;
+  font-size: 20px;
+  color: #fff;
+  text-transform: uppercase;
+  top: 1px;
 `
 
 const You = styled.div<{ color: string }>`
@@ -91,6 +119,19 @@ const Player = styled.div<{ color?: string }>`
       margin-left: 8px;
     }
   }
+
+  ${UserTypeContainer} {
+    width: 24px;
+    height: 24px;
+
+    > :first-child {
+      bottom: 35px;
+    }
+  }
+
+  ${UserType} {
+    font-size: 14px;
+  }
 `
 
 const OtherPlayers = styled.div`
@@ -112,21 +153,6 @@ const DarkOverlay = styled.div`
   z-index: 1;
   background: #000;
   opacity: 0.5;
-`
-
-interface UserTypeProps {
-  fontSize: string
-  marginRight: string
-}
-const UserType = styled.p<UserTypeProps>`
-  font-weight: 600;
-  font-size: ${props => props.fontSize};
-  color: #666;
-  margin-left: auto;
-  margin-right: ${props => props.marginRight};
-  text-transform: uppercase;
-  position: relative;
-  top: 1px;
 `
 
 const Players: React.FC = () => {
@@ -189,9 +215,12 @@ const Players: React.FC = () => {
       <You color={store.player.pattern}>
         <Pattern color={store.player.pattern} onClick={handlePatternClick} />
         <Name>{store.player.name}</Name>
-        <UserType marginRight="16px" fontSize="14px">
-          {store.player.registered ? 'Registered' : 'Guest'}
-        </UserType>
+        {store.player.registered && (
+          <UserTypeContainer background={store.player.pattern}>
+            <Tooltip>Registered user</Tooltip>
+            <UserType>R</UserType>
+          </UserTypeContainer>
+        )}
         {transitions.map(
           ({ item, key, props }) =>
             item && (
@@ -215,10 +244,11 @@ const Players: React.FC = () => {
           <Player key={index} color={player.pattern}>
             <Pattern color={player.pattern} />
             <Name>{player.name}</Name>
-            {player.name && (
-              <UserType marginRight="8px" fontSize="10px">
-                {player.registered ? 'Registered' : 'Guest'}
-              </UserType>
+            {player.registered && (
+              <UserTypeContainer background={player.pattern}>
+                <Tooltip>Registered user</Tooltip>
+                <UserType>R</UserType>
+              </UserTypeContainer>
             )}
           </Player>
         ))}
