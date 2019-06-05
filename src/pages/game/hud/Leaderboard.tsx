@@ -4,6 +4,7 @@ import store from '../../../store'
 import getPlayerGroups from '../../../utils/getPlayerGroups'
 import Header from '../../../components/Header'
 import React from 'react'
+import { HUD_SCALE } from '../../../constants/react'
 
 const Container = styled.div`
   background: rgba(255, 255, 255, 0.92);
@@ -20,7 +21,7 @@ const Container = styled.div`
 
   /* Resolution scaling */
   transform-origin: right bottom;
-  transform: scale(${store.hudScale});
+  transform: scale(${HUD_SCALE});
 `
 
 const Content = styled.div`

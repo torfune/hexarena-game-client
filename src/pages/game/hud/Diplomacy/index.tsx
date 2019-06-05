@@ -7,14 +7,14 @@ import Header from '../../../../components/Header'
 import Label from '../../../../components/Label'
 import store from '../../../../store'
 import game from '../../../../game'
-import { BLUE, PRIMARY } from '../../../../constants/react'
+import { BLUE, PRIMARY, HUD_SCALE } from '../../../../constants/react'
 import React from 'react'
 
 const Container = styled.div`
   z-index: 2;
   background: rgba(255, 255, 255, 0.92);
   bottom: 0;
-  right: calc(256px * ${store.hudScale});
+  right: calc(256px * ${HUD_SCALE});
   width: 300px;
   position: absolute;
   user-select: none;
@@ -26,7 +26,7 @@ const Container = styled.div`
 
   /* Resolution scaling */
   transform-origin: right bottom;
-  transform: scale(${store.hudScale});
+  transform: scale(${HUD_SCALE});
 `
 
 const Content = styled.div`

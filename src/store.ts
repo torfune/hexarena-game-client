@@ -38,7 +38,6 @@ class Store {
   @observable gameTime?: number
   @observable serverTime?: number
   @observable notification?: string
-  @observable hudScale: number = 1
   @observable error?: {
     message: string
     goHome: boolean

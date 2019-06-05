@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import store from '../../../store'
 import { useState, useEffect } from 'react'
 import React from 'react'
+import { HUD_SCALE } from '../../../constants/react'
 
 const Container = styled.div`
   background: rgba(255, 255, 255, 0.92);
@@ -14,7 +15,7 @@ const Container = styled.div`
   top: 0;
   user-select: none;
   transform-origin: left top;
-  transform: scale(${store.hudScale});
+  transform: scale(${HUD_SCALE});
   padding: 12px 16px;
   display: grid;
   grid-template-columns: 40px 80px 40px 100px 40px auto;
@@ -31,15 +32,15 @@ const Label = styled.p<{ column: string }>`
   grid-column: ${props => props.column} / span 2;
 `
 
-const Icon = styled.img<{ column: string; size?: string; marginTop?: string }>`
-  height: ${props => props.size || '38px'};
+const Icon = styled.img<{ column: string; size: string; marginTop?: string }>`
+  height: ${props => props.size};
   grid-column: ${props => props.column};
   margin-top: ${props => props.marginTop};
   opacity: 0.8;
 `
 
 const Count = styled.div<{ top: number }>`
-  font-size: 38px;
+  font-size: 34px;
   color: #222;
   position: absolute;
   top: ${props => props.top}px;
@@ -56,7 +57,7 @@ const CountMask = styled.div`
 `
 
 const VillageCount = styled.p`
-  font-size: 38px;
+  font-size: 34px;
   color: #222;
   position: relative;
   top: -2px;
@@ -67,7 +68,7 @@ for (let i = 0; i <= 50; i++) {
   numbers.push(i)
 }
 
-const BASE_TOP = 0
+const BASE_TOP = -3
 const ROW_HEIGHT = 44
 
 const GoldSection = () => {
@@ -88,7 +89,7 @@ const GoldSection = () => {
 
       <Icon
         column="1"
-        size="34px"
+        size="28px"
         marginTop="3px"
         src="/static/icons/hexagon.svg "
       />
@@ -96,7 +97,7 @@ const GoldSection = () => {
 
       <Icon
         column="3"
-        size="34px"
+        size="28px"
         marginTop="3px"
         src="/static/icons/village.svg "
       />
@@ -108,7 +109,7 @@ const GoldSection = () => {
 
       <Icon
         column="5"
-        size="34px"
+        size="28px"
         marginTop="4px"
         src="/static/icons/gold.svg "
       />

@@ -182,7 +182,7 @@ const Game: React.FC<RouteComponentProps> = observer(() => {
 
       {status === 'running' && (
         <>
-          {/* <Flasher /> */}
+          <Flasher />
           <NotificationManager />
         </>
       )}

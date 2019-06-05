@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import store from '../../../store'
 import React from 'react'
+import { HUD_SCALE } from '../../../constants/react'
 
 const Container = styled.div`
   position: absolute;
@@ -17,7 +18,7 @@ const Container = styled.div`
 
   /* Resolution scaling */
   transform-origin: right top;
-  transform: scale(${store.hudScale});
+  transform: scale(${HUD_SCALE});
 `
 
 const Label = styled.p`
