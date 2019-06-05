@@ -11,7 +11,7 @@ const players: GameServerMessage = {
     tilesCount: 'number',
     allyId: 'string',
     alive: 'bool',
-    registred: 'bool',
+    registered: 'bool',
   },
 }
 

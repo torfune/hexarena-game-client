@@ -38,6 +38,7 @@ const Name = styled.p`
   font-size: 28px;
   color: #222;
   margin-left: 24px;
+  white-space: nowrap;
 `
 
 const You = styled.div<{ color: string }>`
@@ -83,6 +84,7 @@ const Player = styled.div<{ color?: string }>`
 
   ${Name} {
     font-size: 20px;
+    margin-left: 10px;
 
     @media (max-width: 1600px) {
       font-size: 16px;
@@ -112,12 +114,16 @@ const DarkOverlay = styled.div`
   opacity: 0.5;
 `
 
-const Status = styled.p`
+interface UserTypeProps {
+  fontSize: string
+  marginRight: string
+}
+const UserType = styled.p<UserTypeProps>`
   font-weight: 600;
-  font-size: 14px;
+  font-size: ${props => props.fontSize};
   color: #666;
   margin-left: auto;
-  margin-right: 16px;
+  margin-right: ${props => props.marginRight};
   text-transform: uppercase;
   position: relative;
   top: 1px;
@@ -127,6 +133,7 @@ const Players: React.FC = () => {
   const otherPlayers: Array<{
     name?: string
     pattern?: string
+    registered?: boolean
   }> = []
 
   for (let i = 0; i < 6; i++) {
@@ -138,6 +145,7 @@ const Players: React.FC = () => {
       otherPlayers.push({
         name: player.name,
         pattern: player.pattern,
+        registered: player.registered,
       })
     } else {
       otherPlayers.push({})
@@ -181,7 +189,9 @@ const Players: React.FC = () => {
       <You color={store.player.pattern}>
         <Pattern color={store.player.pattern} onClick={handlePatternClick} />
         <Name>{store.player.name}</Name>
-        <Status>{store.player.registred ? 'Registered User' : 'Guest'}</Status>
+        <UserType marginRight="16px" fontSize="14px">
+          {store.player.registered ? 'Registered' : 'Guest'}
+        </UserType>
         {transitions.map(
           ({ item, key, props }) =>
             item && (
@@ -205,6 +215,11 @@ const Players: React.FC = () => {
           <Player key={index} color={player.pattern}>
             <Pattern color={player.pattern} />
             <Name>{player.name}</Name>
+            {player.name && (
+              <UserType marginRight="8px" fontSize="10px">
+                {player.registered ? 'Registered' : 'Guest'}
+              </UserType>
+            )}
           </Player>
         ))}
       </OtherPlayers>
