@@ -75,36 +75,9 @@ class Tile {
     this.bedrock = bedrock
     this.mountain = mountain
 
-    // this.image.background = createImage('background', 'pattern')
-
-    // this.image.blackOverlay.alpha = 0.18
-    // this.image.blackOverlay.visible = false
-    // this.image.contested.visible = false
-
     if (mountain) {
       this.addImage('mountain')
     }
-
-    // this.imageSet.fog = []
-    // for (let i = 0; i < 6; i++) {
-    //   this.imageSet.fog[i] = createImage('fog')
-    //   this.imageSet.fog[i].rotation = getRotationBySide(i)
-    //   this.imageSet.fog[i].visible = false
-    // }
-
-    // this.imageSet.border = []
-    // for (let i = 0; i < 6; i++) {
-    //   this.imageSet.border[i] = createImage('border')
-    //   this.imageSet.border[i].rotation = getRotationBySide(i)
-    //   this.imageSet.border[i].visible = false
-    // }
-
-    // this.imageSet.arrow = []
-    // for (let i = 0; i < 6; i++) {
-    //   this.imageSet.arrow[i] = createImage('arrow')
-    //   this.imageSet.arrow[i].rotation = getRotationBySide(i)
-    //   this.imageSet.arrow[i].visible = false
-    // }
 
     this.updateOwner()
     this.updateScale()
@@ -121,11 +94,6 @@ class Tile {
       case 'village':
       case 'forest':
         this.updateImage(key)
-
-        if (key === 'forest' && !value && this.ownerId === store.playerId) {
-          new GoldAnimation(this, 2)
-        }
-
         break
 
       case 'ownerId':
@@ -685,9 +653,6 @@ class Tile {
         destroyImage('border', image)
         this.imageSet.border[i] = null
       }
-
-      // this.imageSet.border[i].visible = showBorder
-      // this.imageSet.border[i].tint = borderTint ? hex(borderTint) : hex('#fff')
     }
   }
   isHovered() {
