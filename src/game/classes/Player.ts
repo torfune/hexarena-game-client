@@ -26,14 +26,14 @@ class Player {
 
   readonly id: string
   readonly name: string
-  readonly registred: boolean
+  readonly registered: boolean
   @observable ally: Player | null = null
 
-  constructor(id: string, name: string, pattern: string, registred: boolean) {
+  constructor(id: string, name: string, pattern: string, registered: boolean) {
     this.id = id
     this.name = name
     this.props.pattern = createProp(pattern)
-    this.registred = registred
+    this.registered = registered
   }
 
   setProp(key: keyof Props, value: Primitive) {

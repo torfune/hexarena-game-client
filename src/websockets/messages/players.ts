@@ -13,7 +13,7 @@ const players: GameServerMessage = {
     gold: 'number',
     villages: 'number',
     alive: 'bool',
-    registred: 'bool',
+    registered: 'bool',
   },
 }
 
