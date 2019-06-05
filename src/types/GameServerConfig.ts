@@ -1,5 +1,5 @@
 interface GameServerConfig {
-  // GAME
+  // GENERAL
   DEBUG_MODE: boolean
   WORLD_SIZE: number
   BEDROCK_SIZE: number
@@ -7,6 +7,7 @@ interface GameServerConfig {
   TICK_RATE: number
   GAME_LENGTH: number
   TWO_PLAYERS_TIME_DROP: number
+  CHAT_MESSAGE_MAX_LENGTH: number
 
   // MATCH MAKING
   MIN_PLAYERS: number

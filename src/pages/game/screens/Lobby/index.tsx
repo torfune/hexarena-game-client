@@ -35,7 +35,7 @@ const Logo = styled.h2`
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: 450px 3fr 2fr;
+  grid-template-columns: 450px auto 30%;
   position: relative;
 `
 

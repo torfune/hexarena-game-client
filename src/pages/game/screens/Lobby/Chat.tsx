@@ -12,7 +12,8 @@ const Container = styled.div`
 
 const MessagesContainer = styled.div`
   height: calc(100% - 39px - 16px);
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 `
 
 const Message = styled.div`
@@ -23,6 +24,7 @@ const MessageAuthor = styled.p`
   font-weight: 600;
   color: #fff;
   user-select: text;
+  white-space: nowrap;
 `
 
 const MessageContent = styled.p`
@@ -82,6 +84,8 @@ const Chat = () => {
     }
   })
 
+  if (!store.gsConfig) return null
+
   return (
     <Container>
       <MessagesContainer ref={elementRef}>
@@ -96,7 +100,7 @@ const Chat = () => {
       <Input
         autoFocus
         placeholder="Type your message ..."
-        maxLength={64}
+        maxLength={store.gsConfig.CHAT_MESSAGE_MAX_LENGTH}
         value={message}
         onChange={handleMessageChange}
       />
