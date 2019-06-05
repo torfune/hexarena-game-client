@@ -27,7 +27,6 @@ class Store {
   @observable startCountdown: number | null = null
   @observable showHud: boolean = true
   @observable spectating: boolean = false
-  @observable gold: number = 0
   @observable fps: number = 0
   @observable ping: number = 0
   @observable flash: number = 0
@@ -41,10 +40,6 @@ class Store {
   @observable error?: {
     message: string
     goHome: boolean
-  }
-  @observable villages?: {
-    current: number
-    limit: number
   }
   changeHandlers: { [key: string]: (value: any) => void } = {}
   private idMap: {

@@ -1,17 +1,22 @@
 import { observer } from 'mobx-react-lite'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import store from '../../../store'
 import getPlayerGroups from '../../../utils/getPlayerGroups'
-import Header from '../../../components/Header'
 import React from 'react'
 import { HUD_SCALE } from '../../../constants/react'
+import shadeColor from '../../../utils/shade'
+
+const GridCSS = css`
+  display: grid;
+  grid-template-columns: auto 44px 44px 44px;
+`
 
 const Container = styled.div`
   background: rgba(255, 255, 255, 0.92);
   bottom: 0;
   right: 0;
   min-height: 240px;
-  width: 256px;
+  width: 320px;
   position: absolute;
   user-select: none;
   border-top-left-radius: 8px;
@@ -24,18 +29,43 @@ const Container = styled.div`
   transform: scale(${HUD_SCALE});
 `
 
-const Content = styled.div`
-  padding: 20px 24px;
+const Icon = styled.img`
+  height: 18px;
+  opacity: 0.7;
+  display: block;
+  margin: 0 auto;
 `
 
-const Pattern = styled.div`
-  height: 16px;
-  width: 16px;
-  border-radius: 50%;
+const Heading = styled.p`
+  text-transform: uppercase;
+  margin-top: 16px;
+  margin-left: 16px;
+  margin-bottom: 12px;
+  margin-right: 16px;
+  font-weight: 600;
+  color: #333;
+  font-size: 17px;
+
+  ${GridCSS};
+`
+
+const Row = styled.div`
+  display: flex;
+  align-items: center;
+`
+
+interface PatternProps {
+  color: string
+}
+const Pattern = styled.div<PatternProps>`
+  height: 18px;
+  width: 18px;
+  border-radius: 6px;
   background: ${({ color }) => color};
   margin-right: 8px;
   position: relative;
   top: -1px;
+  border: 1px solid ${props => shadeColor(props.color, -10)};
 `
 
 const Skull = styled.img`
@@ -47,12 +77,17 @@ const Skull = styled.img`
 `
 
 const Group = styled.div`
-  background: #eee;
+  background: #efefef;
   margin-top: 10px;
-  border-radius: 4px;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
 
   :first-child {
     margin-top: 0;
+  }
+
+  p {
+    text-align: center;
   }
 `
 
@@ -60,17 +95,13 @@ interface PlayerProps {
   opacity: number
 }
 const Player = styled.div<PlayerProps>`
-  display: flex;
-  align-items: center;
-  padding: 10px 14px;
+  padding: 10px 16px;
   opacity: ${({ opacity }) => opacity};
+
+  ${GridCSS};
 
   p {
     font-weight: 500;
-
-    :last-child {
-      margin-left: auto;
-    }
   }
 `
 
@@ -81,16 +112,18 @@ const Leaderboard = observer(() => {
 
   return (
     <Container>
-      <Header
-        text="Players"
-        iconSrc="/static/icons/crown.svg"
-        iconSize="24px"
-      />
-      <Content>
-        {groups.map((group, index) => (
-          <Group key={index}>
-            {group.players.map(player => (
-              <Player key={player.id} opacity={player.alive ? 1 : 0.5}>
+      <Heading>
+        <span>Players</span>
+        <Icon src="/static/icons/hexagon.svg" />
+        <Icon src="/static/icons/village.svg" />
+        <Icon src="/static/icons/gold.svg" />
+      </Heading>
+
+      {groups.map((group, index) => (
+        <Group key={index}>
+          {group.players.map(player => (
+            <Player key={player.id} opacity={player.alive ? 1 : 0.5}>
+              <Row>
                 {player.alive ? (
                   <Pattern color={player.pattern} />
                 ) : (
@@ -98,12 +131,15 @@ const Leaderboard = observer(() => {
                 )}
 
                 <p>{player.name}</p>
-                <p>{player.alive ? player.tilesCount : '-'}</p>
-              </Player>
-            ))}
-          </Group>
-        ))}
-      </Content>
+              </Row>
+
+              <p>{player.alive ? player.tilesCount : '-'}</p>
+              <p>{player.alive ? player.villages : '-'}</p>
+              <p>{player.alive ? player.gold : '-'}</p>
+            </Player>
+          ))}
+        </Group>
+      ))}
     </Container>
   )
 })

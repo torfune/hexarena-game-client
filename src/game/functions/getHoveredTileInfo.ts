@@ -5,7 +5,7 @@ import game from '..'
 import HoveredTileInfo from '../../types/HoveredTileInfo'
 
 const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
-  if (!store.gsConfig || !store.playerId) return null
+  if (!store.gsConfig || !store.playerId || !store.player) return null
 
   const { BUILD_COST, RECRUIT_COST } = store.gsConfig
 
@@ -58,7 +58,7 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
       label: 'Build castle',
       structure,
       duration: `${store.gsConfig.BUILD_DURATION / 1000}s`,
-      notEnoughGold: store.gold < BUILD_COST,
+      notEnoughGold: store.player.gold < BUILD_COST,
       goldCost: BUILD_COST,
     }
   }
@@ -79,7 +79,7 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
         label: 'Repair building',
         structure,
         duration: `${store.gsConfig.HEAL_DURATION / 1000}s`,
-        notEnoughGold: store.gold < RECRUIT_COST,
+        notEnoughGold: store.player.gold < RECRUIT_COST,
         goldCost: RECRUIT_COST,
       }
     }
@@ -88,7 +88,7 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
       label: 'Recruit army',
       structure,
       duration: `${store.gsConfig.RECRUIT_DURATION / 1000}s`,
-      notEnoughGold: store.gold < RECRUIT_COST,
+      notEnoughGold: store.player.gold < RECRUIT_COST,
       goldCost: RECRUIT_COST,
     }
   }

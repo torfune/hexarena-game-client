@@ -31,8 +31,6 @@ class Socket {
     const [key, payload] = data.split('//')
     const messageKeys = Object.keys(messages)
 
-    // console.log(`${key}: ${payload}`)
-
     if (!messageKeys.includes(key)) {
       console.warn(`Unhandled message: ${key}`)
       return
@@ -229,9 +227,9 @@ class Socket {
   }
   close = () => {
     console.log('close called')
-    // if (this.ws) {
-    //   this.ws.close()
-    // }
+    if (this.ws) {
+      this.ws.close()
+    }
   }
 }
 
@@ -279,17 +277,8 @@ const setStoreValue = (key: string, value: any) => {
       }
       store.status = value
       break
-    case 'villages':
-      store.villages = value
-      break
     case 'chatMessages':
       store.chatMessages = value
-      break
-    case 'gold':
-      if (typeof value !== 'number') {
-        throw Error(typeError(key, value))
-      }
-      store.gold = value
       break
     case 'alreadyPlaying':
       break

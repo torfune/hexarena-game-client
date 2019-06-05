@@ -5,7 +5,6 @@ import armies from './armies'
 import chatMessages from './chatMessages'
 import GameServerMessage from '../../types/GameServerMessage'
 import gameTime from './gameTime'
-import gold from './gold'
 import goldAnimation from './goldAnimation'
 import playerId from './playerId'
 import players from './players'
@@ -13,7 +12,6 @@ import serverTime from './serverTime'
 import startCountdown from './startCountdown'
 import status from './status'
 import tiles from './tiles'
-import villages from './villages'
 import flash from './flash'
 import notification from './notification'
 
@@ -26,7 +24,6 @@ const messages: {
   armies,
   chatMessages,
   gameTime,
-  gold,
   goldAnimation,
   playerId,
   players,
@@ -34,9 +31,8 @@ const messages: {
   startCountdown,
   status,
   tiles,
-  villages,
   flash,
-  notification
+  notification,
 }
 
 export default messages

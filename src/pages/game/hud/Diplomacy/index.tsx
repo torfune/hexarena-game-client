@@ -14,7 +14,7 @@ const Container = styled.div`
   z-index: 2;
   background: rgba(255, 255, 255, 0.92);
   bottom: 0;
-  right: calc(256px * ${HUD_SCALE});
+  right: calc(319px * ${HUD_SCALE});
   width: 300px;
   position: absolute;
   user-select: none;
@@ -30,7 +30,7 @@ const Container = styled.div`
 `
 
 const Content = styled.div`
-  padding: 0 30px;
+  padding: 0 16px;
 `
 
 const ToggleButton = styled.div`
@@ -123,7 +123,7 @@ const Diplomacy = () => {
   return (
     <Container ref={containerRef}>
       <Header
-        text={player.ally ? 'Alliance' : 'Diplomacy'}
+        text={player.ally ? 'Your ally' : 'Diplomacy'}
         iconSrc="/static/icons/player.svg"
         iconSize="24px"
         color={blueHeader ? BLUE : undefined}

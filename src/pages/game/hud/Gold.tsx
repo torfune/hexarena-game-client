@@ -18,7 +18,7 @@ const Container = styled.div`
   transform: scale(${HUD_SCALE});
   padding: 12px 16px;
   display: grid;
-  grid-template-columns: 40px 80px 40px 100px 40px auto;
+  grid-template-columns: 36px 80px 36px 80px 36px auto;
   grid-column-gap: 8px;
   grid-row-gap: 12px;
 `
@@ -74,12 +74,14 @@ const ROW_HEIGHT = 44
 const GoldSection = () => {
   const [goldTop, setGoldTop] = useState(BASE_TOP)
 
-  useEffect(() => {
-    const top = BASE_TOP + store.gold * ROW_HEIGHT * -1
-    setGoldTop(top)
-  }, [store.gold])
+  if (!store.player) return null
 
-  if (!store.villages || !store.player) return null
+  useEffect(() => {
+    if (store.player) {
+      const top = BASE_TOP + store.player.gold * ROW_HEIGHT * -1
+      setGoldTop(top)
+    }
+  }, [store.player.gold])
 
   return (
     <Container>
@@ -91,7 +93,7 @@ const GoldSection = () => {
         column="1"
         size="28px"
         marginTop="3px"
-        src="/static/icons/hexagon.svg "
+        src="/static/icons/hexagon.svg"
       />
       <VillageCount>{store.player.tilesCount}</VillageCount>
 
@@ -99,19 +101,15 @@ const GoldSection = () => {
         column="3"
         size="28px"
         marginTop="3px"
-        src="/static/icons/village.svg "
+        src="/static/icons/village.svg"
       />
-      <VillageCount>
-        {!store.villages.current && !store.villages.limit
-          ? '0'
-          : `${store.villages.current}/${store.villages.limit}`}
-      </VillageCount>
+      <VillageCount>{store.player.villages}</VillageCount>
 
       <Icon
         column="5"
         size="28px"
         marginTop="4px"
-        src="/static/icons/gold.svg "
+        src="/static/icons/gold.svg"
       />
       <CountMask>
         <Count top={goldTop}>

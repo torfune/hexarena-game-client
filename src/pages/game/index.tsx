@@ -46,6 +46,15 @@ const SpinnerContainer = styled.div`
   }
 `
 
+const HudContainer = styled.div`
+  z-index: 10;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+`
+
 interface GameCanvasProps {
   visible: boolean
 }
@@ -153,7 +162,7 @@ const Game: React.FC<RouteComponentProps> = observer(() => {
       )}
 
       {status === 'running' && player && (
-        <>
+        <HudContainer>
           <GameTime />
 
           {showHud && player.alive && (
@@ -177,7 +186,7 @@ const Game: React.FC<RouteComponentProps> = observer(() => {
             ) : (
               <DefeatModal />
             ))}
-        </>
+        </HudContainer>
       )}
 
       {status === 'running' && (

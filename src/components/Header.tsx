@@ -4,28 +4,18 @@ import * as React from 'react'
 const Container = styled.div`
   display: flex;
   justify-content: space-between;
-  padding: 12px 30px;
+  padding: 12px 16px;
   align-items: center;
-  background: ${props => props.color || '#eee'};
+  background: ${props => props.color || '#fff'};
   transition: 100ms;
 
   h2 {
     margin-top: 2px;
     text-transform: uppercase;
-    color: ${props => (props.color ? '#fff' : '#444')};
-    font-size: 18px;
+    color: ${props => (props.color ? '#fff' : '#333')};
+    font-size: 17px;
     font-weight: 600;
   }
-`
-
-interface IconProps {
-  size: string
-}
-
-const Icon = styled.img<IconProps>`
-  height: ${props => props.size};
-  filter: ${props => props.color && 'invert(1)'};
-  opacity: ${props => !props.color && 0.7};
 `
 
 interface Props {
@@ -35,10 +25,9 @@ interface Props {
   color?: string
 }
 
-const Header: React.FC<Props> = ({ text, iconSrc, iconSize, color }) => (
+const Header: React.FC<Props> = ({ text, color }) => (
   <Container color={color}>
     <h2>{text}</h2>
-    <Icon src={iconSrc} size={iconSize} color={color} />
   </Container>
 )
 

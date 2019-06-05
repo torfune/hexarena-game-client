@@ -767,7 +767,7 @@ class Tile {
     return 'Plains'
   }
   canPlayerCreateAction() {
-    if (!store.player || store.gold === undefined || !store.gsConfig) {
+    if (!store.player || !store.gsConfig) {
       return false
     }
 
@@ -784,13 +784,13 @@ class Tile {
     // Recruit
     if (
       (this.castle || this.base) &&
-      store.gold >= store.gsConfig.RECRUIT_COST
+      store.player.gold >= store.gsConfig.RECRUIT_COST
     ) {
       return true
     }
 
     // Build
-    if (this.isEmpty() && store.gold >= store.gsConfig.BUILD_COST) {
+    if (this.isEmpty() && store.player.gold >= store.gsConfig.BUILD_COST) {
       return true
     }
 

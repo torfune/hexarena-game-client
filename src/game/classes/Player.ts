@@ -7,16 +7,20 @@ import { computed, observable } from 'mobx'
 interface Props {
   [key: string]: Prop<Primitive>
   pattern: Prop<string>
-  tilesCount: Prop<number>
   allyId: Prop<string | null>
+  tilesCount: Prop<number>
+  gold: Prop<number>
+  villages: Prop<number>
   alive: Prop<boolean>
 }
 
 class Player {
   @observable props: Props = {
     pattern: createProp(''),
-    tilesCount: createProp(0),
     allyId: createProp(null),
+    tilesCount: createProp(0),
+    gold: createProp(0),
+    villages: createProp(0),
     alive: createProp(true),
   }
 
@@ -30,7 +34,6 @@ class Player {
     this.name = name
     this.props.pattern = createProp(pattern)
     this.registred = registred
-    console.log(this.registred)
   }
 
   setProp(key: keyof Props, value: Primitive) {
@@ -51,17 +54,23 @@ class Player {
   }
 
   // Prop getters
-  @computed get tilesCount() {
-    return this.props.tilesCount.current
+  @computed get pattern() {
+    return this.props.pattern.current
   }
   @computed get allyId() {
     return this.props.allyId.current
   }
+  @computed get tilesCount() {
+    return this.props.tilesCount.current
+  }
+  @computed get gold() {
+    return this.props.gold.current
+  }
+  @computed get villages() {
+    return this.props.villages.current
+  }
   @computed get alive() {
     return this.props.alive.current
-  }
-  @computed get pattern() {
-    return this.props.pattern.current
   }
 }
 
