@@ -26,10 +26,9 @@ const Flasher = () => {
   const { flash, status } = store
 
   useEffect(() => {
-    if (status !== 'running') return
+    if (status !== 'running' || !flash) return
 
     setOpacity(OPACITY)
-
     setTimeout(() => {
       setOpacity(0)
     }, 100)
