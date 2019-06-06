@@ -1,7 +1,12 @@
 const changelog = [
   {
     version: 'Alpha 1.18.0',
-    points: [],
+    points: [
+      'Drag & Drop army sending.',
+      'Zoom on E/Q keys.',
+      'UI/HUD improvements.',
+      'Bug fixes.',
+    ],
   },
   {
     version: 'Alpha 1.17.0',
