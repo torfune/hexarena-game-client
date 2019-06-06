@@ -335,6 +335,16 @@ class Game {
     this.keyDown[key] = false
     this.updateCameraMove()
 
+    if (key === 'e' || key === 'q') {
+      const zoomDirection = key === 'e' ? -1 : 1
+      const scale = this.scale + zoomDirection * ZOOM_SPEED
+      const roundedScale = roundToDecimals(scale, 2)
+
+      if (roundedScale >= MIN_SCALE && roundedScale <= MAX_SCALE) {
+        this.targetScale = roundedScale
+      }
+    }
+
     if (key === 'h' && store.gsConfig.DEBUG_MODE) {
       store.showHud = !store.showHud
     }
