@@ -1,5 +1,9 @@
 const changelog = [
   {
+    version: 'Alpha 1.18.0',
+    points: [],
+  },
+  {
     version: 'Alpha 1.17.0',
     points: [
       'Gold and Village counts are visible in leaderboard.',

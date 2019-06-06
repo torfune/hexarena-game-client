@@ -25,7 +25,6 @@ import getTileByAxial from '../functions/getTileByAxial'
 import getServerHost from '../../utils/getServerHost'
 import Tile from './Tile'
 import { ticker, Application, Container } from 'pixi.js'
-import { CLIENT_RENEG_WINDOW } from 'tls'
 
 class Game {
   scale: number = DEFAULT_SCALE
@@ -343,6 +342,27 @@ class Game {
   handleMouseDown({ clientX: x, clientY: y }: MouseEvent) {
     if (store.status !== 'running' || !this.cursor || !this.camera) return
 
+    const { hoveredTile } = store
+
+    // Army - select
+    if (
+      !this.selectedArmyTile &&
+      hoveredTile &&
+      hoveredTile.ownerId === store.playerId &&
+      hoveredTile.army &&
+      hoveredTile.army.ownerId === store.playerId &&
+      (hoveredTile.castle || hoveredTile.base)
+    ) {
+      this.selectArmy(hoveredTile)
+      return
+    }
+
+    // Army - unselect
+    if (this.selectedArmyTile && hoveredTile === this.selectedArmyTile) {
+      this.unselectArmy()
+      return
+    }
+
     this.cameraDrag = {
       cursor: { x, y },
       camera: {
@@ -352,75 +372,83 @@ class Game {
     }
   }
   handleMouseUp(event: MouseEvent) {
-    if (!this.running || !this.cameraDrag || !this.cursor) return
+    if (!this.running || !this.cursor) return
 
-    const cursorDelta =
-      Math.abs(this.cursor.x - this.cameraDrag.cursor.x) +
-      Math.abs(this.cursor.y - this.cameraDrag.cursor.y)
+    const { hoveredTile, playerId } = store
 
-    this.cameraDrag = null
+    let cursorDelta: number | null = null
+    if (this.cameraDrag) {
+      cursorDelta =
+        Math.abs(this.cursor.x - this.cameraDrag.cursor.x) +
+        Math.abs(this.cursor.y - this.cameraDrag.cursor.y)
+      this.cameraDrag = null
+    }
 
-    if (cursorDelta > 32) return
-
-    const tile = store.hoveredTile
-
-    if (!tile) return
-
-    if (this.selectedArmyTile) {
-      this.sendArmy(tile)
+    if (!hoveredTile) {
+      if (this.selectedArmyTile) {
+        this.unselectArmy()
+      }
       return
     }
 
-    if (
-      tile.owner &&
-      tile.owner.id === store.playerId &&
-      (tile.castle || tile.base || tile.camp)
-    ) {
-      let isThereArmy = false
-
-      for (let i = 0; i < store.armies.length; i++) {
-        const army = store.armies[i]
-
-        if (army.tile.id === tile.id && army.ownerId === store.playerId) {
-          isThereArmy = true
-        }
-      }
-
-      if (isThereArmy) {
-        this.selectedArmyTile = tile
-        tile.selectArmy()
+    // Standard click
+    if (cursorDelta !== null && cursorDelta < 32) {
+      // Army - send
+      if (this.selectedArmyTile && hoveredTile !== this.selectedArmyTile) {
+        this.sendArmy(hoveredTile)
         return
       }
-    }
 
-    let button = null
-    switch (event.button) {
-      case 0:
-        button = 'left'
-        break
-
-      case 2:
-        button = 'right'
-        break
-
-      default:
-    }
-
-    if (button) {
-      this.socket.send('click', `${tile.axial.x}|${tile.axial.z}|${button}`)
-
-      if (canAttack(tile)) {
-        this.predictedActionTile = tile
-
-        setTimeout(
-          (() => {
-            if (this.predictedActionTile === tile) {
-              this.predictedActionTile = null
-            }
-          }).bind(this),
-          500
-        )
+      // Army - select
+      if (
+        hoveredTile.ownerId === playerId &&
+        hoveredTile.army &&
+        hoveredTile.army.ownerId === playerId &&
+        (hoveredTile.castle || hoveredTile.base)
+      ) {
+        this.selectArmy(hoveredTile)
+        return
       }
+
+      let button = null
+      switch (event.button) {
+        case 0:
+          button = 'left'
+          break
+
+        case 2:
+          button = 'right'
+          break
+
+        default:
+          button = 'left'
+      }
+
+      if (button) {
+        this.socket.send(
+          'click',
+          `${hoveredTile.axial.x}|${hoveredTile.axial.z}|${button}`
+        )
+
+        if (canAttack(hoveredTile)) {
+          this.predictedActionTile = hoveredTile
+
+          setTimeout(
+            (() => {
+              if (this.predictedActionTile === hoveredTile) {
+                this.predictedActionTile = null
+              }
+            }).bind(this),
+            500
+          )
+        }
+      }
+    }
+
+    // Army - drag & drop send
+    else if (this.selectedArmyTile && this.selectedArmyTile !== hoveredTile) {
+      this.sendArmy(hoveredTile)
+      return
     }
   }
   handleMouseMove({ clientX: x, clientY: y }: MouseEvent) {
@@ -821,7 +849,6 @@ class Game {
     if (!this.selectedArmyTile) return
 
     let index = null
-
     for (let i = 0; i < 6; i++) {
       if (this.selectedArmyTargetTiles[i].includes(tile)) {
         index = i
@@ -857,6 +884,16 @@ class Game {
 
     this.pixi.stage.x = this.camera.x
     this.pixi.stage.y = this.camera.y
+  }
+  selectArmy(tile: Tile) {
+    this.selectedArmyTile = tile
+    tile.selectArmy()
+  }
+  unselectArmy() {
+    if (!this.selectedArmyTile) return
+
+    this.selectedArmyTile.unselectArmy()
+    this.selectedArmyTile = null
   }
 }
 
