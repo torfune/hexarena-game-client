@@ -128,7 +128,12 @@ const Game: React.FC<RouteComponentProps> = observer(() => {
     }
   }
 
-  if (player && alivePlayers === 3 && (!player.ally || !player.ally.alive)) {
+  if (
+    player &&
+    player.alive &&
+    alivePlayers === 3 &&
+    (!player.ally || !player.ally.alive)
+  ) {
     for (let i = 0; i < players.length; i++) {
       const p = players[i]
       if (p.id !== player.id && p.ally && p.ally.alive) {
