@@ -17,7 +17,6 @@ const List = styled.div`
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
   min-height: 500px;
-  padding-top: 4px;
   padding-bottom: 16px;
 `
 
@@ -35,10 +34,13 @@ const HeadingValue = styled.p`
   color: #fff;
 `
 
-const PlayerRow = styled.div`
+const PlayerRow = styled.div<{ highlighted: boolean }>`
   padding: 8px 24px;
   display: grid;
   grid-template-columns: 32px 1fr auto;
+  background: ${props => (props.highlighted ? '#2F2F2F' : null)};
+  border-top: ${props => (props.highlighted ? '1px solid #282828' : null)};
+  border-bottom: ${props => (props.highlighted ? '1px solid #282828' : null)};
 `
 
 const Value = styled.p`
@@ -55,6 +57,8 @@ const TopPlayers: React.FC = () => {
     })
   }, [])
 
+  const lobbyPlayerNames = store.players.map(player => player.name)
+
   return (
     <Container>
       <Heading>
@@ -64,11 +68,14 @@ const TopPlayers: React.FC = () => {
       </Heading>
 
       <List>
-        {store.topPlayers.map((player, index) => (
-          <PlayerRow key={player.id}>
+        {store.topPlayers.map((topPlayer, index) => (
+          <PlayerRow
+            key={topPlayer.id}
+            highlighted={lobbyPlayerNames.includes(topPlayer.name)}
+          >
             <Value>{index + 1}.</Value>
-            <Value>{player.name}</Value>
-            <Value>{player.elo.toLocaleString()}</Value>
+            <Value>{topPlayer.name}</Value>
+            <Value>{topPlayer.elo.toLocaleString()}</Value>
           </PlayerRow>
         ))}
       </List>
