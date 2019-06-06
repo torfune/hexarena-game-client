@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import ActionPreview from './ActionPreview'
 import StructurePreview from './StructurePreview'
 import { observer } from 'mobx-react-lite'
-import NamePreview from './NamePreview'
+import PlayerPreview from './PlayerPreview'
 import store from '../../../../store'
 import { useState, useEffect } from 'react'
 import getHoveredTileInfo from '../../../../game/functions/getHoveredTileInfo'
@@ -68,7 +68,7 @@ const HoveredTileinfo = () => {
   if (hoveredTile && hoveredTile.owner && hoveredTile.owner.id !== player.id) {
     return (
       <Container cursor={cursor}>
-        <NamePreview name={hoveredTile.owner.name} />
+        <PlayerPreview player={hoveredTile.owner} />
       </Container>
     )
   }
