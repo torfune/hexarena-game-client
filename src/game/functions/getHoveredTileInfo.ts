@@ -1,4 +1,3 @@
-import getAttackDuration from './getAttackDuration'
 import Tile from '../classes/Tile'
 import store from '../../store'
 import game from '..'
@@ -43,12 +42,10 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
 
   // Attack
   if (isNeighborToPlayer && !tile.owner && !tile.isContested()) {
-    const durationMs = getAttackDuration(store.playerId, tile)
-
     return {
       label: 'Capture',
       structure,
-      duration: `${Math.round(durationMs / 100) / 10}s`,
+      duration: `${store.gsConfig.ATTACK_DURATION / 1000}s`,
     }
   }
 

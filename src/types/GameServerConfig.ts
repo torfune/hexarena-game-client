@@ -26,6 +26,7 @@ interface GameServerConfig {
   RECRUIT_DURATION: number
   CUT_DURATION: number
   HEAL_DURATION: number
+  ATTACK_DURATION: number
 
   // GOLD
   MAX_GOLD: number
