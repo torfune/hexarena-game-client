@@ -51,7 +51,7 @@ const Countdown: React.FC<Props> = ({ openingTime }) => {
         clearInterval(interval)
         interval = null
       }
-      // Router.push('/')
+      window.location.reload()
     } else {
       setRemainingDate(new Date(remainingTime))
     }
