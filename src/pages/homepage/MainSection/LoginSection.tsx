@@ -186,10 +186,11 @@ const LoginSection = () => {
     if (!nameValid || !accessToken) return
 
     const { WS_HOST } = getServerHost(window.location.hostname)
+    const guestId = localStorage.getItem('browserId')
 
     await axios.patch(
       `http://${WS_HOST}/users/${userId}`,
-      { name },
+      { name, guestId },
       authHeader(accessToken)
     )
 
@@ -209,9 +210,6 @@ const LoginSection = () => {
       setUser(response.data)
     }
   }
-
-  console.log(`user: ${user}`)
-  console.log(`loggedIn: ${loggedIn}`)
 
   if (loggedIn === null || (loggedIn && !user)) return null
 

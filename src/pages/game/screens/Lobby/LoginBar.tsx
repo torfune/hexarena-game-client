@@ -13,10 +13,30 @@ import {
 } from '../../../../constants/react'
 import getServerHost from '../../../../utils/getServerHost'
 import Axios from 'axios'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import authHeader from '../../../../utils/authHeader'
+import getBrowserId from '../../../../utils/getBrowserId'
 
 const Container = styled.div`
   color: #fff;
+  display: flex;
+  align-items: center;
+`
+
+const EloSection = styled.div`
+  text-align: center;
+  margin-left: 32px;
+`
+
+const EloLabel = styled.p`
+  text-transform: uppercase;
+  font-size: 20px;
+  color: ${PRIMARY};
+  font-weight: 600;
+`
+
+const EloValue = styled.p`
+  font-size: 20px;
 `
 
 const Name = styled.p`
@@ -40,7 +60,6 @@ const LoginButton = styled.div`
   border-radius: 4px;
   font-size: 18px;
   color: #fff;
-  box-shadow: ${BOX_SHADOW};
   transition: 200ms;
 
   :hover {
@@ -49,8 +68,40 @@ const LoginButton = styled.div`
 `
 
 const LoginBar: React.FC = () => {
-  const { loggedIn, login } = useAuth()
+  const [elo, setElo] = useState<number | null>(null)
+  const { loggedIn, login, userId, accessToken } = useAuth()
   const { player } = store
+
+  useEffect(() => {
+    fetchElo()
+  }, [])
+
+  const fetchElo = async () => {
+    const { WS_HOST } = getServerHost(window.location.hostname)
+    let elo = null
+
+    if (loggedIn && userId && accessToken) {
+      const { data: user } = await Axios.get(
+        `http://${WS_HOST}/users/${userId}`,
+        authHeader(accessToken)
+      )
+
+      elo = user.elo
+    } else {
+      const guestId = localStorage.getItem('browserId')
+      if (guestId) {
+        const { data: guest } = await Axios.get(
+          `http://${WS_HOST}/guests/${guestId}`
+        )
+
+        if (guest && guest.elo) {
+          elo = guest.elo
+        }
+      }
+    }
+
+    setElo(elo)
+  }
 
   const handleGoogleAuthSuccess = async (
     loginResponse: GoogleLoginResponse | GoogleLoginResponseOffline
@@ -70,17 +121,25 @@ const LoginBar: React.FC = () => {
       window.location.href = '/'
     } catch {
       console.error('Authentication failed')
+      window.location.href = '/'
     }
   }
 
   const handleGoogleAuthFailure = () => {
     console.error('Authentication failed')
+    window.location.href = '/'
   }
 
   if (loggedIn && player) {
     return (
       <Container>
         <Name>{player.name}</Name>
+        {elo && elo > 1000 && (
+          <EloSection>
+            <EloLabel>Elo</EloLabel>
+            <EloValue>{elo}</EloValue>
+          </EloSection>
+        )}
       </Container>
     )
   } else {
@@ -97,6 +156,12 @@ const LoginBar: React.FC = () => {
           onSuccess={handleGoogleAuthSuccess}
           onFailure={handleGoogleAuthFailure}
         />
+        {elo && elo > 1000 && (
+          <EloSection>
+            <EloLabel>Elo</EloLabel>
+            <EloValue>{elo}</EloValue>
+          </EloSection>
+        )}
       </Container>
     )
   }

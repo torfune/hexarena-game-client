@@ -7,6 +7,7 @@ import AllianceRequest from './game/classes/AllianceRequest'
 import Army from './game/classes/Army'
 import ChatMessage from './types/ChatMessage'
 import TopPlayer from './types/TopPlayer'
+import User from './models/User'
 
 type EntityName = 'action' | 'allianceRequest' | 'army' | 'player' | 'tile'
 type Entity = Action | AllianceRequest | Army | Player | Tile
@@ -41,6 +42,7 @@ class Store {
     message: string
     goHome: boolean
   }
+  user: User | null = null
   changeHandlers: { [key: string]: (value: any) => void } = {}
   private idMap: {
     actions: IdMap<Action>

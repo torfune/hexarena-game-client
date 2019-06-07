@@ -23,9 +23,9 @@ const Header = styled.div`
   background: #222;
   padding: 16px 64px;
   height: ${HEADER_HEIGHT}px;
-  box-shadow: 0 4px 8px #00000022;
   justify-content: space-between;
   align-items: center;
+  border-bottom: 1px solid #111;
 `
 
 const Logo = styled.h2`
