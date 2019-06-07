@@ -13,7 +13,7 @@ import React from 'react'
 const ContainerCSS = css`
   padding-top: 8px;
   border-radius: 8px;
-  border-top-left-radius: 0;
+  border-top-left-radius: 4px;
   background: #fff;
   position: absolute;
   user-select: none;
