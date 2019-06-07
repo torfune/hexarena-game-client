@@ -46,6 +46,11 @@ const NotificationManager: React.FC = () => {
   useEffect(() => {
     if (store.notification && game.cursor) {
       const [key, text] = store.notification.split('|')
+
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].key === key) return
+      }
+
       const notification = {
         key,
         position: {

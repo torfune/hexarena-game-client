@@ -672,6 +672,17 @@ class Tile {
       !this.mountain
     )
   }
+  canBuildCastle() {
+    for (let i = 0; i < 6; i++) {
+      const n = this.neighbors[i]
+
+      if (n && n.base && n.ownerId !== this.ownerId) {
+        return false
+      }
+    }
+
+    return true
+  }
   addPatternPreview(pattern: string) {
     if (this.image.pattern) {
       this.image.pattern.visible = false
@@ -759,7 +770,10 @@ class Tile {
     }
 
     // Build
-    if (this.isEmpty() && store.player.gold >= store.gsConfig.BUILD_COST) {
+    if (
+      store.player.gold >= store.gsConfig.BUILD_COST &&
+      this.canBuildCastle()
+    ) {
       return true
     }
 

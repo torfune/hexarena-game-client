@@ -1,7 +1,16 @@
 const changelog = [
   {
     version: 'Alpha 1.19.0',
-    points: [],
+    points: [
+      'Global chat.',
+      'Sending gold to your ally.',
+      'Flat attack duration - 2 seconds.',
+      'Not possible to build Castle next to enemy Base.',
+      'ELO is visible even if you are not in the top 20.',
+      'Guest ELO.',
+      'Bug fixes.',
+      'UI improvements.',
+    ],
   },
   {
     version: 'Alpha 1.18.0',

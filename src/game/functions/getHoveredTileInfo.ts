@@ -50,7 +50,7 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
   }
 
   // Build
-  if (isOwnedByPlayer && tile.isEmpty()) {
+  if (isOwnedByPlayer && tile.canBuildCastle()) {
     return {
       label: 'Build castle',
       structure,
