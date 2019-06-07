@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react-lite'
-import Ally from './Ally'
 import List from './List'
-import { Fragment, useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import Header from '../../../../components/Header'
 import Label from '../../../../components/Label'
@@ -123,38 +122,28 @@ const Diplomacy = () => {
   return (
     <Container ref={containerRef}>
       <Header
-        text={player.ally ? 'Your ally' : 'Diplomacy'}
+        text={'Diplomacy'}
         iconSrc="/static/icons/player.svg"
         iconSize="24px"
         color={blueHeader ? BLUE : undefined}
       />
       <Content>
-        {player.ally ? (
-          <Ally ally={player.ally} />
-        ) : (
-          <Fragment>
-            <Label>
-              {sendingRequest ? 'Select player' : 'Alliance requests'}
-            </Label>
-
-            <List
-              playerId={player.id}
-              players={players}
-              requests={requests}
-              sendingRequest={sendingRequest}
-              onAccept={handleAccept}
-              onCreate={handleCreate}
-              onDecline={handleDecline}
-            />
-
-            <ToggleButton
-              onClick={handleButtonClick}
-              color={sendingRequest ? PRIMARY : BLUE}
-            >
-              {sendingRequest ? 'Cancel' : 'Send request'}
-            </ToggleButton>
-          </Fragment>
-        )}
+        <Label>{sendingRequest ? 'Select player' : 'Alliance requests'}</Label>
+        <List
+          playerId={player.id}
+          players={players}
+          requests={requests}
+          sendingRequest={sendingRequest}
+          onAccept={handleAccept}
+          onCreate={handleCreate}
+          onDecline={handleDecline}
+        />
+        <ToggleButton
+          onClick={handleButtonClick}
+          color={sendingRequest ? PRIMARY : BLUE}
+        >
+          {sendingRequest ? 'Cancel' : 'Send request'}
+        </ToggleButton>
       </Content>
     </Container>
   )

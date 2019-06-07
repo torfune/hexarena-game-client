@@ -905,6 +905,9 @@ class Game {
     this.selectedArmyTile.unselectArmy()
     this.selectedArmyTile = null
   }
+  sendGoldToAlly() {
+    this.socket.send('sendGold')
+  }
 }
 
 export default Game

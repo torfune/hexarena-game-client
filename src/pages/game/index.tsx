@@ -23,6 +23,7 @@ import Flasher from './hud/Flasher'
 import * as React from 'react'
 import NotificationManager from './hud/NotificationManager'
 import { RouteComponentProps } from '@reach/router'
+import Ally from './hud/Ally'
 
 const Container = styled.div`
   width: 100vw;
@@ -172,7 +173,12 @@ const Game: React.FC<RouteComponentProps> = observer(() => {
 
           {showHud && player.alive && (
             <>
-              <Diplomacy />
+              {player.ally ? (
+                <Ally ally={player.ally} playerGold={player.gold} />
+              ) : (
+                <Diplomacy />
+              )}
+
               <HoverPreview />
               <Leaderboard />
               <Gold />
