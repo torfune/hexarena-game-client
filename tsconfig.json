@@ -11,6 +11,7 @@
     "types": ["react"],
     "skipLibCheck": true,
     "strict": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "resolveJsonModule": true
   }
 }

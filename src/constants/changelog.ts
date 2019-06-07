@@ -1,5 +1,9 @@
 const changelog = [
   {
+    version: 'Alpha 1.19.0',
+    points: [],
+  },
+  {
     version: 'Alpha 1.18.0',
     points: [
       'Drag & Drop army sending.',
