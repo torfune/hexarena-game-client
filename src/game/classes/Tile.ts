@@ -222,22 +222,22 @@ class Tile {
     const pixel = getPixelPosition(this.axial)
     const fillTexture = loader.resources['hitpointsFill'].texture
 
-    this.image.hitpointsBg = createImage('hitpointsBg')
-    this.image.hitpointsBg.x = pixel.x
-    this.image.hitpointsBg.y = pixel.y
-    // this.image.hitpointsBg.scale.x = game.scale
-    // this.image.hitpointsBg.scale.y = game.scale
-    this.image.hitpointsBg.alpha = 0
+    const image = createImage('hitpointsBg')
+    image.x = pixel.x
+    image.y = pixel.y
+    image.alpha = 0
 
+    // Hearts
     this.image.heartLeft = new Sprite(fillTexture)
     this.image.heartRight = new Sprite(fillTexture)
     this.image.heartRight.x += HEART_OFFSET_X
-
     this.image.heartLeft.anchor.set(0.5, 0.5)
     this.image.heartRight.anchor.set(0.5, 0.5)
+    image.addChild(this.image.heartLeft)
+    image.addChild(this.image.heartRight)
 
-    this.image.hitpointsBg.addChild(this.image.heartLeft)
-    this.image.hitpointsBg.addChild(this.image.heartRight)
+    this.image.hitpointsBg = image
+    return image
   }
   addContested() {
     // this.image.contested.visible = true
@@ -332,6 +332,8 @@ class Tile {
     })
 
     setTimeout(() => {
+      delete this.image.heartLeft
+      delete this.image.heartRight
       this.removeImage('hitpointsBg')
     }, 500)
   }
@@ -364,13 +366,15 @@ class Tile {
   showHitpoints() {
     if (this.hitpointsVisible) return
 
-    // TODO: temp fix of crash, investigate further
-    if (!this.image.hitpointsBg) return
+    let image = this.image.hitpointsBg
+    if (!image) {
+      image = this.addHitpoints()
+    }
 
     this.hitpointsVisible = true
 
     const pixel = getPixelPosition(this.axial)
-    const animation = getImageAnimation(this.image.hitpointsBg)
+    const animation = getImageAnimation(image)
 
     let initialFraction
     if (animation && animation instanceof Animation) {
@@ -379,7 +383,7 @@ class Tile {
     }
 
     new Animation(
-      this.image.hitpointsBg,
+      image,
       (image, fraction, context) => {
         image.alpha = fraction
         image.y = context.baseY - HITPOINTS_OFFSET_Y * fraction
