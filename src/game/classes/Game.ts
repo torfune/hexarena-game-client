@@ -285,7 +285,12 @@ class Game {
     document.addEventListener('wheel', this.handleWheelMove.bind(this))
   }
   sendChatMessage(message: string) {
-    this.socket.send('chatMessage', message.slice(0, 64))
+    if (!store.gsConfig) return
+
+    this.socket.send(
+      'chatMessage',
+      message.slice(0, store.gsConfig.CHAT_MESSAGE_MAX_LENGTH)
+    )
   }
   updateScreenSize() {
     if (!this.pixi) return
