@@ -6,7 +6,7 @@ import EndScreen from './screens/EndScreen'
 import ErrorModal from './screens/ErrorModal'
 import GameTime from './hud/GameTime'
 import Leaderboard from './hud/Leaderboard'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import SpectateCloseButton from './screens/SpectateCloseButton'
 import styled from 'styled-components'
 import Gold from './hud/Gold'
@@ -15,13 +15,13 @@ import SurrenderButton from './hud/SurrenderButton'
 import game from '../../game'
 import store from '../../store'
 import { useAuth } from '../../auth'
-import Spinner from '../../components/Spinner'
 import Flasher from './hud/Flasher'
 import * as React from 'react'
 import NotificationManager from './hud/NotificationManager'
 import { RouteComponentProps } from '@reach/router'
 import Ally from './hud/Ally'
 import Lobby from './screens/Lobby'
+import showSurrenderButton from '../../game/functions/showSurrenderButton'
 
 const Container = styled.div`
   width: 100vw;
@@ -74,30 +74,6 @@ const Game: React.FC<RouteComponentProps> = observer(() => {
 
   const { status, showHud, players, player, spectating, error } = store
 
-  let showSurrender = false
-  let alivePlayers = 0
-
-  for (let i = 0; i < players.length; i++) {
-    if (players[i].alive) {
-      alivePlayers++
-    }
-  }
-
-  if (
-    player &&
-    player.alive &&
-    alivePlayers === 3 &&
-    (!player.ally || !player.ally.alive)
-  ) {
-    for (let i = 0; i < players.length; i++) {
-      const p = players[i]
-      if (p.id !== player.id && p.ally && p.ally.alive) {
-        showSurrender = true
-        break
-      }
-    }
-  }
-
   return (
     <Container>
       <GameCanvas
@@ -133,7 +109,9 @@ const Game: React.FC<RouteComponentProps> = observer(() => {
             </>
           )}
 
-          {showSurrender && <SurrenderButton />}
+          {showSurrenderButton(store.players, store.player) && (
+            <SurrenderButton />
+          )}
 
           {!player.alive &&
             (spectating ? (
