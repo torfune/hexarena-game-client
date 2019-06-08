@@ -12,6 +12,7 @@ const loadImages = () => {
       .add('actionIconCut', '/static/images/action-icon-cut.png')
       .add('actionIconEmpty', '/static/images/action-icon-empty.png')
       .add('actionIconRecruit', '/static/images/action-icon-recruit.png')
+      .add('actionIconHeal', '/static/images/action-icon-heal.png')
       .add('army', '/static/images/army.png')
       .add('armyIcon', '/static/images/army-icon.png')
       .add('arrow', '/static/images/arrow.png')
