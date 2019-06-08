@@ -11,7 +11,6 @@ import Socket from '../../websockets/Socket'
 import createGameLoop from '../functions/createGameLoop'
 import loadImages from '../functions/loadImages'
 import createPixiApp from '../functions/createPixiApp'
-import Axios from 'axios'
 import store from '../../store'
 import { Pixel, Axial } from '../../types/coordinates'
 import Animation from './Animation'
@@ -22,9 +21,9 @@ import getDebugCommand from '../functions/getDebugCommand'
 import canAttack from '../functions/canAttack'
 import getHoveredTileInfo from '../functions/getHoveredTileInfo'
 import getTileByAxial from '../functions/getTileByAxial'
-import getServerHost from '../../utils/getServerHost'
 import Tile from './Tile'
 import { ticker, Application, Container } from 'pixi.js'
+import showSurrenderButton from '../functions/showSurrenderButton'
 
 class Game {
   scale: number = DEFAULT_SCALE
@@ -53,6 +52,19 @@ class Game {
   private fpsLastUpdatedAt: number = Date.now()
 
   async start(canvas: HTMLElement) {
+    // Leaving warning
+    window.onbeforeunload = () => {
+      if (
+        !showSurrenderButton(store.players, store.player) &&
+        !store.error &&
+        store.player &&
+        store.player.alive &&
+        store.status === 'running'
+      ) {
+        return true
+      }
+    }
+
     // Initialize
     if (!this.initialized) {
       this.setupEventListeners()
