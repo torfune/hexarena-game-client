@@ -64,6 +64,8 @@ class Game {
   ) {
     const { GS_HOST } = getServerHost(window.location.hostname)
 
+    window.onbeforeunload = () => true
+
     // Fetch GS config
     try {
       const [{ data: gsConfig }, { data: status }] = await Promise.all([
