@@ -53,8 +53,6 @@ class Game {
   private fpsLastUpdatedAt: number = Date.now()
 
   async start(canvas: HTMLElement) {
-    // window.onbeforeunload = () => true
-
     // Initialize
     if (!this.initialized) {
       this.setupEventListeners()

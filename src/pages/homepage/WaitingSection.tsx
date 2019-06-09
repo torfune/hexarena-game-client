@@ -5,7 +5,7 @@ import { observer } from 'mobx-react-lite'
 import { PRIMARY } from '../../constants/react'
 import store from '../../store'
 import { withRouter, RouteProps } from 'react-router-dom'
-import { RouterProps } from 'react-router'
+import { RouterProps, RouteComponentProps } from 'react-router'
 
 const Container = styled.div`
   margin-top: 32px;
@@ -36,7 +36,7 @@ const Label = styled.p`
 // interface Props {
 //   history: any
 // }
-const WaitingSection: React.FC<RouterProps> = ({ history }) => {
+const WaitingSection: React.FC<RouteComponentProps> = ({ history }) => {
   if (!store.waitingTime) return null
 
   const { current, average } = store.waitingTime

@@ -46,6 +46,7 @@ class Action {
   readonly type: ActionType
   readonly tile: Tile
   readonly owner: Player
+  oldTextureName: string | null = null
   mouseLeft: boolean = false
   image: Image = {
     background: createImage('actionBg'),
@@ -148,6 +149,16 @@ class Action {
       this.mouseLeft = true
     }
 
+    if (this.status === 'running') {
+      const textureName = this.getTexture()
+
+      if (this.oldTextureName !== textureName) {
+        const { texture } = loader.resources[textureName]
+        this.image.icon.texture = texture
+        this.oldTextureName = textureName
+      }
+    }
+
     // if (this.mouseLeft) {
     //   if (store.hoveredTile === this.tile) {
     //     this.image.order.visible = false
@@ -183,7 +194,11 @@ class Action {
       case 'attack':
         return 'actionIconAttack'
       case 'recruit':
-        return 'actionIconRecruit'
+        if (this.tile.hitpoints && this.tile.hitpoints < 2) {
+          return 'actionIconHeal'
+        } else {
+          return 'actionIconRecruit'
+        }
       case 'build':
         return 'actionIconBuild'
       case 'cut':
