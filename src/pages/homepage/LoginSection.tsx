@@ -1,23 +1,56 @@
 import styled from 'styled-components'
-import Heading from '../Heading'
-import { FadeUp } from '../../../components/Animations'
 import { useState, useEffect, ChangeEvent } from 'react'
-import User from '../../../models/User'
-import { useAuth } from '../../../auth'
 import GoogleLogin, {
   GoogleLoginResponse,
   GoogleLoginResponseOffline,
 } from 'react-google-login'
-import getServerHost from '../../../utils/getServerHost'
-import axios from 'axios'
-import authHeader from '../../../utils/authHeader'
 import PlayButton from './PlayButton'
-import { GOOGLE_CLIENT_ID, PRIMARY, BOX_SHADOW } from '../../../constants/react'
 import NameInput from './NameInput'
-import Spinner from '../../../components/Spinner'
 import React from 'react'
+import { PRIMARY, BOX_SHADOW, GOOGLE_CLIENT_ID } from '../../constants/react'
+import User from '../../models/User'
+import { useAuth } from '../../auth'
+import { FadeUp } from '../../components/Animations'
+import Heading from './Heading'
+import Spinner from '../../components/Spinner'
+import authHeader from '../../utils/authHeader'
+import getServerHost from '../../utils/getServerHost'
+import Axios from 'axios'
+import Socket from '../../websockets/Socket'
+import getBrowserId from '../../utils/getBrowserId'
+import shadeColor from '../../utils/shade'
+import store from '../../store'
 
-const Container = styled.div``
+const Container = styled.div`
+  width: 100%;
+`
+
+const Placeholder = styled.div`
+  width: 250px;
+  height: 85px;
+`
+
+const Profile = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`
+
+const EloSection = styled.div`
+  width: 80px;
+  text-align: center;
+
+  p {
+    text-transform: uppercase;
+    font-weight: 600;
+    color: ${PRIMARY};
+    font-size: 20px;
+  }
+
+  span {
+    font-size: 22px;
+  }
+`
 
 const ChooseNameSection = styled.div`
   display: flex;
@@ -28,7 +61,8 @@ const LoginButton = styled.div`
   width: 250px;
   background: ${PRIMARY};
   height: 45px;
-  margin-top: 32px;
+  margin-top: 16px;
+  /* box-shadow: ${BOX_SHADOW}; */
   text-align: center;
   display: flex;
   justify-content: center;
@@ -37,8 +71,8 @@ const LoginButton = styled.div`
   border-radius: 4px;
   font-size: 18px;
   color: #fff;
-  box-shadow: ${BOX_SHADOW};
   transition: 200ms;
+  border: 2px solid ${shadeColor(PRIMARY, -20)};
 
   :hover {
     transform: scale(1.05);
@@ -101,14 +135,6 @@ const LoginSection = () => {
   const { userId, accessToken, login, logout, loggedIn } = useAuth()
 
   useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  })
-
-  useEffect(() => {
     if (userId && accessToken) {
       fetchUser(accessToken)
     }
@@ -132,24 +158,14 @@ const LoginSection = () => {
     }, 1000)
   }, [name])
 
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key !== 'Enter' || !loggedIn) return
-
-    if (user && !user.name) {
-      handleNameSave()
-    } else {
-      window.location.href = '/game'
-    }
-  }
-
   const validateName = (name: string) => {
     const { WS_HOST } = getServerHost(window.location.hostname)
 
-    axios
-      .get(`http://${WS_HOST}/users/validate-name/${name.toLowerCase()}`)
-      .then(response => {
-        setNameValid(response.data)
-      })
+    Axios.get(
+      `http://${WS_HOST}/users/validate-name/${name.toLowerCase()}`
+    ).then(response => {
+      setNameValid(response.data)
+    })
   }
 
   const handleGoogleAuthSuccess = (
@@ -159,16 +175,14 @@ const LoginSection = () => {
 
     try {
       const { WS_HOST } = getServerHost(window.location.hostname)
-      axios
-        .get(`http://${WS_HOST}/auth/google`, {
-          params: {
-            idToken: loginResponse.getAuthResponse().id_token,
-          },
-        })
-        .then(response => {
-          const { userId, accessToken, accessTokenExp } = response.data
-          login(userId, accessToken, accessTokenExp)
-        })
+      Axios.get(`http://${WS_HOST}/auth/google`, {
+        params: {
+          idToken: loginResponse.getAuthResponse().id_token,
+        },
+      }).then(response => {
+        const { userId, accessToken, accessTokenExp } = response.data
+        login(userId, accessToken, accessTokenExp)
+      })
     } catch {
       console.error('Authentication failed')
     }
@@ -188,7 +202,7 @@ const LoginSection = () => {
     const { WS_HOST } = getServerHost(window.location.hostname)
     const guestId = localStorage.getItem('browserId')
 
-    await axios.patch(
+    await Axios.patch(
       `http://${WS_HOST}/users/${userId}`,
       { name, guestId },
       authHeader(accessToken)
@@ -199,7 +213,7 @@ const LoginSection = () => {
 
   const fetchUser = async (accessToken: string) => {
     const { WS_HOST } = getServerHost(window.location.hostname)
-    const response = await axios.get(
+    const response = await Axios.get(
       `http://${WS_HOST}/users/${userId}`,
       authHeader(accessToken)
     )
@@ -211,71 +225,81 @@ const LoginSection = () => {
     }
   }
 
-  if (loggedIn === null || (loggedIn && !user)) return null
+  const play = () => {
+    Socket.send('playAsUser', `${getBrowserId()}|${userId}|${accessToken}`)
+    store.waitingTime = {
+      current: 0,
+      average: 0,
+    }
+  }
+
+  if (loggedIn === null || (loggedIn && !user)) return <Placeholder />
 
   if (loggedIn && user) {
     if (user.name) {
       return (
-        <FadeUp>
-          <Container>
-            <Heading>Logged in as {user.name}</Heading>
-            <PlayButtonWrapper>
-              <PlayButton href="/game">Play</PlayButton>
-            </PlayButtonWrapper>
-            <LogoutButton onClick={logout}>Logout</LogoutButton>
-          </Container>
-        </FadeUp>
+        <Container>
+          <Profile>
+            <div>
+              <Heading>Logged in as {user.name}</Heading>
+              <PlayButtonWrapper>
+                <PlayButton onClick={play}>Play</PlayButton>
+              </PlayButtonWrapper>
+              <LogoutButton onClick={logout}>Logout</LogoutButton>
+            </div>
+            <EloSection>
+              <p>Elo</p>
+              <span>{user.elo}</span>
+            </EloSection>
+          </Profile>
+        </Container>
       )
     } else {
       return (
-        <FadeUp>
-          <Container>
-            <Heading>Choose your nickname</Heading>
+        <Container>
+          <Heading>Choose your nickname</Heading>
 
-            <NameTaken visible={nameValid === false && !!name}>
-              Nickname already exists
-            </NameTaken>
+          <NameTaken visible={nameValid === false && !!name}>
+            Nickname already exists
+          </NameTaken>
 
-            <ChooseNameSection>
-              <NameInput
-                placeholder="nickname"
-                value={name}
-                onChange={handleNameChange}
-              />
-              {nameValid === null ? (
-                <SpinnerContainer>
-                  <Spinner size="32px" thickness="4px" />
-                </SpinnerContainer>
-              ) : (
-                <SaveButton disabled={!nameValid} onClick={handleNameSave}>
-                  Save
-                </SaveButton>
-              )}
-            </ChooseNameSection>
+          <ChooseNameSection>
+            <NameInput
+              placeholder="nickname"
+              value={name}
+              onChange={handleNameChange}
+            />
+            {nameValid === null ? (
+              <SpinnerContainer>
+                <Spinner size="32px" thickness="4px" />
+              </SpinnerContainer>
+            ) : (
+              <SaveButton disabled={!nameValid} onClick={handleNameSave}>
+                Save
+              </SaveButton>
+            )}
+          </ChooseNameSection>
 
-            <LogoutButton onClick={logout}>Logout</LogoutButton>
-          </Container>
-        </FadeUp>
+          <LogoutButton onClick={logout}>Logout</LogoutButton>
+        </Container>
       )
     }
   } else {
     return (
-      <FadeUp>
-        <Container>
-          <Heading>Sign In</Heading>
-          <GoogleLogin
-            clientId={GOOGLE_CLIENT_ID}
-            render={(props: any) => (
-              <LoginButton onClick={props.onClick}>
-                <GoogleIcon src="/static/icons/google.svg" />
-                Sign in with Google
-              </LoginButton>
-            )}
-            onSuccess={handleGoogleAuthSuccess}
-            onFailure={handleGoogleAuthFailure}
-          />
-        </Container>
-      </FadeUp>
+      <Container>
+        <Heading>Sign In</Heading>
+        <GoogleLogin
+          clientId={GOOGLE_CLIENT_ID}
+          render={(props: any) => (
+            <LoginButton onClick={props.onClick}>
+              <GoogleIcon src="/static/icons/google.svg" />
+              Sign in with Google
+            </LoginButton>
+          )}
+          onSuccess={handleGoogleAuthSuccess}
+          onFailure={handleGoogleAuthFailure}
+        />
+      </Container>
     )
   }
 }

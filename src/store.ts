@@ -28,13 +28,17 @@ class Store {
   @observable startCountdown: number | null = null
   @observable showHud: boolean = true
   @observable spectating: boolean = false
+  @observable waitingTime: {
+    current: number
+    average: number
+  } | null = null
   @observable fps: number = 0
   @observable ping: number = 0
   @observable flash: number = 0
   @observable goldAnimation?: { tileId: string; count: number }
   @observable gsConfig?: GameServerConfig
   @observable playerId?: string
-  @observable status?: 'pending' | 'starting' | 'running' | 'finished'
+  @observable status?: 'starting' | 'running' | 'finished' | 'aborted'
   @observable gameTime?: number
   @observable serverTime?: number
   @observable notification?: string
@@ -42,7 +46,6 @@ class Store {
     message: string
     goHome: boolean
   }
-  user: User | null = null
   changeHandlers: { [key: string]: (value: any) => void } = {}
   private idMap: {
     actions: IdMap<Action>

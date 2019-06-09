@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import List from './List'
 import { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
-import Header from '../../../../components/Header'
+import Header from '../Header'
 import Label from '../../../../components/Label'
 import store from '../../../../store'
 import game from '../../../../game'
@@ -27,6 +27,28 @@ const Container = styled.div`
   transform-origin: right bottom;
   transform: scale(${HUD_SCALE});
 `
+
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px;
+  align-items: center;
+  background: ${props => props.color || '#fff'};
+  transition: 100ms;
+
+  h2 {
+    margin-top: 2px;
+    text-transform: uppercase;
+    color: ${props => (props.color ? '#fff' : '#333')};
+    font-size: 17px;
+    font-weight: 600;
+  }
+`
+
+interface Props {
+  text: string
+  color?: string
+}
 
 const Content = styled.div`
   padding: 0 16px;
@@ -121,12 +143,9 @@ const Diplomacy = () => {
 
   return (
     <Container ref={containerRef}>
-      <Header
-        text={'Diplomacy'}
-        iconSrc="/static/icons/player.svg"
-        iconSize="24px"
-        color={blueHeader ? BLUE : undefined}
-      />
+      <Header color={blueHeader ? BLUE : undefined}>
+        <h2>Diplomacy</h2>
+      </Header>
       <Content>
         <Label>{sendingRequest ? 'Select player' : 'Alliance requests'}</Label>
         <List

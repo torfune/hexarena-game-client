@@ -1,9 +1,11 @@
-import Heading from './Heading'
 import styled, { css } from 'styled-components'
 import { BOX_SHADOW } from '../../constants/react'
 import React from 'react'
 
-const Container = styled.div``
+const Container = styled.div`
+  margin-top: 96px;
+  color: #fff;
+`
 
 const ButtonsContainer = styled.div`
   margin-top: 32px;
@@ -12,7 +14,7 @@ const ButtonsContainer = styled.div`
 
 const buttonCSS = css`
   width: 200px;
-  box-shadow: ${BOX_SHADOW};
+  border: 2px solid #bbb;
   color: #222;
   font-weight: 600;
   border-radius: 4px;
@@ -21,7 +23,7 @@ const buttonCSS = css`
   align-items: center;
   height: 50px;
   background: #fff;
-  transition: 100ms;
+  transition: 400ms;
 
   :hover {
     background: #ddd;
@@ -48,6 +50,11 @@ const RedditIcon = styled.img`
   height: 32px;
   margin-left: 12px;
   margin-right: 12px;
+`
+
+const Heading = styled.h2`
+  font-size: 32px;
+  font-weight: 500;
 `
 
 const Community: React.FC = () => (

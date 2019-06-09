@@ -14,6 +14,7 @@ import status from './status'
 import tiles from './tiles'
 import flash from './flash'
 import notification from './notification'
+import waitingTime from './waitingTime'
 
 const messages: {
   [key: string]: GameServerMessage
@@ -33,6 +34,7 @@ const messages: {
   tiles,
   flash,
   notification,
+  waitingTime,
 }
 
 export default messages

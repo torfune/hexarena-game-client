@@ -1,18 +1,20 @@
 import ReactDOM from 'react-dom'
 import React from 'react'
 import Homepage from './pages/homepage'
-import { Router } from '@reach/router'
 import Game from './pages/game'
 import GlobalStyle from './components/GlobalStyle'
 import { AuthProvider } from './auth'
+import store from './store'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
+;(window as any).s = store
 
 ReactDOM.render(
   <>
     <GlobalStyle />
     <AuthProvider>
       <Router>
-        <Homepage path="/" />
-        <Game path="game" />
+        <Route path="/" exact component={Homepage} />
+        <Route path="/game" component={Game} />
       </Router>
     </AuthProvider>
   </>,

@@ -1,94 +1,151 @@
-import Footer from './Footer'
-import Heading from './Heading'
-import Logo from './Logo'
-import MainSection from './MainSection'
-import ReleaseNotes from './ReleaseNotes'
 import styled from 'styled-components'
-import TopPlayers from './TopPlayers'
-import Community from './Community'
-import { MIN_SCREEN_WIDTH } from '../../constants/react'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { RouteComponentProps } from '@reach/router'
+import Header from '../../components/Header'
+import Axios from 'axios'
+import getServerHost from '../../utils/getServerHost'
+import { useAuth } from '../../auth'
+import PlaySection from './PlaySection'
+import Chat from './Chat'
+import store from '../../store'
+import Socket from '../../websockets/Socket'
+import Community from './Community'
+import ReleaseNotes from './ReleaseNotes'
+import TopPlayers from './TopPlayers'
+import { PRIMARY } from '../../constants/react'
+import shadeColor from '../../utils/shade'
 
-const Container = styled.div`
-  width: ${MIN_SCREEN_WIDTH}px;
-  margin: 0 auto;
-  background: #333;
-  padding-top: 64px;
-  min-height: 100vh;
-  box-sizing: border-box;
+const Container = styled.div``
+
+const ContentGrid = styled.div`
   display: flex;
-  flex-direction: column;
-  box-shadow: 0px 0px 72px 0px rgba(0, 0, 0, 0.5);
+  width: 66vw;
+  padding-top: calc(48px + 80px);
+  padding-left: 64px;
 `
 
-const Header = styled.div`
-  display: flex;
-  padding: 0 128px;
-  justify-content: space-between;
-  align-items: center;
-`
-
-const Description = styled.h2`
+const ErrorMessage = styled.p`
   color: #fff;
-  font-weight: 300;
-  font-size: 32px;
-  margin-top: 16px;
+  text-align: center;
+  margin-top: 200px;
+  font-size: 24px;
 `
 
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  padding: 96px 128px;
-  grid-gap: 64px;
+const ReloadButton = styled.div`
+  display: flex;
+  background: ${PRIMARY};
+  color: #fff;
+  font-weight: 500;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: 200ms;
+  width: 200px;
+  height: 45px;
+  text-align: center;
+  border: 2px solid ${shadeColor(PRIMARY, -20)};
+  margin: 64px auto;
+
+  :hover {
+    transform: scale(1.05);
+  }
 `
 
-const GameScreenshot = styled.div`
-  background: url('/static/images/screenshot.png');
-  background-position-x: center;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  position: fixed;
-  z-index: -1;
-`
+const Homepage: React.FC<RouteComponentProps> = () => {
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<boolean>(false)
+  const [openingTime, setOpeningTime] = useState<number | null>(null)
+  const { loggedIn } = useAuth()
 
-const BlackOverlay = styled.div`
-  background: #000;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: -1;
-  opacity: 0.6;
-`
+  useEffect(() => {
+    if (store.status) {
+      window.location.reload()
+    }
 
-const Homepage: React.FC<RouteComponentProps> = () => (
-  <Container>
-    <Header>
-      <Logo />
-      <Description>Multiplayer strategy game</Description>
-    </Header>
+    fetchData()
+  }, [])
 
-    <MainSection />
+  const fetchData = async () => {
+    const { GS_HOST, WS_HOST } = getServerHost(window.location.hostname)
 
-    <Grid>
-      <div>
-        <Community />
-        <ReleaseNotes />
-      </div>
-      <div>
-        <Heading>Top 20 players</Heading>
+    try {
+      // GameServer status
+      const { data: status } = await Axios.get(`http://${GS_HOST}/status`)
+      if (status.timeRemaining && status.timeRemaining > 0) {
+        setOpeningTime(status.timeRemaining + Date.now())
+      }
+
+      // GameServer config
+      const { data: config } = await Axios.get(`http://${GS_HOST}/config`)
+      store.gsConfig = config
+
+      // WebServer status
+      await Axios.get(`http://${WS_HOST}/status`)
+
+      // Socket connection
+      await Socket.connect(GS_HOST)
+
+      setLoading(false)
+    } catch (err) {
+      console.error(err)
+      setError(true)
+      setLoading(false)
+    }
+  }
+
+  if (store.status || loading) return <Header />
+
+  if (error) {
+    return (
+      <>
+        <Header />
+
+        <ErrorMessage>Connection failed.</ErrorMessage>
+        <ReloadButton
+          onClick={() => {
+            window.location.reload()
+          }}
+        >
+          Try again
+        </ReloadButton>
+      </>
+    )
+  }
+
+  return (
+    <Container>
+      <Header />
+
+      <ContentGrid>
         <TopPlayers />
-      </div>
-    </Grid>
+        <div>
+          <PlaySection />
+          <Community />
+          <ReleaseNotes />
+        </div>
+      </ContentGrid>
 
-    <Footer />
-    <GameScreenshot />
-    <BlackOverlay />
-  </Container>
-)
+      <Chat />
+    </Container>
+  )
+
+  // if (loading) {
+  //   return <Container />
+  // }
+
+  // return (
+  //   <Container>
+  //     {openingTime ? (
+  //       <Countdown openingTime={openingTime} />
+  //     ) : (
+  //       <>
+  //         <LoginSection />
+  //         {!loggedIn && <GuestSection />}
+  //       </>
+  //     )}
+  //   </Container>
+  // )
+}
 
 export default Homepage

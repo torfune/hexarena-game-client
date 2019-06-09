@@ -1,6 +1,6 @@
 {
   "name": "hexagor-fe",
-  "version": "1.19.0",
+  "version": "1.20.0",
   "description": "HexArena - Browser client",
   "scripts": {
     "dev": "webpack-dev-server --port 3000 --mode development",
@@ -8,7 +8,6 @@
     "tsc": "tsc"
   },
   "dependencies": {
-    "@reach/router": "^1.2.1",
     "axios": "^0.18.0",
     "mobx": "^5.9.4",
     "mobx-react-lite": "^1.2.0",
@@ -16,7 +15,9 @@
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
     "react-google-login": "^5.0.4",
+    "react-router-dom": "^5.0.1",
     "react-spring": "^8.0.7",
+    "simplebar-react": "^1.0.0",
     "styled-components": "^4.1.3",
     "uuid": "^3.3.2"
   },
@@ -25,11 +26,14 @@
     "@types/reach__router": "^1.2.4",
     "@types/react": "^16.8.17",
     "@types/react-dom": "^16.8.4",
+    "@types/react-router-dom": "^4.3.3",
     "@types/styled-components": "^4.1.14",
     "@types/uuid": "^3.4.4",
     "awesome-typescript-loader": "^5.2.1",
     "copy-webpack-plugin": "^5.0.3",
+    "css-loader": "^2.1.1",
     "source-map-loader": "^0.2.4",
+    "style-loader": "^0.23.1",
     "ts-loader": "^6.0.2",
     "typescript": "^3.5.1",
     "webpack": "^4.32.2",

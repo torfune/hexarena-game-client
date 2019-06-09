@@ -1,33 +1,52 @@
 import styled from 'styled-components'
-import * as React from 'react'
+import React from 'react'
+import { version } from '../../package.json'
 
 const Container = styled.div`
+  width: 100vw;
+  z-index: 2;
+  position: fixed;
+  top: 0;
   display: flex;
-  justify-content: space-between;
-  padding: 12px 16px;
+  background: #222;
+  padding: 0 64px;
+  height: 80px;
+  justify-content: flex-end;
   align-items: center;
-  background: ${props => props.color || '#fff'};
-  transition: 100ms;
-
-  h2 {
-    margin-top: 2px;
-    text-transform: uppercase;
-    color: ${props => (props.color ? '#fff' : '#333')};
-    font-size: 17px;
-    font-weight: 600;
-  }
+  border-bottom: 1px solid #111;
+  color: #fff;
 `
 
-interface Props {
-  text: string
-  iconSrc: string
-  iconSize: string
-  color?: string
-}
+const Logo = styled.a`
+  > h1 {
+    font-size: 42px;
+    color: #fff;
+  }
 
-const Header: React.FC<Props> = ({ text, color }) => (
-  <Container color={color}>
-    <h2>{text}</h2>
+  margin-right: auto;
+`
+
+const Version = styled.p`
+  font-size: 28px;
+  margin-left: 32px;
+  padding-left: 32px;
+  border-left: 1px solid #fff;
+  font-weight: 200;
+`
+
+const Description = styled.p`
+  font-size: 28px;
+  font-weight: 200;
+`
+
+const Header = () => (
+  <Container>
+    <Logo href="/">
+      <h1>HexArena.io</h1>
+    </Logo>
+
+    <Description>Multiplayer strategy game</Description>
+    <Version>{version}</Version>
   </Container>
 )
 

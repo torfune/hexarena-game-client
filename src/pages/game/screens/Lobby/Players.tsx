@@ -3,15 +3,14 @@ import { BOX_SHADOW } from '../../../../constants/react'
 import { observer } from 'mobx-react-lite'
 import store from '../../../../store'
 import { useTransition } from 'react-spring'
-import { useState } from 'react'
 import game from '../../../../game'
 import PatternSelector from './PatternSelector'
-import React from 'react'
 import shadeColor from '../../../../utils/shade'
 import Tooltip from '../../../../components/Tooltip'
+import React, { useState } from 'react'
 
 const Container = styled.div`
-  margin-top: 64px;
+  /* margin-top: 64px; */
 `
 
 const Label = styled.p`
@@ -19,7 +18,7 @@ const Label = styled.p`
   font-size: 14px;
   color: #ddd;
   text-transform: uppercase;
-  margin-top: 64px;
+  margin-top: 24px;
 `
 
 interface PatternProps {

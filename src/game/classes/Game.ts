@@ -30,7 +30,6 @@ class Game {
   scale: number = DEFAULT_SCALE
   targetScale: number = DEFAULT_SCALE
   selectedArmyTile: Tile | null = null
-  socket: Socket = new Socket()
   loop: ticker.Ticker | null = null
   pixi: Application | null = null
   readonly stage: { [key: string]: Container } = {}
@@ -53,44 +52,8 @@ class Game {
   private lastUpdatedAt: number = Date.now()
   private fpsLastUpdatedAt: number = Date.now()
 
-  async start(
-    canvas: HTMLElement,
-    browserId: string,
-    authOptions: {
-      userId: string | null
-      accessToken: string | null
-      guestName: string | null
-    }
-  ) {
-    const { GS_HOST } = getServerHost(window.location.hostname)
-
-    window.onbeforeunload = () => true
-
-    // Fetch GS config
-    try {
-      const [{ data: gsConfig }, { data: status }] = await Promise.all([
-        Axios(`http://${GS_HOST}/config`),
-        Axios(`http://${GS_HOST}/status`),
-      ])
-
-      store.gsConfig = gsConfig
-
-      if (status.timeRemaining && status.timeRemaining > 0) {
-        store.error = {
-          message: 'Server is closed.',
-          goHome: true,
-        }
-
-        return
-      }
-    } catch (err) {
-      store.error = {
-        message: 'Connection failed.',
-        goHome: false,
-      }
-
-      throw err
-    }
+  async start(canvas: HTMLElement) {
+    // window.onbeforeunload = () => true
 
     // Initialize
     if (!this.initialized) {
@@ -118,15 +81,6 @@ class Game {
     // Mount PIXI renderer
     canvas.appendChild(this.pixi.view)
 
-    // Connect to GameServer
-    const { userId, accessToken, guestName } = authOptions
-    await this.socket.connect(GS_HOST)
-    if (userId && accessToken) {
-      this.socket.send('startAsUser', `${browserId}|${userId}|${accessToken}`)
-    } else {
-      this.socket.send('startAsGuest', `${browserId}|${guestName}`)
-    }
-
     // Add debug global variables
     ;(window as any).g = this
     ;(window as any).s = store
@@ -134,14 +88,13 @@ class Game {
     this.running = true
   }
   stop() {
-    if (!this.running || !this.socket || !this.pixi) return
+    if (!this.running || !Socket || !this.pixi) return
 
     for (let i = 0; i < TILE_IMAGES.length; i++) {
       this.stage[TILE_IMAGES[i]].removeChildren()
     }
 
     this.running = false
-    this.socket.close()
     this.pixi.stop()
   }
   update() {
@@ -286,21 +239,13 @@ class Game {
     document.addEventListener('contextmenu', this.handleContextMenu, false)
     document.addEventListener('wheel', this.handleWheelMove.bind(this))
   }
-  sendChatMessage(message: string) {
-    if (!store.gsConfig) return
-
-    this.socket.send(
-      'chatMessage',
-      message.slice(0, store.gsConfig.CHAT_MESSAGE_MAX_LENGTH)
-    )
-  }
   updateScreenSize() {
     if (!this.pixi) return
 
     this.pixi.renderer.resize(window.innerWidth, window.innerHeight)
   }
   selectPattern = (pattern: string) => {
-    this.socket.send('pattern', pattern)
+    Socket.send('pattern', pattern)
   }
   handleKeyDown({ key }: KeyboardEvent) {
     if (!this.running || store.status !== 'running') return
@@ -309,7 +254,7 @@ class Game {
     this.updateCameraMove()
 
     if (key === 'Escape') {
-      this.socket.send('cancel')
+      Socket.send('cancel')
       return
     }
 
@@ -334,7 +279,7 @@ class Game {
 
     if (!tile || !command) return
 
-    this.socket.send('debug', `${command}|${tile.axial.x}|${tile.axial.z}`)
+    Socket.send('debug', `${command}|${tile.axial.x}|${tile.axial.z}`)
   }
   handleKeyUp({ key }: KeyboardEvent) {
     if (!this.running || store.status !== 'running' || !store.gsConfig) return
@@ -442,7 +387,7 @@ class Game {
       }
 
       if (button) {
-        this.socket.send(
+        Socket.send(
           'click',
           `${hoveredTile.axial.x}|${hoveredTile.axial.z}|${button}`
         )
@@ -770,13 +715,13 @@ class Game {
     // }
   }
   acceptRequest(senderId: string) {
-    this.socket.send('request', `accept|${senderId}`)
+    Socket.send('request', `accept|${senderId}`)
   }
   declineRequest(senderId: string) {
-    this.socket.send('request', `decline|${senderId}`)
+    Socket.send('request', `decline|${senderId}`)
   }
   createRequest(receiverId: string) {
-    this.socket.send('request', `create|${receiverId}`)
+    Socket.send('request', `create|${receiverId}`)
   }
   updateBlackOverlays() {
     for (let i = 0; i < store.tiles.length; i++) {
@@ -860,7 +805,7 @@ class Game {
     }
   }
   surrender() {
-    this.socket.send('surrender')
+    Socket.send('surrender')
   }
   sendArmy(tile: Tile) {
     if (!this.selectedArmyTile) return
@@ -875,7 +820,7 @@ class Game {
 
     if (index !== null) {
       const { x, z } = this.selectedArmyTile.axial
-      this.socket.send('sendArmy', `${x}|${z}|${index}`)
+      Socket.send('sendArmy', `${x}|${z}|${index}`)
     }
 
     this.updateArmyTileHighlights()
@@ -913,7 +858,7 @@ class Game {
     this.selectedArmyTile = null
   }
   sendGoldToAlly() {
-    this.socket.send('sendGold')
+    Socket.send('sendGold')
   }
 }
 

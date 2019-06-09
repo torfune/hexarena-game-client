@@ -1,26 +1,40 @@
 import { PRIMARY } from '../../constants/react'
-import Heading from './Heading'
 import styled from 'styled-components'
 import changelog from '../../constants/changelog'
-import React from 'react'
+import React, { Fragment } from 'react'
 
 const Container = styled.div`
-  margin-top: 64px;
+  margin-top: 96px;
 `
 
-const UpdateContainer = styled.div`
-  color: #fff;
-  margin-top: 32px;
-  margin-bottom: 32px;
-  background: #383838;
-  padding: 48px;
-  border-radius: 8px;
-  box-shadow: 0px 1px 24px 0px rgba(0, 0, 0, 0.05);
-`
-
-const Version = styled.h3`
+const Heading = styled.h2`
   font-size: 32px;
+  font-weight: 500;
+  color: #fff;
+`
+
+const ReleaseHead = styled.div`
+  background: #2f2f2f;
+  font-size: 24px;
+  font-weight: 600;
+  margin-top: 32px;
+  padding: 16px 48px;
+  border: 1px solid #282828;
+  border-bottom: 0;
+  color: #fff;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+`
+
+const ReleaseBody = styled.div`
+  color: #fff;
   margin-bottom: 32px;
+  background: #323232;
+  padding: 16px 48px;
+  border: 1px solid #282828;
+  padding-bottom: 32px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
 `
 
 const Point = styled.p`
@@ -59,17 +73,19 @@ const ReleaseNotes = () => (
     <Heading>What's new</Heading>
 
     {changelog.map(release => (
-      <UpdateContainer key={release.version}>
-        <Version>{release.version}</Version>
-        {release.points.map(point => (
-          <Point key={point}>{point}</Point>
-        ))}
-        {release.editedBy && (
-          <EditorCredits>
-            Edited by <span>{release.editedBy}</span>
-          </EditorCredits>
-        )}
-      </UpdateContainer>
+      <Fragment key={release.version}>
+        <ReleaseHead>{release.version}</ReleaseHead>
+        <ReleaseBody>
+          {release.points.map(point => (
+            <Point key={point}>{point}</Point>
+          ))}
+          {release.editedBy && (
+            <EditorCredits>
+              Edited by <span>{release.editedBy}</span>
+            </EditorCredits>
+          )}
+        </ReleaseBody>
+      </Fragment>
     ))}
   </Container>
 )

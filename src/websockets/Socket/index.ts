@@ -10,10 +10,10 @@ import game from '../../game'
 import createInstance from '../../utils/createInstance'
 
 class Socket {
-  connected: boolean = false
-  ws?: WebSocket
+  static connected: boolean = false
+  static ws?: WebSocket
 
-  connect(host: string) {
+  static connect(host: string) {
     return new Promise(resolve => {
       this.ws = new WebSocket(`ws://${host}`)
 
@@ -27,7 +27,7 @@ class Socket {
       })
     })
   }
-  handleMessage({ data }: { data: string }) {
+  static handleMessage({ data }: { data: string }) {
     const [key, payload] = data.split('//')
     const messageKeys = Object.keys(messages)
 
@@ -205,11 +205,11 @@ class Socket {
       }
     }
   }
-  handleError = (event: Event) => {
+  static handleError(event: Event) {
     console.error(`Socket error!`)
     console.error(event)
   }
-  handleClose = () => {
+  static handleClose() {
     this.connected = false
     console.log('Socket closed.')
 
@@ -220,15 +220,9 @@ class Socket {
       }
     }
   }
-  send = (message: string, payload?: string) => {
+  static send(message: string, payload?: string) {
     if (this.ws) {
       this.ws.send(`${message}//${payload}`)
-    }
-  }
-  close = () => {
-    console.log('close called')
-    if (this.ws) {
-      this.ws.close()
     }
   }
 }
@@ -246,6 +240,12 @@ const setStoreValue = (key: string, value: any) => {
         throw Error(typeError(key, value))
       }
       store.serverTime = value
+      break
+    case 'waitingTime':
+      if (typeof value !== 'object') {
+        throw Error(typeError(key, value))
+      }
+      store.waitingTime = value
       break
     case 'goldAnimation':
       if (typeof value !== 'object') {
@@ -268,10 +268,10 @@ const setStoreValue = (key: string, value: any) => {
     case 'status':
       if (
         typeof value !== 'string' ||
-        (value !== 'pending' &&
-          value !== 'starting' &&
+        (value !== 'starting' &&
           value !== 'running' &&
-          value !== 'finished')
+          value !== 'finished' &&
+          value !== 'aborted')
       ) {
         throw Error(typeError(key, value))
       }

@@ -1,19 +1,21 @@
 import styled from 'styled-components'
-import { BOX_SHADOW, PRIMARY } from '../../../constants/react'
+import { BOX_SHADOW, PRIMARY } from '../../constants/react'
+import shadeColor from '../../utils/shade'
 
 const PlayButton = styled.a`
-  display: block;
+  display: flex;
   background: ${PRIMARY};
   color: #fff;
-  padding: 8px 0;
   font-weight: 500;
-  font-size: 24px;
-  box-shadow: ${BOX_SHADOW};
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
   border-radius: 4px;
   transition: 200ms;
   width: 160px;
   height: 45px;
   text-align: center;
+  border: 2px solid ${shadeColor(PRIMARY, -20)};
 
   :hover {
     transform: scale(1.05);

@@ -3,10 +3,13 @@ import axios from 'axios'
 import authHeader from './utils/authHeader'
 import Credentials from './types/Credentials'
 import getServerHost from './utils/getServerHost'
+import User from './models/User'
+import Axios from 'axios'
 
 interface Auth {
   loggedIn: boolean | null
   userId: string | null
+  user: User | null
   accessToken: string | null
   accessTokenExp: string | null
   login: (userId: string, accessToken: string, accessTokenExp: string) => void
@@ -16,6 +19,7 @@ interface Auth {
 export const AuthContext = createContext<Auth>({
   loggedIn: null,
   userId: null,
+  user: null,
   accessToken: null,
   accessTokenExp: null,
   login: () => {},
@@ -29,6 +33,7 @@ interface Props {
 export const AuthProvider: React.FC<Props> = ({ children }) => {
   const [loaded, setLoaded] = useState(false)
   const [loggedIn, setLoggedIn] = useState<boolean | null>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [credentials, setCredentials] = useState<Credentials>({
     userId: null,
     accessToken: null,
@@ -77,14 +82,31 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 
   useEffect(() => {
     if (loaded) {
-      const loggedIn =
-        !!credentials.userId &&
-        !!credentials.accessToken &&
-        !!credentials.accessTokenExp
+      const { userId, accessToken, accessTokenExp } = credentials
 
-      setLoggedIn(loggedIn)
+      if (!userId || !accessToken || !accessTokenExp) {
+        setLoggedIn(false)
+        return
+      }
+
+      fetchUser(userId, accessToken)
+      setLoggedIn(true)
     }
   }, [credentials, loaded])
+
+  const fetchUser = async (userId: string, accessToken: string) => {
+    const { WS_HOST } = getServerHost(window.location.hostname)
+    const response = await Axios.get(
+      `http://${WS_HOST}/users/${userId}`,
+      authHeader(accessToken)
+    )
+
+    if (!response.data) {
+      logout()
+    } else {
+      setUser(response.data)
+    }
+  }
 
   const login = (
     userId: string,
@@ -105,6 +127,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     localStorage.removeItem('accessTokenExp')
 
     setCredentials({ userId: null, accessToken: null, accessTokenExp: null })
+    setUser(null)
     setLoaded(true)
   }
 
@@ -115,6 +138,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
         userId: credentials.userId,
         accessToken: credentials.accessToken,
         accessTokenExp: credentials.accessTokenExp,
+        user,
         login,
         logout,
       }}

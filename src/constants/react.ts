@@ -19,3 +19,6 @@ if (HUD_SCALE > 1) {
 // WEBSERVER & AUTH
 export const GOOGLE_CLIENT_ID =
   '110619057119-agls5l4ghp08pmdbfj7mspsf55stoddh.apps.googleusercontent.com'
+
+// BREAKPOINTS
+export const HOMEPAGE_BREAKPOINT = '1870px'

@@ -1,22 +1,23 @@
 import styled from 'styled-components'
-import { BOX_SHADOW } from '../../../constants/react'
+import { BOX_SHADOW } from '../../constants/react'
 
 const NameInput = styled.input.attrs({
   maxLength: 12,
 })`
   padding: 8px 16px;
   border-radius: 4px;
-  box-shadow: ${BOX_SHADOW};
   font-size: 24px;
-  background: #eee;
+  background: #fff;
   font-weight: 500;
   margin-right: 16px;
   color: #333;
-  width: 240px;
+  width: 250px;
+  height: 45px;
+  border: 2px solid #aaa;
 
   :hover,
   :focus {
-    background: #fff;
+    color: #000;
   }
 
   ::placeholder {

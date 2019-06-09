@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import Heading from '../Heading'
+import Heading from './Heading'
 import React from 'react'
 
 const Container = styled.div``
