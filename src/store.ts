@@ -35,6 +35,7 @@ class Store {
   @observable fps: number = 0
   @observable ping: number = 0
   @observable flash: number = 0
+  @observable gameMode: 'diplomacy' | 'ffa' = 'diplomacy'
   @observable goldAnimation?: { tileId: string; count: number }
   @observable gsConfig?: GameServerConfig
   @observable playerId?: string

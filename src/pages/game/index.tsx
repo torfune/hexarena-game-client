@@ -22,6 +22,8 @@ import { RouteComponentProps } from '@reach/router'
 import Ally from './hud/Ally'
 import Lobby from './screens/Lobby'
 import showSurrenderButton from '../../game/functions/showSurrenderButton'
+import playerId from '../../websockets/messages/playerId'
+import Player from '../../game/classes/Player'
 
 const Container = styled.div`
   width: 100vw;
@@ -72,7 +74,7 @@ const Game: React.FC<RouteComponentProps> = observer(() => {
     window.addEventListener('resize', game.updateScreenSize.bind(game))
   }, [loggedIn])
 
-  const { status, showHud, players, player, spectating, error } = store
+  const { status, showHud, gameMode, player, spectating, error } = store
 
   return (
     <Container>
@@ -80,13 +82,6 @@ const Game: React.FC<RouteComponentProps> = observer(() => {
         id="game-canvas"
         visible={status === 'running' || status === 'finished'}
       />
-
-      {/* {status !== 'running' && status !== 'finished' && (
-        <SpinnerContainer>
-          <Spinner size="128px" thickness="12px" />
-          <p>Connecting</p>
-        </SpinnerContainer>
-      )} */}
 
       {status === 'starting' && <Lobby />}
 
@@ -96,11 +91,7 @@ const Game: React.FC<RouteComponentProps> = observer(() => {
 
           {showHud && player.alive && (
             <>
-              {player.ally ? (
-                <Ally ally={player.ally} playerGold={player.gold} />
-              ) : (
-                <Diplomacy />
-              )}
+              {gameMode === 'diplomacy' && renderDiplomacy(player)}
 
               <HoverPreview />
               <Leaderboard />
@@ -140,5 +131,13 @@ const Game: React.FC<RouteComponentProps> = observer(() => {
     </Container>
   )
 })
+
+const renderDiplomacy = (player: Player) => {
+  if (player.ally) {
+    return <Ally ally={player.ally} playerGold={player.gold} />
+  }
+
+  return <Diplomacy />
+}
 
 export default Game

@@ -275,6 +275,15 @@ const setStoreValue = (key: string, value: any) => {
       }
       store.status = value
       break
+    case 'gameMode':
+      if (
+        typeof value !== 'string' ||
+        (value !== 'diplomacy' && value !== 'ffa')
+      ) {
+        throw Error(typeError(key, value))
+      }
+      store.gameMode = value
+      break
     case 'chatMessages':
       store.chatMessages = value
       break
