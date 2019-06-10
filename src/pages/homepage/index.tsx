@@ -16,6 +16,7 @@ import { PRIMARY } from '../../constants/react'
 import shadeColor from '../../utils/shade'
 import Countdown from './Countdown'
 import { observer } from 'mobx-react-lite'
+import { History } from 'history'
 
 const Container = styled.div``
 
@@ -54,10 +55,15 @@ const ReloadButton = styled.div`
   }
 `
 
-const Homepage: React.FC<RouteComponentProps> = () => {
+interface Props {
+  history: History
+}
+const Homepage: React.FC<Props> = ({ history }) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<boolean>(false)
   const [openingTime, setOpeningTime] = useState<number | null>(null)
+
+  store.routerHistory = history
 
   useEffect(() => {
     if (store.status) {
@@ -95,7 +101,7 @@ const Homepage: React.FC<RouteComponentProps> = () => {
     }
   }
 
-  if (store.status || loading) return <Header />
+  if (loading) return <Header />
 
   if (error || store.error) {
     return (

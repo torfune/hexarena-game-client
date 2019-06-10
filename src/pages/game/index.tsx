@@ -49,7 +49,7 @@ const GameCanvas = styled.div<GameCanvasProps>`
 const Game: React.FC<RouteComponentProps> = observer(() => {
   const { loggedIn } = useAuth()
 
-  if (!store.status) {
+  if (!store.status || store.status === 'aborted') {
     window.location.href = '/'
     return null
   }

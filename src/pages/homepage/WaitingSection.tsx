@@ -2,10 +2,7 @@ import styled from 'styled-components'
 import Heading from './Heading'
 import React, { useEffect } from 'react'
 import { observer } from 'mobx-react-lite'
-import { PRIMARY } from '../../constants/react'
 import store from '../../store'
-import { withRouter, RouteProps } from 'react-router-dom'
-import { RouterProps, RouteComponentProps } from 'react-router'
 import Spinner from '../../components/Spinner'
 
 const Container = styled.div``
@@ -41,17 +38,20 @@ const StyledSpinner = styled(Spinner)`
   margin-left: 20px;
 `
 
-const WaitingSection: React.FC<RouteComponentProps> = ({ history }) => {
+const WaitingSection = () => {
+  console.log('waiting section re rendered')
+  console.log(`store status: ${store.status}`)
+
+  useEffect(() => {
+    if (store.status === 'starting' && store.routerHistory) {
+      console.log(`status change: ${store.status}`)
+      store.routerHistory.push('/game')
+    }
+  }, [store.status])
+
   if (!store.waitingTime) return null
 
   const { current, average } = store.waitingTime
-
-  useEffect(() => {
-    if (store.status === 'starting') {
-      console.log(`status change: ${store.status}`)
-      history.push('/game')
-    }
-  }, [store.status])
 
   return (
     <Container>
@@ -87,4 +87,4 @@ const formatTime = (totalSeconds: number) => {
   return `${formatted.minutes}:${formatted.seconds}`
 }
 
-export default withRouter(observer(WaitingSection))
+export default observer(WaitingSection)

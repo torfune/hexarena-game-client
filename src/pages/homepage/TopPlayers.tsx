@@ -52,7 +52,7 @@ const PlayerRow = styled.div<{ color?: string }>`
   padding: 8px 24px;
   display: grid;
   grid-template-columns: 32px 1fr auto;
-  background: ${props => (props.color ? '#444' : null)};
+  background: ${props => (props.color ? '#3f3f3f' : null)};
 `
 
 const Value = styled.p`

@@ -46,6 +46,7 @@ class Store {
     message: string
     goHome: boolean
   }
+  routerHistory?: any
   changeHandlers: { [key: string]: (value: any) => void } = {}
   private idMap: {
     actions: IdMap<Action>

@@ -3,7 +3,7 @@ import TopPlayers from '../../../homepage/TopPlayers'
 import store from '../../../../store'
 import { observer } from 'mobx-react-lite'
 import Players from './Players'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Chat from '../../../homepage/Chat'
 import Header from '../../../../components/Header'
 

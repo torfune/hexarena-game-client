@@ -1,5 +1,5 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import LoginSection from './LoginSection'
 import GuestSection from './GuestSection'
 import { useAuth } from '../../auth'
@@ -23,13 +23,17 @@ const Heading = styled.h2`
   font-weight: 500;
 `
 
-const Row = styled.div`
+const Row = styled.div<{ break?: boolean }>`
   margin-top: 32px;
   display: flex;
 
-  @media (max-width: ${HOMEPAGE_BREAKPOINT}) {
-    display: block;
-  }
+  ${props =>
+    props.break &&
+    css`
+      @media (max-width: ${HOMEPAGE_BREAKPOINT}) {
+        display: block;
+      }
+    `}
 `
 
 const PlaySection = () => {
@@ -47,7 +51,7 @@ const PlaySection = () => {
           <Profile />
         </Row>
       ) : (
-        <Row>
+        <Row break={!loggedIn}>
           <LoginSection />
           {loggedIn ? <Profile /> : <GuestSection />}
         </Row>

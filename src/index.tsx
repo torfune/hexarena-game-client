@@ -13,7 +13,11 @@ ReactDOM.render(
     <GlobalStyle />
     <AuthProvider>
       <Router>
-        <Route path="/" exact component={Homepage} />
+        <Route
+          path="/"
+          exact
+          render={({ history }) => <Homepage history={history} />}
+        />
         <Route path="/game" component={Game} />
       </Router>
     </AuthProvider>
