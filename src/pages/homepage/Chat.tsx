@@ -8,6 +8,7 @@ import { useAuth } from '../../auth'
 import SimpleBar from 'simplebar-react'
 
 import 'simplebar/dist/simplebar.min.css'
+import { PRIMARY } from '../../constants/react'
 
 const Container = styled.div`
   z-index: 2;
@@ -46,9 +47,10 @@ const MessageAuthor = styled.p`
   white-space: nowrap;
 `
 
-const MessageContent = styled.p`
+const MessageContent = styled.p<{ infoMessage: boolean }>`
   margin-left: 10px;
-  color: #eee;
+  color: ${prop => (prop.infoMessage ? PRIMARY : '#eee')};
+  font-style: ${prop => (prop.infoMessage ? 'italic' : null)};
   user-select: text;
 `
 
@@ -134,7 +136,9 @@ const Chat = () => {
         {store.chatMessages.map(({ playerName, content }, index) => (
           <Message key={index}>
             <MessageAuthor>{playerName}:</MessageAuthor>
-            <MessageContent>{content}</MessageContent>
+            <MessageContent infoMessage={playerName === '[info]'}>
+              {content}
+            </MessageContent>
           </Message>
         ))}
       </StyledSimpleBar>
