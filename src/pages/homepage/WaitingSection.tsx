@@ -51,7 +51,7 @@ const WaitingSection = () => {
 
   if (!store.waitingTime) return null
 
-  const { current, average } = store.waitingTime
+  const { current, average, players } = store.waitingTime
 
   return (
     <Container>
@@ -62,10 +62,12 @@ const WaitingSection = () => {
           <div>
             <Label>Current:</Label>
             <Label>Average:</Label>
+            <Label>Players:</Label>
           </div>
           <div>
             <Time>{formatTime(current)}</Time>
-            <Time>{average ? formatTime(average) : '- - : - -'}</Time>
+            <Time>{average ? formatTime(average) : '-'}</Time>
+            <Time>{players || '-'}</Time>
           </div>
         </TimesWrapper>
 

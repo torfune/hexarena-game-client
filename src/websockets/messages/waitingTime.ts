@@ -4,6 +4,7 @@ const waitingTime: GameServerMessage = {
   type: {
     current: 'number',
     average: 'number',
+    players: 'number',
   },
 }
 

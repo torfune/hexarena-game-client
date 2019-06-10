@@ -31,6 +31,7 @@ class Store {
   @observable waitingTime: {
     current: number
     average: number
+    players: number
   } | null = null
   @observable fps: number = 0
   @observable ping: number = 0

@@ -41,10 +41,12 @@ const Profile = () => {
 
   return (
     <Container>
-      <EloSection>
-        <p>Elo</p>
-        <span>{user.elo}</span>
-      </EloSection>
+      {!!user.elo && (
+        <EloSection>
+          <p>Elo</p>
+          <span>{user.elo}</span>
+        </EloSection>
+      )}
       {!store.waitingTime && (
         <LogoutButton onClick={logout}>Logout</LogoutButton>
       )}

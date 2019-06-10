@@ -56,6 +56,7 @@ const GuestSection = () => {
       store.waitingTime = {
         current: 0,
         average: 0,
+        players: 0,
       }
       return
     }
@@ -70,6 +71,7 @@ const GuestSection = () => {
       store.waitingTime = {
         current: 0,
         average: 0,
+        players: 0,
       }
     } else {
       setInvalidName(true)

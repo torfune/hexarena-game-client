@@ -195,6 +195,7 @@ const LoginSection = () => {
     store.waitingTime = {
       current: 0,
       average: 0,
+      players: 0,
     }
   }
 
