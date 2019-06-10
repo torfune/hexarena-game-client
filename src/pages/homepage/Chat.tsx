@@ -15,9 +15,9 @@ const Container = styled.div`
   position: fixed;
   color: #fff;
   right: 0;
-  padding-right: 64px;
+  padding-right: 48px;
   border-left: 1px solid #222;
-  padding-left: 64px;
+  padding-left: 48px;
   padding-top: 48px;
   padding-bottom: 32px;
   top: 80px;

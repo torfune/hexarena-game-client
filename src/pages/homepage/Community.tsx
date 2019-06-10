@@ -15,13 +15,13 @@ const ButtonsContainer = styled.div`
 const buttonCSS = css`
   width: 200px;
   border: 2px solid #bbb;
-  color: #222;
-  font-weight: 600;
+  color: #111;
+  font-weight: 500;
   border-radius: 4px;
-  font-size: 20px;
+  font-size: 18px;
   display: flex;
   align-items: center;
-  height: 50px;
+  height: 45px;
   background: #fff;
   transition: 400ms;
 
@@ -40,14 +40,14 @@ const RedditButton = styled.a`
 `
 
 const DiscordIcon = styled.img`
-  height: 46px;
+  height: 38px;
   margin-right: 4px;
   margin-left: 6px;
   margin-top: 4px;
 `
 
 const RedditIcon = styled.img`
-  height: 32px;
+  height: 26px;
   margin-left: 12px;
   margin-right: 12px;
 `

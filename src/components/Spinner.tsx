@@ -4,6 +4,7 @@ import React from 'react'
 interface ContainerProps {
   size: string
   thickness: string
+  color: string
 }
 const Container = styled.div<ContainerProps>`
   position: relative;
@@ -25,10 +26,10 @@ const Container = styled.div<ContainerProps>`
     position: absolute;
     width: ${props => props.size};
     height: ${props => props.size};
-    border: ${props => props.thickness} solid #fed;
+    border: ${props => `${props.thickness} solid ${props.color}`};
     border-radius: 50%;
     animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-    border-color: #fed transparent transparent transparent;
+    border-color: ${props => props.color} transparent transparent transparent;
   }
 
   div:nth-child(1) {
@@ -47,9 +48,16 @@ const Container = styled.div<ContainerProps>`
 interface Props {
   size: string
   thickness: string
+  color: string
+  className?: string
 }
-const Spinner: React.FC<Props> = ({ size, thickness }) => (
-  <Container size={size} thickness={thickness}>
+const Spinner: React.FC<Props> = ({ size, thickness, color, className }) => (
+  <Container
+    size={size}
+    thickness={thickness}
+    color={color}
+    className={className}
+  >
     <div />
     <div />
     <div />

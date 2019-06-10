@@ -7,6 +7,7 @@ import store from '../../store'
 import { observer } from 'mobx-react-lite'
 import WaitingSection from './WaitingSection'
 import { HOMEPAGE_BREAKPOINT } from '../../constants/react'
+import Profile from './Profile'
 
 const Container = styled.div`
   color: #fff;
@@ -41,11 +42,14 @@ const PlaySection = () => {
       <Heading>Play</Heading>
 
       {store.waitingTime ? (
-        <WaitingSection />
+        <Row>
+          <WaitingSection />
+          <Profile />
+        </Row>
       ) : (
         <Row>
           <LoginSection />
-          {!loggedIn && <GuestSection />}
+          {loggedIn ? <Profile /> : <GuestSection />}
         </Row>
       )}
     </Container>

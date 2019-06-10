@@ -22,3 +22,13 @@ export const GOOGLE_CLIENT_ID =
 
 // BREAKPOINTS
 export const HOMEPAGE_BREAKPOINT = '1870px'
+
+// IFRAME
+export const IFRAME = (() => {
+  try {
+    return window.self !== window.top
+  } catch (e) {
+    return true
+  }
+})()
+console.log(`iframe: ${IFRAME}`)

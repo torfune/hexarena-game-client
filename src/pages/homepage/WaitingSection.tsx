@@ -6,13 +6,11 @@ import { PRIMARY } from '../../constants/react'
 import store from '../../store'
 import { withRouter, RouteProps } from 'react-router-dom'
 import { RouterProps, RouteComponentProps } from 'react-router'
+import Spinner from '../../components/Spinner'
 
-const Container = styled.div`
-  margin-top: 32px;
-`
+const Container = styled.div``
 
 const TimesWrapper = styled.div`
-  margin-top: 24px;
   background: #282828;
   width: 170px;
   padding: 12px 20px;
@@ -20,6 +18,12 @@ const TimesWrapper = styled.div`
   border: 1px solid #222;
   display: flex;
   justify-content: space-between;
+`
+
+const Row = styled.div`
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
 `
 
 const Time = styled.p`
@@ -33,9 +37,10 @@ const Label = styled.p`
   font-weight: 500;
 `
 
-// interface Props {
-//   history: any
-// }
+const StyledSpinner = styled(Spinner)`
+  margin-left: 20px;
+`
+
 const WaitingSection: React.FC<RouteComponentProps> = ({ history }) => {
   if (!store.waitingTime) return null
 
@@ -52,16 +57,20 @@ const WaitingSection: React.FC<RouteComponentProps> = ({ history }) => {
     <Container>
       <Heading>Waiting for other players . . .</Heading>
 
-      <TimesWrapper>
-        <div>
-          <Label>Current:</Label>
-          <Label>Average:</Label>
-        </div>
-        <div>
-          <Time>{formatTime(current)}</Time>
-          <Time>{average ? formatTime(average) : '- - : - -'}</Time>
-        </div>
-      </TimesWrapper>
+      <Row>
+        <TimesWrapper>
+          <div>
+            <Label>Current:</Label>
+            <Label>Average:</Label>
+          </div>
+          <div>
+            <Time>{formatTime(current)}</Time>
+            <Time>{average ? formatTime(average) : '- - : - -'}</Time>
+          </div>
+        </TimesWrapper>
+
+        <StyledSpinner size="40px" thickness="6px" color="#222" />
+      </Row>
     </Container>
   )
 }

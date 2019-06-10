@@ -14,6 +14,7 @@ import ReleaseNotes from './ReleaseNotes'
 import TopPlayers from './TopPlayers'
 import { PRIMARY } from '../../constants/react'
 import shadeColor from '../../utils/shade'
+import Countdown from './Countdown'
 
 const Container = styled.div``
 
@@ -120,7 +121,11 @@ const Homepage: React.FC<RouteComponentProps> = () => {
       <ContentGrid>
         <TopPlayers />
         <div>
-          <PlaySection />
+          {openingTime ? (
+            <Countdown openingTime={openingTime} />
+          ) : (
+            <PlaySection />
+          )}
           <Community />
           <ReleaseNotes />
         </div>

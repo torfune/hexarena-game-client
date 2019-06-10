@@ -1,11 +1,18 @@
 import { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import Heading from './Heading'
 import React from 'react'
 
-const Container = styled.div``
+const Container = styled.div`
+  color: #fff;
+`
+
+const Heading = styled.h2`
+  font-size: 32px;
+  font-weight: 500;
+`
 
 const CountdownTime = styled.p`
+  margin-top: 22px;
   color: #fff;
   font-size: 40px;
   font-weight: 700;
@@ -27,7 +34,7 @@ const Countdown: React.FC<Props> = ({ openingTime }) => {
   const [remainingDate, setRemainingDate] = useState<Date | null>(null)
 
   useEffect(() => {
-    interval = setInterval(updateCountdown, 100)
+    interval = setInterval(updateCountdown, 50)
 
     return () => {
       if (interval) {
@@ -61,9 +68,7 @@ const Countdown: React.FC<Props> = ({ openingTime }) => {
 
   return (
     <Container>
-      <Heading>
-        <span>Alpha</span> test starts in
-      </Heading>
+      <Heading>Game opens in</Heading>
 
       <CountdownTime>
         {remainingDate.getUTCDate() - 1}:

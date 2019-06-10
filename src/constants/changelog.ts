@@ -1,10 +1,20 @@
 const changelog = [
   {
+    version: 'Alpha 1.20.0',
+    points: [
+      'Improved match making.',
+      'FFA mode.',
+      'Balance changes.',
+      'Bug fixes.',
+      'UI improvements.',
+    ],
+  },
+  {
     version: 'Alpha 1.19.0',
     points: [
       'Global chat.',
       'Sending gold to your ally.',
-      'Flat attack duration - 2 seconds.',
+      'Flat attack duration: 2 seconds.',
       'Not possible to build Castle next to enemy Base.',
       'ELO is visible even if you are not in the top 20.',
       'Guest ELO.',

@@ -10,7 +10,6 @@ import React from 'react'
 import { PRIMARY, BOX_SHADOW, GOOGLE_CLIENT_ID } from '../../constants/react'
 import User from '../../models/User'
 import { useAuth } from '../../auth'
-import { FadeUp } from '../../components/Animations'
 import Heading from './Heading'
 import Spinner from '../../components/Spinner'
 import authHeader from '../../utils/authHeader'
@@ -21,35 +20,11 @@ import getBrowserId from '../../utils/getBrowserId'
 import shadeColor from '../../utils/shade'
 import store from '../../store'
 
-const Container = styled.div`
-  width: 100%;
-`
+const Container = styled.div``
 
 const Placeholder = styled.div`
   width: 250px;
   height: 85px;
-`
-
-const Profile = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-`
-
-const EloSection = styled.div`
-  width: 80px;
-  text-align: center;
-
-  p {
-    text-transform: uppercase;
-    font-weight: 600;
-    color: ${PRIMARY};
-    font-size: 20px;
-  }
-
-  span {
-    font-size: 22px;
-  }
 `
 
 const ChooseNameSection = styled.div`
@@ -62,7 +37,6 @@ const LoginButton = styled.div`
   background: ${PRIMARY};
   height: 45px;
   margin-top: 16px;
-  /* box-shadow: ${BOX_SHADOW}; */
   text-align: center;
   display: flex;
   justify-content: center;
@@ -103,15 +77,6 @@ const SaveButton = styled.a<{ disabled: boolean }>`
 
   :hover {
     transform: ${props => !props.disabled && 'scale(1.05)'};
-  }
-`
-
-const LogoutButton = styled.div`
-  color: #fff;
-  margin-top: 24px;
-
-  :hover {
-    text-decoration: underline;
   }
 `
 
@@ -239,19 +204,10 @@ const LoginSection = () => {
     if (user.name) {
       return (
         <Container>
-          <Profile>
-            <div>
-              <Heading>Logged in as {user.name}</Heading>
-              <PlayButtonWrapper>
-                <PlayButton onClick={play}>Play</PlayButton>
-              </PlayButtonWrapper>
-              <LogoutButton onClick={logout}>Logout</LogoutButton>
-            </div>
-            <EloSection>
-              <p>Elo</p>
-              <span>{user.elo}</span>
-            </EloSection>
-          </Profile>
+          <Heading>Logged in as {user.name}</Heading>
+          <PlayButtonWrapper>
+            <PlayButton onClick={play}>Play</PlayButton>
+          </PlayButtonWrapper>
         </Container>
       )
     } else {
@@ -271,7 +227,7 @@ const LoginSection = () => {
             />
             {nameValid === null ? (
               <SpinnerContainer>
-                <Spinner size="32px" thickness="4px" />
+                <Spinner size="32px" thickness="4px" color="#fff" />
               </SpinnerContainer>
             ) : (
               <SaveButton disabled={!nameValid} onClick={handleNameSave}>
@@ -279,8 +235,6 @@ const LoginSection = () => {
               </SaveButton>
             )}
           </ChooseNameSection>
-
-          <LogoutButton onClick={logout}>Logout</LogoutButton>
         </Container>
       )
     }
