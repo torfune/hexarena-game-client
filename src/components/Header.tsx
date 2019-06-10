@@ -46,7 +46,7 @@ const Header = () => (
     </Logo>
 
     <Description>Multiplayer strategy game</Description>
-    <Version>{version}</Version>
+    <Version>Alpha {version.slice(0, 4)}</Version>
   </Container>
 )
 

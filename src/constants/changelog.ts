@@ -1,6 +1,6 @@
 const changelog = [
   {
-    version: 'Alpha 1.20.0',
+    version: 'Alpha 1.20',
     points: [
       'Improved match making.',
       'FFA mode.',
@@ -10,7 +10,7 @@ const changelog = [
     ],
   },
   {
-    version: 'Alpha 1.19.0',
+    version: 'Alpha 1.19',
     points: [
       'Global chat.',
       'Sending gold to your ally.',
@@ -23,7 +23,7 @@ const changelog = [
     ],
   },
   {
-    version: 'Alpha 1.18.0',
+    version: 'Alpha 1.18',
     points: [
       'Drag & Drop army sending.',
       'Zoom on E/Q keys.',
@@ -32,7 +32,7 @@ const changelog = [
     ],
   },
   {
-    version: 'Alpha 1.17.0',
+    version: 'Alpha 1.17',
     points: [
       'Gold and Village counts are visible in leaderboard.',
       'Cutting forests is faster.',
@@ -42,7 +42,7 @@ const changelog = [
     ],
   },
   {
-    version: 'Alpha 1.16.0',
+    version: 'Alpha 1.16',
     points: [
       'Performance optimizations.',
       'Keyboard camera movement (WASD).',
@@ -51,7 +51,7 @@ const changelog = [
     ],
   },
   {
-    version: 'Alpha 1.15.0',
+    version: 'Alpha 1.15',
     points: [
       'Initial gold set to 4.',
       'Faster manual attacks.',
@@ -62,7 +62,7 @@ const changelog = [
     ],
   },
   {
-    version: 'Alpha 1.14.0',
+    version: 'Alpha 1.14',
     points: [
       'Repairing is faster than recruiting.',
       'Captured neutral villages join your empire.',
@@ -72,7 +72,7 @@ const changelog = [
     ],
   },
   {
-    version: 'Alpha 1.13.0',
+    version: 'Alpha 1.13',
     points: [
       'Unlimited gold capacity.',
       'Villages generate gold every 30 seconds.',
@@ -81,7 +81,7 @@ const changelog = [
     ],
   },
   {
-    version: 'Alpha 1.12.0',
+    version: 'Alpha 1.12',
     points: [
       'Google login.',
       'ELO rating system.',
@@ -92,7 +92,7 @@ const changelog = [
     ],
   },
   {
-    version: 'Alpha 1.11.0',
+    version: 'Alpha 1.11',
     points: [
       'Wood is replaced with Gold, it works the same way.',
       'Surrender button (when playing 1 vs 2).',
@@ -101,23 +101,23 @@ const changelog = [
     ],
   },
   {
-    version: 'Alpha 1.10.0',
+    version: 'Alpha 1.10',
     points: ['UI improvements.', 'Bug fixes.'],
   },
   {
-    version: 'Alpha 1.9.0',
+    version: 'Alpha 1.9',
     points: ['UI improvements.', 'More colors.', 'Bug fixes.'],
   },
   {
-    version: 'Alpha 1.8.0',
+    version: 'Alpha 1.8',
     points: ['Alliance request notifications.', 'Bug fixes.'],
   },
   {
-    version: 'Alpha 1.7.0',
+    version: 'Alpha 1.7',
     points: ['Shared vision in an alliance.', 'Several bugs were fixed.'],
   },
   {
-    version: 'Alpha 1.6.0',
+    version: 'Alpha 1.6',
     points: [
       'Redesigned edge of the map.',
       'Cutting trees takes longer, but you get 2 wood instead of 1.',
@@ -135,7 +135,7 @@ const changelog = [
     ],
   },
   {
-    version: 'Alpha 1.5.0',
+    version: 'Alpha 1.5',
     points: [
       'Added Alliances. If your ally wins, you win too.',
       'Villages are no longer spawning in range of enemy Castles.',
@@ -150,7 +150,7 @@ const changelog = [
     ],
   },
   {
-    version: 'Alpha 1.4.0',
+    version: 'Alpha 1.4',
     points: [
       'More responsive armies.',
       'The color selector was moved to waiting screen.',
@@ -176,7 +176,7 @@ const changelog = [
     ],
   },
   {
-    version: 'Alpha 1.3.0',
+    version: 'Alpha 1.3',
     points: [
       'Added action queue.',
       'Slower game tempo.',
@@ -191,7 +191,7 @@ const changelog = [
     points: ['Added waiting screen chat.', 'Game is more stable.'],
   },
   {
-    version: 'Alpha 1.2.0',
+    version: 'Alpha 1.2',
     points: [
       'Wood capacity is now 6 instead of 4.',
       'Castle costs 2 wood instead of 1.',
@@ -204,7 +204,7 @@ const changelog = [
     ],
   },
   {
-    version: 'Alpha 1.1.0',
+    version: 'Alpha 1.1',
     points: [
       'Improved Mountain generator.',
       'Escape now cancels Action instead of quitting the game.',
@@ -214,7 +214,7 @@ const changelog = [
     ],
   },
   {
-    version: 'Alpha 1.0.0',
+    version: 'Alpha 1.0',
     points: [
       'Every Player starts with 7 tiles, with Capital at center.',
       'Added Hit Points System. Capitals have 2 hit points.',

@@ -213,11 +213,9 @@ class Socket {
     this.connected = false
     console.log('Socket closed.')
 
-    if (game.running) {
-      store.error = {
-        message: 'Disconnected.',
-        goHome: false,
-      }
+    store.error = {
+      message: 'Disconnected.',
+      goHome: false,
     }
   }
   static send(message: string, payload?: string) {

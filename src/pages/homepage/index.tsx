@@ -15,6 +15,7 @@ import TopPlayers from './TopPlayers'
 import { PRIMARY } from '../../constants/react'
 import shadeColor from '../../utils/shade'
 import Countdown from './Countdown'
+import { observer } from 'mobx-react-lite'
 
 const Container = styled.div``
 
@@ -57,7 +58,6 @@ const Homepage: React.FC<RouteComponentProps> = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<boolean>(false)
   const [openingTime, setOpeningTime] = useState<number | null>(null)
-  const { loggedIn } = useAuth()
 
   useEffect(() => {
     if (store.status) {
@@ -97,7 +97,7 @@ const Homepage: React.FC<RouteComponentProps> = () => {
 
   if (store.status || loading) return <Header />
 
-  if (error) {
+  if (error || store.error) {
     return (
       <>
         <Header />
@@ -108,7 +108,7 @@ const Homepage: React.FC<RouteComponentProps> = () => {
             window.location.reload()
           }}
         >
-          Try again
+          Reconnect
         </ReloadButton>
       </>
     )
@@ -134,23 +134,6 @@ const Homepage: React.FC<RouteComponentProps> = () => {
       <Chat />
     </Container>
   )
-
-  // if (loading) {
-  //   return <Container />
-  // }
-
-  // return (
-  //   <Container>
-  //     {openingTime ? (
-  //       <Countdown openingTime={openingTime} />
-  //     ) : (
-  //       <>
-  //         <LoginSection />
-  //         {!loggedIn && <GuestSection />}
-  //       </>
-  //     )}
-  //   </Container>
-  // )
 }
 
-export default Homepage
+export default observer(Homepage)
