@@ -40,17 +40,17 @@ const Message = styled.div`
   display: flex;
 `
 
-const MessageAuthor = styled.p`
+const MessageAuthor = styled.p<{ infoMessage: boolean }>`
   font-weight: 600;
   color: #fff;
   user-select: text;
   white-space: nowrap;
+  color: ${prop => (prop.infoMessage ? '#bbb' : '#eee')};
 `
 
 const MessageContent = styled.p<{ infoMessage: boolean }>`
   margin-left: 10px;
-  color: ${prop => (prop.infoMessage ? PRIMARY : '#eee')};
-  font-style: ${prop => (prop.infoMessage ? 'italic' : null)};
+  color: ${prop => (prop.infoMessage ? '#bbb' : '#eee')};
   user-select: text;
 `
 
@@ -135,7 +135,9 @@ const Chat = () => {
       <StyledSimpleBar id="chat-message-container">
         {store.chatMessages.map(({ playerName, content }, index) => (
           <Message key={index}>
-            <MessageAuthor>{playerName}:</MessageAuthor>
+            <MessageAuthor infoMessage={playerName === '[info]'}>
+              {playerName}:
+            </MessageAuthor>
             <MessageContent infoMessage={playerName === '[info]'}>
               {content}
             </MessageContent>
