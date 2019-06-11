@@ -673,6 +673,8 @@ class Tile {
     )
   }
   canBuildCastle() {
+    if (!this.isEmpty()) return false
+
     for (let i = 0; i < 6; i++) {
       const n = this.neighbors[i]
 
