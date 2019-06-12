@@ -136,7 +136,6 @@ class Army {
     const tile = store.getTile(tileId)
 
     if (!tile) {
-      console.log('Moving on non-existing tile, destroying')
       this.destroy()
       return
     }

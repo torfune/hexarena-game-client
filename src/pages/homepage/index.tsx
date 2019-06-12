@@ -17,6 +17,7 @@ import shadeColor from '../../utils/shade'
 import Countdown from './Countdown'
 import { observer } from 'mobx-react-lite'
 import { History } from 'history'
+import loadImages from '../../game/functions/loadImages'
 
 const Container = styled.div``
 
@@ -92,6 +93,9 @@ const Homepage: React.FC<Props> = ({ history }) => {
 
       // Socket connection
       await Socket.connect(GS_HOST)
+
+      // Load images
+      await loadImages()
 
       setLoading(false)
     } catch (err) {

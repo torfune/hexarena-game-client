@@ -9,7 +9,6 @@ import {
 } from '../../constants/game'
 import Socket from '../../websockets/Socket'
 import createGameLoop from '../functions/createGameLoop'
-import loadImages from '../functions/loadImages'
 import createPixiApp from '../functions/createPixiApp'
 import store from '../../store'
 import { Pixel, Axial } from '../../types/coordinates'
@@ -51,7 +50,7 @@ class Game {
   private lastUpdatedAt: number = Date.now()
   private fpsLastUpdatedAt: number = Date.now()
 
-  async start(canvas: HTMLElement) {
+  start(canvas: HTMLElement) {
     // Leaving warning
     window.onbeforeunload = () => {
       if (
@@ -65,27 +64,17 @@ class Game {
       }
     }
 
-    // Initialize
-    if (!this.initialized) {
-      this.setupEventListeners()
-      this.setupStoreListeners()
-
-      await loadImages()
-
-      this.initialized = true
-    }
+    // Listeners and Images
+    this.setupEventListeners()
+    this.setupStoreListeners()
 
     // Initialize PIXI
-    if (!this.pixi) {
-      this.loop = createGameLoop(this.update, this)
-      this.pixi = createPixiApp()
+    this.loop = createGameLoop(this.update, this)
+    this.pixi = createPixiApp()
 
-      for (let i = 0; i < TILE_IMAGES.length; i++) {
-        this.stage[TILE_IMAGES[i]] = new Container()
-        this.pixi.stage.addChild(this.stage[TILE_IMAGES[i]])
-      }
-    } else {
-      this.pixi.start()
+    for (let i = 0; i < TILE_IMAGES.length; i++) {
+      this.stage[TILE_IMAGES[i]] = new Container()
+      this.pixi.stage.addChild(this.stage[TILE_IMAGES[i]])
     }
 
     // Mount PIXI renderer

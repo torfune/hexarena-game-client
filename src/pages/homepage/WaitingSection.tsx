@@ -39,12 +39,11 @@ const StyledSpinner = styled(Spinner)`
 `
 
 const WaitingSection = () => {
-  console.log('waiting section re rendered')
-  console.log(`store status: ${store.status}`)
-
   useEffect(() => {
-    if (store.status === 'starting' && store.routerHistory) {
-      console.log(`status change: ${store.status}`)
+    if (
+      (store.status === 'starting' || store.status === 'running') &&
+      store.routerHistory
+    ) {
       store.routerHistory.push('/game')
     }
   }, [store.status])

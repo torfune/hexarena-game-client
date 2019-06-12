@@ -31,4 +31,4 @@ export const IFRAME = (() => {
     return true
   }
 })()
-console.log(`iframe: ${IFRAME}`)
+console.log(`IFRAME: ${IFRAME}`)

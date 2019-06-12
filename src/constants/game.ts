@@ -57,7 +57,7 @@ export const UNIT_MOVEMENT_SPEED = 0.02
 export const UNIT_RADIUS = 12
 export const UNIT_IMAGE_SCALE = 0.6
 export const UNIT_DOOR_OFFSET = 48
-export const UNIT_MAX_DELAY = 0.6
+export const UNIT_MAX_DELAY = 0.4
 
 // COLORS
 export const BEDROCK_BACKGROUND = '#bbb'
