@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components'
-import { BOX_SHADOW } from '../../constants/react'
 import React from 'react'
 
 const Container = styled.div`

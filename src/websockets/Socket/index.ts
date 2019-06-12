@@ -167,7 +167,7 @@ class Socket {
 
     // Auto destroy
     if (config.autoDestroy) {
-      let collection: Player[] | AllianceRequest[]
+      let collection: Player[] | AllianceRequest[] | OnlinePlayer[]
       let remove: (id: string) => void
 
       switch (key) {
@@ -286,6 +286,9 @@ const setStoreValue = (key: string, value: any) => {
       break
     case 'chatMessages':
       store.chatMessages = value
+      break
+    case 'onlinePlayers':
+      store.onlinePlayers = value
       break
     case 'alreadyPlaying':
       break

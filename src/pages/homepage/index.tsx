@@ -19,6 +19,7 @@ import { observer } from 'mobx-react-lite'
 import { History } from 'history'
 import loadImages from '../../game/functions/loadImages'
 import { version } from '../../../package.json'
+import OnlinePlayers from './OnlinePlayers'
 
 const Container = styled.div``
 
@@ -151,6 +152,7 @@ const Homepage: React.FC<Props> = ({ history }) => {
           ) : (
             <PlaySection />
           )}
+          <OnlinePlayers />
           <Community />
           <ReleaseNotes />
         </div>

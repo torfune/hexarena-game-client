@@ -7,7 +7,6 @@ import AllianceRequest from './game/classes/AllianceRequest'
 import Army from './game/classes/Army'
 import ChatMessage from './types/ChatMessage'
 import TopPlayer from './types/TopPlayer'
-import User from './models/User'
 
 type EntityName = 'action' | 'allianceRequest' | 'army' | 'player' | 'tile'
 type Entity = Action | AllianceRequest | Army | Player | Tile
@@ -21,6 +20,7 @@ class Store {
   @observable allianceRequests: AllianceRequest[] = []
   @observable armies: Army[] = []
   @observable chatMessages: ChatMessage[] = []
+  @observable onlinePlayers: OnlinePlayer[] = []
   @observable players: Player[] = []
   @observable tiles: Tile[] = []
   @observable topPlayers: TopPlayer[] = []
@@ -184,27 +184,27 @@ class Store {
 
   // Public Entity Updaters
   updateAction(id: string, key: string, value: any) {
-    const item = this.getItem('action', id)
+    const item = this.getItem('action', id) as Action
     if (!item) return
     item.setProp(key, value)
   }
   updateAllianceRequest(id: string, key: string, value: any) {
-    const item = this.getItem('allianceRequest', id)
+    const item = this.getItem('allianceRequest', id) as AllianceRequest
     if (!item) return
     item.setProp(key, value)
   }
   updateArmy(id: string, key: string, value: any) {
-    const item = this.getItem('army', id)
+    const item = this.getItem('army', id) as Army
     if (!item) return
     item.setProp(key, value)
   }
   updatePlayer(id: string, key: string, value: any) {
-    const item = this.getItem('player', id)
+    const item = this.getItem('player', id) as Player
     if (!item) return
     item.setProp(key, value)
   }
   updateTile(id: string, key: string, value: any) {
-    const item = this.getItem('tile', id)
+    const item = this.getItem('tile', id) as Tile
     if (!item) return
     item.setProp(key, value)
   }

@@ -16,6 +16,7 @@ import startCountdown from './startCountdown'
 import status from './status'
 import tiles from './tiles'
 import waitingTime from './waitingTime'
+import onlinePlayers from './onlinePlayers'
 
 const messages: {
   [key: string]: GameServerMessage
@@ -37,6 +38,7 @@ const messages: {
   status,
   tiles,
   waitingTime,
+  onlinePlayers,
 }
 
 export default messages
