@@ -18,6 +18,7 @@ import Countdown from './Countdown'
 import { observer } from 'mobx-react-lite'
 import { History } from 'history'
 import loadImages from '../../game/functions/loadImages'
+import { version } from '../../../package.json'
 
 const Container = styled.div``
 
@@ -80,6 +81,16 @@ const Homepage: React.FC<Props> = ({ history }) => {
     try {
       // GameServer status
       const { data: status } = await Axios.get(`http://${GS_HOST}/status`)
+
+      if (status.version.slice(0, 4) !== version.slice(0, 4)) {
+        store.error = {
+          message: `Client and server version doesn't match. Client: ${version} | Server: ${
+            status.version
+          }`,
+          goHome: true,
+        }
+      }
+
       if (status.timeRemaining && status.timeRemaining > 0) {
         setOpeningTime(status.timeRemaining + Date.now())
       }
@@ -112,7 +123,11 @@ const Homepage: React.FC<Props> = ({ history }) => {
       <>
         <Header />
 
-        <ErrorMessage>Connection failed.</ErrorMessage>
+        <ErrorMessage>
+          {store.error && store.error.message
+            ? store.error.message
+            : 'Connection failed.'}
+        </ErrorMessage>
         <ReloadButton
           onClick={() => {
             window.location.reload()
