@@ -16,6 +16,7 @@ const Heading = styled.h2`
 const OnlinePlayersContainer = styled.div`
   display: flex;
   margin-top: 16px;
+  flex-wrap: wrap;
 `
 
 const OnlinePlayer = styled.div`
