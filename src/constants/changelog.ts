@@ -1,5 +1,14 @@
 const changelog = [
   {
+    version: 'Alpha 1.21',
+    points: [
+      'Unlimited number of concurrently running actions.',
+      'Every player starts with 1 village.',
+      'Capturing a tile costs 1 gold.',
+      'Bug fixes.',
+    ],
+  },
+  {
     version: 'Alpha 1.20',
     points: [
       'Improved match making.',
