@@ -106,7 +106,7 @@ const EndScreen = () => {
 
         <Table groups={groups} />
 
-        <ContinueButton href="/game">Play again</ContinueButton>
+        <ContinueButton href="/game">Continue</ContinueButton>
 
         <RedSheet left="80px" />
         <RedSheet right="80px" />
