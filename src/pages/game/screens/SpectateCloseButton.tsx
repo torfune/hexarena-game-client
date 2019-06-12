@@ -27,7 +27,7 @@ const Container = styled.div`
 
 const SpectateCloseButton = () => (
   <a href="/game">
-    <Container>Play again</Container>
+    <Container>Continue</Container>
   </a>
 )
 

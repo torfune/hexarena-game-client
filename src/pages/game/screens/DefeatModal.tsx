@@ -96,7 +96,7 @@ const DefeatModal = () => {
 
         <ButtonRow>
           <a href="/game">
-            <Button color={PRIMARY}>Play again</Button>
+            <Button color={PRIMARY}>Continue</Button>
           </a>
 
           <Button color={BLUE} onClick={handleSpectateClick}>
