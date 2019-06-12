@@ -7,7 +7,6 @@ module.exports = {
     filename: 'bundle.js',
     path: path.join(__dirname, '/build'),
   },
-  devtool: 'inline-source-map',
   module: {
     rules: [
       {
