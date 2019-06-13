@@ -1,4 +1,6 @@
 const shadeColor = (color: string, percent: number) => {
+  if (color === '#fff' || color === '#000') return color
+
   const R1 = parseInt(color.substring(1, 3), 16)
   const G1 = parseInt(color.substring(3, 5), 16)
   const B1 = parseInt(color.substring(5, 7), 16)
