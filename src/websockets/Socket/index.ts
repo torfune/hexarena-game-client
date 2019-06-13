@@ -6,7 +6,6 @@ import AllianceRequest from '../../game/classes/AllianceRequest'
 import Army from '../../game/classes/Army'
 import Player from '../../game/classes/Player'
 import Tile from '../../game/classes/Tile'
-import game from '../../game'
 import createInstance from '../../utils/createInstance'
 
 class Socket {
@@ -47,6 +46,12 @@ class Socket {
     // Primitive value
     if (!config.instance && !config.isArray) {
       setStoreValue(key, parsed)
+
+      // Status -> /game
+      if (key === 'status' && (parsed === 'starting' || parsed === 'running')) {
+        store.routerHistory.push('/game')
+      }
+
       return
     }
 

@@ -49,30 +49,24 @@ const GameCanvas = styled.div<GameCanvasProps>`
 `
 
 const Game: React.FC<RouteComponentProps> = observer(() => {
-  const { loggedIn } = useAuth()
-
   if (!store.status || store.status === 'aborted') {
     window.location.href = '/'
     return null
   }
 
   useEffect(() => {
-    return () => {
-      game.stop()
-      window.removeEventListener('resize', game.updateScreenSize)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (loggedIn === null) return
-
     const canvas = document.getElementById('game-canvas')
     if (!canvas) throw Error('Cannot find canvas.')
 
     game.start(canvas)
 
     window.addEventListener('resize', game.updateScreenSize.bind(game))
-  }, [loggedIn])
+
+    return () => {
+      game.stop()
+      window.removeEventListener('resize', game.updateScreenSize)
+    }
+  }, [])
 
   const { status, showHud, gameMode, player, spectating, error } = store
 

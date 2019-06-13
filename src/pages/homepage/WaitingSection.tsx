@@ -39,15 +39,6 @@ const StyledSpinner = styled(Spinner)`
 `
 
 const WaitingSection = () => {
-  useEffect(() => {
-    if (
-      (store.status === 'starting' || store.status === 'running') &&
-      store.routerHistory
-    ) {
-      store.routerHistory.push('/game')
-    }
-  }, [store.status])
-
   if (!store.waitingTime) return null
 
   const { current, average, players } = store.waitingTime
