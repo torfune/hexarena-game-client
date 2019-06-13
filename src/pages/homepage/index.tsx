@@ -20,8 +20,14 @@ import { History } from 'history'
 import loadImages from '../../game/functions/loadImages'
 import { version } from '../../../package.json'
 import OnlinePlayers from './OnlinePlayers'
+import Spinner from '../../components/Spinner'
 
 const Container = styled.div``
+
+const StyledSpinner = styled(Spinner)`
+  /* margin-top: 256px; */
+  margin: 256px auto;
+`
 
 const ContentGrid = styled.div`
   display: flex;
@@ -117,7 +123,13 @@ const Homepage: React.FC<Props> = ({ history }) => {
     }
   }
 
-  if (loading) return <Header />
+  if (loading)
+    return (
+      <>
+        <Header />
+        <StyledSpinner size="96px" thickness="6px" color="#fff" />
+      </>
+    )
 
   if (error || store.error) {
     return (
