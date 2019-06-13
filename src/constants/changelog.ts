@@ -1,5 +1,9 @@
 const changelog = [
   {
+    version: 'Alpha 1.22',
+    points: ['Auto-capture surrounded neutral tiles.'],
+  },
+  {
     version: 'Alpha 1.21',
     points: [
       'Unlimited number of concurrently running actions.',
