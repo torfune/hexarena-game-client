@@ -133,9 +133,9 @@ const Leaderboard = observer(() => {
                 <p>{player.name}</p>
               </Row>
 
-              <p>{player.alive ? player.tilesCount : '-'}</p>
-              <p>{player.alive ? player.villages : '-'}</p>
-              <p>{player.alive ? player.gold : '-'}</p>
+              <p>{player.tilesCount}</p>
+              <p>{player.villages}</p>
+              <p>{player.gold}</p>
             </Player>
           ))}
         </Group>

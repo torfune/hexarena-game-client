@@ -3,6 +3,7 @@ import Primitive from '../../types/Primitive'
 import Prop from '../../types/Prop'
 import createProp from '../../utils/createProp'
 import { computed, observable } from 'mobx'
+import hex from '../functions/hex'
 
 interface Props {
   [key: string]: Prop<Primitive>
@@ -41,15 +42,23 @@ class Player {
     this.props[key].current = value
 
     switch (key) {
+      case 'pattern': {
+        for (let i = 0; i < store.tiles.length; i++) {
+          const tile = store.tiles[i]
+
+          if (tile.image.pattern && tile.ownerId === this.id) {
+            tile.image.pattern.tint = hex(String(value))
+          }
+        }
+        break
+      }
+
       case 'allyId': {
         if (this.allyId) {
           this.ally = store.getPlayer(this.allyId)
         }
         break
       }
-
-      default:
-        break
     }
   }
 
@@ -73,5 +82,8 @@ class Player {
     return this.props.alive.current
   }
 }
+
+// player.pattern
+// player.props.pattern.current
 
 export default Player
