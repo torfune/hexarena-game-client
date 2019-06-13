@@ -3,7 +3,7 @@ import TopPlayers from '../../../homepage/TopPlayers'
 import store from '../../../../store'
 import { observer } from 'mobx-react-lite'
 import Players from './Players'
-import React, { useEffect } from 'react'
+import React from 'react'
 import Chat from '../../../homepage/Chat'
 import Header from '../../../../components/Header'
 
@@ -36,24 +36,22 @@ const Heading = styled.h2<HeadingProps>`
   text-align: ${props => (props.center ? 'center' : 'left')};
 `
 
-const Lobby = () => {
-  return (
-    <>
-      <Header />
-      <Container>
-        <TopPlayers fixedHeight="calc(100vh - 300px)" />
-        <PlayersSection>
-          <Heading>
-            {store.startCountdown
-              ? `Game starts in ${store.startCountdown} seconds`
-              : '. . .'}
-          </Heading>
-          <Players />
-        </PlayersSection>
-      </Container>
-      <Chat />
-    </>
-  )
-}
+const Lobby = () => (
+  <>
+    <Header />
+    <Container>
+      <TopPlayers fixedHeight="calc(100vh - 300px)" />
+      <PlayersSection>
+        <Heading>
+          {store.startCountdown
+            ? `Game starts in ${store.startCountdown} seconds`
+            : '. . .'}
+        </Heading>
+        <Players />
+      </PlayersSection>
+    </Container>
+    <Chat />
+  </>
+)
 
 export default observer(Lobby)

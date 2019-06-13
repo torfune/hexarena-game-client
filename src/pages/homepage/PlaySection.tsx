@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 import LoginSection from './LoginSection'
 import GuestSection from './GuestSection'
@@ -8,6 +8,8 @@ import { observer } from 'mobx-react-lite'
 import WaitingSection from './WaitingSection'
 import { HOMEPAGE_BREAKPOINT } from '../../constants/react'
 import Profile from './Profile'
+import Socket from '../../websockets/Socket'
+import getBrowserId from '../../utils/getBrowserId'
 
 const Container = styled.div`
   color: #fff;
@@ -37,9 +39,51 @@ const Row = styled.div<{ break?: boolean }>`
 `
 
 const PlaySection = () => {
-  const { loggedIn } = useAuth()
+  const { loggedIn, userId, accessToken } = useAuth()
+  const [queryLoaded, setQueryLoaded] = useState(false)
 
-  if (loggedIn === null) return <Container />
+  useEffect(() => {
+    if (loggedIn === null) return
+
+    const { href, protocol, pathname, host } = window.location
+
+    const query = href.split('?')[1]
+    if (query && query === 'play') {
+      if (loggedIn) {
+        playAsUser()
+      } else {
+        playAsGuest()
+      }
+
+      const path = `${protocol}//${host}${pathname}`
+      window.history.pushState({ path }, '', path)
+    }
+
+    setQueryLoaded(true)
+  }, [loggedIn])
+
+  const playAsGuest = (name?: string) => {
+    if (!name) {
+      name = localStorage.getItem('guestName') || ''
+    }
+
+    play('playAsGuest', `${getBrowserId()}|${name}`)
+  }
+
+  const playAsUser = () => {
+    play('playAsUser', `${getBrowserId()}|${userId}|${accessToken}`)
+  }
+
+  const play = (message: 'playAsGuest' | 'playAsUser', data: string) => {
+    Socket.send(message, data)
+    store.waitingTime = {
+      current: 0,
+      average: 0,
+      players: 0,
+    }
+  }
+
+  if (loggedIn === null || !queryLoaded) return <Container />
 
   return (
     <Container>
@@ -52,8 +96,8 @@ const PlaySection = () => {
         </Row>
       ) : (
         <Row break={!loggedIn}>
-          <LoginSection />
-          {loggedIn ? <Profile /> : <GuestSection />}
+          <LoginSection play={playAsUser} />
+          {loggedIn ? <Profile /> : <GuestSection play={playAsGuest} />}
         </Row>
       )}
     </Container>

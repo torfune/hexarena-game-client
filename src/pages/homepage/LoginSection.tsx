@@ -93,7 +93,10 @@ const SpinnerContainer = styled.div`
 
 let nameValidationTimeout: NodeJS.Timeout | null = null
 
-const LoginSection = () => {
+interface Props {
+  play: () => void
+}
+const LoginSection: React.FC<Props> = ({ play }) => {
   const [user, setUser] = useState<User | null>(null)
   const [name, setName] = useState('')
   const [nameValid, setNameValid] = useState<boolean | null>(false)
@@ -187,15 +190,6 @@ const LoginSection = () => {
       logout()
     } else {
       setUser(response.data)
-    }
-  }
-
-  const play = () => {
-    Socket.send('playAsUser', `${getBrowserId()}|${userId}|${accessToken}`)
-    store.waitingTime = {
-      current: 0,
-      average: 0,
-      players: 0,
     }
   }
 

@@ -49,8 +49,10 @@ const GameCanvas = styled.div<GameCanvasProps>`
 `
 
 const Game: React.FC<RouteComponentProps> = observer(() => {
-  if (!store.status || store.status === 'aborted') {
-    window.location.href = '/'
+  const { status, showHud, gameMode, player, spectating, error } = store
+
+  if (!status || status === 'aborted') {
+    window.location.href = status === 'aborted' ? '/?play' : '/'
     return null
   }
 
@@ -67,8 +69,6 @@ const Game: React.FC<RouteComponentProps> = observer(() => {
       window.removeEventListener('resize', game.updateScreenSize)
     }
   }, [])
-
-  const { status, showHud, gameMode, player, spectating, error } = store
 
   return (
     <Container>

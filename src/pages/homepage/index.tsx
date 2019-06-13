@@ -1,10 +1,8 @@
 import styled from 'styled-components'
 import React, { useState, useEffect } from 'react'
-import { RouteComponentProps } from '@reach/router'
 import Header from '../../components/Header'
 import Axios from 'axios'
 import getServerHost from '../../utils/getServerHost'
-import { useAuth } from '../../auth'
 import PlaySection from './PlaySection'
 import Chat from './Chat'
 import store from '../../store'
@@ -25,7 +23,6 @@ import Spinner from '../../components/Spinner'
 const Container = styled.div``
 
 const StyledSpinner = styled(Spinner)`
-  /* margin-top: 256px; */
   margin: 256px auto;
 `
 
