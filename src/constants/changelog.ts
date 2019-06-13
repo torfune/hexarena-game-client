@@ -1,7 +1,11 @@
 const changelog = [
   {
     version: 'Alpha 1.22',
-    points: ['Auto-capture surrounded neutral tiles.'],
+    points: [
+      'Auto-capture surrounded neutral tiles.',
+      'Improved match making.',
+      'Bug fixes.',
+    ],
   },
   {
     version: 'Alpha 1.21',
