@@ -9,9 +9,7 @@ import shadeColor from '../../../../utils/shade'
 import Tooltip from '../../../../components/Tooltip'
 import React, { useState } from 'react'
 
-const Container = styled.div`
-  /* margin-top: 64px; */
-`
+const Container = styled.div``
 
 const Label = styled.p`
   font-weight: 600;
@@ -155,6 +153,8 @@ const DarkOverlay = styled.div`
 `
 
 const Players: React.FC = () => {
+  if (!store.player || !store.gsConfig) return null
+
   const otherPlayers: Array<{
     name?: string
     pattern?: string
@@ -176,8 +176,6 @@ const Players: React.FC = () => {
       otherPlayers.push({})
     }
   }
-
-  if (!store.player || !store.gsConfig) return null
 
   const { PATTERNS } = store.gsConfig
   const { pattern } = store.player
