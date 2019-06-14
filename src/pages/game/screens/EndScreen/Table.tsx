@@ -25,12 +25,11 @@ const Group = styled.div`
   box-shadow: 0px 4px 16px #00000033;
 `
 
-interface PlayerProps {
+interface NameAndTilesProps {
   opacity: number
 }
-const Player = styled.div<PlayerProps>`
+const Player = styled.div`
   margin: 8px 0 0 0;
-  opacity: ${props => props.opacity};
 
   p {
     font-weight: 500;
@@ -59,9 +58,10 @@ const Skull = styled.img`
   top: 1px;
 `
 
-const NameAndTiles = styled.div`
+const NameAndTiles = styled.div<NameAndTilesProps>`
   display: flex;
   justify-content: space-between;
+  opacity: ${props => props.opacity};
 `
 
 const ReasonOfDeath = styled.div`
@@ -93,8 +93,8 @@ const Table: React.FC<Props> = ({ groups }) => (
     {groups.map((group, index) => (
       <Group key={index}>
         {group.players.map(player => (
-          <Player key={player.id} opacity={player.alive ? 1 : 0.5}>
-            <NameAndTiles>
+          <Player key={player.id}>
+            <NameAndTiles opacity={player.alive ? 1 : 0.5}>
               {player.alive ? (
                 <Pattern color={player.pattern} />
               ) : (
