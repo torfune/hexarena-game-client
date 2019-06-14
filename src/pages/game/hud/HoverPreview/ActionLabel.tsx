@@ -32,7 +32,7 @@ const renderIconByLabel = (label: string) => {
   let src = null
 
   switch (label) {
-    case 'Cancel action':
+    case 'Cancel':
       src = '/static/icons/cross.svg'
       break
     case 'Capture':

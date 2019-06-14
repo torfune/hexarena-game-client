@@ -2,6 +2,7 @@ import Tile from '../classes/Tile'
 import store from '../../store'
 import game from '..'
 import HoveredTileInfo from '../../types/HoveredTileInfo'
+import { TextureLoader } from 'pixi.js'
 
 const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
   if (!store.gsConfig || !store.playerId || !store.player) return null
@@ -24,8 +25,15 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
 
   const structure = tile.getStructureName()
 
+  // Bedrock
+  if (tile.bedrock) {
+    return {
+      structure,
+    }
+  }
+
   // Army send
-  if (game.selectedArmyTile) {
+  if (game.selectedArmyTile || (tile.army && tile.ownerId === store.playerId)) {
     return {
       label: 'Send army',
       structure,
@@ -33,9 +41,13 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
   }
 
   // Cancel
-  if (tile.action && tile.action.owner.id === store.playerId) {
+  if (
+    tile.action &&
+    tile.action.owner.id === store.playerId &&
+    tile.action.type === 'attack'
+  ) {
     return {
-      label: 'Cancel action',
+      label: 'Cancel',
       structure,
     }
   }
@@ -50,7 +62,7 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
   }
 
   // Build
-  if (isOwnedByPlayer && tile.canBuildCastle()) {
+  if (isOwnedByPlayer && tile.canBuildCastle() && !tile.action) {
     return {
       label: 'Build castle',
       structure,
@@ -61,7 +73,7 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
   }
 
   // Cut
-  if (isOwnedByPlayer && tile.forest) {
+  if (isOwnedByPlayer && tile.forest && !tile.action) {
     return {
       label: 'Get gold',
       structure,
@@ -70,7 +82,12 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
   }
 
   // Recruit / Heal
-  if (isOwnedByPlayer && (tile.castle || tile.base) && !tile.army) {
+  if (
+    isOwnedByPlayer &&
+    (tile.castle || tile.base) &&
+    !tile.army &&
+    !tile.action
+  ) {
     if (tile.hitpoints && tile.hitpoints === 1) {
       return {
         label: 'Repair building',

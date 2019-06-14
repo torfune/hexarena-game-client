@@ -758,7 +758,8 @@ class Tile {
       this.owner.id !== store.player.id ||
       this.mountain ||
       this.village ||
-      game.selectedArmyTile
+      game.selectedArmyTile ||
+      this.action
     ) {
       return false
     }
