@@ -2,6 +2,7 @@ const changelog = [
   {
     version: 'Alpha 1.23',
     points: [
+      'Performance optimizations.',
       'Army range set to 5.',
       'Dynamic world size based on number of players.',
       'Actions are no longer cancelable.',
