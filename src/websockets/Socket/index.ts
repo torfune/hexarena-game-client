@@ -136,7 +136,7 @@ class Socket {
             break
           case 'tiles':
             if (item instanceof Tile) {
-              store.tiles.push(item)
+              store.addTile(item)
             }
             break
         }
@@ -196,13 +196,15 @@ class Socket {
       }
     }
 
+    // Change handlers
     if (store.changeHandlers[key]) {
       switch (key) {
         case 'tiles':
-          store.changeHandlers[key](store.tiles)
+          store.changeHandlers[key]()
           break
+
         case 'actions':
-          store.changeHandlers[key](store.actions)
+          store.changeHandlers[key]()
           break
 
         default:
@@ -310,11 +312,11 @@ const setStoreValue = (key: string, value: any) => {
   if (store.changeHandlers[key]) {
     switch (key) {
       case 'serverTime':
-        store.changeHandlers[key](store.serverTime)
+        store.changeHandlers[key]()
         break
 
       case 'goldAnimation':
-        store.changeHandlers[key](store.goldAnimation)
+        store.changeHandlers[key]()
         break
     }
   }

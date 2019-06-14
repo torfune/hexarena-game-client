@@ -44,9 +44,9 @@ class Player {
 
     switch (key) {
       case 'pattern': {
-        for (let i = 0; i < store.tiles.length; i++) {
-          const tile = store.tiles[i]
-
+        const keys = Object.keys(store.idMap.tiles)
+        for (let i = keys.length - 1; i >= 0; i--) {
+          const tile = store.idMap.tiles[keys[i]]
           if (tile.image.pattern && tile.ownerId === this.id) {
             tile.image.pattern.tint = hex(String(value))
           }
@@ -86,8 +86,5 @@ class Player {
     return this.props.killerName.current
   }
 }
-
-// player.pattern
-// player.props.pattern.current
 
 export default Player

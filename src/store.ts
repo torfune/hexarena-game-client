@@ -7,12 +7,17 @@ import AllianceRequest from './game/classes/AllianceRequest'
 import Army from './game/classes/Army'
 import ChatMessage from './types/ChatMessage'
 import TopPlayer from './types/TopPlayer'
+import Primitive from './types/Primitive'
 
 type EntityName = 'action' | 'allianceRequest' | 'army' | 'player' | 'tile'
 type Entity = Action | AllianceRequest | Army | Player | Tile
 
 interface IdMap<T> {
   [key: string]: T
+}
+
+interface Tiles {
+  [key: string]: Tile
 }
 
 class Store {
@@ -22,7 +27,7 @@ class Store {
   @observable chatMessages: ChatMessage[] = []
   @observable onlinePlayers: OnlinePlayer[] = []
   @observable players: Player[] = []
-  @observable tiles: Tile[] = []
+  @observable tiles: Tiles = {}
   @observable topPlayers: TopPlayer[] = []
   @observable hoveredTile: Tile | null = null
   @observable startCountdown: number | null = null
@@ -48,9 +53,10 @@ class Store {
     message: string
     goHome: boolean
   }
+  @observable spawnTile?: Tile
   routerHistory?: any
-  changeHandlers: { [key: string]: (value: any) => void } = {}
-  private idMap: {
+  changeHandlers: { [key: string]: () => void } = {}
+  idMap: {
     actions: IdMap<Action>
     allianceRequests: IdMap<AllianceRequest>
     armies: IdMap<Army>
@@ -94,10 +100,6 @@ class Store {
       case 'player':
         collection = this.players
         idMap = this.idMap.players
-        break
-      case 'tile':
-        collection = this.tiles
-        idMap = this.idMap.tiles
         break
     }
 
@@ -143,13 +145,9 @@ class Store {
         collection = this.players
         idMap = this.idMap.players
         break
-      case 'tile':
-        collection = this.tiles
-        idMap = this.idMap.tiles
-        break
     }
 
-    if (!collection || !idMap) throw Error(`Invalid entity name: ${entityName}`)
+    if (!collection || !idMap) throw Error(`Can't remove entity: ${entityName}`)
 
     for (let i = 0; i < collection.length; i++) {
       if (collection[i].id === id) {
@@ -177,12 +175,11 @@ class Store {
     const item = this.getItem('player', id)
     return item ? (item as Player) : null
   }
-  getTile(id: string) {
-    const item = this.getItem('tile', id)
-    return item ? (item as Tile) : null
+  getTile(id: string): Tile | null {
+    return this.idMap.tiles[id] || null
   }
 
-  // Public Entity Updaters
+  // Update
   updateAction(id: string, key: string, value: any) {
     const item = this.getItem('action', id) as Action
     if (!item) return
@@ -203,13 +200,13 @@ class Store {
     if (!item) return
     item.setProp(key, value)
   }
-  updateTile(id: string, key: string, value: any) {
-    const item = this.getItem('tile', id) as Tile
-    if (!item) return
-    item.setProp(key, value)
+  updateTile(id: string, key: string, value: Primitive) {
+    const tile = this.getTile(id)
+    if (!tile) return
+    tile.setProp(key, value)
   }
 
-  // Public Entity Removers
+  // Remove
   removeAction(id: string) {
     this.removeItem('action', id)
   }
@@ -222,12 +219,27 @@ class Store {
   removePlayer(id: string) {
     this.removeItem('player', id)
   }
-  removeTile(id: string) {
-    this.removeItem('tile', id)
+
+  // Add
+  addTile(tile: Tile) {
+    this.idMap.tiles[tile.id] = tile
+
+    // Update neighbors
+    tile.updateNeighbors()
+    for (let i = 0; i < 6; i++) {
+      const n = tile.neighbors[i]
+      if (n) {
+        n.updateNeighbors()
+      }
+    }
+
+    if (!this.spawnTile) {
+      this.spawnTile = tile
+    }
   }
 
   // Change Listeners
-  onChange = (key: string, callback: (current: any) => void) => {
+  onChange = (key: string, callback: () => void) => {
     if (
       key !== 'tiles' &&
       key !== 'actions' &&

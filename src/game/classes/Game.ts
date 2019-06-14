@@ -58,7 +58,9 @@ class Game {
         !store.error &&
         store.player &&
         store.player.alive &&
-        store.status === 'running'
+        store.status === 'running' &&
+        store.gsConfig &&
+        !store.gsConfig.DEBUG_MODE
       ) {
         return true
       }
@@ -188,13 +190,12 @@ class Game {
     this.updateHoveredTile()
   }
   setupStoreListeners() {
-    store.onChange('tiles', (tiles: Tile[]) => {
-      if (!this.camera) {
-        this.setCameraToAxialPosition(tiles[0].axial)
+    store.onChange('tiles', () => {
+      if (!this.camera && store.spawnTile) {
+        this.setCameraToAxialPosition(store.spawnTile.axial)
       }
 
       this.updateBlackOverlays()
-      this.updateNeighbors()
       this.updateBorders()
       this.updateHoveredTileInfo()
       this.updatePatternPreviews()
@@ -436,32 +437,22 @@ class Game {
     const hoveredTileInfo = getHoveredTileInfo(store.hoveredTile)
     return !!hoveredTileInfo
   }
-  updateNeighbors() {
-    if (!store.tiles) return
-
-    for (let i = 0; i < store.tiles.length; i++) {
-      store.tiles[i].updateNeighbors()
-    }
-  }
   updateBorders() {
-    if (!store.tiles) return
-
-    for (let i = 0; i < store.tiles.length; i++) {
-      store.tiles[i].updateBorders()
+    const keys = Object.keys(store.idMap.tiles)
+    for (let i = keys.length - 1; i >= 0; i--) {
+      store.idMap.tiles[keys[i]].updateBorders()
     }
   }
   updateContested() {
-    if (!store.tiles) return
-
-    for (let i = 0; i < store.tiles.length; i++) {
-      const t = store.tiles[i]
-
-      if (t === store.hoveredTile && t.isContested() && !t.owner) {
-        t.addContested()
-      } else {
-        t.removeContested()
-      }
-    }
+    // if (!store.tiles) return
+    // for (let i = 0; i < store.tiles.length; i++) {
+    //   const t = store.tiles[i]
+    //   if (t === store.hoveredTile && t.isContested() && !t.owner) {
+    //     t.addContested()
+    //   } else {
+    //     t.removeContested()
+    //   }
+    // }
   }
   getHoveredTile() {
     if (!this.cursor || !this.camera) return
@@ -723,8 +714,9 @@ class Game {
     Socket.send('request', `create|${receiverId}`)
   }
   updateBlackOverlays() {
-    for (let i = 0; i < store.tiles.length; i++) {
-      store.tiles[i].updateBlackOverlay()
+    const keys = Object.keys(store.idMap.tiles)
+    for (let i = keys.length - 1; i >= 0; i--) {
+      store.idMap.tiles[keys[i]].updateBlackOverlay()
     }
   }
   updateHoveredTile() {

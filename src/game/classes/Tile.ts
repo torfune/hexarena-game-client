@@ -7,12 +7,10 @@ import {
   ARMY_ICON_OFFSET_Y,
   HEART_OFFSET_X,
   HITPOINTS_OFFSET_Y,
-  NEIGHBOR_DIRECTIONS,
   BEDROCK_BORDER,
   BEDROCK_BACKGROUND,
 } from '../../constants/game'
 import game from '..'
-import GoldAnimation from './GoldAnimation'
 import getImageAnimation from '../functions/getImageAnimation'
 import shade from '../../utils/shade'
 import Player from './Player'
@@ -28,6 +26,8 @@ import TileImageArray from '../../types/TileImageArray'
 import { Sprite, Loader } from 'pixi.js'
 import getRotationBySide from '../functions/getRotationBySide'
 import destroyImage from '../functions/destroyImage'
+import axialInDirection from '../../utils/axialInDirection'
+import getTileByAxial from '../functions/getTileByAxial'
 
 const loader = Loader.shared
 
@@ -61,7 +61,7 @@ class Tile {
   owner: Player | null = null
   army: Army | null = null
   hitpointsVisible: boolean = false
-  neighbors: Tile[] = []
+  neighbors: Array<Tile | null> = []
   image: TileImage = {}
   imageSet: TileImageArray = {
     arrow: [],
@@ -536,32 +536,13 @@ class Tile {
     }
   }
   updateNeighbors() {
-    let missingNeighbors = []
-
+    const neighbors = []
     for (let i = 0; i < 6; i++) {
-      if (!this.neighbors[i]) {
-        missingNeighbors.push(i)
-      }
+      const axial = axialInDirection(this.axial, i)
+      neighbors[i] = getTileByAxial(axial)
     }
 
-    if (!missingNeighbors.length) return
-
-    for (let i = 0; i < store.tiles.length; i++) {
-      const tile = store.tiles[i]
-
-      for (let j = 0; j < missingNeighbors.length; j++) {
-        const direction = missingNeighbors[j]
-
-        if (
-          tile.axial.x === this.axial.x + NEIGHBOR_DIRECTIONS[direction].x &&
-          tile.axial.z === this.axial.z + NEIGHBOR_DIRECTIONS[direction].z
-        ) {
-          this.neighbors[direction] = tile
-          break
-        }
-      }
-    }
-
+    this.neighbors = neighbors
     this.updateFogs()
   }
   updateFogs() {
