@@ -60,6 +60,12 @@ const Skull = styled.img`
   top: 1px;
 `
 
+const PlayerNameAndStatus = styled.div`
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+`
+
 interface Props {
   groups: PlayerGroup[]
 }
@@ -79,8 +85,11 @@ const Table: React.FC<Props> = ({ groups }) => (
             ) : (
               <Skull src="/static/icons/skull.svg" />
             )}
-
-            <p>{player.name}</p>
+            <PlayerNameAndStatus>
+              <p>{player.name}</p>
+              {player.killerName && <p>killed by {player.killerName}</p>}
+              {!player.alive && !player.killerName && <p>surrendered</p>}
+            </PlayerNameAndStatus>
             <p>{player.alive ? player.tilesCount : '-'}</p>
           </Player>
         ))}

@@ -23,6 +23,7 @@ class Player {
     gold: createProp(0),
     villages: createProp(0),
     alive: createProp(true),
+    killerName: createProp(''),
   }
 
   readonly id: string
@@ -80,6 +81,9 @@ class Player {
   }
   @computed get alive() {
     return this.props.alive.current
+  }
+  @computed get killerName() {
+    return this.props.killerName.current
   }
 }
 

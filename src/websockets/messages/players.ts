@@ -14,6 +14,7 @@ const players: GameServerMessage = {
     villages: 'number',
     alive: 'bool',
     registered: 'bool',
+    killerName: 'string',
   },
 }
 
