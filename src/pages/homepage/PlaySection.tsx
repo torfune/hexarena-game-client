@@ -13,10 +13,10 @@ import getBrowserId from '../../utils/getBrowserId'
 
 const Container = styled.div`
   color: #fff;
-  height: 170px;
+  height: 200px;
 
   @media (max-width: ${HOMEPAGE_BREAKPOINT}) {
-    height: 300px;
+    height: 280px;
   }
 `
 

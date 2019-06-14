@@ -4,6 +4,7 @@ import React, { useEffect } from 'react'
 import { observer } from 'mobx-react-lite'
 import store from '../../store'
 import Spinner from '../../components/Spinner'
+import Socket from '../../websockets/Socket'
 
 const Container = styled.div``
 
@@ -38,10 +39,31 @@ const StyledSpinner = styled(Spinner)`
   margin-left: 20px;
 `
 
+const CancelButton = styled.div`
+  background: #444;
+  border-radius: 4px;
+  padding: 6px 0;
+  margin-top: 8px;
+  border: 1px solid #2f2f2f;
+  width: 170px;
+  text-align: center;
+  font-size: 14px;
+
+  :hover {
+    background: #3f3f3f;
+  }
+`
+
 const WaitingSection = () => {
   if (!store.waitingTime) return null
 
   const { current, average, players } = store.waitingTime
+
+  const cancelQueue = () => {
+    Socket.send('cancelQueue')
+    store.waitingTime = null
+    store.onlinePlayers = []
+  }
 
   return (
     <Container>
@@ -63,6 +85,8 @@ const WaitingSection = () => {
 
         <StyledSpinner size="40px" thickness="6px" color="#222" />
       </Row>
+
+      <CancelButton onClick={cancelQueue}>Cancel</CancelButton>
     </Container>
   )
 }
