@@ -4,6 +4,7 @@
   "description": "HexArena - Browser client",
   "scripts": {
     "dev": "webpack-dev-server --port 3000 --mode development",
+    "start": "webpack-dev-server --port 3000 --mode production",
     "build": "webpack --mode production",
     "tsc": "tsc"
   },
@@ -37,6 +38,7 @@
     "ts-loader": "^6.0.2",
     "typescript": "^3.5.1",
     "webpack": "^4.32.2",
+    "webpack-bundle-analyzer": "^3.3.2",
     "webpack-cli": "^3.3.2",
     "webpack-dev-server": "^3.5.1"
   }
