@@ -63,18 +63,18 @@ const VillageCount = styled.p`
   top: -2px;
 `
 
-const numbers: number[] = []
-for (let i = 0; i <= 50; i++) {
-  numbers.push(i)
-}
-
 const BASE_TOP = -3
 const ROW_HEIGHT = 44
 
 const GoldSection = () => {
   const [goldTop, setGoldTop] = useState(BASE_TOP)
 
-  if (!store.player) return null
+  if (!store.player || !store.gsConfig) return null
+
+  const numbers: number[] = []
+  for (let i = 0; i <= store.gsConfig.MAX_GOLD; i++) {
+    numbers.push(i)
+  }
 
   useEffect(() => {
     if (store.player) {
