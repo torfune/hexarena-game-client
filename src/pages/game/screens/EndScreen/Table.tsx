@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import PlayerGroup from '../../../../types/PlayerGroup'
 import React from 'react'
+import { PRIMARY } from '../../../../constants/react'
 
 const Container = styled.div`
   margin: 0 auto;
@@ -28,8 +29,7 @@ interface PlayerProps {
   opacity: number
 }
 const Player = styled.div<PlayerProps>`
-  display: flex;
-  margin: 8px 0;
+  margin: 8px 0 0 0;
   opacity: ${props => props.opacity};
 
   p {
@@ -45,7 +45,6 @@ const Pattern = styled.div`
   border-radius: 100%;
   width: 16px;
   height: 16px;
-  display: inline-block;
   background: ${props => props.color};
   margin-right: 8px;
   position: relative;
@@ -60,12 +59,27 @@ const Skull = styled.img`
   top: 1px;
 `
 
-const PlayerNameAndStatus = styled.div`
+const NameAndTiles = styled.div`
   display: flex;
-  flex-direction: column;
-  text-align: left;
+  justify-content: space-between;
 `
 
+const ReasonOfDeath = styled.div`
+  p {
+    margin-top: 8px;
+    text-align: left;
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 400;
+    opacity: 0.8;
+  }
+  span {
+    color: ${PRIMARY};
+    font-style: normal;
+    font-weight: 600;
+    opacity: 1;
+  }
+`
 interface Props {
   groups: PlayerGroup[]
 }
@@ -80,17 +94,23 @@ const Table: React.FC<Props> = ({ groups }) => (
       <Group key={index}>
         {group.players.map(player => (
           <Player key={player.id} opacity={player.alive ? 1 : 0.5}>
-            {player.alive ? (
-              <Pattern color={player.pattern} />
-            ) : (
-              <Skull src="/static/icons/skull.svg" />
-            )}
-            <PlayerNameAndStatus>
+            <NameAndTiles>
+              {player.alive ? (
+                <Pattern color={player.pattern} />
+              ) : (
+                <Skull src="/static/icons/skull.svg" />
+              )}
               <p>{player.name}</p>
-              {player.killerName && <p>killed by {player.killerName}</p>}
-              {!player.alive && !player.killerName && <p>surrendered</p>}
-            </PlayerNameAndStatus>
-            <p>{player.alive ? player.tilesCount : '-'}</p>
+              <p>{player.alive ? player.tilesCount : '-'}</p>
+            </NameAndTiles>
+            <ReasonOfDeath>
+              {player.killerName && (
+                <p>
+                  Killed by <span>{player.killerName}</span>
+                </p>
+              )}
+              {!player.alive && !player.killerName && <p>Surrendered.</p>}
+            </ReasonOfDeath>
           </Player>
         ))}
       </Group>
