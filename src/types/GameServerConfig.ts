@@ -14,6 +14,9 @@ interface GameServerConfig {
   MAX_PLAYERS: number
   COUNTDOWN_TIME: number
 
+  // ARMIES
+  ARMY_RANGE: number
+
   // VISION
   DEFAULT_VISION: number
   MOUNTAIN_VISION: number
@@ -33,7 +36,7 @@ interface GameServerConfig {
   START_GOLD: number
   BUILD_COST: number
   RECRUIT_COST: number
-  GOLD_GAIN: number
+  CUT_GOLD_GAIN: number
 
   // MANUAL ATTACKS
   DEFAULT_DEFEND_POWER: number

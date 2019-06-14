@@ -504,7 +504,7 @@ class Tile {
 
       armyTargetTiles[i].push(nextTile)
 
-      for (let j = 0; j < 3; j++) {
+      for (let j = 0; j < 4; j++) {
         const lastTile = armyTargetTiles[i][armyTargetTiles[i].length - 1]
         nextTile = lastTile.neighbors[i]
 

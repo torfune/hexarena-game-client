@@ -476,7 +476,7 @@ class Game {
     return getTileByAxial(axial)
   }
   getTilesToCapture(tile: Tile, playerId: string) {
-    if (!store.player) return []
+    if (!store.player || !store.gsConfig) return []
 
     const tilesToCapture = []
 
@@ -510,7 +510,7 @@ class Game {
       }
 
       if (direction !== null) {
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < store.gsConfig.ARMY_RANGE; i++) {
           const t = this.selectedArmyTargetTiles[direction][i]
 
           if (!t) continue
