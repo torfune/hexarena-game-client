@@ -1,5 +1,17 @@
 const changelog = [
   {
+    version: 'Alpha 1.23',
+    points: [
+      'Army range set to 5.',
+      'Dynamic world size based on number of players.',
+      'Actions are no longer cancelable.',
+      'Slower game tempo.',
+      'You get gold of player you just captured.',
+      'Gold cap set to 80.',
+      'UI improvements.',
+    ],
+  },
+  {
     version: 'Alpha 1.22',
     points: [
       'Auto-capture surrounded neutral tiles.',
