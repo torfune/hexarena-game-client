@@ -49,7 +49,6 @@ interface Props {
   player: Player
 }
 const PlayerPreview: React.FC<Props> = ({ player }) => {
-  console.log(player.pattern)
   return (
     <Container>
       {player.pattern === '#fff' ? (
