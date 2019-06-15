@@ -102,12 +102,14 @@ const LoginSection: React.FC<Props> = ({ play }) => {
   const [nameValid, setNameValid] = useState<boolean | null>(false)
   const { userId, accessToken, login, logout, loggedIn } = useAuth()
 
+  // Fetch user
   useEffect(() => {
     if (userId && accessToken) {
       fetchUser(accessToken)
     }
   }, [userId, accessToken])
 
+  // Validate name
   useEffect(() => {
     if (nameValidationTimeout) {
       clearTimeout(nameValidationTimeout)
@@ -152,12 +154,18 @@ const LoginSection: React.FC<Props> = ({ play }) => {
         login(userId, accessToken, accessTokenExp)
       })
     } catch {
-      console.error('Authentication failed')
+      store.error = {
+        message: 'Authentication failed.',
+        goHome: true,
+      }
     }
   }
 
   const handleGoogleAuthFailure = () => {
-    console.error('Authentication failed')
+    store.error = {
+      message: 'Authentication failed.',
+      goHome: true,
+    }
   }
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {

@@ -10,6 +10,7 @@ const changelog = [
       'You get gold of player you just captured.',
       'Gold cap set to 80.',
       'UI improvements.',
+      'Bug fixes.',
     ],
   },
   {
