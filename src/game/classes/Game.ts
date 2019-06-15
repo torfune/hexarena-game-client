@@ -289,12 +289,7 @@ class Game {
 
     if (key === 'e' || key === 'q') {
       const zoomDirection = key === 'e' ? -1 : 1
-      const scale = this.scale + zoomDirection * ZOOM_SPEED
-      const roundedScale = roundToDecimals(scale, 2)
-
-      if (roundedScale >= MIN_SCALE && roundedScale <= MAX_SCALE) {
-        this.targetScale = roundedScale
-      }
+      this.targetScale = this.calculateZoomScale(zoomDirection)
     }
 
     if (key === 'h' && store.gsConfig.DEBUG_MODE) {
@@ -421,12 +416,8 @@ class Game {
 
     const delta = deltaY || detail
     const zoomDirection = (delta < 0 ? -1 : 1) * -1
-    const scale = this.scale + zoomDirection * ZOOM_SPEED
-    const roundedScale = roundToDecimals(scale, 2)
 
-    if (roundedScale >= MIN_SCALE && roundedScale <= MAX_SCALE) {
-      this.targetScale = roundedScale
-    }
+    this.targetScale = this.calculateZoomScale(zoomDirection)
   }
   handleContextMenu(event: Event) {
     event.preventDefault()
@@ -850,6 +841,15 @@ class Game {
   }
   sendGoldToAlly() {
     Socket.send('sendGold')
+  }
+  calculateZoomScale(zoomDirection: number) {
+    const scale = this.scale + zoomDirection * this.scale * ZOOM_SPEED
+    const roundedScale = roundToDecimals(scale, 2)
+
+    if (roundedScale >= MIN_SCALE && roundedScale <= MAX_SCALE) {
+      return roundedScale
+    }
+    return this.scale
   }
 }
 
