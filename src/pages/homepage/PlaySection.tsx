@@ -43,7 +43,7 @@ const Maintainance = styled.div`
   font-size: 18px;
 `
 
-const MAINTENANCE = true
+const MAINTENANCE = false
 
 const PlaySection = () => {
   const { loggedIn, userId, accessToken } = useAuth()
