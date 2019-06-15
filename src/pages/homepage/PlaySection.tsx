@@ -38,6 +38,13 @@ const Row = styled.div<{ break?: boolean }>`
     `}
 `
 
+const Maintainance = styled.div`
+  margin-top: 32px;
+  font-size: 18px;
+`
+
+const MAINTENANCE = true
+
 const PlaySection = () => {
   const { loggedIn, userId, accessToken } = useAuth()
   const [queryLoaded, setQueryLoaded] = useState(false)
@@ -81,6 +88,15 @@ const PlaySection = () => {
       average: 0,
       players: 0,
     }
+  }
+
+  if (MAINTENANCE) {
+    return (
+      <Container>
+        <Heading>Maintenance</Heading>
+        <Maintainance>Come back in 10 minutes.</Maintainance>
+      </Container>
+    )
   }
 
   if (loggedIn === null || !queryLoaded) return <Container />
