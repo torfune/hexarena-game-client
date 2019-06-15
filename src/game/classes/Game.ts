@@ -289,21 +289,17 @@ class Game {
 
     if (key === 'e' || key === 'q') {
       const zoomDirection = key === 'e' ? -1 : 1
-      const scale = this.scale + zoomDirection * ZOOM_SPEED
-      const roundedScale = roundToDecimals(scale, 2)
-
-      if (roundedScale >= MIN_SCALE && roundedScale <= MAX_SCALE) {
-        this.targetScale = roundedScale
-      }
+      this.targetScale = this.calculateZoomScale(zoomDirection)
     }
 
     if (key === 'h' && store.gsConfig.DEBUG_MODE) {
       store.showHud = !store.showHud
     }
   }
-  handleMouseDown({ clientX: x, clientY: y }: MouseEvent) {
+  handleMouseDown(event: MouseEvent) {
     if (store.status !== 'running' || !this.cursor || !this.camera) return
 
+    const { clientX: x, clientY: y, button } = event
     const { hoveredTile } = store
 
     // Army - select
@@ -313,14 +309,19 @@ class Game {
       hoveredTile.ownerId === store.playerId &&
       hoveredTile.army &&
       hoveredTile.army.ownerId === store.playerId &&
-      (hoveredTile.castle || hoveredTile.base)
+      (hoveredTile.castle || hoveredTile.base) &&
+      button !== 2
     ) {
       this.selectArmy(hoveredTile)
       return
     }
 
     // Army - unselect
-    if (this.selectedArmyTile && hoveredTile === this.selectedArmyTile) {
+    if (
+      this.selectedArmyTile &&
+      hoveredTile === this.selectedArmyTile &&
+      button !== 2
+    ) {
       this.unselectArmy()
       return
     }
@@ -346,6 +347,22 @@ class Game {
       this.cameraDrag = null
     }
 
+    let button = null
+    switch (event.button) {
+      case 0:
+        button = 'left'
+        break
+
+      case 2:
+        button = 'right'
+        break
+
+      default:
+        button = 'left'
+    }
+
+    if (button === 'right') return
+
     if (!hoveredTile) {
       if (this.selectedArmyTile) {
         this.unselectArmy()
@@ -370,20 +387,6 @@ class Game {
       ) {
         this.selectArmy(hoveredTile)
         return
-      }
-
-      let button = null
-      switch (event.button) {
-        case 0:
-          button = 'left'
-          break
-
-        case 2:
-          button = 'right'
-          break
-
-        default:
-          button = 'left'
       }
 
       if (button) {
@@ -421,12 +424,8 @@ class Game {
 
     const delta = deltaY || detail
     const zoomDirection = (delta < 0 ? -1 : 1) * -1
-    const scale = this.scale + zoomDirection * ZOOM_SPEED
-    const roundedScale = roundToDecimals(scale, 2)
 
-    if (roundedScale >= MIN_SCALE && roundedScale <= MAX_SCALE) {
-      this.targetScale = roundedScale
-    }
+    this.targetScale = this.calculateZoomScale(zoomDirection)
   }
   handleContextMenu(event: Event) {
     event.preventDefault()
@@ -850,6 +849,15 @@ class Game {
   }
   sendGoldToAlly() {
     Socket.send('sendGold')
+  }
+  calculateZoomScale(zoomDirection: number) {
+    const scale = this.scale + zoomDirection * this.scale * ZOOM_SPEED
+    const roundedScale = roundToDecimals(scale, 2)
+
+    if (roundedScale >= MIN_SCALE && roundedScale <= MAX_SCALE) {
+      return roundedScale
+    }
+    return this.scale
   }
 }
 
