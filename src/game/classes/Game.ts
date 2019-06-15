@@ -296,9 +296,10 @@ class Game {
       store.showHud = !store.showHud
     }
   }
-  handleMouseDown({ clientX: x, clientY: y }: MouseEvent) {
+  handleMouseDown(event: MouseEvent) {
     if (store.status !== 'running' || !this.cursor || !this.camera) return
 
+    const { clientX: x, clientY: y, button } = event
     const { hoveredTile } = store
 
     // Army - select
@@ -308,14 +309,19 @@ class Game {
       hoveredTile.ownerId === store.playerId &&
       hoveredTile.army &&
       hoveredTile.army.ownerId === store.playerId &&
-      (hoveredTile.castle || hoveredTile.base)
+      (hoveredTile.castle || hoveredTile.base) &&
+      button !== 2
     ) {
       this.selectArmy(hoveredTile)
       return
     }
 
     // Army - unselect
-    if (this.selectedArmyTile && hoveredTile === this.selectedArmyTile) {
+    if (
+      this.selectedArmyTile &&
+      hoveredTile === this.selectedArmyTile &&
+      button !== 2
+    ) {
       this.unselectArmy()
       return
     }
@@ -341,6 +347,22 @@ class Game {
       this.cameraDrag = null
     }
 
+    let button = null
+    switch (event.button) {
+      case 0:
+        button = 'left'
+        break
+
+      case 2:
+        button = 'right'
+        break
+
+      default:
+        button = 'left'
+    }
+
+    if (button === 'right') return
+
     if (!hoveredTile) {
       if (this.selectedArmyTile) {
         this.unselectArmy()
@@ -365,20 +387,6 @@ class Game {
       ) {
         this.selectArmy(hoveredTile)
         return
-      }
-
-      let button = null
-      switch (event.button) {
-        case 0:
-          button = 'left'
-          break
-
-        case 2:
-          button = 'right'
-          break
-
-        default:
-          button = 'left'
       }
 
       if (button) {
