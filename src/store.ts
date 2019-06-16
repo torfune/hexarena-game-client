@@ -29,6 +29,7 @@ class Store {
   @observable allianceRequests: AllianceRequest[] = []
   @observable armies: Army[] = []
   @observable players: Player[] = []
+  @observable timeFromActivity: number = 0
   @observable tiles: Tiles = {}
   @observable hoveredTile: Tile | null = null
   @observable startCountdown: number | null = null
@@ -61,6 +62,7 @@ class Store {
   }
 
   // Other
+  @observable chatMessage: string = ''
   @observable onlinePlayers: OnlinePlayer[] = []
   @observable topPlayers: TopPlayer[] = []
   @observable chatMessages: ChatMessage[] = []

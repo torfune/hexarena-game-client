@@ -93,19 +93,24 @@ const SignInMessage = styled.div`
 
 const Chat = () => {
   const { user } = useAuth()
-  const [message, setMessage] = useState('')
 
   const handleKeyDown = ({ key }: KeyboardEvent) => {
-    if (key !== 'Enter' || !message || !store.gsConfig || !user || !user.name) {
+    if (
+      key !== 'Enter' ||
+      !store.chatMessage ||
+      !store.gsConfig ||
+      !user ||
+      !user.name
+    ) {
       return
     }
 
-    Socket.send('chatMessage', `${user.name}|${message}`)
-    setMessage('')
+    Socket.send('chatMessage', `${user.name}|${store.chatMessage}`)
+    store.chatMessage = ''
   }
 
   const handleMessageChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setMessage(event.target.value)
+    store.chatMessage = event.target.value
   }
 
   useEffect(() => {
@@ -123,9 +128,9 @@ const Chat = () => {
     if (ele) {
       ele.scrollTop = ele.scrollHeight
     }
-  }, [store.chatMessages])
+  }, [store.chatMessages, store.chatMessage])
 
-  // if (!store.gsConfig) return null
+  if (!store.gsConfig) return null
 
   return (
     <Container>
@@ -148,8 +153,8 @@ const Chat = () => {
         <Input
           autoFocus
           placeholder="Type your message ..."
-          // maxLength={store.gsConfig.CHAT_MESSAGE_MAX_LENGTH}
-          value={message}
+          maxLength={store.gsConfig.CHAT_MESSAGE_MAX_LENGTH}
+          value={store.chatMessage}
           onChange={handleMessageChange}
         />
       ) : (

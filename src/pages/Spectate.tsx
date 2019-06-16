@@ -46,6 +46,7 @@ const Spectate: React.FC = () => {
       store.showHud = true
       store.fps = 0
       store.ping = 0
+      store.timeFromActivity = 0
       store.gameTime = undefined
       store.serverTime = undefined
       store.notification = undefined
