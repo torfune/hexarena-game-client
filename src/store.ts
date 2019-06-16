@@ -280,6 +280,36 @@ class Store {
 
     this.changeHandlers[key] = callback
   }
+
+  // Reset
+  reset() {
+    this.actions = []
+    this.allianceRequests = []
+    this.armies = []
+    this.tiles = {}
+    this.hoveredTile = null
+    this.startCountdown = null
+    this.showHud = true
+    this.fps = 0
+    this.ping = 0
+    this.timeFromActivity = 0
+    this.gameTime = undefined
+    this.serverTime = undefined
+    this.notification = undefined
+    this.goldAnimation = undefined
+    this.gameMode = undefined
+    this.flash = 0
+    this.spawnTile = undefined
+    this.changeHandlers = {}
+    this.gameIndex = null
+    this.idMap = {
+      actions: {},
+      allianceRequests: {},
+      armies: {},
+      players: {},
+      tiles: {},
+    }
+  }
 }
 
 const store = new Store()

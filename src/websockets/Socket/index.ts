@@ -32,10 +32,14 @@ class Socket {
 
     // Start game
     if (key === 'startGame') {
-      console.log(`WS: startGame`)
-      if (!store._game) {
-        store.createGame()
+      store.spectating = false
+      store.reset()
+
+      if (store._game) {
+        store._game.destroy()
       }
+
+      store.createGame()
       store.waitingTime = null
       store.routerHistory.push('/game')
       return

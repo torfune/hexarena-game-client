@@ -48,23 +48,15 @@ const GameCanvas = styled.div<GameCanvasProps>`
 const GamePage: React.FC<RouteComponentProps> = observer(() => {
   const { status, showHud, gameMode, player, spectating, error } = store
 
-  if (!status || status === 'aborted') {
+  if (!status || status === 'aborted' || !store._game) {
     window.location.href = status === 'aborted' ? '/?play' : '/'
     return null
-  }
-
-  if (!store._game) {
-    store.createGame()
   }
 
   // Mount / Unmount
   useEffect(() => {
     const canvas = document.getElementById('game-canvas')
     if (!canvas) throw Error('Cannot find canvas.')
-
-    if (!store._game) {
-      store.createGame()
-    }
 
     store.game.render(canvas)
 

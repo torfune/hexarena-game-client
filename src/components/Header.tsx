@@ -133,7 +133,7 @@ const Header = () => {
         {spectating && (
           <SpectateSection>
             <img src="/static/icons/spectate.svg" />
-            <p>Spectating Game #2</p>
+            <p>Spectating Game #{store.gameIndex}</p>
             <Link to="/">
               <CancelButton>
                 <img src="/static/icons/cross.svg" />

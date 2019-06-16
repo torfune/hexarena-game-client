@@ -18,51 +18,25 @@ const Container = styled.div`
 `
 
 const Spectate: React.FC = () => {
-  if (!store._game) {
-    store.createGame()
-  }
-
   useEffect(() => {
     const canvas = document.getElementById('game-canvas')
     if (!canvas) throw Error('Cannot find canvas.')
 
     store.spectating = true
+    store.reset()
+
+    if (store._game) {
+      store._game.destroy()
+    }
+
+    store.createGame()
     store.game.render(canvas)
 
     store.gameIndex = Number(window.location.href.split('?gameIndex=')[1])
     store.game.spectate()
 
     return () => {
-      store.game.destroy()
       store.spectating = false
-
-      // Store cleanup
-      store.actions = []
-      store.allianceRequests = []
-      store.armies = []
-      store.tiles = {}
-      store.hoveredTile = null
-      store.startCountdown = null
-      store.showHud = true
-      store.fps = 0
-      store.ping = 0
-      store.timeFromActivity = 0
-      store.gameTime = undefined
-      store.serverTime = undefined
-      store.notification = undefined
-      store.goldAnimation = undefined
-      store.gameMode = undefined
-      store.flash = 0
-      store.spawnTile = undefined
-      store.changeHandlers = {}
-      store.gameIndex = null
-      store.idMap = {
-        actions: {},
-        allianceRequests: {},
-        armies: {},
-        players: {},
-        tiles: {},
-      }
     }
   }, [])
 
