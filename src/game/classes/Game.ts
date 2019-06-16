@@ -132,15 +132,15 @@ class Game {
       this.fpsLastUpdatedAt = now
     }
 
-    if (
-      store.player &&
-      store.player.alive &&
-      store.gameTime &&
-      store.timeFromActivity - store.gameTime > 60
-    ) {
-      this.surrender()
-      return
-    }
+    // if (
+    //   store.player &&
+    //   store.player.alive &&
+    //   store.gameTime &&
+    //   store.timeFromActivity - store.gameTime > 60
+    // ) {
+    //   this.surrender()
+    //   return
+    // }
 
     if (this.animations.length > 0) {
       // Animations
@@ -218,7 +218,7 @@ class Game {
   }
   spectate() {
     if (store.gameIndex === null) return
-    console.log(`spectating ${store.gameIndex}`)
+
     Socket.send('spectate', String(store.gameIndex))
   }
   setupStoreListeners() {
