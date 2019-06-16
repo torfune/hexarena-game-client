@@ -45,7 +45,7 @@ export const HEART_OFFSET_X = 57
 export const HITPOINTS_OFFSET_Y = 176
 
 // ZOOM
-export const ZOOM_SPEED = 0.1
+export const ZOOM_SPEED = 0.2
 export const MAX_SCALE = 0.5
 export const MIN_SCALE = 0.1
 export const DEFAULT_SCALE = 0.5

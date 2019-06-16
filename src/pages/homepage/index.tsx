@@ -41,7 +41,7 @@ const Homepage: React.FC<Props> = ({ history }) => {
             <PlaySection />
           )}
           <RunningGames />
-          <OnlinePlayers />
+          {/* <OnlinePlayers /> */}
           <Community />
           <ReleaseNotes />
         </div>
