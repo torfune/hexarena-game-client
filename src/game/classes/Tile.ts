@@ -10,7 +10,6 @@ import {
   BEDROCK_BORDER,
   BEDROCK_BACKGROUND,
 } from '../../constants/game'
-import game from '..'
 import getImageAnimation from '../functions/getImageAnimation'
 import shade from '../../utils/shade'
 import Player from './Player'
@@ -80,7 +79,6 @@ class Tile {
     }
 
     this.updateOwner()
-    this.updateScale()
   }
 
   setProp(key: keyof Props, value: Primitive) {
@@ -134,7 +132,7 @@ class Tile {
       this.showHitpoints()
     }
 
-    if (this.canPlayerCreateAction() && game.selectedArmyTile !== this) {
+    if (this.canPlayerCreateAction() && store.game.selectedArmyTile !== this) {
       this.addHighlight()
     }
   }
@@ -143,48 +141,9 @@ class Tile {
       this.hideHitpoints()
     }
 
-    if (this.owner && game.selectedArmyTile !== this) {
+    if (this.owner && store.game.selectedArmyTile !== this) {
       this.removeHighlight()
     }
-  }
-  updateScale() {
-    // const pixel = getPixelPosition(this.axial)
-    // const imageKeys = Object.keys(this.image) as Array<keyof TileImage>
-    // for (let i = 0; i < imageKeys.length; i++) {
-    //   const key = imageKeys[i]
-    //   const image = this.image[key]
-    //   if (!image) continue
-    //   if (key === 'armyIcon' || key === 'hitpointsBg') {
-    //     image.x = pixel.x
-    //     image.scale.x = game.scale
-    //     image.scale.y = game.scale
-    //     const animation = getImageAnimation(image)
-    //     if (animation && animation instanceof Animation) {
-    //       animation.context.baseY = pixel.y
-    //     } else {
-    //       image.y = pixel.y - ARMY_ICON_OFFSET_Y * game.scale
-    //     }
-    //     continue
-    //   }
-    //   image.x = pixel.x
-    //   image.y = pixel.y
-    //   image.scale.x = game.scale
-    //   image.scale.y = game.scale
-    // }
-    // const imageSetKeys = Object.keys(this.imageSet) as Array<
-    //   keyof TileImageArray
-    // >
-    // for (let i = 0; i < imageSetKeys.length; i++) {
-    //   const key = imageSetKeys[i]
-    //   const imageSet = this.imageSet[key]
-    //   for (let j = 0; j < 6; j++) {
-    //     if (!imageSet[j]) continue
-    //     imageSet[j].x = pixel.x
-    //     imageSet[j].y = pixel.y
-    //     imageSet[j].scale.x = game.scale
-    //     imageSet[j].scale.y = game.scale
-    //   }
-    // }
   }
   addHighlight() {
     if (!this.owner || !this.image.pattern) return
@@ -205,15 +164,13 @@ class Tile {
     this.image.armyIcon = createImage('armyIcon')
     this.image.armyIcon.x = pixel.x
     this.image.armyIcon.y = pixel.y
-    // this.image.armyIcon.scale.x = game.scale
-    // this.image.armyIcon.scale.y = game.scale
     this.image.armyIcon.alpha = 0
 
     new Animation(
       this.image.armyIcon,
       (image, fraction, context) => {
         image.alpha = fraction
-        image.y = context.baseY - ARMY_ICON_OFFSET_Y * /*game.scale **/ fraction
+        image.y = context.baseY - ARMY_ICON_OFFSET_Y * fraction
       },
       { context: { baseY: pixel.y }, speed: 0.05 }
     )
@@ -283,7 +240,7 @@ class Tile {
         },
         {
           context: {
-            stage: game.stage[key],
+            stage: store.game.stage[key],
           },
           onFinish: (image, context) => {
             context.stage.removeChild(image)
@@ -292,7 +249,7 @@ class Tile {
         }
       )
     } else {
-      game.stage[key].removeChild(image)
+      store.game.stage[key].removeChild(image)
     }
   }
   removeArmy() {
@@ -310,11 +267,12 @@ class Tile {
         fraction = 1 - fraction
 
         image.alpha = fraction
-        image.y = context.baseY - ARMY_ICON_OFFSET_Y * game.scale * fraction
+        image.y =
+          context.baseY - ARMY_ICON_OFFSET_Y * store.game.scale * fraction
       },
       {
         context: {
-          stage: game.stage['armyIcon'],
+          stage: store.game.stage['armyIcon'],
           baseY: position.y,
         },
         onFinish: (image, context) => {
@@ -443,7 +401,7 @@ class Tile {
       image.alpha = 0
       image.tint = hex(newOwner.pattern)
 
-      game.animations.push(
+      store.game.animations.push(
         new Animation(
           image,
           (image, fraction) => {
@@ -514,7 +472,7 @@ class Tile {
       }
     }
 
-    game.selectedArmyTargetTiles = armyTargetTiles
+    store.game.selectedArmyTargetTiles = armyTargetTiles
   }
   unselectArmy() {
     if (!this.image.pattern || !this.owner) return
@@ -607,18 +565,18 @@ class Tile {
 
       // Preview -> Neutral
       if (
-        game.tilesWithPatternPreview.includes(this) &&
+        store.game.tilesWithPatternPreview.includes(this) &&
         !n.owner &&
-        !game.tilesWithPatternPreview.includes(n)
+        !store.game.tilesWithPatternPreview.includes(n)
       ) {
         showBorder = true
       }
 
       // Preview -> Owned
       if (
-        game.tilesWithPatternPreview.includes(this) &&
+        store.game.tilesWithPatternPreview.includes(this) &&
         n.owner &&
-        !game.tilesWithPatternPreview.includes(n)
+        !store.game.tilesWithPatternPreview.includes(n)
       ) {
         showBorder = true
       }
@@ -677,8 +635,8 @@ class Tile {
     this.image.patternPreview.x = pixel.x
     this.image.patternPreview.y = pixel.y
     this.image.patternPreview.tint = hex(pattern)
-    // this.image.patternPreview.scale.x = game.scale
-    // this.image.patternPreview.scale.y = game.scale
+    // this.image.patternPreview.scale.x = store.game.scale
+    // this.image.patternPreview.scale.y = store.game.scale
     this.image.patternPreview.alpha = 0.5
   }
   removePatternPreview() {
@@ -688,7 +646,7 @@ class Tile {
       this.image.pattern.visible = true
     }
 
-    game.stage['patternPreview'].removeChild(this.image.patternPreview)
+    store.game.stage['patternPreview'].removeChild(this.image.patternPreview)
   }
   isContested() {
     if (!store.player) return false
@@ -739,7 +697,7 @@ class Tile {
       this.owner.id !== store.player.id ||
       this.mountain ||
       this.village ||
-      game.selectedArmyTile ||
+      store.game.selectedArmyTile ||
       this.action
     ) {
       return false

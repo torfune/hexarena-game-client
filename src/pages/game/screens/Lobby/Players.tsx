@@ -3,7 +3,6 @@ import { BOX_SHADOW } from '../../../../constants/react'
 import { observer } from 'mobx-react-lite'
 import store from '../../../../store'
 import { useTransition } from 'react-spring'
-import game from '../../../../game'
 import PatternSelector from './PatternSelector'
 import shadeColor from '../../../../utils/shade'
 import Tooltip from '../../../../components/Tooltip'
@@ -153,8 +152,6 @@ const DarkOverlay = styled.div`
 `
 
 const Players: React.FC = () => {
-  if (!store.player || !store.gsConfig) return null
-
   const otherPlayers: Array<{
     name?: string
     pattern?: string
@@ -177,8 +174,6 @@ const Players: React.FC = () => {
     }
   }
 
-  const { PATTERNS } = store.gsConfig
-  const { pattern } = store.player
   const lockedPatterns = store.players
     .filter(player => player.pattern !== pattern)
     .map(({ pattern }) => pattern)
@@ -202,9 +197,14 @@ const Players: React.FC = () => {
   const handlePatternSelect = (pattern: string) => {
     if (lockedPatterns.includes(pattern)) return
 
-    game.selectPattern(pattern)
+    store.game.selectPattern(pattern)
     setShowSelector(false)
   }
+
+  if (!store.player || !store.gsConfig) return null
+
+  const { PATTERNS } = store.gsConfig
+  const { pattern } = store.player
 
   return (
     <Container>

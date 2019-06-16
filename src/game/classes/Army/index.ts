@@ -1,4 +1,3 @@
-import game from '../..'
 import Unit from './Unit'
 import getPixelPosition from '../../functions/getPixelPosition'
 import getUniqueRandomizedPositions from '../../functions/getUniqueRandomizedPositions'
@@ -55,7 +54,7 @@ class Army {
       UNIT_POSITION_OFFSET
     )
 
-    const isInside = tile.base || tile.castle || tile.camp
+    const isInside = tile.base || tile.castle
 
     for (let i = 0; i < UNIT_COUNT; i++) {
       if (isInside) {
@@ -175,9 +174,10 @@ class Army {
     if (
       (sameOwner || allyOwner) &&
       !this.isDestroying &&
-      (tile.base || tile.castle || tile.camp) &&
-      (tile.hitpoints === 2 || tile.camp)
+      (tile.base || tile.castle) &&
+      tile.hitpoints === 2
     ) {
+      console.log(`Adding army to a tile.`)
       tile.addArmy(this)
     }
   }

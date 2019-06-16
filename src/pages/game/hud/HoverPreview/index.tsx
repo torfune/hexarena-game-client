@@ -35,7 +35,6 @@ const Container = styled.div.attrs<ContainerProps>(({ cursor }) => ({
 
 const HoveredTileinfo = () => {
   const { hoveredTile, player } = store
-
   const [cursor, setCursor] = useState({ x: 0, y: 0 })
   const [
     hoveredTileInfo,
@@ -63,9 +62,11 @@ const HoveredTileinfo = () => {
     }
   }, [hoveredTile])
 
-  if (!player) return null
-
-  if (hoveredTile && hoveredTile.owner && hoveredTile.owner.id !== player.id) {
+  if (
+    hoveredTile &&
+    hoveredTile.owner &&
+    (!player || hoveredTile.owner.id !== player.id)
+  ) {
     return (
       <Container cursor={cursor}>
         <PlayerPreview player={hoveredTile.owner} />

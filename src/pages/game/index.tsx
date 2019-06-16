@@ -12,9 +12,7 @@ import styled from 'styled-components'
 import Gold from './hud/Gold'
 import Performance from './hud/Performance'
 import SurrenderButton from './hud/SurrenderButton'
-import game from '../../game'
 import store from '../../store'
-import { useAuth } from '../../auth'
 import Flasher from './hud/Flasher'
 import * as React from 'react'
 import NotificationManager from './hud/NotificationManager'
@@ -22,7 +20,6 @@ import { RouteComponentProps } from '@reach/router'
 import Ally from './hud/Ally'
 import Lobby from './screens/Lobby'
 import showSurrenderButton from '../../game/functions/showSurrenderButton'
-import playerId from '../../websockets/messages/playerId'
 import Player from '../../game/classes/Player'
 
 const Container = styled.div`
@@ -48,7 +45,7 @@ const GameCanvas = styled.div<GameCanvasProps>`
   visibility: ${props => (props.visible ? 'visible' : 'hidden')};
 `
 
-const Game: React.FC<RouteComponentProps> = observer(() => {
+const GamePage: React.FC<RouteComponentProps> = observer(() => {
   const { status, showHud, gameMode, player, spectating, error } = store
 
   if (!status || status === 'aborted') {
@@ -56,17 +53,31 @@ const Game: React.FC<RouteComponentProps> = observer(() => {
     return null
   }
 
+  if (!store._game) {
+    store.createGame()
+  }
+
+  // Mount / Unmount
   useEffect(() => {
     const canvas = document.getElementById('game-canvas')
     if (!canvas) throw Error('Cannot find canvas.')
 
-    game.start(canvas)
+    if (!store._game) {
+      store.createGame()
+    }
 
-    window.addEventListener('resize', game.updateScreenSize.bind(game))
+    store.game.render(canvas)
+
+    window.addEventListener(
+      'resize',
+      store.game.updateScreenSize.bind(store.game)
+    )
 
     return () => {
-      game.stop()
-      window.removeEventListener('resize', game.updateScreenSize)
+      window.removeEventListener('resize', store.game.updateScreenSize)
+
+      // Force reload
+      window.location.reload()
     }
   }, [])
 
@@ -77,51 +88,53 @@ const Game: React.FC<RouteComponentProps> = observer(() => {
         visible={status === 'running' || status === 'finished'}
       />
 
-      {status === 'starting' && <Lobby />}
+      <>
+        {status === 'starting' && <Lobby />}
 
-      {status === 'running' && player && (
-        <HudContainer>
-          <GameTime />
+        {status === 'running' && player && (
+          <HudContainer>
+            <GameTime />
 
-          {showHud && player.alive && (
-            <>
-              {gameMode === 'diplomacy' && renderDiplomacy(player)}
-
-              <HoverPreview />
-              <Leaderboard />
-              <Gold />
-              <Performance />
-            </>
-          )}
-
-          {showSurrenderButton(store.players, store.player) && (
-            <SurrenderButton />
-          )}
-
-          {!player.alive &&
-            (spectating ? (
+            {showHud && player.alive && (
               <>
-                <SpectateCloseButton />
+                {gameMode === 'diplomacy' && renderDiplomacy(player)}
+
+                <HoverPreview />
                 <Leaderboard />
+                <Gold />
+                <Performance />
               </>
-            ) : (
-              <DefeatModal />
-            ))}
-        </HudContainer>
-      )}
+            )}
 
-      {status === 'running' && (
-        <>
-          <Flasher />
-          <NotificationManager />
-        </>
-      )}
+            {showSurrenderButton(store.players, store.player) && (
+              <SurrenderButton />
+            )}
 
-      {status === 'finished' && <EndScreen />}
+            {!player.alive &&
+              (spectating ? (
+                <>
+                  <SpectateCloseButton />
+                  <Leaderboard />
+                </>
+              ) : (
+                <DefeatModal />
+              ))}
+          </HudContainer>
+        )}
 
-      {error && status !== 'finished' && (
-        <ErrorModal message={error.message} goHome={error.goHome} />
-      )}
+        {status === 'running' && (
+          <>
+            <Flasher />
+            <NotificationManager />
+          </>
+        )}
+
+        {status === 'finished' && <EndScreen />}
+
+        {error && status !== 'finished' && (
+          <ErrorModal message={error.message} goHome={error.goHome || true} />
+        )}
+      </>
     </Container>
   )
 })
@@ -134,4 +147,4 @@ const renderDiplomacy = (player: Player) => {
   return <Diplomacy />
 }
 
-export default Game
+export default GamePage

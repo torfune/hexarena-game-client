@@ -7,6 +7,7 @@ import Army from '../../game/classes/Army'
 import Player from '../../game/classes/Player'
 import Tile from '../../game/classes/Tile'
 import createInstance from '../../utils/createInstance'
+import parseRunningGames from '../../utils/parseRunningGames'
 
 class Socket {
   static connected: boolean = false
@@ -28,13 +29,31 @@ class Socket {
   }
   static handleMessage({ data }: { data: string }) {
     const [key, payload] = data.split('//')
-    const messageKeys = Object.keys(messages)
 
-    if (!messageKeys.includes(key)) {
+    // Start game
+    if (key === 'startGame') {
+      console.log(`WS: startGame`)
+      if (!store._game) {
+        store.createGame()
+      }
+      store.waitingTime = null
+      store.routerHistory.push('/game')
+      return
+    }
+
+    // Running games
+    if (key === 'runningGames') {
+      store.runningGames = parseRunningGames(payload)
+      return
+    }
+
+    // Unknown message name
+    if (!Object.keys(messages).includes(key)) {
       console.warn(`Unhandled message: ${key}`)
       return
     }
 
+    // Parse
     const config = messages[key]
     const parsed = parse(payload, config)
 
@@ -47,10 +66,34 @@ class Socket {
     if (!config.instance && !config.isArray) {
       setStoreValue(key, parsed)
 
-      // Status -> /game
-      if (key === 'status' && (parsed === 'starting' || parsed === 'running')) {
-        store.routerHistory.push('/game')
-      }
+      // const { pathname } = window.location
+      // console.log(pathname)
+
+      // // Status / -> /game
+      // if (
+      //   key === 'status' &&
+      //   (parsed === 'starting' || parsed === 'running') &&
+      //   !store.spectating &&
+      //   pathname === '/'
+      // ) {
+      //   store.waitingTime = null
+      //   store.routerHistory.push('/game')
+      // }
+
+      // // Status /spectate -> /game
+      // if (
+      //   key === 'status' &&
+      //   (parsed === 'starting' || parsed === 'running') &&
+      //   store.spectating &&
+      //   window.location.pathname === '/spectate'
+      // ) {
+      //   // if (store._game) {
+      //   //   store._game.destroy()
+      //   // }
+
+      //   store.waitingTime = null
+      //   store.routerHistory.push('/game')
+      // }
 
       return
     }
@@ -263,6 +306,9 @@ const setStoreValue = (key: string, value: any) => {
       break
     case 'notification':
       store.notification = value
+      break
+    case 'gameIndex':
+      store.gameIndex = value
       break
     case 'playerId':
       if (typeof value !== 'string') {

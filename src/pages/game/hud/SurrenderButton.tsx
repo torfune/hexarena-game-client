@@ -1,7 +1,7 @@
-import game from '../../../game'
 import styled from 'styled-components'
 import { PRIMARY, SECONDARY } from '../../../constants/react'
 import React from 'react'
+import store from '../../../store'
 
 const Container = styled.div`
   background: ${PRIMARY};
@@ -27,7 +27,9 @@ const Container = styled.div`
 `
 
 const SurrenderButton = () => (
-  <Container onClick={game.surrender.bind(game)}>Surrender</Container>
+  <Container onClick={store.game.surrender.bind(store.game)}>
+    Surrender
+  </Container>
 )
 
 export default SurrenderButton

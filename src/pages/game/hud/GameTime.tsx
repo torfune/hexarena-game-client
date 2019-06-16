@@ -2,13 +2,14 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import store from '../../../store'
 import React from 'react'
-import { HUD_SCALE } from '../../../constants/react'
+import { HUD_SCALE, CHAT_WIDTH } from '../../../constants/react'
 
-const Container = styled.div`
+const Container = styled.div<{ spectating: boolean }>`
   position: absolute;
-  top: 0;
+  top: ${props => (props.spectating ? '80px' : 0)};
   left: 0;
-  width: 100vw;
+  width: ${props =>
+    props.spectating ? `calc(100vw - ${CHAT_WIDTH})` : '100vw'};
 `
 
 const Content = styled.div`
@@ -43,7 +44,7 @@ const GameTime = observer(() => {
   }
 
   return (
-    <Container>
+    <Container spectating={store.spectating}>
       <Content>
         {formatted.minutes}:{formatted.seconds}
       </Content>

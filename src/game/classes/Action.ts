@@ -1,4 +1,3 @@
-import game from '../../game'
 import getPixelPosition from '../functions/getPixelPosition'
 import hex from '../functions/hex'
 import createImage from '../functions/createImage'
@@ -65,7 +64,8 @@ class Action {
     this.image.cancelIcon.visible = false
     this.image.order.visible = false
 
-    game.stage.actionFill.addChild(this.image.fill)
+    if (!store.game) return
+    store.game.stage.actionFill.addChild(this.image.fill)
 
     this.tile.action = this
     this.update()
@@ -158,36 +158,26 @@ class Action {
         this.oldTextureName = textureName
       }
     }
-
-    // if (this.mouseLeft) {
-    //   if (store.hoveredTile === this.tile) {
-    //     this.image.order.visible = false
-    //     this.image.icon.visible = false
-    //     this.image.cancelIcon.visible = true
-    //   } else {
-    //     this.image.order.visible = true
-    //     this.image.icon.visible = true
-    //     this.image.cancelIcon.visible = false
-    //   }
-    // }
   }
   destroy() {
+    if (!store.game) return
+
     store.removeAction(this.id)
 
     this.tile.action = null
 
     if (
-      game.predictedActionTile &&
-      game.predictedActionTile.id === this.tile.id
+      store.game.predictedActionTile &&
+      store.game.predictedActionTile.id === this.tile.id
     ) {
-      game.predictedActionTile = null
+      store.game.predictedActionTile = null
     }
 
-    game.stage.actionBg.removeChild(this.image.background)
-    game.stage.actionFill.removeChild(this.image.fill)
-    game.stage.actionIcon.removeChild(this.image.icon)
-    game.stage.actionIcon.removeChild(this.image.cancelIcon)
-    game.stage.actionIcon.removeChild(this.image.order)
+    store.game.stage.actionBg.removeChild(this.image.background)
+    store.game.stage.actionFill.removeChild(this.image.fill)
+    store.game.stage.actionIcon.removeChild(this.image.icon)
+    store.game.stage.actionIcon.removeChild(this.image.cancelIcon)
+    store.game.stage.actionIcon.removeChild(this.image.order)
   }
   getTexture() {
     switch (this.type) {

@@ -1,6 +1,6 @@
-import game from '..'
 import { Sprite, Loader } from 'pixi.js'
 import hex from './hex'
+import store from '../../store'
 
 const loader = Loader.shared
 
@@ -18,7 +18,7 @@ const createImage = (imageName: string, textureName?: string) => {
     image.tint = hex('#eee')
   }
 
-  game.stage[imageName].addChild(image)
+  store.game.stage[imageName].addChild(image)
 
   return image
 }

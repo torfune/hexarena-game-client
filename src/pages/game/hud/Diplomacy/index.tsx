@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import Label from '../../../../components/Label'
 import store from '../../../../store'
-import game from '../../../../game'
 import { BLUE, PRIMARY, HUD_SCALE } from '../../../../constants/react'
 import React from 'react'
 
@@ -107,16 +106,16 @@ const Diplomacy = () => {
 
   const handleCreate = (id: string) => {
     setSendingRequest(false)
-    game.createRequest(id)
+    store.game.createRequest(id)
   }
 
   const handleAccept = (id: string) => {
-    game.acceptRequest(id)
+    store.game.acceptRequest(id)
     setBlueHeader(false)
   }
 
   const handleDecline = (id: string) => {
-    game.declineRequest(id)
+    store.game.declineRequest(id)
   }
 
   const handleFlash = () => {

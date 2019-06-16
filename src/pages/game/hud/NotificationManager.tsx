@@ -4,7 +4,6 @@ import styled from 'styled-components'
 import * as React from 'react'
 import { observer } from 'mobx-react-lite'
 import { animated, useTransition } from 'react-spring'
-import game from '../../../game'
 import { Pixel } from '../../../types/coordinates'
 import { BOX_SHADOW } from '../../../constants/react'
 
@@ -44,7 +43,7 @@ const NotificationManager: React.FC = () => {
   itemsRef.current = items
 
   useEffect(() => {
-    if (store.notification && game.cursor) {
+    if (store.notification && store.game.cursor) {
       const [key, text] = store.notification.split('|')
 
       for (let i = 0; i < items.length; i++) {
@@ -54,8 +53,8 @@ const NotificationManager: React.FC = () => {
       const notification = {
         key,
         position: {
-          x: game.cursor.x,
-          y: game.cursor.y,
+          x: store.game.cursor.x,
+          y: store.game.cursor.y,
         },
         text,
       }

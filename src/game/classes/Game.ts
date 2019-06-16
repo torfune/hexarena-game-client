@@ -21,18 +21,17 @@ import canAttack from '../functions/canAttack'
 import getHoveredTileInfo from '../functions/getHoveredTileInfo'
 import getTileByAxial from '../functions/getTileByAxial'
 import Tile from './Tile'
-import { ticker, Application, Container } from 'pixi.js'
+import { Ticker, Application, Container } from 'pixi.js'
 import showSurrenderButton from '../functions/showSurrenderButton'
 
 class Game {
   scale: number = DEFAULT_SCALE
   targetScale: number = DEFAULT_SCALE
   selectedArmyTile: Tile | null = null
-  loop: ticker.Ticker | null = null
+  loop: Ticker | null = null
   pixi: Application | null = null
   readonly stage: { [key: string]: Container } = {}
   initialized: boolean = false
-  running: boolean = false
   private pingArray: number[] = []
   private fpsArray: number[] = []
   readonly animations: Array<Animation | GoldAnimation> = []
@@ -49,8 +48,16 @@ class Game {
   readonly keyDown: { [key: string]: boolean } = {}
   private lastUpdatedAt: number = Date.now()
   private fpsLastUpdatedAt: number = Date.now()
+  eventListeners: {
+    mousemove: (event: any) => void
+    mousedown: (event: any) => void
+    mouseup: (event: any) => void
+    keydown: (event: any) => void
+    keyup: (event: any) => void
+    wheel: (event: any) => void
+  } | null = null
 
-  start(canvas: HTMLElement) {
+  constructor() {
     // Leaving warning
     window.onbeforeunload = () => {
       if (
@@ -70,7 +77,11 @@ class Game {
     this.setupEventListeners()
     this.setupStoreListeners()
 
-    // Initialize PIXI
+    // Add debug global variables
+    ;(window as any).g = this
+    ;(window as any).s = store
+  }
+  render(canvas: HTMLElement) {
     this.loop = createGameLoop(this.update, this)
     this.pixi = createPixiApp()
 
@@ -79,24 +90,30 @@ class Game {
       this.pixi.stage.addChild(this.stage[TILE_IMAGES[i]])
     }
 
-    // Mount PIXI renderer
     canvas.appendChild(this.pixi.view)
-
-    // Add debug global variables
-    ;(window as any).g = this
-    ;(window as any).s = store
-
-    this.running = true
   }
-  stop() {
-    if (!this.running || !Socket || !this.pixi) return
-
+  destroy() {
     for (let i = 0; i < TILE_IMAGES.length; i++) {
       this.stage[TILE_IMAGES[i]].removeChildren()
     }
 
-    this.running = false
-    this.pixi.stop()
+    if (this.pixi) {
+      this.pixi.destroy()
+      this.pixi = null
+    }
+
+    if (this.loop) {
+      this.loop.destroy()
+      this.loop = null
+    }
+
+    if (store.spectating) {
+      Socket.send('stopSpectate', String(store.gameIndex))
+    }
+
+    this.clearEventListeners()
+
+    store._game = null
   }
   update() {
     if (!store.actions || !store.armies || !this.camera || !this.pixi) return
@@ -189,6 +206,11 @@ class Game {
     // Hovered tile
     this.updateHoveredTile()
   }
+  spectate() {
+    if (store.gameIndex === null) return
+    console.log(`spectating ${store.gameIndex}`)
+    Socket.send('spectate', String(store.gameIndex))
+  }
   setupStoreListeners() {
     store.onChange('tiles', () => {
       if (!this.camera && store.spawnTile) {
@@ -231,13 +253,33 @@ class Game {
     })
   }
   setupEventListeners() {
-    document.addEventListener('mousemove', this.handleMouseMove.bind(this))
-    document.addEventListener('mousedown', this.handleMouseDown.bind(this))
-    document.addEventListener('mouseup', this.handleMouseUp.bind(this))
-    document.addEventListener('keydown', this.handleKeyDown.bind(this))
-    document.addEventListener('keyup', this.handleKeyUp.bind(this))
+    this.eventListeners = {
+      mousemove: this.handleMouseMove.bind(this),
+      mousedown: this.handleMouseDown.bind(this),
+      mouseup: this.handleMouseUp.bind(this),
+      keydown: this.handleKeyDown.bind(this),
+      keyup: this.handleKeyUp.bind(this),
+      wheel: this.handleWheelMove.bind(this),
+    }
+
+    document.addEventListener('mousemove', this.eventListeners.mousemove)
+    document.addEventListener('mousedown', this.eventListeners.mousedown)
+    document.addEventListener('mouseup', this.eventListeners.mouseup)
+    document.addEventListener('keydown', this.eventListeners.keydown)
+    document.addEventListener('keyup', this.eventListeners.keyup)
     document.addEventListener('contextmenu', this.handleContextMenu, false)
-    document.addEventListener('wheel', this.handleWheelMove.bind(this))
+    document.addEventListener('wheel', this.eventListeners.wheel)
+  }
+  clearEventListeners() {
+    if (!this.eventListeners) return
+
+    document.removeEventListener('mousemove', this.eventListeners.mousemove)
+    document.removeEventListener('mousedown', this.eventListeners.mousedown)
+    document.removeEventListener('mouseup', this.eventListeners.mouseup)
+    document.removeEventListener('keydown', this.eventListeners.keydown)
+    document.removeEventListener('keyup', this.eventListeners.keyup)
+    document.removeEventListener('contextmenu', this.handleContextMenu, false)
+    document.removeEventListener('wheel', this.eventListeners.wheel)
   }
   updateScreenSize() {
     if (!this.pixi) return
@@ -248,7 +290,7 @@ class Game {
     Socket.send('pattern', pattern)
   }
   handleKeyDown({ key }: KeyboardEvent) {
-    if (!this.running || store.status !== 'running') return
+    if (store.status !== 'running') return
 
     this.keyDown[key] = true
     this.updateCameraMove()
@@ -282,7 +324,7 @@ class Game {
     Socket.send('debug', `${command}|${tile.axial.x}|${tile.axial.z}`)
   }
   handleKeyUp({ key }: KeyboardEvent) {
-    if (!this.running || store.status !== 'running' || !store.gsConfig) return
+    if (store.status !== 'running' || !store.gsConfig) return
 
     this.keyDown[key] = false
     this.updateCameraMove()
@@ -334,7 +376,7 @@ class Game {
     }
   }
   handleMouseUp(event: MouseEvent) {
-    if (!this.running || !this.cursor) return
+    if (!this.cursor) return
 
     const { hoveredTile, playerId } = store
 
@@ -417,8 +459,6 @@ class Game {
     this.cursor = { x, y }
   }
   handleWheelMove({ deltaY, detail }: WheelEvent) {
-    if (!this.running) return
-
     const delta = deltaY || detail
     const zoomDirection = (delta < 0 ? -1 : 1) * -1
     const scale = this.scale + zoomDirection * ZOOM_SPEED
@@ -467,7 +507,7 @@ class Game {
     return getTileByAxial(axial)
   }
   getTilesToCapture(tile: Tile, playerId: string) {
-    if (!store.player || !store.gsConfig) return []
+    if (!store.gsConfig) return []
 
     const tilesToCapture = []
 
@@ -490,7 +530,7 @@ class Game {
     }
 
     // C : Army
-    if (playerId === store.playerId && this.selectedArmyTile) {
+    if (store.player && playerId === store.playerId && this.selectedArmyTile) {
       let direction = null
 
       for (let i = 0; i < 6; i++) {
@@ -573,19 +613,18 @@ class Game {
     }
 
     // Allied tiles
-    for (let i = tilesToCapture.length - 1; i >= 0; i--) {
-      const t = tilesToCapture[i]
-
-      if (t.owner && t.owner.id === store.player.allyId) {
-        tilesToCapture.splice(i, 1)
+    if (store.player && store.player.allyId) {
+      for (let i = tilesToCapture.length - 1; i >= 0; i--) {
+        const t = tilesToCapture[i]
+        if (t.owner && t.owner.id === store.player.allyId) {
+          tilesToCapture.splice(i, 1)
+        }
       }
     }
 
     return tilesToCapture
   }
   updatePatternPreviews() {
-    if (!store.actions || !store.player) return
-
     const oldTilesWithPatternPreview = this.tilesWithPatternPreview
     const pattern: { [key: string]: string } = {}
 
@@ -619,7 +658,7 @@ class Game {
     }
 
     // Hovered tile
-    if (store.hoveredTile) {
+    if (store.hoveredTile && store.player) {
       const tilesToCapture = this.getTilesToCapture(
         store.hoveredTile,
         store.player.id
@@ -637,7 +676,7 @@ class Game {
     }
 
     // Predicted action tile
-    if (this.predictedActionTile) {
+    if (this.predictedActionTile && store.player) {
       const tilesToCapture = this.getTilesToCapture(
         this.predictedActionTile,
         store.player.id
@@ -656,7 +695,6 @@ class Game {
 
     for (let i = 0; i < oldTilesWithPatternPreview.length; i++) {
       const t = oldTilesWithPatternPreview[i]
-
       if (!this.tilesWithPatternPreview.includes(t)) {
         t.removePatternPreview()
       }
@@ -664,7 +702,6 @@ class Game {
 
     for (let i = 0; i < this.tilesWithPatternPreview.length; i++) {
       const t = this.tilesWithPatternPreview[i]
-
       if (!oldTilesWithPatternPreview.includes(t)) {
         t.addPatternPreview(pattern[`${t.axial.x}|${t.axial.z}`])
       }

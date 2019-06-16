@@ -1,8 +1,6 @@
 import Tile from '../classes/Tile'
 import store from '../../store'
-import game from '..'
 import HoveredTileInfo from '../../types/HoveredTileInfo'
-import { TextureLoader } from 'pixi.js'
 
 const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
   if (!store.gsConfig || !store.playerId || !store.player) return null
@@ -33,7 +31,10 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
   }
 
   // Army send
-  if (game.selectedArmyTile || (tile.army && tile.ownerId === store.playerId)) {
+  if (
+    store.game.selectedArmyTile ||
+    (tile.army && tile.ownerId === store.playerId)
+  ) {
     return {
       label: 'Send army',
       structure,

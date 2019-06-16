@@ -11,6 +11,7 @@ export const LOGO_SHADOW = '0px 2px 16px rgba(0, 0, 0, 0.3)'
 // DIMENSIONS
 export const MIN_SCREEN_WIDTH = 1366
 export const MIN_SCREEN_HEIGHT = 768
+export const CHAT_WIDTH = 'calc(32vw - 64px)'
 export let HUD_SCALE = (window.innerHeight / 2000) * 2
 if (HUD_SCALE > 1) {
   HUD_SCALE = 1

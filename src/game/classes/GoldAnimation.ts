@@ -1,8 +1,8 @@
 import createImage from '../functions/createImage'
 import getPixelPosition from '../functions/getPixelPosition'
-import game from '..'
 import Tile from './Tile'
 import { Sprite } from 'pixi.js'
+import store from '../../store'
 
 const SCALE = 0.2
 const SPEED = 0.6
@@ -36,7 +36,7 @@ class GoldAnimation {
     }
 
     this.updateScale()
-    game.animations.push(this)
+    store.game.animations.push(this)
   }
   update() {
     for (let i = this.coins.length - 1; i >= 0; i--) {
@@ -101,7 +101,7 @@ class Coin {
   }
   destroy() {
     this.destroyed = true
-    game.stage['gold'].removeChild(this.image)
+    store.game.stage['gold'].removeChild(this.image)
   }
 }
 

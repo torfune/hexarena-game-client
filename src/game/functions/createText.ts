@@ -1,5 +1,5 @@
-import game from '..'
 import { Text, TextStyle } from 'pixi.js'
+import store from '../../store'
 
 const createText = (content: string, stageName: string) => {
   const text = new Text(
@@ -13,7 +13,7 @@ const createText = (content: string, stageName: string) => {
   )
 
   text.anchor.set(0.5, 0.5)
-  game.stage[stageName].addChild(text)
+  store.game.stage[stageName].addChild(text)
 
   return text
 }

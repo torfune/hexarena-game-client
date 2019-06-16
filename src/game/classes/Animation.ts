@@ -1,6 +1,6 @@
-import game from '..'
 import { easeInOutQuad } from '../functions/easing'
 import { Sprite } from 'pixi.js'
+import store from '../../store'
 
 class Animation {
   updateScale(): any {
@@ -36,7 +36,7 @@ class Animation {
       this.speed = speed || this.speed
     }
 
-    game.animations.push(this)
+    store.game.animations.push(this)
   }
   update() {
     this.fraction += this.speed
@@ -56,9 +56,9 @@ class Animation {
     }
   }
   destroy = () => {
-    const index = game.animations.indexOf(this)
+    const index = store.game.animations.indexOf(this)
     if (index !== -1) {
-      game.animations.splice(index, 1)
+      store.game.animations.splice(index, 1)
     }
   }
 }

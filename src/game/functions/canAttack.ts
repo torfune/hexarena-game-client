@@ -1,5 +1,4 @@
 import store from '../../store'
-import game from '..'
 import Tile from '../classes/Tile'
 
 const canAttack = (tile: Tile) => {
@@ -13,7 +12,7 @@ const canAttack = (tile: Tile) => {
       !tile.owner &&
       !tile.isContested() &&
       !tile.bedrock &&
-      !game.selectedArmyTile
+      !store.game.selectedArmyTile
     ) {
       return true
     }

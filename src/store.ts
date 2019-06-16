@@ -8,6 +8,9 @@ import Army from './game/classes/Army'
 import ChatMessage from './types/ChatMessage'
 import TopPlayer from './types/TopPlayer'
 import Primitive from './types/Primitive'
+import RunningGame from './types/RunningGame'
+import GameMode from './types/GameMode'
+import Game from './game/classes/Game'
 
 type EntityName = 'action' | 'allianceRequest' | 'army' | 'player' | 'tile'
 type Entity = Action | AllianceRequest | Army | Player | Tile
@@ -21,41 +24,28 @@ interface Tiles {
 }
 
 class Store {
+  // Game
   @observable actions: Action[] = []
   @observable allianceRequests: AllianceRequest[] = []
   @observable armies: Army[] = []
-  @observable chatMessages: ChatMessage[] = []
-  @observable onlinePlayers: OnlinePlayer[] = []
   @observable players: Player[] = []
   @observable tiles: Tiles = {}
-  @observable topPlayers: TopPlayer[] = []
   @observable hoveredTile: Tile | null = null
   @observable startCountdown: number | null = null
   @observable showHud: boolean = true
-  @observable spectating: boolean = false
-  @observable waitingTime: {
-    current: number
-    average: number
-    players: number
-  } | null = null
   @observable fps: number = 0
   @observable ping: number = 0
-  @observable flash: number = 0
-  @observable gameMode?: 'diplomacy' | 'ffa'
-  @observable goldAnimation?: { tileId: string; count: number }
-  @observable gsConfig?: GameServerConfig
-  @observable playerId?: string
   @observable status?: 'starting' | 'running' | 'finished' | 'aborted'
   @observable gameTime?: number
   @observable serverTime?: number
+  @observable playerId?: string
   @observable notification?: string
-  @observable error?: {
-    message: string
-    goHome: boolean
-  }
+  @observable goldAnimation?: { tileId: string; count: number }
+  @observable gameMode?: GameMode
+  @observable flash: number = 0
   @observable spawnTile?: Tile
-  routerHistory?: any
   changeHandlers: { [key: string]: () => void } = {}
+  gameIndex: number | null = 0
   idMap: {
     actions: IdMap<Action>
     allianceRequests: IdMap<AllianceRequest>
@@ -70,6 +60,27 @@ class Store {
     tiles: {},
   }
 
+  // Other
+  @observable onlinePlayers: OnlinePlayer[] = []
+  @observable topPlayers: TopPlayer[] = []
+  @observable chatMessages: ChatMessage[] = []
+  @observable spectating: boolean = false
+  @observable waitingTime: {
+    current: number
+    average: number
+    players: number
+  } | null = null
+  @observable gsConfig?: GameServerConfig
+  @observable error?: {
+    message: string
+    goHome?: boolean
+  }
+  @observable runningGames: RunningGame[] = []
+  @observable loading: boolean = true
+  @observable openingTime: number | null = null
+  _game: Game | null = null
+  routerHistory?: any
+
   // Custom Getters
   @computed get player() {
     if (this.players && this.playerId) {
@@ -77,6 +88,22 @@ class Store {
     }
 
     return null
+  }
+
+  // Game
+  createGame() {
+    if (this._game) {
+      throw new Error('Game is already initialized!')
+    }
+
+    this._game = new Game()
+  }
+  get game() {
+    if (!this._game) {
+      throw new Error(`Game is not initialized!`)
+    }
+
+    return this._game
   }
 
   // Dynamic Entity Getter

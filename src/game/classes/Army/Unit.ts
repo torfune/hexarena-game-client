@@ -1,11 +1,10 @@
 import createImage from '../../functions/createImage'
 import { easeOutCubic } from '../../functions/easing'
-import game from '../..'
 import { UNIT_IMAGE_SCALE, UNIT_MAX_DELAY } from '../../../constants/game'
-import calculateFullScaleNumber from '../../functions/calculateFullScaleNumber'
 import roundToDecimals from '../../functions/roundToDecimals'
 import { Pixel } from '../../../types/coordinates'
 import { Sprite } from 'pixi.js'
+import store from '../../../store'
 
 class Unit {
   image: Sprite = createImage('army')
@@ -57,7 +56,7 @@ class Unit {
     this.image.alpha = alpha
   }
   destroy() {
-    game.stage['army'].removeChild(this.image)
+    store.game.stage['army'].removeChild(this.image)
   }
 }
 

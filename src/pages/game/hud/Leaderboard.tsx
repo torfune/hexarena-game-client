@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 import store from '../../../store'
 import getPlayerGroups from '../../../utils/getPlayerGroups'
 import React from 'react'
-import { HUD_SCALE } from '../../../constants/react'
+import { HUD_SCALE, CHAT_WIDTH } from '../../../constants/react'
 import shadeColor from '../../../utils/shade'
 
 const GridCSS = css`
@@ -11,10 +11,10 @@ const GridCSS = css`
   grid-template-columns: auto 44px 44px 44px;
 `
 
-const Container = styled.div`
+const Container = styled.div<{ spectating: boolean }>`
   background: rgba(255, 255, 255, 0.92);
   bottom: 0;
-  right: 0;
+  right: ${props => (props.spectating ? CHAT_WIDTH : 0)};
   min-height: 240px;
   width: 320px;
   position: absolute;
@@ -106,12 +106,12 @@ const Player = styled.div<PlayerProps>`
 `
 
 const Leaderboard = observer(() => {
-  if (!store.players.length) return null
+  if (store.players.length === 0) return null
 
   const groups = getPlayerGroups(store.players)
 
   return (
-    <Container>
+    <Container spectating={store.spectating}>
       <Heading>
         <span>Players</span>
         <Icon src="/static/icons/hexagon.svg" />

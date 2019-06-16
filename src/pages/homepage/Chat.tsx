@@ -6,9 +6,8 @@ import React from 'react'
 import Socket from '../../websockets/Socket'
 import { useAuth } from '../../auth'
 import SimpleBar from 'simplebar-react'
-
 import 'simplebar/dist/simplebar.min.css'
-import { PRIMARY } from '../../constants/react'
+import { CHAT_WIDTH } from '../../constants/react'
 
 const Container = styled.div`
   z-index: 2;
@@ -22,7 +21,7 @@ const Container = styled.div`
   padding-top: 48px;
   padding-bottom: 32px;
   top: 80px;
-  width: calc(32vw - 64px);
+  width: ${CHAT_WIDTH};
   height: calc(100vh - 80px);
 `
 
@@ -126,7 +125,7 @@ const Chat = () => {
     }
   }, [store.chatMessages])
 
-  if (!store.gsConfig) return null
+  // if (!store.gsConfig) return null
 
   return (
     <Container>
@@ -149,7 +148,7 @@ const Chat = () => {
         <Input
           autoFocus
           placeholder="Type your message ..."
-          maxLength={store.gsConfig.CHAT_MESSAGE_MAX_LENGTH}
+          // maxLength={store.gsConfig.CHAT_MESSAGE_MAX_LENGTH}
           value={message}
           onChange={handleMessageChange}
         />

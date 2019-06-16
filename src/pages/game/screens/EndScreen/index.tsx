@@ -3,20 +3,22 @@ import { useSpring, animated } from 'react-spring'
 import renderWinStatement from './renderWinStatement'
 import styled from 'styled-components'
 import Table from './Table'
-import { PRIMARY } from '../../../../constants/react'
+import { PRIMARY, CHAT_WIDTH } from '../../../../constants/react'
 import getPlayerGroups from '../../../../utils/getPlayerGroups'
 import store from '../../../../store'
 import React from 'react'
 
-const Container = styled(animated.div)`
+const Container = styled(animated.div)<{ spectating: boolean }>`
   position: absolute;
-  top: 0;
+  margin-top: ${props => (props.spectating ? '80px' : 0)};
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: ${props =>
+    props.spectating ? `calc(100vw - ${CHAT_WIDTH})` : '100vw'};
+  height: ${props => (props.spectating ? 'calc(100vh - 80px)' : '100vh')};
   background: #00000088;
   border-bottom: 1px solid #222;
   z-index: 11;
+  overflow: hidden;
 `
 
 const Box = styled.div`
@@ -99,7 +101,7 @@ const EndScreen = () => {
   const message = store.gameTime <= 0 ? `Time's up!` : 'The game has finished!'
 
   return (
-    <Container style={spring}>
+    <Container style={spring} spectating={store.spectating}>
       <Box>
         <Heading>{message}</Heading>
         <WinStatement>{renderWinStatement(groups[0].players)}</WinStatement>

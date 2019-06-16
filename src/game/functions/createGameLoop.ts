@@ -3,14 +3,8 @@ import { Ticker } from 'pixi.js'
 
 const ticker = Ticker.shared
 
-const createGameLoop = (
-  updateFunction: () => void,
-  gameInstanceReference: Game
-) => {
-  // const loop = ticker.shared
-
-  ticker.add(updateFunction, gameInstanceReference)
-
+const createGameLoop = (updateFunction: () => void, game: Game) => {
+  ticker.add(updateFunction, game)
   return ticker
 }
 

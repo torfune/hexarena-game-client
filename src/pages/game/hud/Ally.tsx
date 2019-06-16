@@ -5,8 +5,7 @@ import Player from '../../../game/classes/Player'
 import Pattern from '../../../components/Pattern'
 import { HUD_SCALE } from '../../../constants/react'
 import shadeColor from '../../../utils/shade'
-import playerId from '../../../websockets/messages/playerId'
-import game from '../../../game'
+import store from '../../../store'
 
 const Container = styled.div`
   z-index: 2;
@@ -155,7 +154,7 @@ const Ally: React.FC<Props> = ({ ally, playerGold }) => (
         color={ally.pattern}
         disabled={playerGold === 0}
         onClick={() => {
-          game.sendGoldToAlly()
+          store.game.sendGoldToAlly()
         }}
       >
         Send 1 gold

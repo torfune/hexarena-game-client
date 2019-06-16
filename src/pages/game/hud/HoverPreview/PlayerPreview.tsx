@@ -48,26 +48,24 @@ const Pattern = styled.div<PatternProps>`
 interface Props {
   player: Player
 }
-const PlayerPreview: React.FC<Props> = ({ player }) => {
-  return (
-    <Container>
-      {player.pattern === '#fff' ? (
-        <Icon src="/static/icons/skull.svg" />
-      ) : (
-        <Pattern color={player.pattern} />
-      )}
-      <Name>{player.name}</Name>
+const PlayerPreview: React.FC<Props> = ({ player }) => (
+  <Container>
+    {player.pattern === '#fff' ? (
+      <Icon src="/static/icons/skull.svg" />
+    ) : (
+      <Pattern color={player.pattern} />
+    )}
+    <Name>{player.name}</Name>
 
-      <Icon src="/static/icons/hexagon.svg" />
-      <Value>{player.tilesCount}</Value>
+    <Icon src="/static/icons/hexagon.svg" />
+    <Value>{player.tilesCount}</Value>
 
-      <Icon src="/static/icons/village.svg" />
-      <Value>{player.villages}</Value>
+    <Icon src="/static/icons/village.svg" />
+    <Value>{player.villages}</Value>
 
-      <Icon src="/static/icons/gold.svg" />
-      <Value>{player.gold}</Value>
-    </Container>
-  )
-}
+    <Icon src="/static/icons/gold.svg" />
+    <Value>{player.gold}</Value>
+  </Container>
+)
 
 export default PlayerPreview
