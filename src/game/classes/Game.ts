@@ -115,8 +115,18 @@ class Game {
       this.fpsLastUpdatedAt = now
     }
 
-    // Animations
+    if (
+      store.player &&
+      store.player.alive &&
+      store.gameTime &&
+      store.timeFromActivity - store.gameTime > 60
+    ) {
+      this.surrender()
+      return
+    }
+
     if (this.animations.length > 0) {
+      // Animations
       for (let i = this.animations.length - 1; i >= 0; i--) {
         this.animations[i].update()
 
@@ -417,6 +427,8 @@ class Game {
     }
   }
   handleMouseMove({ clientX: x, clientY: y }: MouseEvent) {
+    store.timeFromActivity = store.gameTime ? store.gameTime : 0
+
     this.cursor = { x, y }
   }
   handleWheelMove({ deltaY, detail }: WheelEvent) {

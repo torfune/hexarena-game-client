@@ -21,6 +21,7 @@ interface Tiles {
 }
 
 class Store {
+  @observable timeFromActivity: number = 0
   @observable actions: Action[] = []
   @observable allianceRequests: AllianceRequest[] = []
   @observable armies: Army[] = []
