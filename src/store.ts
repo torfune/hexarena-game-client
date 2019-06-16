@@ -25,6 +25,7 @@ class Store {
   @observable allianceRequests: AllianceRequest[] = []
   @observable armies: Army[] = []
   @observable chatMessages: ChatMessage[] = []
+  @observable chatMessage: string = ''
   @observable onlinePlayers: OnlinePlayer[] = []
   @observable players: Player[] = []
   @observable tiles: Tiles = {}
