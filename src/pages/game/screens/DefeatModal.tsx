@@ -98,10 +98,6 @@ const DefeatModal = () => {
           <a href="/game">
             <Button color={PRIMARY}>Continue</Button>
           </a>
-
-          <Button color={BLUE} onClick={handleSpectateClick}>
-            Spectate
-          </Button>
         </ButtonRow>
       </Container>
     </PopIn>

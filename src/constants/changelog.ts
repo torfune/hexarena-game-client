@@ -1,5 +1,13 @@
 const changelog = [
   {
+    version: 'Alpha 1.24',
+    points: [
+      'Spectator mode.',
+      'Kick AFKs after 1 minute.',
+      'Right click can only be used for camera movement.',
+    ],
+  },
+  {
     version: 'Alpha 1.23',
     points: [
       'Performance optimizations.',
