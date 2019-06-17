@@ -32,14 +32,14 @@ class Socket {
 
     // Start game
     if (key === 'startGame') {
-      store.spectating = false
-      store.reset()
-
-      if (store._game) {
-        store._game.destroy()
+      if (store.spectating) {
+        store.game.destroy()
+        store.spectating = false
       }
 
+      store.reset()
       store.createGame()
+      store.gameIndex = Number(payload)
       store.waitingTime = null
       store.routerHistory.push('/game')
       return

@@ -107,10 +107,6 @@ class Game {
       this.loop = null
     }
 
-    if (store.spectating) {
-      Socket.send('stopSpectate', String(store.gameIndex))
-    }
-
     this.clearEventListeners()
 
     store._game = null
@@ -220,6 +216,11 @@ class Game {
     if (store.gameIndex === null) return
 
     Socket.send('spectate', String(store.gameIndex))
+  }
+  stopSpectate() {
+    Socket.send('stopSpectate', String(store.gameIndex))
+    store.spectating = false
+    store.gameIndex = null
   }
   setupStoreListeners() {
     store.onChange('tiles', () => {

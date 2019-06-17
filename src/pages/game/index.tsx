@@ -48,7 +48,7 @@ const GameCanvas = styled.div<GameCanvasProps>`
 const GamePage: React.FC<RouteComponentProps> = observer(() => {
   const { status, showHud, gameMode, player, spectating, error } = store
 
-  if (!status || status === 'aborted' || !store._game) {
+  if (status === 'aborted' || store.gameIndex === null) {
     window.location.href = status === 'aborted' ? '/?play' : '/'
     return null
   }

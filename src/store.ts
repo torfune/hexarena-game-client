@@ -45,8 +45,8 @@ class Store {
   @observable gameMode?: GameMode
   @observable flash: number = 0
   @observable spawnTile?: Tile
+  @observable gameIndex: number | null = null
   changeHandlers: { [key: string]: () => void } = {}
-  gameIndex: number | null = 0
   idMap: {
     actions: IdMap<Action>
     allianceRequests: IdMap<AllianceRequest>
@@ -286,22 +286,25 @@ class Store {
     this.actions = []
     this.allianceRequests = []
     this.armies = []
-    this.tiles = {}
-    this.hoveredTile = null
-    this.startCountdown = null
-    this.showHud = true
-    this.fps = 0
-    this.ping = 0
-    this.timeFromActivity = 0
-    this.gameTime = undefined
-    this.serverTime = undefined
-    this.notification = undefined
-    this.goldAnimation = undefined
-    this.gameMode = undefined
-    this.flash = 0
-    this.spawnTile = undefined
     this.changeHandlers = {}
+    this.flash = 0
+    this.fps = 0
     this.gameIndex = null
+    this.gameMode = undefined
+    this.gameTime = undefined
+    this.goldAnimation = undefined
+    this.hoveredTile = null
+    this.notification = undefined
+    this.ping = 0
+    this.playerId = undefined
+    this.players = []
+    this.serverTime = undefined
+    this.showHud = true
+    this.spawnTile = undefined
+    this.startCountdown = null
+    this.status = undefined
+    this.tiles = {}
+    this.timeFromActivity = 0
     this.idMap = {
       actions: {},
       allianceRequests: {},

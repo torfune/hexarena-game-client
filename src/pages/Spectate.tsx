@@ -36,7 +36,10 @@ const Spectate: React.FC = () => {
     store.game.spectate()
 
     return () => {
-      store.spectating = false
+      if (store.spectating) {
+        store.game.stopSpectate()
+        store.game.destroy()
+      }
     }
   }, [])
 
