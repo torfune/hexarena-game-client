@@ -61,7 +61,18 @@ const Loader: React.FC = () => {
       // GameServer status
       const { data: status } = await Axios.get(`http://${GS_HOST}/status`)
 
-      if (status.version.slice(0, 4) !== version.slice(0, 4)) {
+      const gsVersion = status.version.slice(0, 4)
+      const feVersion = version.slice(0, 4)
+
+      if (gsVersion !== feVersion) {
+        // Try reload to get latest version
+        const lastVersionReloaded = localStorage.getItem('lastVersionReloaded')
+        if (lastVersionReloaded !== feVersion) {
+          localStorage.setItem('lastVersionReloaded', feVersion)
+          window.location.reload()
+          return
+        }
+
         store.error = {
           message: `Client and server version doesn't match. Client: ${version} | Server: ${
             status.version

@@ -1,5 +1,9 @@
 const changelog = [
   {
+    version: 'Alpha 1.25',
+    points: ['Fixed spectate related bugs.'],
+  },
+  {
     version: 'Alpha 1.24',
     points: [
       'Spectator mode.',
