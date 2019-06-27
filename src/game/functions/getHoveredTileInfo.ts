@@ -17,6 +17,7 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
     BUILD_DURATION,
     UPGRADE_DURATION,
     RECRUIT_DURATION,
+    HP,
   } = store.gsConfig
 
   let isNeighborToPlayer = false
@@ -88,6 +89,23 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
     }
   }
 
+  // Heal
+  if (
+    isOwnedByPlayer &&
+    tile.building &&
+    !tile.army &&
+    !tile.action &&
+    tile.building.hp < HP[tile.building.type]
+  ) {
+    return {
+      label: 'Repair Building',
+      structure,
+      duration: `${HEAL_DURATION / 1000}s`,
+      notEnoughGold: store.player.gold < RECRUIT_COST,
+      goldCost: RECRUIT_COST,
+    }
+  }
+
   // Upgrade
   if (
     isOwnedByPlayer &&
@@ -105,18 +123,14 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
     }
   }
 
-  // Recruit / Heal
-  if (isOwnedByPlayer && tile.building && !tile.army && !tile.action) {
-    if (tile.building && tile.building.hp === 1) {
-      return {
-        label: 'Repair Building',
-        structure,
-        duration: `${HEAL_DURATION / 1000}s`,
-        notEnoughGold: store.player.gold < RECRUIT_COST,
-        goldCost: RECRUIT_COST,
-      }
-    }
-
+  // Recruit
+  if (
+    isOwnedByPlayer &&
+    tile.building &&
+    tile.building.type !== 'TOWER' &&
+    !tile.army &&
+    !tile.action
+  ) {
     return {
       label: 'Recruit Army',
       iconSrc: '/static/icons/army.svg',
