@@ -5,16 +5,17 @@ interface TileImage {
   background?: Sprite
   base?: Sprite
   blackOverlay?: Sprite
-  camp?: Sprite
   castle?: Sprite
   contested?: Sprite
   forest?: Sprite
-  heartLeft?: Sprite
-  heartRight?: Sprite
-  hitpointsBg?: Sprite
+  hpBackground?: Sprite
+  hpFill1?: Sprite
+  hpFill2?: Sprite
+  hpFill3?: Sprite
   mountain?: Sprite
   pattern?: Sprite
   patternPreview?: Sprite
+  tower?: Sprite
   village?: Sprite
 }
 

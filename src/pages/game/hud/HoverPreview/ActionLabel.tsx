@@ -3,6 +3,7 @@ import React from 'react'
 
 const Icon = styled.img`
   height: 20px;
+  margin-right: 8px;
 `
 
 const Container = styled.div`
@@ -13,47 +14,19 @@ const Container = styled.div`
   h4 {
     font-size: 18px;
     font-weight: 600;
-    margin-left: 8px;
+    white-space: nowrap;
   }
 `
 
 interface Props {
   label: string
+  iconSrc?: string
 }
-
-const ActionLabel: React.FC<Props> = ({ label }) => (
+const ActionLabel: React.FC<Props> = ({ label, iconSrc }) => (
   <Container>
-    {renderIconByLabel(label)}
+    {iconSrc && <Icon src={iconSrc} />}
     <h4>{label}</h4>
   </Container>
 )
-
-const renderIconByLabel = (label: string) => {
-  let src = null
-
-  switch (label) {
-    case 'Cancel':
-      src = '/static/icons/cross.svg'
-      break
-    case 'Capture':
-      src = '/static/icons/swords.svg'
-      break
-    case 'Build castle':
-      src = '/static/icons/castle.svg'
-      break
-    case 'Get gold':
-      src = '/static/icons/axe.svg'
-      break
-    case 'Recruit army':
-    case 'Send army':
-      src = '/static/icons/army.svg'
-      break
-    default:
-  }
-
-  if (!src) return null
-
-  return <Icon src={src} />
-}
 
 export default ActionLabel

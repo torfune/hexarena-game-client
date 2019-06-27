@@ -1,7 +1,8 @@
 import styled from 'styled-components'
-import ActionType from './ActionLabel'
+import ActionLabel from './ActionLabel'
 import { PRIMARY } from '../../../../constants/react'
 import React from 'react'
+import HoveredTileInfo from '../../../../types/HoveredTileInfo'
 
 interface ContainerProps {
   showGold: boolean
@@ -101,6 +102,7 @@ const Icon = styled.img`
 interface Props {
   structure: string
   label?: string
+  iconSrc?: string
   goldCost?: number
   duration?: string
   notEnoughGold?: boolean
@@ -112,13 +114,14 @@ const ActionPreview: React.FC<Props> = ({
   structure,
   duration,
   notEnoughGold,
+  iconSrc,
 }) => {
   return (
     <>
       <Container showGold={!!goldCost} showDuration={!!duration}>
         <HorizontalLine />
 
-        {label && <ActionType label={label} />}
+        {label && <ActionLabel label={label} iconSrc={iconSrc} />}
 
         <Structure>{structure}</Structure>
 

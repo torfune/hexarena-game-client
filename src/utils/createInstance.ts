@@ -44,7 +44,8 @@ const createAction = (data: Data) => {
     type !== 'attack' &&
     type !== 'cut' &&
     type !== 'build' &&
-    type !== 'recruit'
+    type !== 'recruit' &&
+    type !== 'upgrade'
   ) {
     return null
   }

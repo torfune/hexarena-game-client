@@ -7,13 +7,15 @@ export const TILE_IMAGES = [
   'contested',
   'fog',
   'actionIcon',
+  'actionIconBackground',
   'actionFill',
   'actionBg',
   'castle',
+  'tower',
   'base',
   'camp',
-  'hitpointsFill',
-  'hitpointsBg',
+  'hpBackground',
+  'hpFill',
   'armyIcon',
   'village',
   'mountain',
@@ -41,8 +43,13 @@ export const CAMERA_SPEED = 24
 
 // IMAGE OFFSETS
 export const ARMY_ICON_OFFSET_Y = 180
-export const HEART_OFFSET_X = 57
-export const HITPOINTS_OFFSET_Y = 176
+export const HP_FILL_OFFSET_Y = 10
+export const HP_FILL_OFFSET_X = 26
+export const HP_BACKGROUND_OFFSET = {
+  TOWER: 105,
+  CASTLE: 120,
+  BASE: 130,
+}
 
 // ZOOM
 export const ZOOM_SPEED = 0.2
@@ -69,7 +76,7 @@ export const DEBUG_COMMANDS = [
   ['2', 'add_army'],
   ['3', 'lose_tile'],
   ['4', 'add_forest'],
-  ['5', 'add_camp'],
+  ['5', 'building'],
   ['6', 'add_player'],
   ['7', 'send_army'],
   ['8', 'add_gold'],
@@ -77,8 +84,8 @@ export const DEBUG_COMMANDS = [
   ['e', 'add_castle'],
   ['f', 'dummy_send_army'],
   ['g', 'defeat'],
-  ['q', 'remove_hitpoint'],
   ['r', 'dummy_capture'],
   ['t', 'add_village'],
-  ['w', 'add_hitpoint'],
+  ['n', 'hp_remove'],
+  ['m', 'hp_add'],
 ]

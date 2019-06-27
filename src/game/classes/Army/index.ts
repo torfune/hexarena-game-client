@@ -54,7 +54,7 @@ class Army {
       UNIT_POSITION_OFFSET
     )
 
-    const isInside = tile.base || tile.castle
+    const isInside = tile.building
 
     for (let i = 0; i < UNIT_COUNT; i++) {
       if (isInside) {
@@ -132,6 +132,9 @@ class Army {
     }
   }
   moveOn(tileId: string) {
+    const { gsConfig } = store
+    if (!gsConfig) return
+
     const tile = store.getTile(tileId)
 
     if (!tile) {
@@ -164,7 +167,7 @@ class Army {
     )
 
     for (let i = 0; i < UNIT_COUNT; i++) {
-      if (tile.base || tile.castle || tile.camp) {
+      if (tile.building) {
         this.units[i].moveOn(doorPosition.x, doorPosition.y)
       } else {
         this.units[i].moveOn(randomizedPositions[i].x, randomizedPositions[i].y)
@@ -174,10 +177,9 @@ class Army {
     if (
       (sameOwner || allyOwner) &&
       !this.isDestroying &&
-      (tile.base || tile.castle) &&
-      tile.hitpoints === 2
+      tile.building &&
+      tile.building.hp === gsConfig.HP[tile.building.type]
     ) {
-      console.log(`Adding army to a tile.`)
       tile.addArmy(this)
     }
   }

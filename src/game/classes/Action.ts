@@ -7,21 +7,20 @@ import Player from './Player'
 import Primitive from '../../types/Primitive'
 import Prop from '../../types/Prop'
 import createProp from '../../utils/createProp'
-import createText from '../functions/createText'
 import { Sprite, Graphics, Text, Loader } from 'pixi.js'
 
 const loader = Loader.shared
 
 const ACTION_RADIUS = 49
 
-export type ActionType = 'attack' | 'cut' | 'build' | 'recruit'
+export type ActionType = 'attack' | 'cut' | 'build' | 'recruit' | 'upgrade'
 export type ActionStatus = 'pending' | 'running' | 'finished'
 
 interface Image {
   background: Sprite
   fill: Graphics
-  order: Text
   icon: Sprite
+  iconBackground: Sprite
   cancelIcon: Sprite
 }
 
@@ -29,7 +28,6 @@ interface Props {
   [key: string]: Prop<Primitive>
   duration: Prop<number>
   finishedAt: Prop<number>
-  order: Prop<number>
   status: Prop<ActionStatus | null>
 }
 
@@ -51,8 +49,8 @@ class Action {
     background: createImage('actionBg'),
     fill: new Graphics(),
     icon: createImage('actionIcon', 'actionIconEmpty'),
+    iconBackground: createImage('actionIconBackground', 'actionIconEmpty'),
     cancelIcon: createImage('actionIcon', 'actionIconCancel'),
-    order: createText('#', 'actionIcon'),
   }
 
   constructor(id: string, type: ActionType, tile: Tile, owner: Player) {
@@ -62,7 +60,23 @@ class Action {
     this.owner = owner
 
     this.image.cancelIcon.visible = false
-    this.image.order.visible = false
+
+    if (type === 'upgrade' || type === 'build') {
+      this.image.icon.alpha = 0.85
+
+      switch (type) {
+        case 'upgrade':
+          this.image.icon.scale.x = 0.28
+          this.image.icon.scale.y = 0.28
+          break
+        case 'build':
+          this.image.icon.scale.x = 0.38
+          this.image.icon.scale.y = 0.38
+          break
+      }
+    } else {
+      this.image.iconBackground.visible = false
+    }
 
     if (!store.game) return
     store.game.stage.actionFill.addChild(this.image.fill)
@@ -78,13 +92,7 @@ class Action {
     switch (key) {
       case 'status':
         switch (this.status) {
-          case 'pending':
-            this.image.order.visible = true
-            break
-
           case 'running':
-            this.image.order.visible = false
-
             const { texture } = loader.resources[this.getTexture()]
             this.image.icon.texture = texture
             break
@@ -96,10 +104,6 @@ class Action {
           default:
             break
         }
-        break
-
-      case 'order':
-        this.image.order.text = String(this.order)
         break
 
       default:
@@ -135,15 +139,12 @@ class Action {
 
     this.image.background.x = pixel.x
     this.image.background.y = pixel.y
-
     this.image.icon.x = pixel.x
     this.image.icon.y = pixel.y
-
+    this.image.iconBackground.x = pixel.x
+    this.image.iconBackground.y = pixel.y
     this.image.cancelIcon.x = pixel.x
     this.image.cancelIcon.y = pixel.y
-
-    this.image.order.x = pixel.x
-    this.image.order.y = pixel.y
 
     if (store.hoveredTile !== this.tile) {
       this.mouseLeft = true
@@ -176,23 +177,25 @@ class Action {
     store.game.stage.actionBg.removeChild(this.image.background)
     store.game.stage.actionFill.removeChild(this.image.fill)
     store.game.stage.actionIcon.removeChild(this.image.icon)
+    store.game.stage.actionIconBackground.removeChild(this.image.iconBackground)
     store.game.stage.actionIcon.removeChild(this.image.cancelIcon)
-    store.game.stage.actionIcon.removeChild(this.image.order)
   }
   getTexture() {
     switch (this.type) {
       case 'attack':
         return 'actionIconAttack'
       case 'recruit':
-        if (this.tile.hitpoints && this.tile.hitpoints < 2) {
+        if (this.tile.building && this.tile.building.hp < 2) {
           return 'actionIconHeal'
         } else {
           return 'actionIconRecruit'
         }
-      case 'build':
-        return 'actionIconBuild'
       case 'cut':
         return 'actionIconCut'
+      case 'build':
+        return 'tower-icon'
+      case 'upgrade':
+        return 'castle-icon'
     }
   }
 

@@ -11,7 +11,6 @@ const actions: GameServerMessage = {
     status: 'string',
     duration: 'number',
     finishedAt: 'number',
-    order: 'number',
   },
 }
 

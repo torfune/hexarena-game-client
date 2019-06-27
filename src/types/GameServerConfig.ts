@@ -27,6 +27,7 @@ interface GameServerConfig {
   MAX_ACTIONS: number
   BUILD_DURATION: number
   RECRUIT_DURATION: number
+  UPGRADE_DURATION: number
   CUT_DURATION: number
   HEAL_DURATION: number
   ATTACK_DURATION: number
@@ -36,6 +37,8 @@ interface GameServerConfig {
   START_GOLD: number
   BUILD_COST: number
   RECRUIT_COST: number
+  ATTACK_COST: number
+  UPGRADE_COST: number
   CUT_GOLD_GAIN: number
 
   // MANUAL ATTACKS
@@ -45,8 +48,11 @@ interface GameServerConfig {
   MS_PER_POWER: number
 
   // BUILDINGS
-  BASE_HP: number
-  CASTLE_HP: number
+  HP: {
+    BASE: 2
+    TOWER: 2
+    CASTLE: 3
+  }
 
   // VILLAGES
   TILES_PER_VILLAGE: number

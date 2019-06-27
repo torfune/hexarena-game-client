@@ -5,10 +5,11 @@ import createImage from '../functions/createImage'
 import hex from '../functions/hex'
 import {
   ARMY_ICON_OFFSET_Y,
-  HEART_OFFSET_X,
-  HITPOINTS_OFFSET_Y,
   BEDROCK_BORDER,
   BEDROCK_BACKGROUND,
+  HP_FILL_OFFSET_X,
+  HP_FILL_OFFSET_Y,
+  HP_BACKGROUND_OFFSET,
 } from '../../constants/game'
 import getImageAnimation from '../functions/getImageAnimation'
 import shade from '../../utils/shade'
@@ -27,27 +28,26 @@ import getRotationBySide from '../functions/getRotationBySide'
 import destroyImage from '../functions/destroyImage'
 import axialInDirection from '../../utils/axialInDirection'
 import getTileByAxial from '../functions/getTileByAxial'
+import BuildingType from '../../types/BuildingType'
 
 const loader = Loader.shared
 
 interface Props {
   [key: string]: Prop<Primitive>
-  base: Prop<boolean>
+  buildingHp: Prop<number | null>
+  buildingType: Prop<BuildingType | null>
   camp: Prop<boolean>
-  castle: Prop<boolean>
   forest: Prop<boolean>
-  hitpoints: Prop<number | null>
   ownerId: Prop<string | null>
   village: Prop<boolean>
 }
 
 class Tile {
   props: Props = {
-    base: createProp(false),
+    buildingHp: createProp(null),
+    buildingType: createProp(null),
     camp: createProp(false),
-    castle: createProp(false),
     forest: createProp(false),
-    hitpoints: createProp(null),
     ownerId: createProp(null),
     village: createProp(false),
   }
@@ -59,7 +59,7 @@ class Tile {
   action: Action | null = null
   owner: Player | null = null
   army: Army | null = null
-  hitpointsVisible: boolean = false
+  hpVisible: boolean = false
   neighbors: Array<Tile | null> = []
   image: TileImage = {}
   imageSet: TileImageArray = {
@@ -86,9 +86,6 @@ class Tile {
     this.props[key].current = value
 
     switch (key) {
-      case 'base':
-      case 'castle':
-      case 'camp':
       case 'village':
       case 'forest':
         this.updateImage(key)
@@ -98,15 +95,41 @@ class Tile {
         this.updateOwner()
         break
 
-      case 'hitpoints':
-        if (!this.props.hitpoints.previous && this.hitpoints) {
-          this.addHitpoints()
-        } else if (this.props.hitpoints.previous && !this.hitpoints) {
-          this.removeHitpoints()
-        } else {
-          this.updateHitpoints()
+      case 'buildingType':
+        if (value === 'BASE') {
+          if (!this.image.base) {
+            this.addImage('base')
+          }
+        } else if (value === 'CASTLE') {
+          if (!this.image.castle) {
+            this.addImage('castle')
+            this.removeImage('tower')
+          }
+        } else if (value === 'TOWER') {
+          if (!this.image.tower) {
+            this.addImage('tower')
+          }
+        } else if (value === null) {
+          this.removeImage('base')
+          this.removeImage('tower')
+          this.removeImage('castle')
         }
+        this.updateHitpoints()
         break
+
+      case 'buildingHp':
+        this.updateHitpoints()
+        break
+
+      // case 'hitpoints':
+      //   if (!this.props.hitpoints.previous && this.hitpoints) {
+      //     this.addHitpoints()
+      //   } else if (this.props.hitpoints.previous && !this.hitpoints) {
+      //     this.removeHitpoints()
+      //   } else {
+      //     this.updateHitpoints()
+      //   }
+      //   break
 
       default:
         break
@@ -128,7 +151,7 @@ class Tile {
     // }
   }
   startHover() {
-    if (this.hitpoints === 2 && !this.army) {
+    if (this.building && !this.army) {
       this.showHitpoints()
     }
 
@@ -137,7 +160,11 @@ class Tile {
     }
   }
   endHover() {
-    if (this.hitpoints === 2 && !this.army && this.hitpointsVisible) {
+    const { gsConfig } = store
+    if (!gsConfig) return
+
+    const { building } = this
+    if (building && building.hp === gsConfig.HP[building.type]) {
       this.hideHitpoints()
     }
 
@@ -151,9 +178,14 @@ class Tile {
     this.image.pattern.tint = hex(shade(this.owner.pattern, 10))
   }
   addArmy(army: Army) {
-    if (this.army) return
+    const { gsConfig } = store
+    if (this.army || !gsConfig) return
 
-    if (this.hitpointsVisible) {
+    if (
+      this.hpVisible &&
+      this.building &&
+      this.building.hp === gsConfig.HP[this.building.type]
+    ) {
       this.hideHitpoints()
     }
 
@@ -174,27 +206,6 @@ class Tile {
       },
       { context: { baseY: pixel.y }, speed: 0.05 }
     )
-  }
-  addHitpoints() {
-    const pixel = getPixelPosition(this.axial)
-    const fillTexture = loader.resources['hitpointsFill'].texture
-
-    const image = createImage('hitpointsBg')
-    image.x = pixel.x
-    image.y = pixel.y
-    image.alpha = 0
-
-    // Hearts
-    this.image.heartLeft = new Sprite(fillTexture)
-    this.image.heartRight = new Sprite(fillTexture)
-    this.image.heartRight.x += HEART_OFFSET_X
-    this.image.heartLeft.anchor.set(0.5, 0.5)
-    this.image.heartRight.anchor.set(0.5, 0.5)
-    image.addChild(this.image.heartLeft)
-    image.addChild(this.image.heartRight)
-
-    this.image.hitpointsBg = image
-    return image
   }
   addContested() {
     // this.image.contested.visible = true
@@ -282,69 +293,167 @@ class Tile {
       }
     )
   }
-  removeHitpoints() {
-    if (!this.image.heartLeft || !this.image.heartRight) return
-
-    new Animation(this.image.heartLeft, (image, fraction) => {
-      image.alpha = 1 - fraction
-    })
-
-    setTimeout(() => {
-      delete this.image.heartLeft
-      delete this.image.heartRight
-      this.removeImage('hitpointsBg')
-    }, 500)
-  }
   updateHitpoints() {
-    if (!this.hitpoints || !this.image.heartLeft || !this.image.heartRight)
+    const { gsConfig } = store
+    if (!gsConfig) return
+
+    // Remove
+    if (!this.building) {
+      this.removeImage('hpBackground')
       return
-
-    const previousHitpoints = this.props.hitpoints.previous
-
-    if (this.hitpoints === 2 && (!previousHitpoints || previousHitpoints < 2)) {
-      new Animation(this.image.heartRight, (image, fraction) => {
-        image.alpha = fraction
-      })
-
-      setTimeout(() => {
-        if (!this.isHovered()) {
-          this.hideHitpoints()
-        }
-      }, 800)
-    } else if (this.hitpoints < 2 && previousHitpoints === 2) {
-      new Animation(this.image.heartRight, (image, fraction) => {
-        image.alpha = 1 - fraction
-      })
     }
 
-    if (this.hitpoints < 2) {
-      this.showHitpoints()
+    // Add
+    if (!this.image.hpBackground) {
+      const pixel = getPixelPosition(this.axial)
+      const image = createImage(
+        'hpBackground',
+        `hpBackground${this.building.type === 'CASTLE' ? '3' : '2'}`
+      )
+      image.x = pixel.x
+      image.y = pixel.y
+      image.alpha = 0
+      this.image.hpBackground = image
+
+      const fillTexture = loader.resources['hpFill'].texture
+      this.image.hpFill1 = new Sprite(fillTexture)
+      this.image.hpFill2 = new Sprite(fillTexture)
+      this.image.hpFill3 = new Sprite(fillTexture)
+      this.image.hpFill1.anchor.set(0.5, 0.5)
+      this.image.hpFill2.anchor.set(0.5, 0.5)
+      this.image.hpFill3.anchor.set(0.5, 0.5)
+      this.image.hpFill1.y = HP_FILL_OFFSET_Y * -1
+      this.image.hpFill2.y = HP_FILL_OFFSET_Y * -1
+      this.image.hpFill3.y = HP_FILL_OFFSET_Y * -1
+      if (this.building.type === 'CASTLE') {
+        this.image.hpFill1.x = HP_FILL_OFFSET_X * 2 * -1
+        this.image.hpFill3.x = HP_FILL_OFFSET_X * 2
+      } else {
+        this.image.hpFill1.x = HP_FILL_OFFSET_X * -1
+        this.image.hpFill2.x = HP_FILL_OFFSET_X
+        this.image.hpFill3.visible = false
+      }
+      image.addChild(this.image.hpFill1)
+      image.addChild(this.image.hpFill2)
+      image.addChild(this.image.hpFill3)
+
+      if (
+        this.building.hp !== gsConfig.HP[this.building.type] ||
+        (this.isHovered() && !this.army)
+      ) {
+        this.showHitpoints()
+      }
     }
+
+    // Upgrade
+    if (this.building.type === 'CASTLE') {
+      const { texture } = loader.resources['hpBackground3']
+      this.image.hpBackground.texture = texture
+
+      if (
+        this.building.hp !== gsConfig.HP[this.building.type] ||
+        (this.isHovered() && !this.army)
+      ) {
+        this.showHitpoints()
+      }
+
+      if (this.image.hpFill1 && this.image.hpFill2 && this.image.hpFill3) {
+        this.image.hpFill1.x = HP_FILL_OFFSET_X * 2 * -1
+        this.image.hpFill2.x = 0
+        this.image.hpFill3.x = HP_FILL_OFFSET_X * 2
+        this.image.hpFill3.visible = true
+      }
+    }
+
+    // Update
+    if (!this.image.hpFill1 || !this.image.hpFill2 || !this.image.hpFill3) {
+      return
+    }
+
+    switch (this.building.hp) {
+      case 0:
+        this.image.hpFill1.visible = false
+        this.image.hpFill2.visible = false
+        this.image.hpFill3.visible = false
+        break
+      case 1:
+        this.image.hpFill1.visible = true
+        this.image.hpFill2.visible = false
+        this.image.hpFill3.visible = false
+        break
+      case 2:
+        this.image.hpFill1.visible = true
+        this.image.hpFill2.visible = true
+        this.image.hpFill3.visible = false
+        break
+      case 3:
+        this.image.hpFill1.visible = true
+        this.image.hpFill2.visible = true
+        this.image.hpFill3.visible = true
+        break
+    }
+
+    if (
+      this.building.hp === gsConfig.HP[this.building.type] &&
+      !this.isHovered()
+    ) {
+      setTimeout(
+        (() => {
+          if (
+            this.building &&
+            this.building.hp === gsConfig.HP[this.building.type] &&
+            !this.isHovered()
+          ) {
+            this.hideHitpoints()
+          }
+        }).bind(this),
+        500
+      )
+    }
+
+    // if (!this.hitpoints || !this.image.heartLeft || !this.image.heartRight)
+    //   return
+
+    // if (this.hitpoints === 2 && (!previousHitpoints || previousHitpoints < 2)) {
+    //   new Animation(this.image.heartRight, (image, fraction) => {
+    //     image.alpha = fraction
+    //   })
+    //   setTimeout(() => {
+    //     if (!this.isHovered()) {
+    //       this.hideHitpoints()
+    //     }
+    //   }, 800)
+    // } else if (this.hitpoints < 2 && previousHitpoints === 2) {
+    //   new Animation(this.image.heartRight, (image, fraction) => {
+    //     image.alpha = 1 - fraction
+    //   })
+    // }
+    // if (this.hitpoints < 2) {
+    //   this.showHitpoints()
+    // }
   }
   showHitpoints() {
-    if (this.hitpointsVisible) return
-
-    let image = this.image.hitpointsBg
-    if (!image) {
-      image = this.addHitpoints()
+    if (this.hpVisible || !this.image.hpBackground || !this.building) {
+      return
     }
 
-    this.hitpointsVisible = true
+    this.hpVisible = true
 
+    const building = this.building
     const pixel = getPixelPosition(this.axial)
-    const animation = getImageAnimation(image)
+    const animation = getImageAnimation(this.image.hpBackground)
 
-    let initialFraction
+    let initialFraction: number | undefined = undefined
     if (animation && animation instanceof Animation) {
       initialFraction = 1 - animation.fraction
       animation.destroy()
     }
 
     new Animation(
-      image,
+      this.image.hpBackground,
       (image, fraction, context) => {
         image.alpha = fraction
-        image.y = context.baseY - HITPOINTS_OFFSET_Y * fraction
+        image.y = context.baseY - HP_BACKGROUND_OFFSET[building.type] * fraction
       },
       {
         context: { baseY: pixel.y },
@@ -354,15 +463,15 @@ class Tile {
     )
   }
   hideHitpoints() {
-    if (!this.hitpointsVisible) return
+    if (!this.hpVisible || !this.building || !this.image.hpBackground) {
+      return
+    }
 
-    // TODO: temp fix of crash, investigate further
-    if (!this.image.hitpointsBg) return
+    this.hpVisible = false
 
-    this.hitpointsVisible = false
-
+    const building = this.building
     const pixel = getPixelPosition(this.axial)
-    const animation = getImageAnimation(this.image.hitpointsBg)
+    const animation = getImageAnimation(this.image.hpBackground)
 
     let initialFraction
     if (animation && animation instanceof Animation) {
@@ -371,12 +480,11 @@ class Tile {
     }
 
     new Animation(
-      this.image.hitpointsBg,
+      this.image.hpBackground,
       (image, fraction, context) => {
         fraction = 1 - fraction
-
         image.alpha = fraction
-        image.y = context.baseY - HITPOINTS_OFFSET_Y * fraction
+        image.y = context.baseY - HP_BACKGROUND_OFFSET[building.type] * fraction
       },
       {
         context: { baseY: pixel.y },
@@ -603,21 +711,19 @@ class Tile {
   }
   isEmpty() {
     return (
-      !this.castle &&
-      !this.base &&
+      !this.building &&
       !this.forest &&
       !this.camp &&
       !this.village &&
       !this.mountain
     )
   }
-  canBuildCastle() {
+  canBuildTower() {
     if (!this.isEmpty()) return false
 
     for (let i = 0; i < 6; i++) {
       const n = this.neighbors[i]
-
-      if (n && n.base && n.ownerId !== this.ownerId) {
+      if (n && n.building && n.ownerId !== this.ownerId) {
         return false
       }
     }
@@ -675,10 +781,14 @@ class Tile {
       return 'Mountains'
     } else if (this.forest) {
       return 'Forest'
-    } else if (this.castle) {
-      return 'Castle'
-    } else if (this.base) {
-      return 'Base'
+    } else if (this.building) {
+      if (this.building.type === 'TOWER') {
+        return 'Tower'
+      } else if (this.building.type === 'CASTLE') {
+        return 'Castle'
+      } else if (this.building.type === 'BASE') {
+        return 'Base'
+      }
     } else if (this.camp) {
       return 'Camp'
     } else if (this.village) {
@@ -704,17 +814,14 @@ class Tile {
     }
 
     // Recruit
-    if (
-      (this.castle || this.base) &&
-      store.player.gold >= store.gsConfig.RECRUIT_COST
-    ) {
+    if (this.building && store.player.gold >= store.gsConfig.RECRUIT_COST) {
       return true
     }
 
     // Build
     if (
       store.player.gold >= store.gsConfig.BUILD_COST &&
-      this.canBuildCastle()
+      this.canBuildTower()
     ) {
       return true
     }
@@ -733,26 +840,27 @@ class Tile {
   }
 
   // Prop getters
-  get base() {
-    return this.props.base.current
-  }
   get camp() {
     return this.props.camp.current
   }
-  get castle() {
-    return this.props.castle.current
-  }
   get forest() {
     return this.props.forest.current
-  }
-  get hitpoints() {
-    return this.props.hitpoints.current
   }
   get ownerId() {
     return this.props.ownerId.current
   }
   get village() {
     return this.props.village.current
+  }
+  get building() {
+    const type = this.props.buildingType.current
+    const hp = this.props.buildingHp.current
+
+    if (type === null || hp === null) {
+      return null
+    }
+
+    return { type, hp }
   }
 }
 

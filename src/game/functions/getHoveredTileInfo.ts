@@ -5,7 +5,19 @@ import HoveredTileInfo from '../../types/HoveredTileInfo'
 const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
   if (!store.gsConfig || !store.playerId || !store.player) return null
 
-  const { BUILD_COST, RECRUIT_COST } = store.gsConfig
+  // GS Config
+  const {
+    BUILD_COST,
+    RECRUIT_COST,
+    UPGRADE_COST,
+    ATTACK_DURATION,
+    ATTACK_COST,
+    HEAL_DURATION,
+    CUT_DURATION,
+    BUILD_DURATION,
+    UPGRADE_DURATION,
+    RECRUIT_DURATION,
+  } = store.gsConfig
 
   let isNeighborToPlayer = false
   let isOwnedByPlayer = tile.owner && tile.owner.id === store.playerId
@@ -36,19 +48,8 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
     (tile.army && tile.ownerId === store.playerId)
   ) {
     return {
-      label: 'Send army',
-      structure,
-    }
-  }
-
-  // Cancel
-  if (
-    tile.action &&
-    tile.action.owner.id === store.playerId &&
-    tile.action.type === 'attack'
-  ) {
-    return {
-      label: 'Cancel',
+      label: 'Send Army',
+      iconSrc: '/static/icons/army.svg',
       structure,
     }
   }
@@ -56,18 +57,22 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
   // Attack
   if (isNeighborToPlayer && !tile.owner && !tile.isContested()) {
     return {
-      label: 'Capture',
+      label: 'Capture Tile',
+      iconSrc: '/static/icons/swords.svg',
       structure,
-      duration: `${store.gsConfig.ATTACK_DURATION / 1000}s`,
+      duration: `${ATTACK_DURATION / 1000}s`,
+      notEnoughGold: store.player.gold < ATTACK_COST,
+      goldCost: ATTACK_COST,
     }
   }
 
   // Build
-  if (isOwnedByPlayer && tile.canBuildCastle() && !tile.action) {
+  if (isOwnedByPlayer && tile.canBuildTower() && !tile.action) {
     return {
-      label: 'Build castle',
+      label: 'Build Tower',
+      iconSrc: '/static/images/tower-icon.png',
       structure,
-      duration: `${store.gsConfig.BUILD_DURATION / 1000}s`,
+      duration: `${BUILD_DURATION / 1000}s`,
       notEnoughGold: store.player.gold < BUILD_COST,
       goldCost: BUILD_COST,
     }
@@ -76,33 +81,47 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
   // Cut
   if (isOwnedByPlayer && tile.forest && !tile.action) {
     return {
-      label: 'Get gold',
+      label: 'Sell Wood',
+      iconSrc: '/static/icons/axe.svg',
       structure,
-      duration: `${store.gsConfig.CUT_DURATION / 1000}s`,
+      duration: `${CUT_DURATION / 1000}s`,
+    }
+  }
+
+  // Upgrade
+  if (
+    isOwnedByPlayer &&
+    tile.building &&
+    tile.building.type === 'TOWER' &&
+    !tile.action
+  ) {
+    return {
+      label: 'Upgrade to Castle',
+      iconSrc: '/static/images/castle-icon.png',
+      structure,
+      duration: `${UPGRADE_DURATION / 1000}s`,
+      notEnoughGold: store.player.gold < UPGRADE_COST,
+      goldCost: UPGRADE_COST,
     }
   }
 
   // Recruit / Heal
-  if (
-    isOwnedByPlayer &&
-    (tile.castle || tile.base) &&
-    !tile.army &&
-    !tile.action
-  ) {
-    if (tile.hitpoints && tile.hitpoints === 1) {
+  if (isOwnedByPlayer && tile.building && !tile.army && !tile.action) {
+    if (tile.building && tile.building.hp === 1) {
       return {
-        label: 'Repair building',
+        label: 'Repair Building',
         structure,
-        duration: `${store.gsConfig.HEAL_DURATION / 1000}s`,
+        duration: `${HEAL_DURATION / 1000}s`,
         notEnoughGold: store.player.gold < RECRUIT_COST,
         goldCost: RECRUIT_COST,
       }
     }
 
     return {
-      label: 'Recruit army',
+      label: 'Recruit Army',
+      iconSrc: '/static/icons/army.svg',
       structure,
-      duration: `${store.gsConfig.RECRUIT_DURATION / 1000}s`,
+      duration: `${RECRUIT_DURATION / 1000}s`,
       notEnoughGold: store.player.gold < RECRUIT_COST,
       goldCost: RECRUIT_COST,
     }
@@ -112,8 +131,9 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
   if (!isNeighborToPlayer || isOwnedByPlayer) {
     if (
       structure !== 'Plains' &&
-      structure !== 'Castle' &&
-      structure !== 'Base'
+      structure !== 'Base' &&
+      structure !== 'Tower' &&
+      structure !== 'Castle'
     ) {
       return {
         structure,

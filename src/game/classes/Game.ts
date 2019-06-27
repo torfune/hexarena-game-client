@@ -362,7 +362,7 @@ class Game {
       hoveredTile.ownerId === store.playerId &&
       hoveredTile.army &&
       hoveredTile.army.ownerId === store.playerId &&
-      (hoveredTile.castle || hoveredTile.base) &&
+      hoveredTile.building &&
       button !== 2
     ) {
       this.selectArmy(hoveredTile)
@@ -436,7 +436,7 @@ class Game {
         hoveredTile.ownerId === playerId &&
         hoveredTile.army &&
         hoveredTile.army.ownerId === playerId &&
-        (hoveredTile.castle || hoveredTile.base)
+        hoveredTile.building
       ) {
         this.selectArmy(hoveredTile)
         return
@@ -569,7 +569,7 @@ class Game {
           }
 
           // Owned Castle & Base
-          if (t.ownerId === playerId && (t.castle || t.base)) {
+          if (t.ownerId === playerId && t.building) {
             break
           }
 
@@ -581,7 +581,7 @@ class Game {
           if (t.ownerId !== playerId && !t.bedrock) {
             tilesToCapture.push(t)
 
-            if (t.camp || t.mountain || t.village || t.castle || t.base) {
+            if (t.camp || t.mountain || t.village || t.building) {
               break
             }
           }
@@ -606,8 +606,7 @@ class Game {
         if (
           !n ||
           n.bedrock ||
-          n.castle ||
-          n.base ||
+          n.building ||
           n.mountain ||
           tilesToCapture.includes(n)
         ) {
@@ -840,7 +839,7 @@ class Game {
 
         t.addHighlight()
 
-        if (t.castle || t.base) break
+        if (t.building) break
       }
     }
   }
