@@ -370,6 +370,10 @@ class Tile {
       return
     }
 
+    if (this.building.hp < gsConfig.HP[this.building.type]) {
+      this.showHitpoints()
+    }
+
     switch (this.building.hp) {
       case 0:
         this.image.hpFill1.visible = false
@@ -410,27 +414,6 @@ class Tile {
         500
       )
     }
-
-    // if (!this.hitpoints || !this.image.heartLeft || !this.image.heartRight)
-    //   return
-
-    // if (this.hitpoints === 2 && (!previousHitpoints || previousHitpoints < 2)) {
-    //   new Animation(this.image.heartRight, (image, fraction) => {
-    //     image.alpha = fraction
-    //   })
-    //   setTimeout(() => {
-    //     if (!this.isHovered()) {
-    //       this.hideHitpoints()
-    //     }
-    //   }, 800)
-    // } else if (this.hitpoints < 2 && previousHitpoints === 2) {
-    //   new Animation(this.image.heartRight, (image, fraction) => {
-    //     image.alpha = 1 - fraction
-    //   })
-    // }
-    // if (this.hitpoints < 2) {
-    //   this.showHitpoints()
-    // }
   }
   showHitpoints() {
     if (this.hpVisible || !this.image.hpBackground || !this.building) {
