@@ -1,5 +1,9 @@
 const changelog = [
   {
+    version: 'Alpha 1.26',
+    points: ['Towers & Castles.', 'Chat timestamps.'],
+  },
+  {
     version: 'Alpha 1.25',
     points: ['Fixed spectate related bugs.'],
   },
