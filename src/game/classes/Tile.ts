@@ -703,18 +703,6 @@ class Tile {
       !this.mountain
     )
   }
-  canBuildTower() {
-    if (!this.isEmpty()) return false
-
-    for (let i = 0; i < 6; i++) {
-      const n = this.neighbors[i]
-      if (n && n.building && n.ownerId !== this.ownerId) {
-        return false
-      }
-    }
-
-    return true
-  }
   addPatternPreview(pattern: string) {
     if (this.image.pattern) {
       this.image.pattern.visible = false
@@ -726,8 +714,6 @@ class Tile {
     this.image.patternPreview.x = pixel.x
     this.image.patternPreview.y = pixel.y
     this.image.patternPreview.tint = hex(pattern)
-    // this.image.patternPreview.scale.x = store.game.scale
-    // this.image.patternPreview.scale.y = store.game.scale
     this.image.patternPreview.alpha = 0.5
   }
   removePatternPreview() {
@@ -804,10 +790,7 @@ class Tile {
     }
 
     // Build
-    if (
-      store.player.gold >= store.gsConfig.BUILD_COST &&
-      this.canBuildTower()
-    ) {
+    if (store.player.gold >= store.gsConfig.BUILD_COST && this.isEmpty()) {
       return true
     }
 

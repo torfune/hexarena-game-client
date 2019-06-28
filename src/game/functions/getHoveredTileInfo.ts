@@ -68,7 +68,7 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
   }
 
   // Build
-  if (isOwnedByPlayer && tile.canBuildTower() && !tile.action) {
+  if (isOwnedByPlayer && tile.isEmpty() && !tile.action) {
     return {
       label: 'Build Tower',
       iconSrc: '/static/images/tower-icon.png',
