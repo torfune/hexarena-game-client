@@ -523,25 +523,51 @@ class Game {
 
     const tilesToCapture = []
 
-    // A : Attack hover
-    if (store.playerId === playerId) {
-      if (canAttack(tile)) {
-        tilesToCapture.push(tile)
+    // Attack hover
+    if (store.playerId === playerId && canAttack(tile)) {
+      tilesToCapture.push(tile)
+    }
+
+    // Upgrade hover
+    if (
+      store.playerId === tile.ownerId &&
+      tile.building &&
+      tile.building.type === 'TOWER' &&
+      tile.building.hp === store.gsConfig.HP.TOWER &&
+      !this.selectedArmyTile
+    ) {
+      for (let i = 0; i < 6; i++) {
+        const n = tile.neighbors[i]
+        if (n && !tilesToCapture.includes(n) && !n.owner) {
+          tilesToCapture.push(n)
+        }
       }
     }
 
-    // B : Action
+    // Actions (attack, upgrade)
     for (let i = 0; i < store.actions.length; i++) {
       const action = store.actions[i]
 
-      if (tilesToCapture.includes(action.tile)) continue
-
-      if (action.type === 'attack' && action.owner.id === playerId) {
+      if (
+        action.type === 'attack' &&
+        action.owner.id === playerId &&
+        !tilesToCapture.includes(action.tile)
+      ) {
         tilesToCapture.push(action.tile)
+        continue
+      }
+
+      if (action.type === 'upgrade' && action.owner.id === playerId) {
+        for (let j = 0; j < 6; j++) {
+          const n = action.tile.neighbors[j]
+          if (n && !tilesToCapture.includes(n) && !n.owner) {
+            tilesToCapture.push(n)
+          }
+        }
       }
     }
 
-    // C : Army
+    // Army sending
     if (store.player && playerId === store.playerId && this.selectedArmyTile) {
       let direction = null
 
@@ -645,7 +671,7 @@ class Game {
     for (let i = 0; i < store.actions.length; i++) {
       const action = store.actions[i]
 
-      if (action.type !== 'attack') continue
+      if (action.type !== 'attack' && action.type !== 'upgrade') continue
 
       const tilesToCapture = this.getTilesToCapture(
         action.tile,
