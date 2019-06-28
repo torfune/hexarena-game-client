@@ -1,5 +1,9 @@
 const changelog = [
   {
+    version: 'Alpha 1.27',
+    points: ['Duel mode.', 'Lot of bug fixes and small improvements.'],
+  },
+  {
     version: 'Alpha 1.26',
     points: ['Towers & Castles.', 'Chat timestamps.'],
   },
