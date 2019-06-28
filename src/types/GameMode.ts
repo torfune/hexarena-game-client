@@ -1,3 +1,3 @@
-type GameMode = 'ffa' | 'diplomacy'
+type GameMode = 'ffa' | 'diplomacy' | 'duel'
 
 export default GameMode

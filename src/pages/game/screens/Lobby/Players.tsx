@@ -240,7 +240,9 @@ const Players: React.FC = () => {
         {otherPlayers.map((player, index) => (
           <Player key={index} color={player.pattern}>
             <Pattern color={player.pattern} />
-            <Name>{player.name}</Name>
+            <Name>
+              {store.gameMode === 'duel' && player.name ? '???' : player.name}
+            </Name>
             {player.registered && (
               <UserTypeContainer background={player.pattern}>
                 <Tooltip>Registered user</Tooltip>

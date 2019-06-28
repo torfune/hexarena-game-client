@@ -23,17 +23,20 @@ const PlayersSection = styled.div`
   width: 100%;
 `
 
-interface HeadingProps {
-  marginBottom?: string
-  center?: boolean
-}
-const Heading = styled.h2<HeadingProps>`
+const Heading = styled.h2`
   color: #fff;
   font-size: 32px;
   font-weight: 500;
   padding-bottom: 24px;
-  display: block;
-  text-align: ${props => (props.center ? 'center' : 'left')};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  > p:last-child {
+    text-transform: uppercase;
+    font-size: 24px;
+    color: #ccc;
+  }
 `
 
 const Lobby = () => (
@@ -43,9 +46,12 @@ const Lobby = () => (
       <TopPlayers fixedHeight="calc(100vh - 300px)" />
       <PlayersSection>
         <Heading>
-          {store.startCountdown
-            ? `Game starts in ${store.startCountdown} seconds`
-            : '. . .'}
+          <p>
+            {store.startCountdown
+              ? `Game starts in ${store.startCountdown} seconds`
+              : '. . .'}
+          </p>
+          <p>{store.gameMode}</p>
         </Heading>
         <Players />
       </PlayersSection>

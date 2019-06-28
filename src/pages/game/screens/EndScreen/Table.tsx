@@ -29,8 +29,6 @@ interface NameAndTilesProps {
   opacity: number
 }
 const Player = styled.div`
-  margin: 8px 0 0 0;
-
   p {
     font-weight: 500;
 

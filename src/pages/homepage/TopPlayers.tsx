@@ -93,7 +93,8 @@ const TopPlayers: React.FC<Props> = ({ fixedHeight }) => {
           <PlayerRow
             key={topPlayer.id}
             color={
-              lobbyPlayerNames.includes(topPlayer.name)
+              lobbyPlayerNames.includes(topPlayer.name) &&
+              store.gameMode !== 'duel'
                 ? namePatternMap[topPlayer.name]
                 : undefined
             }

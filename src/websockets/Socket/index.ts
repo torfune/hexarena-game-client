@@ -335,7 +335,7 @@ const setStoreValue = (key: string, value: any) => {
     case 'gameMode':
       if (
         typeof value !== 'string' ||
-        (value !== 'diplomacy' && value !== 'ffa')
+        (value !== 'diplomacy' && value !== 'ffa' && value !== 'duel')
       ) {
         throw Error(typeError(key, value))
       }

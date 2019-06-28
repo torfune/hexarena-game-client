@@ -1,3 +1,5 @@
+import GameMode from './GameMode'
+
 interface RunningGamePlayer {
   name: string
   pattern: string
@@ -7,7 +9,7 @@ interface RunningGamePlayer {
 interface RunningGame {
   id: string
   finishesAt: number
-  mode: 'ffa' | 'diplomacy'
+  mode: GameMode
   players: RunningGamePlayer[]
 }
 
