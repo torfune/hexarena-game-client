@@ -812,6 +812,9 @@ class Game {
     }
   }
   updateArmyTileHighlights() {
+    const { gsConfig } = store
+    if (!gsConfig) return
+
     let direction = null
 
     for (let i = 0; i < 6; i++) {
@@ -832,7 +835,7 @@ class Game {
     }
 
     if (direction !== null) {
-      for (let i = 0; i < 4; i++) {
+      for (let i = 0; i < gsConfig.ARMY_RANGE; i++) {
         const t = this.selectedArmyTargetTiles[direction][i]
 
         if (!t || !t.owner || t.owner.id !== store.playerId) continue
