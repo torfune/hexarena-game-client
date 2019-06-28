@@ -297,7 +297,7 @@ const setStoreValue = (key: string, value: any) => {
       if (typeof value !== 'object') {
         throw Error(typeError(key, value))
       }
-      store.waitingTime = value
+      store.waitingTime = value.current === null ? null : value
       break
     case 'goldAnimation':
       if (typeof value !== 'object') {

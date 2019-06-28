@@ -62,8 +62,6 @@ const WaitingSection = () => {
 
   const cancelQueue = () => {
     Socket.send('cancelQueue')
-    store.waitingTime = null
-    store.onlinePlayers = []
   }
 
   return (
