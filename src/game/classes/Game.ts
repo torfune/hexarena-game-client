@@ -301,7 +301,9 @@ class Game {
     Socket.send('pattern', pattern)
   }
   handleKeyDown({ key }: KeyboardEvent) {
-    if (store.status !== 'running') return
+    if (store.status !== 'running' || (store.spectating && store.chatFocus)) {
+      return
+    }
 
     this.keyDown[key] = true
     this.updateCameraMove()
@@ -335,7 +337,13 @@ class Game {
     Socket.send('debug', `${command}|${tile.axial.x}|${tile.axial.z}`)
   }
   handleKeyUp({ key }: KeyboardEvent) {
-    if (store.status !== 'running' || !store.gsConfig) return
+    if (
+      store.status !== 'running' ||
+      !store.gsConfig ||
+      (store.spectating && store.chatFocus)
+    ) {
+      return
+    }
 
     this.keyDown[key] = false
     this.updateCameraMove()
