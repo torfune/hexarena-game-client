@@ -11,7 +11,6 @@ import SpectateCloseButton from './screens/SpectateCloseButton'
 import styled from 'styled-components'
 import Gold from './hud/Gold'
 import Performance from './hud/Performance'
-import SurrenderButton from './hud/SurrenderButton'
 import store from '../../store'
 import Flasher from './hud/Flasher'
 import * as React from 'react'
@@ -19,8 +18,8 @@ import NotificationManager from './hud/NotificationManager'
 import { RouteComponentProps } from '@reach/router'
 import Ally from './hud/Ally'
 import Lobby from './screens/Lobby'
-import showSurrenderButton from '../../game/functions/showSurrenderButton'
 import Player from '../../game/classes/Player'
+import Surrender from './hud/Surrender'
 
 const Container = styled.div`
   width: 100vw;
@@ -98,9 +97,9 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
               </>
             )}
 
-            {showSurrenderButton(store.players, store.player) && (
-              <SurrenderButton />
-            )}
+            {/* {showSurrenderButton(store.players, store.player) && ( */}
+            <Surrender />
+            {/* )} */}
 
             {!player.alive &&
               (spectating ? (
