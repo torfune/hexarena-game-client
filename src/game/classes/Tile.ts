@@ -519,6 +519,10 @@ class Tile {
       }
     }
 
+    if (store.game.selectedArmyTile === this) {
+      store.game.unselectArmy()
+    }
+
     this.owner = newOwner
   }
   selectArmy() {
@@ -566,18 +570,16 @@ class Tile {
     store.game.selectedArmyTargetTiles = armyTargetTiles
   }
   unselectArmy() {
-    if (!this.image.pattern || !this.owner) return
-
-    this.image.pattern.tint = hex(this.owner.pattern)
+    if (this.image.pattern && this.owner) {
+      this.image.pattern.tint = hex(this.owner.pattern)
+    }
 
     for (let i = 0; i < 6; i++) {
       const n = this.neighbors[i]
-
       if (!n) continue
 
       const direction = invertHexDirection(i)
       const image = n.imageSet.arrow[direction]
-
       if (image) {
         destroyImage('arrow', image)
         n.imageSet.arrow[direction] = null
