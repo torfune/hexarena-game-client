@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, ChangeEvent } from 'react'
+import { useEffect, useState, ChangeEvent } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import store from '../../store'
@@ -118,6 +118,14 @@ const Chat = () => {
     store.chatMessage = event.target.value
   }
 
+  const handleFocus = () => {
+    store.chatFocus = true
+  }
+
+  const handleBlur = () => {
+    store.chatFocus = false
+  }
+
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown)
 
@@ -172,6 +180,8 @@ const Chat = () => {
           maxLength={store.gsConfig.CHAT_MESSAGE_MAX_LENGTH}
           value={store.chatMessage}
           onChange={handleMessageChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
         />
       ) : (
         <SignInMessage>

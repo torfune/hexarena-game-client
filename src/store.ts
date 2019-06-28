@@ -46,6 +46,7 @@ class Store {
   @observable flash: number = 0
   @observable spawnTile?: Tile
   @observable gameIndex: number | null = null
+  @observable chatFocus: boolean = false
   changeHandlers: { [key: string]: () => void } = {}
   idMap: {
     actions: IdMap<Action>
