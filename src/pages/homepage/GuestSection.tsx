@@ -40,10 +40,12 @@ const GuestSection: React.FC<Props> = ({ play }) => {
   const [invalidName, setInvalidName] = useState(false)
 
   useEffect(() => {
-    const guestName = localStorage.getItem('guestName')
-    if (guestName) {
-      setName(guestName)
+    let guestName = localStorage.getItem('guestName')
+    if (!guestName) {
+      guestName = `Guest ${Math.floor(Math.random() * 10000)}`
+      localStorage.setItem('guestName', guestName)
     }
+    setName(guestName)
   }, [])
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -78,7 +80,7 @@ const GuestSection: React.FC<Props> = ({ play }) => {
       <Row>
         <div>
           <NameInput
-            placeholder="Guest 42"
+            placeholder="Nickname"
             value={name}
             onChange={handleNameChange}
           />
