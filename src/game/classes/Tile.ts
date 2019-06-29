@@ -528,6 +528,8 @@ class Tile {
     // Set camera to capital
     if (!store.spawnTile && this.ownerId === store.playerId) {
       store.spawnTile = this
+    } else if (!store.spawnTile && store.spectating) {
+      store.spawnTile = this
     }
   }
   selectArmy() {
