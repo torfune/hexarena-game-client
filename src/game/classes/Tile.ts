@@ -725,26 +725,26 @@ class Tile {
 
     store.game.stage['patternPreview'].removeChild(this.image.patternPreview)
   }
-  isContested() {
-    if (!store.player) return false
+  // isContested() {
+  //   if (!store.player) return false
 
-    let neighborPlayersIds: string[] = []
+  //   let neighborPlayersIds: string[] = []
 
-    for (let i = 0; i < 6; i++) {
-      const n = this.neighbors[i]
+  //   for (let i = 0; i < 6; i++) {
+  //     const n = this.neighbors[i]
 
-      if (
-        n &&
-        n.owner &&
-        n.ownerId !== store.player.allyId &&
-        !neighborPlayersIds.includes(n.owner.id)
-      ) {
-        neighborPlayersIds.push(n.owner.id)
-      }
-    }
+  //     if (
+  //       n &&
+  //       n.owner &&
+  //       n.ownerId !== store.player.allyId &&
+  //       !neighborPlayersIds.includes(n.owner.id)
+  //     ) {
+  //       neighborPlayersIds.push(n.owner.id)
+  //     }
+  //   }
 
-    return neighborPlayersIds.length >= 2
-  }
+  //   return neighborPlayersIds.length >= 2
+  // }
   getStructureName() {
     if (this.bedrock) {
       return 'Edge of the World'

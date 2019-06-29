@@ -10,7 +10,7 @@ const canAttack = (tile: Tile) => {
       neighbor.owner &&
       neighbor.owner.id === store.playerId &&
       !tile.owner &&
-      !tile.isContested() &&
+      // !tile.isContested() &&
       !tile.bedrock &&
       !store.game.selectedArmyTile
     ) {

@@ -56,7 +56,7 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
   }
 
   // Attack
-  if (isNeighborToPlayer && !tile.owner && !tile.isContested()) {
+  if (isNeighborToPlayer && !tile.owner /* && !tile.isContested() */) {
     return {
       label: 'Capture Tile',
       iconSrc: '/static/icons/swords.svg',
