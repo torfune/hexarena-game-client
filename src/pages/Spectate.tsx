@@ -10,6 +10,7 @@ import Leaderboard from './game/hud/Leaderboard'
 import HoverPreview from './game/hud/HoverPreview'
 import EndScreen from './game/screens/EndScreen'
 import GameTime from './game/hud/GameTime'
+import MatchFound from '../components/MatchFound'
 
 const Container = styled.div`
   width: calc(100vw - ${CHAT_WIDTH});
@@ -58,6 +59,7 @@ const Spectate: React.FC = () => {
       </Container>
 
       <Chat />
+      <MatchFound />
     </>
   )
 }

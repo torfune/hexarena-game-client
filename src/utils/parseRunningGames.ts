@@ -12,7 +12,7 @@ const parseRunningGames = (payload: string) => {
 
     let id: string = ''
     let finishesAt: number = 0
-    let mode: GameMode = 'ffa'
+    let mode: GameMode = 'RANDOM_DUEL'
 
     const players: RunningGamePlayer[] = []
     let currentPlayer: {

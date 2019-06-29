@@ -241,7 +241,11 @@ const Players: React.FC = () => {
           <Player key={index} color={player.pattern}>
             <Pattern color={player.pattern} />
             <Name>
-              {store.gameMode === 'duel' && player.name ? '???' : player.name}
+              {(store.gameMode === 'BALANCED_DUEL' ||
+                store.gameMode === 'RANDOM_DUEL') &&
+              player.name
+                ? '???'
+                : player.name}
             </Name>
             {player.registered && (
               <UserTypeContainer background={player.pattern}>

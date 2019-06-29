@@ -148,7 +148,7 @@ const Header = () => {
           <TimesWrapper>
             <div>
               <Label>Current:</Label>
-              <Label>Average:</Label>
+              <Label>Estimated:</Label>
               <Label>Players:</Label>
             </div>
             <div>

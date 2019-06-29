@@ -94,7 +94,8 @@ const TopPlayers: React.FC<Props> = ({ fixedHeight }) => {
             key={topPlayer.id}
             color={
               lobbyPlayerNames.includes(topPlayer.name) &&
-              store.gameMode !== 'duel'
+              store.gameMode !== 'BALANCED_DUEL' &&
+              store.gameMode !== 'RANDOM_DUEL'
                 ? namePatternMap[topPlayer.name]
                 : undefined
             }

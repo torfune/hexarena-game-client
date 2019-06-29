@@ -62,6 +62,7 @@ class Store {
   }
 
   // Other
+  @observable matchFound: boolean = false
   @observable chatMessage: string = ''
   @observable onlinePlayers: OnlinePlayer[] = []
   @observable topPlayers: TopPlayer[] = []

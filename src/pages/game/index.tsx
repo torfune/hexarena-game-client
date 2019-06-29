@@ -88,7 +88,10 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
 
             {showHud && player.alive && (
               <>
-                {gameMode === 'diplomacy' && renderDiplomacy(player)}
+                {(gameMode === 'DIPLOMACY' ||
+                  gameMode === 'TEAMS_4' ||
+                  gameMode === 'TEAMS_6') &&
+                  renderDiplomacy(player)}
 
                 <HoverPreview />
                 <Leaderboard />
@@ -97,9 +100,7 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
               </>
             )}
 
-            {/* {showSurrenderButton(store.players, store.player) && ( */}
             <Surrender />
-            {/* )} */}
 
             {!player.alive &&
               (spectating ? (

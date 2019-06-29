@@ -34,7 +34,7 @@ const Heading = styled.h2`
 
   > p:last-child {
     text-transform: uppercase;
-    font-size: 24px;
+    font-size: 20px;
     color: #ccc;
   }
 `
@@ -51,7 +51,7 @@ const Lobby = () => (
               ? `Game starts in ${store.startCountdown} seconds`
               : '. . .'}
           </p>
-          <p>{store.gameMode}</p>
+          {store.gameMode && <p>{store.gameMode.replace('_', ' ')}</p>}
         </Heading>
         <Players />
       </PlayersSection>

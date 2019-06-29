@@ -11,7 +11,7 @@ const Container = styled.div``
 
 const TimesWrapper = styled.div`
   background: #282828;
-  width: 170px;
+  width: 190px;
   padding: 12px 20px;
   border-radius: 4px;
   border: 1px solid #222;
@@ -46,7 +46,7 @@ const CancelButton = styled.div`
   padding: 6px 0;
   margin-top: 8px;
   border: 1px solid #2f2f2f;
-  width: 170px;
+  width: 190px;
   text-align: center;
   font-size: 14px;
 
@@ -66,13 +66,13 @@ const WaitingSection = () => {
 
   return (
     <Container>
-      <Heading>Waiting for other players . . .</Heading>
+      <Heading>Finding match</Heading>
 
       <Row>
         <TimesWrapper>
           <div>
             <Label>Current:</Label>
-            <Label>Average:</Label>
+            <Label>Estimated:</Label>
             <Label>Players:</Label>
           </div>
           <div>

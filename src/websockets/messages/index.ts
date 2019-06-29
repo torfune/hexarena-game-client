@@ -8,6 +8,7 @@ import gameMode from './gameMode'
 import GameServerMessage from '../../types/GameServerMessage'
 import gameTime from './gameTime'
 import goldAnimation from './goldAnimation'
+import matchFound from './matchFound'
 import notification from './notification'
 import playerId from './playerId'
 import players from './players'
@@ -32,6 +33,7 @@ const messages: {
   gameTime,
   goldAnimation,
   notification,
+  matchFound,
   playerId,
   players,
   serverTime,

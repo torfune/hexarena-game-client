@@ -41,6 +41,7 @@ class Socket {
       store.createGame()
       store.gameIndex = Number(payload)
       store.waitingTime = null
+      store.matchFound = false
       store.routerHistory.push('/game')
       return
     }
@@ -69,36 +70,6 @@ class Socket {
     // Primitive value
     if (!config.instance && !config.isArray) {
       setStoreValue(key, parsed)
-
-      // const { pathname } = window.location
-      // console.log(pathname)
-
-      // // Status / -> /game
-      // if (
-      //   key === 'status' &&
-      //   (parsed === 'starting' || parsed === 'running') &&
-      //   !store.spectating &&
-      //   pathname === '/'
-      // ) {
-      //   store.waitingTime = null
-      //   store.routerHistory.push('/game')
-      // }
-
-      // // Status /spectate -> /game
-      // if (
-      //   key === 'status' &&
-      //   (parsed === 'starting' || parsed === 'running') &&
-      //   store.spectating &&
-      //   window.location.pathname === '/spectate'
-      // ) {
-      //   // if (store._game) {
-      //   //   store._game.destroy()
-      //   // }
-
-      //   store.waitingTime = null
-      //   store.routerHistory.push('/game')
-      // }
-
       return
     }
 
@@ -299,6 +270,9 @@ const setStoreValue = (key: string, value: any) => {
       }
       store.waitingTime = value.current === null ? null : value
       break
+    case 'matchFound':
+      store.matchFound = value
+      break
     case 'goldAnimation':
       if (typeof value !== 'object') {
         throw Error(typeError(key, value))
@@ -335,7 +309,12 @@ const setStoreValue = (key: string, value: any) => {
     case 'gameMode':
       if (
         typeof value !== 'string' ||
-        (value !== 'diplomacy' && value !== 'ffa' && value !== 'duel')
+        (value !== 'DIPLOMACY' &&
+          value !== 'FFA' &&
+          value !== 'BALANCED_DUEL' &&
+          value !== 'RANDOM_DUEL' &&
+          value !== 'TEAMS_4' &&
+          value !== 'TEAMS_6')
       ) {
         throw Error(typeError(key, value))
       }

@@ -10,8 +10,8 @@ import TopPlayers from './TopPlayers'
 import Countdown from './Countdown'
 import { observer } from 'mobx-react-lite'
 import { History } from 'history'
-import OnlinePlayers from './OnlinePlayers'
 import RunningGames from './RunningGames'
+import MatchFound from '../../components/MatchFound'
 
 const Container = styled.div``
 
@@ -41,9 +41,9 @@ const Homepage: React.FC<Props> = ({ history }) => {
             <PlaySection />
           )}
           <RunningGames />
-          {/* <OnlinePlayers /> */}
           <Community />
           <ReleaseNotes />
+          <MatchFound />
         </div>
       </ContentGrid>
 
