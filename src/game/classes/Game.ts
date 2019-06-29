@@ -628,14 +628,7 @@ class Game {
       const t = villageTiles[0]
       for (let j = 0; j < 6; j++) {
         const n = t.neighbors[j]
-
-        if (
-          !n ||
-          n.bedrock ||
-          n.building ||
-          n.mountain ||
-          tilesToCapture.includes(n)
-        ) {
+        if (!n || n.bedrock || tilesToCapture.includes(n)) {
           continue
         }
 

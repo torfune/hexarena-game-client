@@ -524,6 +524,11 @@ class Tile {
     }
 
     this.owner = newOwner
+
+    // Set camera to capital
+    if (!store.spawnTile && this.ownerId === store.playerId) {
+      store.spawnTile = this
+    }
   }
   selectArmy() {
     if (!this.image.pattern) return

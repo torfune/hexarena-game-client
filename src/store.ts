@@ -262,10 +262,6 @@ class Store {
         n.updateNeighbors()
       }
     }
-
-    if (!this.spawnTile) {
-      this.spawnTile = tile
-    }
   }
 
   // Change Listeners
