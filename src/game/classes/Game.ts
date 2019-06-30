@@ -433,7 +433,7 @@ class Game {
     }
 
     // Standard click
-    if (!this.dragged && cursorDelta !== null && cursorDelta < 16) {
+    if (cursorDelta !== null && cursorDelta < 32) {
       // Army - send
       if (this.selectedArmyTile && hoveredTile !== this.selectedArmyTile) {
         this.sendArmy(hoveredTile)
@@ -451,7 +451,7 @@ class Game {
         return
       }
 
-      if (button) {
+      if (button && !this.dragged) {
         Socket.send(
           'click',
           `${hoveredTile.axial.x}|${hoveredTile.axial.z}|${button}`
