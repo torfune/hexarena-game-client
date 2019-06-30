@@ -409,6 +409,10 @@ class Game {
       this.cameraDrag = null
     }
 
+    // Clear dragged
+    const dragged = this.dragged
+    this.dragged = false
+
     let button = null
     switch (event.button) {
       case 0:
@@ -451,7 +455,7 @@ class Game {
         return
       }
 
-      if (button && !this.dragged) {
+      if (button && !dragged) {
         Socket.send(
           'click',
           `${hoveredTile.axial.x}|${hoveredTile.axial.z}|${button}`
@@ -477,7 +481,6 @@ class Game {
       this.sendArmy(hoveredTile)
       return
     }
-    this.dragged = false
   }
   handleMouseMove({ clientX: x, clientY: y }: MouseEvent) {
     store.timeFromActivity = store.gameTime ? store.gameTime : 0
@@ -487,7 +490,7 @@ class Game {
     if (this.cameraDrag) {
       const cursorDeltaX = Math.abs(this.cursor.x - this.cameraDrag.cursor.x)
       const cursorDeltaY = Math.abs(this.cursor.y - this.cameraDrag.cursor.y)
-      if (cursorDeltaX + cursorDeltaY > 16) {
+      if (cursorDeltaX + cursorDeltaY > 32) {
         this.dragged = true
       }
     }
