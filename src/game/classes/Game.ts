@@ -41,6 +41,7 @@ class Game {
     camera: Pixel
     cursor: Pixel
   } | null = null
+  dragged: boolean = false
   cursor: Pixel | null = null
   selectedArmyTargetTiles: Tile[][] = []
   tilesWithPatternPreview: Tile[] = []
@@ -432,7 +433,7 @@ class Game {
     }
 
     // Standard click
-    if (cursorDelta !== null && cursorDelta < 32) {
+    if (!this.dragged && cursorDelta !== null && cursorDelta < 16) {
       // Army - send
       if (this.selectedArmyTile && hoveredTile !== this.selectedArmyTile) {
         this.sendArmy(hoveredTile)
@@ -476,11 +477,20 @@ class Game {
       this.sendArmy(hoveredTile)
       return
     }
+    this.dragged = false
   }
   handleMouseMove({ clientX: x, clientY: y }: MouseEvent) {
     store.timeFromActivity = store.gameTime ? store.gameTime : 0
 
     this.cursor = { x, y }
+
+    if (this.cameraDrag) {
+      const cursorDeltaX = Math.abs(this.cursor.x - this.cameraDrag.cursor.x)
+      const cursorDeltaY = Math.abs(this.cursor.y - this.cameraDrag.cursor.y)
+      if (cursorDeltaX + cursorDeltaY > 16) {
+        this.dragged = true
+      }
+    }
   }
   handleWheelMove({ deltaY, detail }: WheelEvent) {
     const delta = deltaY || detail
