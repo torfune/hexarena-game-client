@@ -1,5 +1,18 @@
 const changelog = [
   {
+    version: 'Alpha 1.29',
+    points: [
+      "Villages don't spawn anymore.",
+      'Improved world generator.',
+      'Balanced spawn locations.',
+      'Bug fixes.',
+    ],
+  },
+  {
+    version: 'Alpha 1.28',
+    points: ['Premade teams mode.', 'Improved matchmaking.'],
+  },
+  {
     version: 'Alpha 1.27',
     points: ['Duel mode.', 'Lot of bug fixes and small improvements.'],
   },
