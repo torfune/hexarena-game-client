@@ -29,6 +29,7 @@ import destroyImage from '../functions/destroyImage'
 import axialInDirection from '../../utils/axialInDirection'
 import getTileByAxial from '../functions/getTileByAxial'
 import BuildingType from '../../types/BuildingType'
+import Forest from './Forest'
 
 const loader = Loader.shared
 
@@ -37,7 +38,6 @@ interface Props {
   buildingHp: Prop<number | null>
   buildingType: Prop<BuildingType | null>
   camp: Prop<boolean>
-  forest: Prop<boolean>
   ownerId: Prop<string | null>
   village: Prop<boolean>
 }
@@ -47,7 +47,6 @@ class Tile {
     buildingHp: createProp(null),
     buildingType: createProp(null),
     camp: createProp(false),
-    forest: createProp(false),
     ownerId: createProp(null),
     village: createProp(false),
   }
@@ -56,6 +55,7 @@ class Tile {
   readonly axial: Axial
   readonly bedrock: boolean
   readonly mountain: boolean
+  forest: Forest | null = null
   action: Action | null = null
   owner: Player | null = null
   army: Army | null = null
@@ -75,7 +75,8 @@ class Tile {
     this.mountain = mountain
 
     if (mountain) {
-      this.addImage('mountain')
+      const image = this.addImage('mountain')
+      image.y -= 16
     }
 
     this.updateOwner()
@@ -786,20 +787,12 @@ class Tile {
       return true
     }
 
-    // Cut gold
-    if (this.forest) {
-      return true
-    }
-
     return false
   }
 
   // Prop getters
   get camp() {
     return this.props.camp.current
-  }
-  get forest() {
-    return this.props.forest.current
   }
   get ownerId() {
     return this.props.ownerId.current

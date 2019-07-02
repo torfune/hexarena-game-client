@@ -13,7 +13,7 @@ const loader = Loader.shared
 
 const ACTION_RADIUS = 49
 
-export type ActionType = 'attack' | 'cut' | 'build' | 'recruit' | 'upgrade'
+export type ActionType = 'ATTACK' | 'BUILD' | 'RECRUIT' | 'UPGRADE'
 export type ActionStatus = 'pending' | 'running' | 'finished'
 
 interface Image {
@@ -61,15 +61,15 @@ class Action {
 
     this.image.cancelIcon.visible = false
 
-    if (type === 'upgrade' || type === 'build') {
+    if (type === 'UPGRADE' || type === 'BUILD') {
       this.image.icon.alpha = 0.85
 
       switch (type) {
-        case 'upgrade':
+        case 'UPGRADE':
           this.image.icon.scale.x = 0.28
           this.image.icon.scale.y = 0.28
           break
-        case 'build':
+        case 'BUILD':
           this.image.icon.scale.x = 0.38
           this.image.icon.scale.y = 0.38
           break
@@ -182,19 +182,17 @@ class Action {
   }
   getTexture() {
     switch (this.type) {
-      case 'attack':
+      case 'ATTACK':
         return 'actionIconAttack'
-      case 'recruit':
+      case 'RECRUIT':
         if (this.tile.building && this.tile.building.hp < 2) {
           return 'actionIconHeal'
         } else {
           return 'actionIconRecruit'
         }
-      case 'cut':
-        return 'actionIconCut'
-      case 'build':
+      case 'BUILD':
         return 'tower-icon'
-      case 'upgrade':
+      case 'UPGRADE':
         return 'castle-icon'
     }
   }

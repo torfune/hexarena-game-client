@@ -11,9 +11,16 @@ import Primitive from './types/Primitive'
 import RunningGame from './types/RunningGame'
 import GameMode from './types/GameMode'
 import Game from './game/classes/Game'
+import Forest from './game/classes/Forest'
 
-type EntityName = 'action' | 'allianceRequest' | 'army' | 'player' | 'tile'
-type Entity = Action | AllianceRequest | Army | Player | Tile
+type EntityName =
+  | 'action'
+  | 'allianceRequest'
+  | 'army'
+  | 'player'
+  | 'tile'
+  | 'forest'
+type Entity = Action | AllianceRequest | Army | Player | Tile | Forest
 
 interface IdMap<T> {
   [key: string]: T
@@ -29,6 +36,7 @@ class Store {
   @observable allianceRequests: AllianceRequest[] = []
   @observable armies: Army[] = []
   @observable players: Player[] = []
+  @observable forests: Forest[] = []
   @observable timeFromActivity: number = 0
   @observable tiles: Tiles = {}
   @observable hoveredTile: Tile | null = null
@@ -54,12 +62,14 @@ class Store {
     armies: IdMap<Army>
     players: IdMap<Player>
     tiles: IdMap<Tile>
+    forests: IdMap<Forest>
   } = {
     actions: {},
     allianceRequests: {},
     armies: {},
     players: {},
     tiles: {},
+    forests: {},
   }
 
   // Other
@@ -132,6 +142,10 @@ class Store {
         collection = this.players
         idMap = this.idMap.players
         break
+      case 'forest':
+        collection = this.forests
+        idMap = this.idMap.forests
+        break
     }
 
     if (!collection || !idMap) throw Error(`Invalid entity name: ${entityName}`)
@@ -176,6 +190,10 @@ class Store {
         collection = this.players
         idMap = this.idMap.players
         break
+      case 'forest':
+        collection = this.forests
+        idMap = this.idMap.forests
+        break
     }
 
     if (!collection || !idMap) throw Error(`Can't remove entity: ${entityName}`)
@@ -209,6 +227,10 @@ class Store {
   getTile(id: string): Tile | null {
     return this.idMap.tiles[id] || null
   }
+  getForest(id: string) {
+    const item = this.getItem('forest', id)
+    return item ? (item as Forest) : null
+  }
 
   // Update
   updateAction(id: string, key: string, value: any) {
@@ -236,6 +258,11 @@ class Store {
     if (!tile) return
     tile.setProp(key, value)
   }
+  updateForest(id: string, key: string, value: Primitive) {
+    const forest = this.getForest(id)
+    if (!forest) return
+    forest.setProp(key, value)
+  }
 
   // Remove
   removeAction(id: string) {
@@ -249,6 +276,9 @@ class Store {
   }
   removePlayer(id: string) {
     this.removeItem('player', id)
+  }
+  removeForest(id: string) {
+    this.removeItem('forest', id)
   }
 
   // Add
@@ -309,6 +339,7 @@ class Store {
       armies: {},
       players: {},
       tiles: {},
+      forests: {},
     }
   }
 }

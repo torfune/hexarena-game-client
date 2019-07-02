@@ -19,7 +19,7 @@ export const TILE_IMAGES = [
   'armyIcon',
   'village',
   'mountain',
-  'forest',
+  'tree',
   'army',
   'arrow',
   'border',

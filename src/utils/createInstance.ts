@@ -4,6 +4,7 @@ import AllianceRequest from '../game/classes/AllianceRequest'
 import Army from '../game/classes/Army'
 import Player from '../game/classes/Player'
 import Tile from '../game/classes/Tile'
+import Forest from '../game/classes/Forest'
 
 interface Data {
   [key: string]: any
@@ -21,15 +22,15 @@ const createInstance = (key: string, data: Data) => {
       return createPlayer(data)
     case 'tiles':
       return createTile(data)
+    case 'forests':
+      return createForest(data)
   }
-
   return null
 }
 
+// Action
 const createAction = (data: Data) => {
   const { id, type, tileId, ownerId } = data
-
-  // Type check
   if (
     typeof id !== 'string' ||
     typeof type !== 'string' ||
@@ -38,33 +39,22 @@ const createAction = (data: Data) => {
   ) {
     return null
   }
-
-  // Action type
   if (
-    type !== 'attack' &&
-    type !== 'cut' &&
-    type !== 'build' &&
-    type !== 'recruit' &&
-    type !== 'upgrade'
+    type !== 'ATTACK' &&
+    type !== 'BUILD' &&
+    type !== 'RECRUIT' &&
+    type !== 'UPGRADE'
   ) {
     return null
   }
-
-  // Find entities
   const tile = store.getTile(tileId)
   const owner = store.getPlayer(ownerId)
-
-  // Non-existing entities
-  if (!tile || !owner) return null
-
-  // Create instance
-  return new Action(id, type, tile, owner)
+  return !tile || !owner ? null : new Action(id, type, tile, owner)
 }
 
+// Alliance Request
 const createAllianceRequest = (data: Data) => {
   const { id, senderId, receiverId } = data
-
-  // Type check
   if (
     typeof id !== 'string' ||
     typeof senderId !== 'string' ||
@@ -72,22 +62,14 @@ const createAllianceRequest = (data: Data) => {
   ) {
     return null
   }
-
-  // Find entities
   const sender = store.getPlayer(senderId)
   const receiver = store.getPlayer(receiverId)
-
-  // Non-existing entities
-  if (!sender || !receiver) return null
-
-  // Create instance
-  return new AllianceRequest(id, sender, receiver)
+  return !sender || !receiver ? null : new AllianceRequest(id, sender, receiver)
 }
 
+// Army
 const createArmy = (data: Data) => {
   const { id, tileId, ownerId } = data
-
-  // Type check
   if (
     typeof id !== 'string' ||
     typeof tileId !== 'string' ||
@@ -95,22 +77,14 @@ const createArmy = (data: Data) => {
   ) {
     return null
   }
-
-  // Find entities
   const tile = store.getTile(tileId)
   const owner = store.getPlayer(ownerId)
-
-  // Non-existing entities
-  if (!tile || !owner) return null
-
-  // Create instance
-  return new Army(id, tile, owner)
+  return !tile || !owner ? null : new Army(id, tile, owner)
 }
 
+// Player
 const createPlayer = (data: Data) => {
   const { id, name, pattern, registered } = data
-
-  // Type check
   if (
     typeof id !== 'string' ||
     typeof name !== 'string' ||
@@ -119,14 +93,12 @@ const createPlayer = (data: Data) => {
   ) {
     return null
   }
-
   return new Player(id, name, pattern, registered)
 }
 
+// Tile
 const createTile = (data: Data) => {
   const { id, x, z, mountain, bedrock } = data
-
-  // Type check
   if (
     typeof id !== 'string' ||
     typeof x !== 'number' ||
@@ -136,9 +108,21 @@ const createTile = (data: Data) => {
   ) {
     return null
   }
-
-  // Create instance
   return new Tile(id, { x, z }, mountain, bedrock)
+}
+
+// Forest
+const createForest = (data: Data) => {
+  const { id, tileId, treeCount } = data
+  if (
+    typeof id !== 'string' ||
+    typeof tileId !== 'string' ||
+    typeof treeCount !== 'number'
+  ) {
+    return null
+  }
+  const tile = store.getTile(tileId)
+  return tile ? new Forest(id, tile, treeCount) : null
 }
 
 export default createInstance
