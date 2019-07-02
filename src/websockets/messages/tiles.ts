@@ -10,8 +10,6 @@ const tiles: GameServerMessage = {
     ownerId: 'string',
     buildingType: 'string',
     buildingHp: 'number',
-    camp: 'bool',
-    forest: 'bool',
     mountain: 'bool',
     village: 'bool',
     bedrock: 'bool',

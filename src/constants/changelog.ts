@@ -1,7 +1,11 @@
 const changelog = [
   {
+    version: 'Alpha 1.31',
+    points: ['Forest rework', 'Balance changes', 'Bug fixes'],
+  },
+  {
     version: 'Alpha 1.30',
-    points: ['Updated artwork.', 'Balance changes', 'Bug fixes.'],
+    points: ['Updated artwork', 'Balance changes', 'Bug fixes'],
   },
   {
     version: 'Alpha 1.29',

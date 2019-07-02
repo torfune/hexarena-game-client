@@ -79,16 +79,6 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
     }
   }
 
-  // Cut
-  if (isOwnedByPlayer && tile.forest && !tile.action) {
-    return {
-      label: 'Sell Wood',
-      iconSrc: '/static/icons/axe.svg',
-      structure,
-      duration: `${CUT_DURATION / 1000}s`,
-    }
-  }
-
   // Heal
   if (
     isOwnedByPlayer &&

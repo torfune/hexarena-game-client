@@ -565,12 +565,12 @@ class Game {
       }
     }
 
-    // Actions (attack, upgrade)
+    // Actions (ATTACK, UPGRADE)
     for (let i = 0; i < store.actions.length; i++) {
       const action = store.actions[i]
 
       if (
-        action.type === 'attack' &&
+        action.type === 'ATTACK' &&
         action.owner.id === playerId &&
         !tilesToCapture.includes(action.tile)
       ) {
@@ -578,7 +578,7 @@ class Game {
         continue
       }
 
-      if (action.type === 'upgrade' && action.owner.id === playerId) {
+      if (action.type === 'UPGRADE' && action.owner.id === playerId) {
         for (let j = 0; j < 6; j++) {
           const n = action.tile.neighbors[j]
           if (n && !tilesToCapture.includes(n) && !n.owner) {
@@ -685,7 +685,7 @@ class Game {
     for (let i = 0; i < store.actions.length; i++) {
       const action = store.actions[i]
 
-      if (action.type !== 'attack' && action.type !== 'upgrade') continue
+      if (action.type !== 'ATTACK' && action.type !== 'UPGRADE') continue
 
       const tilesToCapture = this.getTilesToCapture(
         action.tile,
