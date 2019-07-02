@@ -12,7 +12,9 @@ const getPlayerGroups = (players: Player[]) => {
     for (const group of groups) {
       if (group.players[0].allyId === player.id) {
         group.players.push(player)
-        group.score += player.tilesCount
+        if (player.alive) {
+          group.score += player.tilesCount
+        }
         groupFound = true
       }
     }
@@ -20,7 +22,7 @@ const getPlayerGroups = (players: Player[]) => {
     if (!groupFound) {
       groups.push({
         players: [player],
-        score: player.tilesCount,
+        score: player.alive ? player.tilesCount : 0,
       })
     }
   }

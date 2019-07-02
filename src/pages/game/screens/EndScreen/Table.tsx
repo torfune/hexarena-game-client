@@ -29,6 +29,12 @@ interface NameAndTilesProps {
   opacity: number
 }
 const Player = styled.div`
+  margin-top: 8px;
+
+  :first-child {
+    margin-top: 0;
+  }
+
   p {
     font-weight: 500;
 
@@ -64,7 +70,7 @@ const NameAndTiles = styled.div<NameAndTilesProps>`
 
 const ReasonOfDeath = styled.div`
   p {
-    margin-top: 8px;
+    margin-top: 4px;
     text-align: left;
     font-size: 14px;
     font-style: italic;

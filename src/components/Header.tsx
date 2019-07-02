@@ -159,11 +159,10 @@ const Header = () => {
               <Time>{waitingTime.players || '-'}</Time>
             </div>
           </TimesWrapper>
-          <Link to="/">
-            <CancelButton onClick={cancelQueue}>
-              <img src="/static/icons/cross.svg" />
-            </CancelButton>
-          </Link>
+
+          <CancelButton onClick={cancelQueue}>
+            <img src="/static/icons/cross.svg" />
+          </CancelButton>
         </QueueSection>
       ) : (
         <Description>Multiplayer strategy game</Description>

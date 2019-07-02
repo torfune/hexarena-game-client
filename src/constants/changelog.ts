@@ -1,5 +1,9 @@
 const changelog = [
   {
+    version: 'Alpha 1.30',
+    points: ['Updated artwork.', 'Balance changes', 'Bug fixes.'],
+  },
+  {
     version: 'Alpha 1.29',
     points: [
       "Villages don't spawn anymore.",

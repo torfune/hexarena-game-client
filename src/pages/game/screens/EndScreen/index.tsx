@@ -7,6 +7,7 @@ import { PRIMARY, CHAT_WIDTH } from '../../../../constants/react'
 import getPlayerGroups from '../../../../utils/getPlayerGroups'
 import store from '../../../../store'
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 const Container = styled(animated.div)<{ spectating: boolean }>`
   position: absolute;
@@ -75,7 +76,7 @@ const Heading = styled.p`
   color: #fff;
 `
 
-const ContinueButton = styled.a`
+const ContinueButton = styled.div`
   background: ${PRIMARY};
   border-radius: 4px;
   box-shadow: 0px 4px 16px #00000033;
@@ -108,7 +109,15 @@ const EndScreen = () => {
 
         <Table groups={groups} />
 
-        <ContinueButton href="/game">Continue</ContinueButton>
+        {store.spectating ? (
+          <Link to="/">
+            <ContinueButton>Continue</ContinueButton>
+          </Link>
+        ) : (
+          <a href="/">
+            <ContinueButton>Continue</ContinueButton>
+          </a>
+        )}
 
         <RedSheet left="80px" />
         <RedSheet right="80px" />
