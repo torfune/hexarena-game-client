@@ -7,9 +7,6 @@ import NameInput from './NameInput'
 import getServerHost from '../../utils/getServerHost'
 import { PRIMARY, HOMEPAGE_BREAKPOINT } from '../../constants/react'
 import React from 'react'
-import getBrowserId from '../../utils/getBrowserId'
-import Socket from '../../websockets/Socket'
-import store from '../../store'
 
 const Container = styled.div`
   margin-left: 48px;

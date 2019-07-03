@@ -82,6 +82,10 @@ const PlaySection = () => {
   }
 
   const play = (message: 'playAsGuest' | 'playAsUser', data: string) => {
+    if (Notification.permission === 'default') {
+      Notification.requestPermission()
+    }
+
     Socket.send(message, data)
     store.waitingTime = {
       current: 0,
