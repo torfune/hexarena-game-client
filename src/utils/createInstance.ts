@@ -117,7 +117,8 @@ const createForest = (data: Data) => {
   if (
     typeof id !== 'string' ||
     typeof tileId !== 'string' ||
-    typeof treeCount !== 'number'
+    typeof treeCount !== 'number' ||
+    treeCount === 0
   ) {
     return null
   }

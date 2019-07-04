@@ -12,7 +12,6 @@ const Container = styled.div`
   bottom: 0;
   left: 0;
   min-height: 240px;
-  /* width: 320px; */
   position: absolute;
   user-select: none;
   border-top-right-radius: 8px;
