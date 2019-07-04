@@ -37,7 +37,9 @@ const HoverPreview = () => {
   const { player, hoveredTile, hoveredTileInfo, cursor } = store
 
   useEffect(() => {
-    store.game.updateHoveredTileInfo()
+    if (store._game) {
+      store.game.updateHoveredTileInfo()
+    }
   }, [store.gold])
 
   if (!cursor) return null
