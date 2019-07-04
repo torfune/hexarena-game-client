@@ -183,7 +183,11 @@ class Action {
       case 'ATTACK':
         return 'actionIconAttack'
       case 'RECRUIT':
-        if (this.tile.building && this.tile.building.hp < 2) {
+        if (
+          store.gsConfig &&
+          this.tile.building &&
+          this.tile.building.hp < store.gsConfig.HP[this.tile.building.type]
+        ) {
           return 'actionIconHeal'
         } else {
           return 'actionIconRecruit'

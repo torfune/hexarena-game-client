@@ -570,7 +570,7 @@ class Game {
 
           if (!t) continue
 
-          // Owned Mountain
+          // Enemy Mountain
           if (
             t.mountain &&
             t.owner &&
@@ -615,6 +615,10 @@ class Game {
       for (let j = 0; j < 6; j++) {
         const n = t.neighbors[j]
         if (!n || n.bedrock || tilesToCapture.includes(n)) {
+          continue
+        }
+
+        if (n.owner && (n.mountain || n.building)) {
           continue
         }
 

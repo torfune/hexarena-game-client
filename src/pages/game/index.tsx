@@ -93,6 +93,7 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
                   gameMode === 'TEAMS_6') &&
                   renderDiplomacy(player)}
 
+                <Gold />
                 <HoverPreview />
                 <Leaderboard />
                 <Performance />

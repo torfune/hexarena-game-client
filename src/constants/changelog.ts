@@ -1,5 +1,9 @@
 const changelog = [
   {
+    version: 'Alpha 1.32',
+    points: ['Build tower on forest tile', 'Bug fixes'],
+  },
+  {
     version: 'Alpha 1.31',
     points: ['Forest rework', 'Balance changes', 'Bug fixes'],
   },
