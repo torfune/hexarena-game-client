@@ -10,6 +10,7 @@ import HoverPreview from './game/hud/HoverPreview'
 import EndScreen from './game/screens/EndScreen'
 import GameTime from './game/hud/GameTime'
 import MatchFound from '../components/MatchFound'
+import Economy from './game/hud/Economy'
 
 const Container = styled.div`
   width: calc(100vw - ${CHAT_WIDTH});
@@ -53,6 +54,7 @@ const Spectate: React.FC = () => {
         <GameTime />
         <HoverPreview />
         <Leaderboard />
+        <Economy />
 
         {store.status === 'finished' && <EndScreen />}
       </Container>

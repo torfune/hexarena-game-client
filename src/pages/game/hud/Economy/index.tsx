@@ -1,12 +1,11 @@
 import styled from 'styled-components'
 import { HUD_SCALE } from '../../../../constants/react'
 import { observer } from 'mobx-react-lite'
-import store from '../../../../store'
 import React from 'react'
 import Income from './Income'
 import Gold from './Gold'
 import Chart from './Chart'
-import ChartLegend from './ChartLegend'
+import store from '../../../../store'
 
 const Container = styled.div`
   background: rgba(255, 255, 255, 0.92);
@@ -41,14 +40,15 @@ const ChartSection = styled.div`
 const Economy = observer(() => {
   return (
     <Container>
-      <GoldSection>
-        <Income />
-        <Gold />
-      </GoldSection>
+      {!store.spectating && (
+        <GoldSection>
+          <Income />
+          <Gold />
+        </GoldSection>
+      )}
 
       <ChartSection>
         <Chart />
-        {/* <ChartLegend /> */}
       </ChartSection>
     </Container>
   )
