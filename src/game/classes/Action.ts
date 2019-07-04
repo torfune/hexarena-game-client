@@ -83,6 +83,7 @@ class Action {
 
     this.tile.action = this
     this.update()
+    store.game.updateHoveredTileInfo()
   }
 
   setProp(key: keyof Props, value: Primitive) {

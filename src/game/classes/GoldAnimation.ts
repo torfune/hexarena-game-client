@@ -8,7 +8,7 @@ const SCALE = 0.2
 const SPEED = 0.6
 const OFFSET_X = 48
 const OFFSET_Y = 48
-const MIN_Y = 80
+const MIN_Y = 20
 
 class GoldAnimation {
   coins: Coin[] = []

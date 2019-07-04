@@ -13,7 +13,6 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
     ATTACK_DURATION,
     ATTACK_COST,
     HEAL_DURATION,
-    CUT_DURATION,
     BUILD_DURATION,
     UPGRADE_DURATION,
     RECRUIT_DURATION,
@@ -56,7 +55,7 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
   }
 
   // Attack
-  if (isNeighborToPlayer && !tile.owner /* && !tile.isContested() */) {
+  if (isNeighborToPlayer && !tile.owner && !tile.action) {
     return {
       label: 'Capture Tile',
       iconSrc: '/static/icons/swords.svg',
@@ -68,14 +67,15 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
   }
 
   // Build
-  if (isOwnedByPlayer && tile.isEmpty() && !tile.action) {
+  const tileGold = tile.forest ? tile.forest.trees.length : 0
+  if (isOwnedByPlayer && (tile.isEmpty() || tile.forest) && !tile.action) {
     return {
       label: 'Build Tower',
       iconSrc: '/static/images/tower-icon.png',
       structure,
       duration: `${BUILD_DURATION / 1000}s`,
-      notEnoughGold: store.player.gold < BUILD_COST,
-      goldCost: BUILD_COST,
+      notEnoughGold: store.player.gold < BUILD_COST - tileGold,
+      goldCost: BUILD_COST - tileGold,
     }
   }
 

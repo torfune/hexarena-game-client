@@ -12,6 +12,8 @@ import RunningGame from './types/RunningGame'
 import GameMode from './types/GameMode'
 import Game from './game/classes/Game'
 import Forest from './game/classes/Forest'
+import HoveredTileInfo from './types/HoveredTileInfo'
+import { Pixel } from './types/coordinates'
 
 type EntityName =
   | 'action'
@@ -37,7 +39,6 @@ class Store {
   @observable armies: Army[] = []
   @observable players: Player[] = []
   @observable forests: Forest[] = []
-  @observable timeFromActivity: number = 0
   @observable tiles: Tiles = {}
   @observable hoveredTile: Tile | null = null
   @observable startCountdown: number | null = null
@@ -54,7 +55,8 @@ class Store {
   @observable flash: number = 0
   @observable spawnTile?: Tile
   @observable gameIndex: number | null = null
-  @observable chatFocus: boolean = false
+  @observable cursor: Pixel | null = null
+  @observable hoveredTileInfo: HoveredTileInfo | null = null
   changeHandlers: { [key: string]: () => void } = {}
   idMap: {
     actions: IdMap<Action>
@@ -73,6 +75,7 @@ class Store {
   }
 
   // Other
+  @observable chatFocus: boolean = false
   @observable matchFound: boolean = false
   @observable chatMessage: string = ''
   @observable onlinePlayers: OnlinePlayer[] = []
@@ -102,6 +105,9 @@ class Store {
     }
 
     return null
+  }
+  @computed get gold() {
+    return this.player ? this.player.gold : 0
   }
 
   // Game
@@ -332,7 +338,8 @@ class Store {
     this.startCountdown = null
     this.status = undefined
     this.tiles = {}
-    this.timeFromActivity = 0
+    this.cursor = null
+    this.hoveredTileInfo = null
     this.idMap = {
       actions: {},
       allianceRequests: {},

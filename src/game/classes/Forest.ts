@@ -9,6 +9,7 @@ import shuffle from '../../utils/shuffle'
 import destroyImage from '../functions/destroyImage'
 import store from '../../store'
 import Animation from '../classes/Animation'
+import chance from '../functions/chance'
 
 const TREE_MARGIN_X = 70
 const TREE_MARGIN_Y = 60
@@ -55,7 +56,7 @@ class Forest {
             image.scale.y = fraction
           },
           {
-            speed: 0.03,
+            speed: 0.04,
           }
         )
       }, Math.round(Math.random() * 800))
@@ -92,14 +93,16 @@ class Forest {
     }
   }
   treeFallAnimation(image: Sprite) {
+    const direction = chance(50) ? -1 : 1
+
     new Animation(
       image,
       (image: Sprite, fraction: number) => {
-        image.rotation = (Math.PI / 2) * fraction
+        image.rotation = (Math.PI / 2) * fraction * direction
         image.alpha = 1 - fraction
       },
       {
-        speed: 0.01,
+        speed: 0.02,
         onFinish: (image: Sprite) => {
           destroyImage('tree', image)
         },

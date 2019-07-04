@@ -22,7 +22,6 @@ import getHoveredTileInfo from '../functions/getHoveredTileInfo'
 import getTileByAxial from '../functions/getTileByAxial'
 import Tile from './Tile'
 import { Ticker, Application, Container } from 'pixi.js'
-import showSurrenderButton from '../functions/showSurrenderButton'
 
 class Game {
   scale: number = DEFAULT_SCALE
@@ -42,7 +41,6 @@ class Game {
     cursor: Pixel
   } | null = null
   dragged: boolean = false
-  cursor: Pixel | null = null
   selectedArmyTargetTiles: Tile[][] = []
   tilesWithPatternPreview: Tile[] = []
   predictedActionTile: Tile | null = null
@@ -62,7 +60,6 @@ class Game {
     // Leaving warning
     window.onbeforeunload = () => {
       if (
-        !showSurrenderButton(store.players, store.player) &&
         !store.error &&
         store.player &&
         store.player.alive &&
@@ -129,16 +126,6 @@ class Game {
       this.fpsLastUpdatedAt = now
     }
 
-    // if (
-    //   store.player &&
-    //   store.player.alive &&
-    //   store.gameTime &&
-    //   store.timeFromActivity - store.gameTime > 60
-    // ) {
-    //   this.surrender()
-    //   return
-    // }
-
     if (this.animations.length > 0) {
       // Animations
       for (let i = this.animations.length - 1; i >= 0; i--) {
@@ -151,12 +138,12 @@ class Game {
     }
 
     // Camera
-    if (this.cameraDrag && this.cursor !== null) {
+    if (this.cameraDrag && store.cursor !== null) {
       const { camera, cursor } = this.cameraDrag
 
       this.camera = {
-        x: camera.x - (cursor.x - this.cursor.x),
-        y: camera.y - (cursor.y - this.cursor.y),
+        x: camera.x - (cursor.x - store.cursor.x),
+        y: camera.y - (cursor.y - store.cursor.y),
       }
 
       this.updateStagePosition()
@@ -231,14 +218,12 @@ class Game {
 
       this.updateBlackOverlays()
       this.updateBorders()
-      this.updateHoveredTileInfo()
       this.updatePatternPreviews()
     })
 
     store.onChange('actions', () => {
       this.updatePatternPreviews()
     })
-
     store.onChange('serverTime', () => {
       if (store.serverTime) {
         this.pingArray.push(Date.now() - store.serverTime)
@@ -251,7 +236,6 @@ class Game {
         store.ping = Math.round(sum / this.pingArray.length)
       }
     })
-
     store.onChange('goldAnimation', () => {
       const { goldAnimation } = store
 
@@ -359,7 +343,7 @@ class Game {
     }
   }
   handleMouseDown(event: MouseEvent) {
-    if (store.status !== 'running' || !this.cursor || !this.camera) return
+    if (store.status !== 'running' || !store.cursor || !this.camera) return
 
     const { clientX: x, clientY: y, button } = event
     const { hoveredTile } = store
@@ -397,15 +381,15 @@ class Game {
     }
   }
   handleMouseUp(event: MouseEvent) {
-    if (!this.cursor) return
+    if (!store.cursor) return
 
     const { hoveredTile, playerId } = store
 
     let cursorDelta: number | null = null
     if (this.cameraDrag) {
       cursorDelta =
-        Math.abs(this.cursor.x - this.cameraDrag.cursor.x) +
-        Math.abs(this.cursor.y - this.cameraDrag.cursor.y)
+        Math.abs(store.cursor.x - this.cameraDrag.cursor.x) +
+        Math.abs(store.cursor.y - this.cameraDrag.cursor.y)
       this.cameraDrag = null
     }
 
@@ -483,13 +467,11 @@ class Game {
     }
   }
   handleMouseMove({ clientX: x, clientY: y }: MouseEvent) {
-    store.timeFromActivity = store.gameTime ? store.gameTime : 0
-
-    this.cursor = { x, y }
+    store.cursor = { x, y }
 
     if (this.cameraDrag) {
-      const cursorDeltaX = Math.abs(this.cursor.x - this.cameraDrag.cursor.x)
-      const cursorDeltaY = Math.abs(this.cursor.y - this.cameraDrag.cursor.y)
+      const cursorDeltaX = Math.abs(store.cursor.x - this.cameraDrag.cursor.x)
+      const cursorDeltaY = Math.abs(store.cursor.y - this.cameraDrag.cursor.y)
       if (cursorDeltaX + cursorDeltaY > 32) {
         this.dragged = true
       }
@@ -504,35 +486,18 @@ class Game {
   handleContextMenu(event: Event) {
     event.preventDefault()
   }
-  updateHoveredTileInfo() {
-    if (!store.hoveredTile) return false
-
-    const hoveredTileInfo = getHoveredTileInfo(store.hoveredTile)
-    return !!hoveredTileInfo
-  }
   updateBorders() {
     const keys = Object.keys(store.idMap.tiles)
     for (let i = keys.length - 1; i >= 0; i--) {
       store.idMap.tiles[keys[i]].updateBorders()
     }
   }
-  updateContested() {
-    // if (!store.tiles) return
-    // for (let i = 0; i < store.tiles.length; i++) {
-    //   const t = store.tiles[i]
-    //   if (t === store.hoveredTile && t.isContested() && !t.owner) {
-    //     t.addContested()
-    //   } else {
-    //     t.removeContested()
-    //   }
-    // }
-  }
   getHoveredTile() {
-    if (!this.cursor || !this.camera) return
+    if (!store.cursor || !this.camera) return
 
     const pixel = {
-      x: this.cursor.x - this.camera.x,
-      y: this.cursor.y - this.camera.y,
+      x: store.cursor.x - this.camera.x,
+      y: store.cursor.y - this.camera.y,
     }
 
     const axial = pixelToAxial(pixel)
@@ -809,26 +774,20 @@ class Game {
   }
   updateHoveredTile() {
     const newHoveredTile = this.getHoveredTile()
+    let changed = false
 
     // existing -> non-existing
     if (store.hoveredTile && !newHoveredTile) {
       store.hoveredTile.endHover()
       store.hoveredTile = null
+      changed = true
     }
 
     // non-existing -> existing
     if (!store.hoveredTile && newHoveredTile) {
       store.hoveredTile = newHoveredTile
       newHoveredTile.startHover()
-
-      this.updatePatternPreviews()
-
-      if (this.selectedArmyTile) {
-        this.updateArmyTileHighlights()
-      } else {
-        this.updateHoveredTileInfo()
-        this.updateContested()
-      }
+      changed = true
     }
 
     // existing[A] -> existing[B]
@@ -840,16 +799,22 @@ class Game {
       store.hoveredTile.endHover()
       store.hoveredTile = newHoveredTile
       store.hoveredTile.startHover()
+      changed = true
+    }
 
+    if (changed) {
       this.updatePatternPreviews()
+      this.updateHoveredTileInfo()
 
       if (this.selectedArmyTile) {
         this.updateArmyTileHighlights()
-      } else {
-        this.updateHoveredTileInfo()
-        this.updateContested()
       }
     }
+  }
+  updateHoveredTileInfo() {
+    store.hoveredTileInfo = store.hoveredTile
+      ? getHoveredTileInfo(store.hoveredTile)
+      : null
   }
   updateArmyTileHighlights() {
     const { gsConfig } = store

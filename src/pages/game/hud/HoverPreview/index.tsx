@@ -33,34 +33,14 @@ const Container = styled.div.attrs<ContainerProps>(({ cursor }) => ({
   ${ContainerCSS}
 `
 
-const HoveredTileinfo = () => {
-  const { hoveredTile, player } = store
-  const [cursor, setCursor] = useState({ x: 0, y: 0 })
-  const [
-    hoveredTileInfo,
-    setHoveredTileInfo,
-  ] = useState<HoveredTileInfo | null>(null)
-
-  const handleMouseMove = ({ clientX, clientY }: MouseEvent) => {
-    setCursor({ x: clientX + 12, y: clientY + 12 })
-  }
+const HoverPreview = () => {
+  const { player, hoveredTile, hoveredTileInfo, cursor } = store
 
   useEffect(() => {
-    document.addEventListener('mousemove', handleMouseMove)
+    store.game.updateHoveredTileInfo()
+  }, [store.gold])
 
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (hoveredTile) {
-      const tileInfo = getHoveredTileInfo(hoveredTile)
-      setHoveredTileInfo(tileInfo)
-    } else {
-      setHoveredTileInfo(null)
-    }
-  }, [hoveredTile])
+  if (!cursor) return null
 
   if (
     hoveredTile &&
@@ -87,4 +67,4 @@ const HoveredTileinfo = () => {
   )
 }
 
-export default observer(HoveredTileinfo)
+export default observer(HoverPreview)

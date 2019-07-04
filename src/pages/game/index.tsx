@@ -95,7 +95,6 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
 
                 <HoverPreview />
                 <Leaderboard />
-                <Gold />
                 <Performance />
               </>
             )}
