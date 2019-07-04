@@ -5,13 +5,13 @@ import store from '../../../store'
 
 const Container = styled.div`
   background: rgba(255, 255, 255, 0.92);
-  bottom: 0;
+  top: 0;
   left: 0;
   width: 280px;
   position: absolute;
   user-select: none;
-  border-top-right-radius: 8px;
-  border-top: 1px solid #ddd;
+  border-bottom-right-radius: 8px;
+  border-bottom: 1px solid #ddd;
   border-right: 1px solid #ddd;
   overflow: hidden;
   padding-top: 16px;

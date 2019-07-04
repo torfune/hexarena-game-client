@@ -11,6 +11,7 @@ const players: GameServerMessage = {
     allyId: 'string',
     tilesCount: 'number',
     gold: 'number',
+    economy: 'number',
     villages: 'number',
     alive: 'bool',
     registered: 'bool',

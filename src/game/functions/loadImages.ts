@@ -23,7 +23,6 @@ const loadImages = () => {
       .add('border', `${images}/border.png?${version}`)
       .add('castle', `${images}/castle.png?${version}`)
       .add('castle-icon', `${images}/castle-icon.png?${version}`)
-      .add('contested', `${images}/contested.png?${version}`)
       .add('fog', `${images}/fog.png?${version}`)
       .add('tree', `${images}/tree.png?${version}`)
       .add('gold', `${images}/gold.png?${version}`)

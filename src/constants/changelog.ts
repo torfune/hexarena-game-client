@@ -1,7 +1,12 @@
 const changelog = [
   {
     version: 'Alpha 1.32',
-    points: ['Build tower on forest tile', 'Bug fixes'],
+    points: [
+      'Economy HUD',
+      'Build tower on forest tile',
+      'Balance changes',
+      'Bug fixes',
+    ],
   },
   {
     version: 'Alpha 1.31',

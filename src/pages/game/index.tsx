@@ -20,6 +20,7 @@ import Ally from './hud/Ally'
 import Lobby from './screens/Lobby'
 import Player from '../../game/classes/Player'
 import Surrender from './hud/Surrender'
+import Economy from './hud/Economy'
 
 const Container = styled.div`
   width: 100vw;
@@ -93,24 +94,16 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
                   gameMode === 'TEAMS_6') &&
                   renderDiplomacy(player)}
 
-                <Gold />
                 <HoverPreview />
                 <Leaderboard />
+                <Economy />
                 <Performance />
               </>
             )}
 
             <Surrender />
 
-            {!player.alive &&
-              (spectating ? (
-                <>
-                  <SpectateCloseButton />
-                  <Leaderboard />
-                </>
-              ) : (
-                <DefeatModal />
-              ))}
+            {!player.alive && <DefeatModal />}
           </HudContainer>
         )}
 

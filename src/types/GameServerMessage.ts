@@ -2,6 +2,7 @@ interface GameServerMessage {
   isArray?: boolean
   instance?: boolean
   autoDestroy?: boolean
+  allowNull?: boolean
   type:
     | string
     | {

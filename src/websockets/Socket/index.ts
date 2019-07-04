@@ -64,7 +64,7 @@ class Socket {
     const parsed = parse(payload, config)
 
     // Null value
-    if (parsed === null && key !== 'startCountdown') {
+    if (parsed === null && !config.allowNull) {
       throw Error(`Cannot parse: ${key}`)
     }
 
@@ -284,6 +284,9 @@ const setStoreValue = (key: string, value: any) => {
       break
     case 'matchFound':
       store.matchFound = value
+      break
+    case 'nextIncomeAt':
+      store.nextIncomeAt = value
       break
     case 'goldAnimation':
       if (typeof value !== 'object') {

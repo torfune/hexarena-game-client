@@ -42,6 +42,7 @@ class Store {
   @observable tiles: Tiles = {}
   @observable hoveredTile: Tile | null = null
   @observable startCountdown: number | null = null
+  @observable nextIncomeAt: number | null = null
   @observable showHud: boolean = true
   @observable fps: number = 0
   @observable ping: number = 0
@@ -108,6 +109,13 @@ class Store {
   }
   @computed get gold() {
     return this.player ? this.player.gold : 0
+  }
+  @computed get economySum() {
+    let sum = 0
+    for (let i = 0; i < this.players.length; i++) {
+      sum += this.players[i].economy
+    }
+    return sum
   }
 
   // Game
@@ -323,6 +331,7 @@ class Store {
     this.changeHandlers = {}
     this.flash = 0
     this.fps = 0
+    this.nextIncomeAt = null
     this.gameIndex = null
     this.gameMode = undefined
     this.gameTime = undefined
