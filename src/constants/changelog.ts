@@ -1,5 +1,9 @@
 const changelog = [
   {
+    version: 'Alpha 1.33',
+    points: ['Village rework', 'Balance changes', 'Bug fixes'],
+  },
+  {
     version: 'Alpha 1.32',
     points: [
       'Economy HUD',
