@@ -20,7 +20,7 @@ const BarWrapper = styled.div`
 `
 
 const BarFill = styled.div<{ percentage: number }>`
-  transition: 100ms;
+  transition: ${props => (props.percentage ? '100ms' : 0)};
   width: ${props => props.percentage}%;
   height: 20px;
   background: #333;
