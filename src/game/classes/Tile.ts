@@ -30,6 +30,7 @@ import axialInDirection from '../../utils/axialInDirection'
 import getTileByAxial from '../functions/getTileByAxial'
 import BuildingType from '../../types/BuildingType'
 import Forest from './Forest'
+import Village from './Village'
 
 const loader = Loader.shared
 
@@ -37,18 +38,14 @@ interface Props {
   [key: string]: Prop<Primitive>
   buildingHp: Prop<number | null>
   buildingType: Prop<BuildingType | null>
-  camp: Prop<boolean>
   ownerId: Prop<string | null>
-  village: Prop<boolean>
 }
 
 class Tile {
   props: Props = {
     buildingHp: createProp(null),
     buildingType: createProp(null),
-    camp: createProp(false),
     ownerId: createProp(null),
-    village: createProp(false),
   }
 
   readonly id: string
@@ -56,6 +53,7 @@ class Tile {
   readonly bedrock: boolean
   readonly mountain: boolean
   forest: Forest | null = null
+  village: Village | null = null
   action: Action | null = null
   owner: Player | null = null
   army: Army | null = null
@@ -87,11 +85,6 @@ class Tile {
     this.props[key].current = value
 
     switch (key) {
-      case 'village':
-      case 'forest':
-        this.updateImage(key)
-        break
-
       case 'ownerId':
         this.updateOwner()
         break
@@ -703,13 +696,7 @@ class Tile {
     return store.hoveredTile && store.hoveredTile.id === this.id
   }
   isEmpty() {
-    return (
-      !this.building &&
-      !this.forest &&
-      !this.camp &&
-      !this.village &&
-      !this.mountain
-    )
+    return !this.building && !this.forest && !this.village && !this.mountain
   }
   addPatternPreview(pattern: string) {
     if (this.image.pattern) {
@@ -748,10 +735,8 @@ class Tile {
       } else if (this.building.type === 'BASE') {
         return 'Base'
       }
-    } else if (this.camp) {
-      return 'Camp'
     } else if (this.village) {
-      return 'Village'
+      return `Village (${this.village.houseCount})`
     }
 
     return 'Plains'
@@ -765,7 +750,6 @@ class Tile {
       !this.owner ||
       this.owner.id !== store.player.id ||
       this.mountain ||
-      this.village ||
       store.game.selectedArmyTile ||
       this.action
     ) {
@@ -791,14 +775,8 @@ class Tile {
   }
 
   // Prop getters
-  get camp() {
-    return this.props.camp.current
-  }
   get ownerId() {
     return this.props.ownerId.current
-  }
-  get village() {
-    return this.props.village.current
   }
   get building() {
     const type = this.props.buildingType.current

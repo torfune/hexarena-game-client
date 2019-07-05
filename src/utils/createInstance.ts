@@ -5,6 +5,7 @@ import Army from '../game/classes/Army'
 import Player from '../game/classes/Player'
 import Tile from '../game/classes/Tile'
 import Forest from '../game/classes/Forest'
+import Village from '../game/classes/Village'
 
 interface Data {
   [key: string]: any
@@ -24,6 +25,8 @@ const createInstance = (key: string, data: Data) => {
       return createTile(data)
     case 'forests':
       return createForest(data)
+    case 'villages':
+      return createVillage(data)
   }
   return null
 }
@@ -124,6 +127,21 @@ const createForest = (data: Data) => {
   }
   const tile = store.getTile(tileId)
   return tile ? new Forest(id, tile, treeCount) : null
+}
+
+// Village
+const createVillage = (data: Data) => {
+  const { id, tileId, houseCount } = data
+  if (
+    typeof id !== 'string' ||
+    typeof tileId !== 'string' ||
+    typeof houseCount !== 'number' ||
+    houseCount === 0
+  ) {
+    return null
+  }
+  const tile = store.getTile(tileId)
+  return tile ? new Village(id, tile, houseCount) : null
 }
 
 export default createInstance

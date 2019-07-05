@@ -12,7 +12,7 @@ const players: GameServerMessage = {
     tilesCount: 'number',
     gold: 'number',
     economy: 'number',
-    villages: 'number',
+    houses: 'number',
     alive: 'bool',
     registered: 'bool',
     killerName: 'string',

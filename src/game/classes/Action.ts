@@ -21,7 +21,6 @@ interface Image {
   fill: Graphics
   icon: Sprite
   iconBackground: Sprite
-  cancelIcon: Sprite
 }
 
 interface Props {
@@ -50,7 +49,6 @@ class Action {
     fill: new Graphics(),
     icon: createImage('actionIcon', 'actionIconEmpty'),
     iconBackground: createImage('actionIconBackground', 'actionIconEmpty'),
-    cancelIcon: createImage('actionIcon', 'actionIconCancel'),
   }
 
   constructor(id: string, type: ActionType, tile: Tile, owner: Player) {
@@ -58,8 +56,6 @@ class Action {
     this.type = type
     this.tile = tile
     this.owner = owner
-
-    this.image.cancelIcon.visible = false
 
     if (type === 'UPGRADE' || type === 'BUILD') {
       this.image.icon.alpha = 0.85
@@ -141,8 +137,6 @@ class Action {
     this.image.icon.y = pixel.y
     this.image.iconBackground.x = pixel.x
     this.image.iconBackground.y = pixel.y
-    this.image.cancelIcon.x = pixel.x
-    this.image.cancelIcon.y = pixel.y
 
     if (store.hoveredTile !== this.tile) {
       this.mouseLeft = true
@@ -176,7 +170,6 @@ class Action {
     store.game.stage.actionFill.removeChild(this.image.fill)
     store.game.stage.actionIcon.removeChild(this.image.icon)
     store.game.stage.actionIconBackground.removeChild(this.image.iconBackground)
-    store.game.stage.actionIcon.removeChild(this.image.cancelIcon)
   }
   getTexture() {
     switch (this.type) {

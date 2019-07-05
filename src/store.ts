@@ -14,6 +14,7 @@ import Game from './game/classes/Game'
 import Forest from './game/classes/Forest'
 import HoveredTileInfo from './types/HoveredTileInfo'
 import { Pixel } from './types/coordinates'
+import Village from './game/classes/Village'
 
 type EntityName =
   | 'action'
@@ -39,6 +40,7 @@ class Store {
   @observable armies: Army[] = []
   @observable players: Player[] = []
   @observable forests: Forest[] = []
+  @observable villages: Village[] = []
   @observable tiles: Tiles = {}
   @observable hoveredTile: Tile | null = null
   @observable startCountdown: number | null = null
@@ -66,6 +68,7 @@ class Store {
     players: IdMap<Player>
     tiles: IdMap<Tile>
     forests: IdMap<Forest>
+    villages: IdMap<Village>
   } = {
     actions: {},
     allianceRequests: {},
@@ -73,6 +76,7 @@ class Store {
     players: {},
     tiles: {},
     forests: {},
+    villages: {},
   }
 
   // Other
@@ -245,6 +249,21 @@ class Store {
     const item = this.getItem('forest', id)
     return item ? (item as Forest) : null
   }
+  getVillage(id: string) {
+    if (!this.idMap.villages[id]) {
+      let item = null
+      for (let i = 0; i < this.villages.length; i++) {
+        if (this.villages[i].id === id) {
+          item = this.villages[i]
+          break
+        }
+      }
+      if (item) {
+        this.idMap.villages[id] = item
+      }
+    }
+    return this.idMap.villages[id]
+  }
 
   // Update
   updateAction(id: string, key: string, value: any) {
@@ -277,6 +296,11 @@ class Store {
     if (!forest) return
     forest.setProp(key, value)
   }
+  updateVillage(id: string, key: string, value: Primitive) {
+    const village = this.getVillage(id)
+    if (!village) return
+    village.setProp(key, value)
+  }
 
   // Remove
   removeAction(id: string) {
@@ -293,6 +317,15 @@ class Store {
   }
   removeForest(id: string) {
     this.removeItem('forest', id)
+  }
+  removeVillage(id: string) {
+    for (let i = 0; i < this.villages.length; i++) {
+      if (this.villages[i].id === id) {
+        this.villages.splice(i, 1)
+        delete this.idMap.villages[id]
+        return
+      }
+    }
   }
 
   // Add
@@ -328,6 +361,8 @@ class Store {
     this.actions = []
     this.allianceRequests = []
     this.armies = []
+    this.forests = []
+    this.villages = []
     this.changeHandlers = {}
     this.flash = 0
     this.fps = 0
@@ -356,6 +391,7 @@ class Store {
       players: {},
       tiles: {},
       forests: {},
+      villages: {},
     }
   }
 }

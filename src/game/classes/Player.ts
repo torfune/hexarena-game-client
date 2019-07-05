@@ -12,7 +12,7 @@ interface Props {
   tilesCount: Prop<number>
   gold: Prop<number>
   economy: Prop<number>
-  villages: Prop<number>
+  houses: Prop<number>
   alive: Prop<boolean>
 }
 
@@ -23,7 +23,7 @@ class Player {
     tilesCount: createProp(0),
     gold: createProp(0),
     economy: createProp(0),
-    villages: createProp(0),
+    houses: createProp(0),
     alive: createProp(true),
     killerName: createProp(''),
   }
@@ -81,8 +81,8 @@ class Player {
   @computed get economy() {
     return this.props.economy.current
   }
-  @computed get villages() {
-    return this.props.villages.current
+  @computed get houses() {
+    return this.props.houses.current
   }
   @computed get alive() {
     return this.props.alive.current

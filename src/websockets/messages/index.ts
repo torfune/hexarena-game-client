@@ -20,6 +20,7 @@ import serverTime from './serverTime'
 import startCountdown from './startCountdown'
 import status from './status'
 import tiles from './tiles'
+import villages from './villages'
 import waitingTime from './waitingTime'
 
 const messages: {
@@ -46,6 +47,7 @@ const messages: {
   startCountdown,
   status,
   tiles,
+  villages,
   waitingTime,
 }
 

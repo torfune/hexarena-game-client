@@ -11,7 +11,6 @@ const tiles: GameServerMessage = {
     buildingType: 'string',
     buildingHp: 'number',
     mountain: 'bool',
-    village: 'bool',
     bedrock: 'bool',
   },
 }

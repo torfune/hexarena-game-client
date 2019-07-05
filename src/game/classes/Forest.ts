@@ -49,11 +49,13 @@ class Forest {
       image.y = pixel.y + treePosition[i].y
       image.anchor.set(0.5, 1)
       image.scale.y = 0
+      image.scale.x = 0
       setTimeout(() => {
         new Animation(
           image,
           (image: Sprite, fraction: number) => {
             image.scale.y = fraction
+            image.scale.x = fraction
           },
           {
             speed: 0.04,

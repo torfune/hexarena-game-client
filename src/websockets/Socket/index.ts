@@ -9,6 +9,7 @@ import Tile from '../../game/classes/Tile'
 import createInstance from '../../utils/createInstance'
 import parseRunningGames from '../../utils/parseRunningGames'
 import Forest from '../../game/classes/Forest'
+import Village from '../../game/classes/Village'
 
 class Socket {
   static connected: boolean = false
@@ -92,7 +93,16 @@ class Socket {
       const keys = Object.keys(fields)
       const id = fields.id
 
-      let item: Army | AllianceRequest | Action | Player | Tile | Forest | null
+      let item:
+        | Army
+        | AllianceRequest
+        | Action
+        | Player
+        | Tile
+        | Forest
+        | Village
+        | null
+
       switch (key) {
         case 'actions':
           item = store.getAction(id)
@@ -111,6 +121,9 @@ class Socket {
           break
         case 'forests':
           item = store.getForest(id)
+          break
+        case 'villages':
+          item = store.getVillage(id)
           break
         default:
           throw new Error(`Cannot parse: ${key}`)
@@ -166,6 +179,11 @@ class Socket {
               store.forests.push(item)
             }
             break
+          case 'villages':
+            if (item instanceof Village) {
+              store.villages.push(item)
+            }
+            break
         }
       }
 
@@ -195,6 +213,9 @@ class Socket {
             break
           case 'forests':
             store.updateForest(id, prop, value)
+            break
+          case 'villages':
+            store.updateVillage(id, prop, value)
             break
         }
       }
