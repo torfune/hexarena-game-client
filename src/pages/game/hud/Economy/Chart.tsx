@@ -8,20 +8,9 @@ import store from '../../../../store'
 
 const Container = styled.div``
 
-const PieWrapper = styled.div`
+const ChartWrapper = styled.div`
   margin-top: 16px;
 `
-
-const DATA: ChartData = {
-  labels: ['rakec', 'META', 'Mate J'],
-  datasets: [
-    {
-      data: [16, 12, 8],
-      backgroundColor: ['#A3CB38', '#fa983a', '#ff6b6b'],
-      borderWidth: 4,
-    },
-  ],
-}
 
 const OPTIONS: ChartOptions = {
   legend: {
@@ -45,7 +34,7 @@ const Chart = () => {
       labels: store.players.map(p => p.name),
       datasets: [
         {
-          data: store.players.map(p => p.economy),
+          data: store.players.map(p => p.houses),
           backgroundColor: store.players.map(p => p.pattern),
           borderWidth: 4,
         },
@@ -53,27 +42,7 @@ const Chart = () => {
     }
 
     setData(data)
-
-    // const economies: number[] = []
-
-    // for (let i = 0; i < store.players.length; i++) {
-    //   const { economy } = store.players[i]
-    //   economies.push(economy)
-    // }
-
-    // console.log(economies)
-  }, [store.economySum])
-
-  // const data: ChartData = {
-  //   labels: ['rakec', 'META', 'Mate J'],
-  //   datasets: [
-  //     {
-  //       data: [16, 12, 8],
-  //       backgroundColor: ['#A3CB38', '#fa983a', '#ff6b6b'],
-  //       borderWidth: 4,
-  //     },
-  //   ],
-  // }
+  }, [store.economy])
 
   if (!data) return null
 
@@ -81,9 +50,9 @@ const Chart = () => {
     <Container>
       <Label>Economy overview</Label>
 
-      <PieWrapper>
+      <ChartWrapper>
         <Doughnut data={data} options={OPTIONS} height={140} width={300} />
-      </PieWrapper>
+      </ChartWrapper>
     </Container>
   )
 }

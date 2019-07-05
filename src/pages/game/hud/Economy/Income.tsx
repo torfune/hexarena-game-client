@@ -10,20 +10,17 @@ const Container = styled.div`
 `
 
 const BarWrapper = styled.div`
-  border-left: 4px solid #000;
-  border-right: 4px solid #000;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  padding: 0 12px;
+  height: 36px;
   margin-top: 12px;
+  background: #ddd;
+  border-radius: 4px;
+  overflow: hidden;
 `
 
 const BarFill = styled.div<{ percentage: number }>`
-  transition: ${props => (props.percentage ? '100ms' : 0)};
   width: ${props => props.percentage}%;
-  height: 20px;
-  background: #333;
+  height: 100%;
+  background: #444;
 `
 
 let interval: NodeJS.Timeout | null = null
@@ -35,7 +32,7 @@ const Income = () => {
   incomeStartedAtRef.current = incomeStartedAt
 
   useEffect(() => {
-    interval = setInterval(update, 50)
+    interval = setInterval(update, 16)
     return () => {
       if (interval) {
         clearInterval(interval)

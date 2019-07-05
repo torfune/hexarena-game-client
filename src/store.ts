@@ -114,12 +114,12 @@ class Store {
   @computed get gold() {
     return this.player ? this.player.gold : 0
   }
-  @computed get economySum() {
-    let sum = 0
+  @computed get economy() {
+    let economy = 0
     for (let i = 0; i < this.players.length; i++) {
-      sum += this.players[i].economy
+      economy += this.players[i].houses
     }
-    return sum
+    return economy
   }
 
   // Game
