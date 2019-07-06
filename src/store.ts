@@ -44,7 +44,9 @@ class Store {
   @observable tiles: Tiles = {}
   @observable hoveredTile: Tile | null = null
   @observable startCountdown: number | null = null
-  @observable nextIncomeAt: number | null = null
+  @observable incomeAt: number | null = null
+  @observable lastIncomeAt: number | null = null
+  @observable incomeStartedAt: number | null = null
   @observable showHud: boolean = true
   @observable fps: number = 0
   @observable ping: number = 0
@@ -366,7 +368,7 @@ class Store {
     this.changeHandlers = {}
     this.flash = 0
     this.fps = 0
-    this.nextIncomeAt = null
+    this.incomeAt = null
     this.gameIndex = null
     this.gameMode = undefined
     this.gameTime = undefined

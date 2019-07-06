@@ -1,8 +1,8 @@
 import GameServerMessage from '../../types/GameServerMessage'
 
-const nextIncomeAt: GameServerMessage = {
+const lastIncomeAt: GameServerMessage = {
   type: 'number',
   allowNull: true,
 }
 
-export default nextIncomeAt
+export default lastIncomeAt

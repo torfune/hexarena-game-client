@@ -306,8 +306,11 @@ const setStoreValue = (key: string, value: any) => {
     case 'matchFound':
       store.matchFound = value
       break
-    case 'nextIncomeAt':
-      store.nextIncomeAt = value
+    case 'incomeAt':
+      store.incomeAt = value
+      break
+    case 'lastIncomeAt':
+      store.lastIncomeAt = value
       break
     case 'goldAnimation':
       if (typeof value !== 'object') {

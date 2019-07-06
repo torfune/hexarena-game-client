@@ -11,7 +11,8 @@ import GameServerMessage from '../../types/GameServerMessage'
 import gameTime from './gameTime'
 import goldAnimation from './goldAnimation'
 import matchFound from './matchFound'
-import nextIncomeAt from './nextIncomeAt'
+import incomeAt from './incomeAt'
+import lastIncomeAt from './lastIncomeAt'
 import notification from './notification'
 import onlinePlayers from './onlinePlayers'
 import playerId from './playerId'
@@ -38,9 +39,10 @@ const messages: {
   gameTime,
   goldAnimation,
   matchFound,
-  nextIncomeAt,
+  incomeAt,
   notification,
   onlinePlayers,
+  lastIncomeAt,
   playerId,
   players,
   serverTime,

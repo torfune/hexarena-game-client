@@ -199,6 +199,9 @@ class Game {
 
     // Hovered tile
     this.updateHoveredTile()
+
+    // Income bar
+    this.updateIncomeBar()
   }
   spectate() {
     if (store.gameIndex === null) return
@@ -918,6 +921,37 @@ class Game {
       return roundedScale
     }
     return this.scale
+  }
+  updateIncomeBar() {
+    const BAR_WIDTH = 200
+    const BAR_HEIGHT = 36
+
+    const { ping, incomeAt, incomeStartedAt } = store
+    const element = document.getElementById('income-bar-fill')
+    const canvas = element as HTMLCanvasElement
+    const ctx = canvas.getContext('2d')
+
+    if (!incomeAt || !incomeStartedAt || !ctx) return
+
+    ctx.canvas.width = BAR_WIDTH
+    ctx.canvas.height = BAR_HEIGHT
+
+    ctx.clearRect(0, 0, BAR_WIDTH, BAR_HEIGHT)
+
+    const now = Date.now() + ping
+    const total = incomeAt - incomeStartedAt
+    const onePercent = total / 100
+    const current = now - incomeStartedAt
+
+    let fraction = roundToDecimals(current / onePercent / 100, 2)
+    if (fraction < 0) {
+      fraction = 0
+    } else if (fraction > 1) {
+      fraction = 1
+    }
+
+    ctx.fillStyle = '#333'
+    ctx.fillRect(0, 0, BAR_WIDTH * fraction, BAR_HEIGHT)
   }
 }
 
