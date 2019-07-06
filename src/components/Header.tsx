@@ -1,11 +1,12 @@
 import styled from 'styled-components'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { version } from '../../package.json'
 import { Link } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import store from '../store'
 import formatTime from '../utils/formatTime'
 import Socket from '../websockets/Socket'
+import RunningGame from '../types/RunningGame.js'
 
 const Container = styled.div`
   width: 100vw;
@@ -50,7 +51,7 @@ const LeftSection = styled.div`
   align-items: center;
 `
 
-const CancelButton = styled.div`
+const NavigationButton = styled.div`
   background: #444;
   border-radius: 4px;
   padding: 10px;
@@ -117,11 +118,33 @@ const Label = styled.p`
 const Header = () => {
   const { spectating, waitingTime } = store
 
+  // const [spectatingGame, setSpectatingGame] = useState<RunningGame | null>(null)
+
   const cancelQueue = () => {
     Socket.send('cancelQueue')
     store.waitingTime = null
     store.onlinePlayers = []
   }
+
+  let currentGameIndex = null
+  let nextGameIndex = null
+
+  const currentGame = (g: any) => {
+    return Number(g.id) === store.gameIndex
+  }
+
+  currentGameIndex = store.runningGames.findIndex(currentGame)
+
+  if (
+    currentGameIndex > -1 &&
+    currentGameIndex < store.runningGames.length - 1
+  ) {
+    nextGameIndex = store.runningGames[currentGameIndex + 1].id
+  } else if (currentGameIndex > -1) {
+    nextGameIndex = store.runningGames[0].id
+  }
+
+  console.log(store.gameIndex)
 
   return (
     <Container>
@@ -135,10 +158,17 @@ const Header = () => {
             <img src="/static/icons/spectate.svg" />
             <p>Spectating Game #{store.gameIndex}</p>
             <Link to="/">
-              <CancelButton>
+              <NavigationButton>
                 <img src="/static/icons/cross.svg" />
-              </CancelButton>
+              </NavigationButton>
             </Link>
+            {nextGameIndex !== null && (
+              <Link to={`/spectate?gameIndex=${nextGameIndex}`}>
+                <NavigationButton>
+                  <img src="/static/icons/cross.svg" />
+                </NavigationButton>
+              </Link>
+            )}
           </SpectateSection>
         )}
       </LeftSection>
@@ -160,9 +190,9 @@ const Header = () => {
             </div>
           </TimesWrapper>
 
-          <CancelButton onClick={cancelQueue}>
+          <NavigationButton onClick={cancelQueue}>
             <img src="/static/icons/cross.svg" />
-          </CancelButton>
+          </NavigationButton>
         </QueueSection>
       ) : (
         <Description>Multiplayer strategy game</Description>

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { BOX_SHADOW, PRIMARY } from '../../constants/react'
+import { PRIMARY } from '../../constants/react'
 import shadeColor from '../../utils/shade'
 
 const PlayButton = styled.a`
