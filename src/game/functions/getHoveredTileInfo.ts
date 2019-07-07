@@ -12,7 +12,6 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
     UPGRADE_COST,
     ATTACK_DURATION,
     ATTACK_COST,
-    HEAL_DURATION,
     BUILD_DURATION,
     UPGRADE_DURATION,
     RECRUIT_DURATION,
@@ -90,7 +89,7 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
     return {
       label: 'Repair Building',
       structure,
-      duration: `${HEAL_DURATION / 1000}s`,
+      duration: `${RECRUIT_DURATION / 1000}s`,
       notEnoughGold: store.player.gold < RECRUIT_COST,
       goldCost: RECRUIT_COST,
     }

@@ -1,5 +1,14 @@
 const changelog = [
   {
+    version: 'Alpha 1.34',
+    points: [
+      'Forests are no longer generating gold.',
+      'Army stops after capturing forest tile.',
+      'UI improvements.',
+      'Balance changes.',
+    ],
+  },
+  {
     version: 'Alpha 1.33',
     points: ['Village rework', 'Balance changes', 'Bug fixes'],
   },
