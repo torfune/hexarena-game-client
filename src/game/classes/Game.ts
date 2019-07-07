@@ -928,7 +928,10 @@ class Game {
 
     const { ping, incomeAt, incomeStartedAt } = store
     const element = document.getElementById('income-bar-fill')
-    const canvas = element as HTMLCanvasElement
+    const canvas = element as HTMLCanvasElement | null
+
+    if (!canvas) return
+
     const ctx = canvas.getContext('2d')
 
     if (!incomeAt || !incomeStartedAt || !ctx) return
