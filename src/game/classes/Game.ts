@@ -938,7 +938,7 @@ class Game {
 
     ctx.clearRect(0, 0, BAR_WIDTH, BAR_HEIGHT)
 
-    const now = Date.now() + ping
+    const now = Date.now() //- ping
     const total = incomeAt - incomeStartedAt
     const onePercent = total / 100
     const current = now - incomeStartedAt

@@ -20,7 +20,7 @@ const IncomeBar = styled.canvas`
 
 const Income = () => {
   useEffect(() => {
-    store.incomeStartedAt = Date.now()
+    store.incomeStartedAt = Date.now() // - store.ping
   }, [store.lastIncomeAt])
 
   return (
