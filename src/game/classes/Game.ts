@@ -107,7 +107,17 @@ class Game {
 
     this.clearEventListeners()
 
+    // Remove canvas element
+    const canvasContainer = document.getElementById('game-canvas')
+    if (canvasContainer) {
+      const canvas = canvasContainer.firstChild
+      if (canvas) {
+        canvasContainer.removeChild(canvas)
+      }
+    }
+
     store._game = null
+    store.reset()
   }
   update() {
     if (!store.actions || !store.armies || !this.camera || !this.pixi) return
@@ -203,15 +213,15 @@ class Game {
     // Income bar
     this.updateIncomeBar()
   }
-  spectate() {
-    if (store.gameIndex === null) return
-
-    Socket.send('spectate', String(store.gameIndex))
+  spectate(gameIndex: number) {
+    Socket.send('spectate', String(gameIndex))
+    store.gameIndex = gameIndex
+    store.spectating = true
   }
   stopSpectate() {
     Socket.send('stopSpectate', String(store.gameIndex))
-    store.spectating = false
     store.gameIndex = null
+    store.spectating = false
   }
   setupStoreListeners() {
     store.onChange('tiles', () => {

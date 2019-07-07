@@ -1,12 +1,12 @@
 import styled from 'styled-components'
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { version } from '../../package.json'
 import { Link } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import store from '../store'
 import formatTime from '../utils/formatTime'
 import Socket from '../websockets/Socket'
-import RunningGame from '../types/RunningGame.js'
+import Game from '../game/classes/Game.js'
 
 const Container = styled.div`
   width: 100vw;
@@ -51,19 +51,21 @@ const LeftSection = styled.div`
   align-items: center;
 `
 
-const NavigationButton = styled.div`
+const NavigationButton = styled.div<{ height?: string }>`
+  display: flex;
   background: #444;
   border-radius: 4px;
-  padding: 10px;
   border: 1px solid #2f2f2f;
   font-size: 14px;
   font-weight: 500;
-  display: flex;
   align-items: center;
   margin-left: 16px;
+  height: 32px;
+  width: 32px;
+  justify-content: space-around;
 
   > img {
-    height: 12px;
+    height: ${props => props.height};
     filter: invert(1);
   }
 
@@ -118,33 +120,46 @@ const Label = styled.p`
 const Header = () => {
   const { spectating, waitingTime } = store
 
-  // const [spectatingGame, setSpectatingGame] = useState<RunningGame | null>(null)
-
   const cancelQueue = () => {
     Socket.send('cancelQueue')
     store.waitingTime = null
     store.onlinePlayers = []
   }
 
-  let currentGameIndex = null
-  let nextGameIndex = null
+  const getNextGameIndex = () => {
+    const { gameIndex } = store
 
-  const currentGame = (g: any) => {
-    return Number(g.id) === store.gameIndex
+    if (gameIndex === null) return null
+
+    for (let i = gameIndex; i < store.runningGames.length; i++) {
+      const id = Number(store.runningGames[i].id)
+      if (gameIndex === store.runningGames.length - 1) {
+        return 0
+      }
+      if (id !== gameIndex) {
+        return id
+      }
+    }
+
+    return null
   }
 
-  currentGameIndex = store.runningGames.findIndex(currentGame)
+  const nextGameIndex = getNextGameIndex()
 
-  if (
-    currentGameIndex > -1 &&
-    currentGameIndex < store.runningGames.length - 1
-  ) {
-    nextGameIndex = store.runningGames[currentGameIndex + 1].id
-  } else if (currentGameIndex > -1) {
-    nextGameIndex = store.runningGames[0].id
+  const handleNextGameClick = () => {
+    const canvas = document.getElementById('game-canvas')
+
+    if (!canvas || nextGameIndex === null || !store._game) return
+
+    // Destroy old game
+    store.game.stopSpectate()
+    store.game.destroy()
+
+    // Create new game
+    store.createGame()
+    store.game.render(canvas)
+    store.game.spectate(nextGameIndex)
   }
-
-  console.log(store.gameIndex)
 
   return (
     <Container>
@@ -159,15 +174,13 @@ const Header = () => {
             <p>Spectating Game #{store.gameIndex}</p>
             <Link to="/">
               <NavigationButton>
-                <img src="/static/icons/cross.svg" />
+                <img height="12px" src="/static/icons/cross.svg" />
               </NavigationButton>
             </Link>
             {nextGameIndex !== null && (
-              <Link to={`/spectate?gameIndex=${nextGameIndex}`}>
-                <NavigationButton>
-                  <img src="/static/icons/cross.svg" />
-                </NavigationButton>
-              </Link>
+              <NavigationButton onClick={handleNextGameClick}>
+                <img height="14px" src="/static/icons/arrow-right.svg" />
+              </NavigationButton>
             )}
           </SpectateSection>
         )}
@@ -191,7 +204,7 @@ const Header = () => {
           </TimesWrapper>
 
           <NavigationButton onClick={cancelQueue}>
-            <img src="/static/icons/cross.svg" />
+            <img height="12px" src="/static/icons/cross.svg" />
           </NavigationButton>
         </QueueSection>
       ) : (
