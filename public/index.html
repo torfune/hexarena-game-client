@@ -11,10 +11,32 @@
       rel="stylesheet"
     />
     <link href="/global.css?1.35.0" rel="stylesheet" />
+
+    <!-- Sentry -->
     <script
       src="https://browser.sentry-cdn.com/5.0.7/bundle.min.js"
       crossOrigin="anonymous"
     ></script>
+    <script>
+      Sentry.init({
+        dsn: 'https://28bb77120c0b45a991f6c251a58ffa63@sentry.io/1438180',
+        environment: getEnvironment(),
+      })
+    </script>
+
+    <!-- Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=UA-68180597-3"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || []
+      function gtag() {
+        dataLayer.push(arguments)
+      }
+      gtag('js', new Date())
+      gtag('config', 'UA-68180597-3')
+    </script>
   </head>
 
   <body>
