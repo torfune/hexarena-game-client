@@ -12,6 +12,7 @@ import { observer } from 'mobx-react-lite'
 import { History } from 'history'
 import RunningGames from './RunningGames'
 import MatchFound from '../../components/MatchFound'
+import HowToPlay from './HowToPlay'
 
 const Container = styled.div``
 
@@ -46,6 +47,7 @@ const Homepage: React.FC<Props> = ({ history }) => {
           )}
           <RunningGames />
           <Community />
+          <HowToPlay />
           <ReleaseNotes />
           <MatchFound />
         </div>
