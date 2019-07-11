@@ -1,5 +1,9 @@
 const changelog = [
   {
+    version: 'Alpha 1.36',
+    points: ['Balance changes.', 'Balanced 2v2 games.'],
+  },
+  {
     version: 'Alpha 1.34',
     points: [
       'Forests are no longer generating gold.',
