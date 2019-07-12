@@ -7,11 +7,19 @@ const images = '/static/images'
 const loadImages = () => {
   return new Promise(resolve => {
     loader
-      .add('actionBg', `${images}/action-bg.png?${version}`)
-      .add('actionIconAttack', `${images}/action-icon-attack.png?${version}`)
-      .add('actionIconEmpty', `${images}/action-icon-empty.png?${version}`)
-      .add('actionIconHeal', `${images}/action-icon-heal.png?${version}`)
-      .add('actionIconRecruit', `${images}/action-icon-recruit.png?${version}`)
+      .add('action-bg', `${images}/action-bg.png?${version}`)
+      .add('action-icon-attack', `${images}/action-icon-attack.png?${version}`)
+      .add('action-icon-empty', `${images}/action-icon-empty.png?${version}`)
+      .add('action-icon-heal', `${images}/action-icon-heal.png?${version}`)
+      .add(
+        'action-icon-recruit',
+        `${images}/action-icon-recruit.png?${version}`
+      )
+      .add('action-icon-build', `${images}/action-icon-build.png?${version}`)
+      .add(
+        'action-icon-upgrade',
+        `${images}/action-icon-upgrade.png?${version}`
+      )
       .add('army', `${images}/army.png?${version}`)
       .add('armyIcon', `${images}/army-icon.png?${version}`)
       .add('arrow', `${images}/arrow.png?${version}`)
