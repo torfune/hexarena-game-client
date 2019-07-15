@@ -1,5 +1,9 @@
 const changelog = [
   {
+    version: 'Alpha 1.38',
+    points: ['Faster responsivity for players with higher latency.'],
+  },
+  {
     version: 'Alpha 1.37',
     points: ['Action animations.'],
   },
