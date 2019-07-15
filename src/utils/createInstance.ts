@@ -33,12 +33,13 @@ const createInstance = (key: string, data: Data) => {
 
 // Action
 const createAction = (data: Data) => {
-  const { id, type, tileId, ownerId } = data
+  const { id, type, tileId, ownerId, status } = data
   if (
     typeof id !== 'string' ||
     typeof type !== 'string' ||
     typeof tileId !== 'string' ||
-    typeof ownerId !== 'string'
+    typeof ownerId !== 'string' ||
+    typeof status !== 'string'
   ) {
     return null
   }
@@ -48,6 +49,9 @@ const createAction = (data: Data) => {
     type !== 'RECRUIT' &&
     type !== 'UPGRADE'
   ) {
+    return null
+  }
+  if (status === 'finished') {
     return null
   }
   const tile = store.getTile(tileId)

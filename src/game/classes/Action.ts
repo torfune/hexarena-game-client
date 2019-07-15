@@ -1,17 +1,16 @@
 import getPixelPosition from '../functions/getPixelPosition'
 import hex from '../functions/hex'
-import createImage from '../functions/createImage'
 import store from '../../store'
 import Tile from './Tile'
 import Player from './Player'
 import Primitive from '../../types/Primitive'
 import Prop from '../../types/Prop'
 import createProp from '../../utils/createProp'
-import { Sprite, Graphics, Text, Loader } from 'pixi.js'
+import { Sprite, Graphics, Loader } from 'pixi.js'
+import Animation from '../classes/Animation'
 
 const loader = Loader.shared
-
-const ACTION_RADIUS = 49
+const ACTION_RADIUS = 50
 
 export type ActionType = 'ATTACK' | 'BUILD' | 'RECRUIT' | 'UPGRADE'
 export type ActionStatus = 'pending' | 'running' | 'finished'
@@ -34,10 +33,10 @@ class Action {
   readonly type: ActionType
   readonly tile: Tile
   readonly owner: Player
-  oldTextureName: string | null = null
   image: Sprite = new Sprite()
   fill: Graphics = new Graphics()
-  icon: Sprite = new Sprite(this.getIconTexture())
+  icon: Sprite
+  background: Sprite
 
   constructor(id: string, type: ActionType, tile: Tile, owner: Player) {
     this.id = id
@@ -45,20 +44,40 @@ class Action {
     this.tile = tile
     this.owner = owner
 
-    if (!store.game) return
-
     const pixel = getPixelPosition(this.tile.axial)
 
-    this.image.addChild(new Sprite(loader.resources['action-bg'].texture))
+    this.background = new Sprite(loader.resources['action-bg'].texture)
+    this.background.anchor.set(0.5)
+    this.icon = new Sprite(this.getIconTexture())
+    this.icon.anchor.set(0.5)
+    this.icon.scale.set(0.55)
+
+    this.image.addChild(this.background)
     this.image.addChild(this.fill)
     this.image.addChild(this.icon)
+    this.image.anchor.set(0.5)
+    this.image.scale.set(0)
+    this.image.alpha = 0
     this.image.x = pixel.x
     this.image.y = pixel.y
 
+    new Animation(
+      this.image,
+      (image: Sprite, fraction: number) => {
+        image.scale.set(fraction)
+        image.alpha = fraction
+      },
+      {
+        speed: 0.06,
+      }
+    )
+
     this.tile.action = this
-    this.update()
-    store.game.updateHoveredTileInfo()
-    store.game.stage.action.addChild(this.image)
+
+    if (store.game) {
+      store.game.updateHoveredTileInfo()
+      store.game.stage.action.addChild(this.image)
+    }
   }
 
   setProp(key: keyof Props, value: Primitive) {
@@ -68,11 +87,6 @@ class Action {
     switch (key) {
       case 'status':
         switch (this.status) {
-          case 'running':
-            const { texture } = loader.resources[this.getTexture()]
-            this.image.icon.texture = texture
-            break
-
           case 'finished':
             this.destroy()
             break
@@ -86,7 +100,6 @@ class Action {
   update() {
     const { finishedAt, duration, status } = this
     const timeDelta = finishedAt + store.ping - Date.now()
-
     let fraction = Math.round((1 - timeDelta / duration) * 100) / 100
 
     if (fraction < 0 || status === 'pending') {
@@ -97,37 +110,20 @@ class Action {
       fraction = 1
     }
 
-    const radius = Math.round(ACTION_RADIUS)
-
     const startAngle = -Math.PI / 2
     const arcSize = Math.PI * 2 * fraction
     const endAngle = startAngle + arcSize
 
-    this.image.fill.clear()
-    this.image.fill.beginFill(hex('#111'))
-    this.image.fill.moveTo(0, 0)
-    this.image.fill.arc(pixel.x, pixel.y, radius, startAngle, endAngle)
-    this.image.fill.endFill()
-
-    if (store.hoveredTile !== this.tile) {
-      this.mouseLeft = true
-    }
-
-    if (this.status === 'running') {
-      const textureName = this.getTexture()
-
-      if (this.oldTextureName !== textureName) {
-        const { texture } = loader.resources[textureName]
-        this.image.icon.texture = texture
-        this.oldTextureName = textureName
-      }
-    }
+    this.fill.clear()
+    this.fill.beginFill(hex('#222'))
+    this.fill.moveTo(0, 0)
+    this.fill.arc(0, 0, ACTION_RADIUS, startAngle, endAngle)
+    this.fill.endFill()
   }
   destroy() {
     if (!store.game) return
 
     store.removeAction(this.id)
-
     this.tile.action = null
 
     if (
@@ -137,29 +133,38 @@ class Action {
       store.game.predictedActionTile = null
     }
 
-    store.game.stage.actionBg.removeChild(this.image.background)
-    store.game.stage.actionFill.removeChild(this.image.fill)
-    store.game.stage.actionIcon.removeChild(this.image.icon)
-    store.game.stage.actionIconBackground.removeChild(this.image.iconBackground)
+    new Animation(
+      this.image,
+      (image: Sprite, fraction: number) => {
+        image.scale.set(1 - fraction)
+        image.alpha = 1 - fraction
+      },
+      {
+        speed: 0.06,
+        onFinish: () => {
+          store.game.stage.action.removeChild(this.image)
+        },
+      }
+    )
   }
   getIconTexture() {
     switch (this.type) {
       case 'ATTACK':
-        return loader.resources['actionIconAttack'].texture
+        return loader.resources['action-icon-attack'].texture
       case 'RECRUIT':
         if (
           store.gsConfig &&
           this.tile.building &&
           this.tile.building.hp < store.gsConfig.HP[this.tile.building.type]
         ) {
-          return loader.resources['actionIconHeal'].texture
+          return loader.resources['action-icon-heal'].texture
         } else {
-          return loader.resources['actionIconRecruit'].texture
+          return loader.resources['action-icon-recruit'].texture
         }
       case 'BUILD':
-        return loader.resources['tower-icon'].texture
+        return loader.resources['action-icon-build'].texture
       case 'UPGRADE':
-        return loader.resources['castle-icon'].texture
+        return loader.resources['action-icon-upgrade'].texture
     }
   }
 

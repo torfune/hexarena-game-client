@@ -126,14 +126,11 @@ class Game {
       this.fpsLastUpdatedAt = now
     }
 
-    if (this.animations.length > 0) {
-      // Animations
-      for (let i = this.animations.length - 1; i >= 0; i--) {
-        this.animations[i].update()
-
-        if (this.animations[i].finished) {
-          this.animations.splice(i, 1)
-        }
+    // Animations
+    for (let i = this.animations.length - 1; i >= 0; i--) {
+      this.animations[i].update()
+      if (this.animations[i].finished) {
+        this.animations.splice(i, 1)
       }
     }
 

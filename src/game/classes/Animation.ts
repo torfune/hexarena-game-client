@@ -1,6 +1,7 @@
 import { easeInOutQuad } from '../functions/easing'
 import { Sprite } from 'pixi.js'
 import store from '../../store'
+import roundToDecimals from '../functions/roundToDecimals'
 
 class Animation {
   updateScale(): any {
@@ -39,7 +40,7 @@ class Animation {
     store.game.animations.push(this)
   }
   update() {
-    this.fraction += this.speed
+    this.fraction = roundToDecimals(this.fraction + this.speed, 2)
 
     if (this.fraction > 1) {
       this.fraction = 1
