@@ -1,7 +1,15 @@
 const changelog = [
   {
+    version: 'Alpha 1.37',
+    points: ['Action animations.'],
+  },
+  {
     version: 'Alpha 1.36',
     points: ['Balance changes.', 'Balanced 2v2 games.'],
+  },
+  {
+    version: 'Alpha 1.35',
+    points: ['Matchmaking improvements.', 'Bug fixes.'],
   },
   {
     version: 'Alpha 1.34',
