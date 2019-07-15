@@ -258,6 +258,10 @@ class Socket {
           store.changeHandlers[key]()
           break
 
+        case 'players':
+          store.changeHandlers[key]()
+          break
+
         default:
           throw Error(`Unsupported store listener: ${key}`)
       }

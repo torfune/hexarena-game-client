@@ -349,6 +349,7 @@ class Store {
     if (
       key !== 'tiles' &&
       key !== 'actions' &&
+      key !== 'players' &&
       key !== 'serverTime' &&
       key !== 'goldAnimation'
     ) {

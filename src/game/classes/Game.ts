@@ -17,11 +17,13 @@ import pixelToAxial from '../functions/pixelToAxial'
 import getPixelPosition from '../functions/getPixelPosition'
 import roundToDecimals from '../functions/roundToDecimals'
 import getDebugCommand from '../functions/getDebugCommand'
-import canAttack from '../functions/canAttack'
+// import canAttack from '../functions/canAttack'
 import getHoveredTileInfo from '../functions/getHoveredTileInfo'
 import getTileByAxial from '../functions/getTileByAxial'
 import Tile from './Tile'
 import { Ticker, Application, Container } from 'pixi.js'
+import Action from './Action'
+import uuid = require('uuid/v4')
 
 class Game {
   scale: number = DEFAULT_SCALE
@@ -43,7 +45,6 @@ class Game {
   dragged: boolean = false
   selectedArmyTargetTiles: Tile[][] = []
   tilesWithPatternPreview: Tile[] = []
-  predictedActionTile: Tile | null = null
   readonly keyDown: { [key: string]: boolean } = {}
   private lastUpdatedAt: number = Date.now()
   private fpsLastUpdatedAt: number = Date.now()
@@ -222,6 +223,9 @@ class Game {
     })
 
     store.onChange('actions', () => {
+      this.updatePatternPreviews()
+    })
+    store.onChange('players', () => {
       this.updatePatternPreviews()
     })
     store.onChange('serverTime', () => {
@@ -411,6 +415,7 @@ class Game {
         button = 'left'
     }
 
+    // Right mouse button
     if (button === 'right') return
 
     if (!hoveredTile) {
@@ -439,24 +444,19 @@ class Game {
         return
       }
 
-      if (button && !dragged) {
-        Socket.send(
-          'click',
-          `${hoveredTile.axial.x}|${hoveredTile.axial.z}|${button}`
-        )
-
-        if (canAttack(hoveredTile)) {
-          this.predictedActionTile = hoveredTile
-
-          setTimeout(
-            (() => {
-              if (this.predictedActionTile === hoveredTile) {
-                this.predictedActionTile = null
-              }
-            }).bind(this),
-            500
-          )
+      // Create action
+      if (button && !dragged && store.player) {
+        const actionType = hoveredTile.getActionType()
+        if (!actionType) {
+          this.showNotEnoughGold(hoveredTile)
+          return
         }
+
+        const action = new Action(uuid(), actionType, hoveredTile, store.player)
+        store.actions.push(action)
+
+        const { x, z } = hoveredTile.axial
+        Socket.send('action', `${action.id}|${x}|${z}|${actionType}`)
       }
     }
 
@@ -508,20 +508,15 @@ class Game {
     if (!store.gsConfig) return []
 
     const tilesToCapture = []
+    const actionType = tile.getActionType()
 
     // Attack hover
-    if (store.playerId === playerId && canAttack(tile)) {
+    if (store.playerId === playerId && actionType === 'ATTACK') {
       tilesToCapture.push(tile)
     }
 
     // Upgrade hover
-    if (
-      store.playerId === tile.ownerId &&
-      tile.building &&
-      tile.building.type === 'TOWER' &&
-      tile.building.hp === store.gsConfig.HP.TOWER &&
-      !this.selectedArmyTile
-    ) {
+    if (actionType === 'UPGRADE') {
       for (let i = 0; i < 6; i++) {
         const n = tile.neighbors[i]
         if (n && !tilesToCapture.includes(n) && !n.owner) {
@@ -689,25 +684,6 @@ class Game {
         if (this.tilesWithPatternPreview.includes(t)) continue
 
         this.tilesWithPatternPreview.push(t)
-
-        pattern[`${t.axial.x}|${t.axial.z}`] = store.player.pattern
-      }
-    }
-
-    // Predicted action tile
-    if (this.predictedActionTile && store.player) {
-      const tilesToCapture = this.getTilesToCapture(
-        this.predictedActionTile,
-        store.player.id
-      )
-
-      for (let i = 0; i < tilesToCapture.length; i++) {
-        const t = tilesToCapture[i]
-
-        if (this.tilesWithPatternPreview.includes(t)) continue
-
-        this.tilesWithPatternPreview.push(t)
-
         pattern[`${t.axial.x}|${t.axial.z}`] = store.player.pattern
       }
     }
@@ -952,6 +928,31 @@ class Game {
 
     ctx.fillStyle = '#333'
     ctx.fillRect(0, 0, BAR_WIDTH * fraction, BAR_HEIGHT)
+  }
+  showNotEnoughGold(tile: Tile) {
+    if (!store.player || !store.gsConfig) return
+
+    const {
+      ATTACK_COST,
+      BUILD_COST,
+      UPGRADE_COST,
+      RECRUIT_COST,
+      HP,
+    } = store.gsConfig
+
+    const actionType = tile.getActionType(true)
+
+    if (
+      !actionType ||
+      (actionType === 'ATTACK' && store.player.gold >= ATTACK_COST) ||
+      (actionType === 'BUILD' && store.player.gold >= BUILD_COST) ||
+      (actionType === 'UPGRADE' && store.player.gold >= UPGRADE_COST) ||
+      (actionType === 'RECRUIT' && store.player.gold >= RECRUIT_COST)
+    ) {
+      return
+    }
+
+    store.notification = `${Date.now()}|Not enough gold`
   }
 }
 

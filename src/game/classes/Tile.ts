@@ -149,7 +149,7 @@ class Tile {
       this.showHitpoints()
     }
 
-    if (this.canPlayerCreateAction() && store.game.selectedArmyTile !== this) {
+    if (this.getActionType()) {
       this.addHighlight()
     }
   }
@@ -741,37 +741,68 @@ class Tile {
 
     return 'Plains'
   }
-  canPlayerCreateAction() {
-    if (!store.player || !store.gsConfig) {
-      return false
+  getActionType(ignoreGold: boolean = false) {
+    if (!store.player || !store.gsConfig || this.action) {
+      return null
     }
 
+    const {
+      ATTACK_COST,
+      BUILD_COST,
+      UPGRADE_COST,
+      RECRUIT_COST,
+      HP,
+    } = store.gsConfig
+
+    // Neighbor check
+    let isNeighbor = false
+    for (let i = 0; i < 6; i++) {
+      const n = this.neighbors[i]
+      if (n && n.ownerId === store.playerId) {
+        isNeighbor = true
+        break
+      }
+    }
+
+    // ATTACK
     if (
-      !this.owner ||
-      this.owner.id !== store.player.id ||
-      this.mountain ||
-      store.game.selectedArmyTile ||
-      this.action
+      isNeighbor &&
+      !this.owner &&
+      (store.player.gold >= ATTACK_COST || ignoreGold)
     ) {
-      return false
+      return 'ATTACK'
     }
 
-    // Recruit
-    if (this.building && store.player.gold >= store.gsConfig.RECRUIT_COST) {
-      return true
+    if (this.ownerId !== store.playerId) return null
+
+    // BUILD
+    const forestGold = this.forest ? this.forest.treeCount : 0
+    if (
+      (this.isEmpty() || this.forest) &&
+      (store.player.gold >= BUILD_COST - forestGold || ignoreGold)
+    ) {
+      return 'BUILD'
     }
 
-    // Build
-    if (store.player.gold >= store.gsConfig.BUILD_COST && this.isEmpty()) {
-      return true
+    // RECRUIT
+    if (
+      this.building &&
+      (store.player.gold >= RECRUIT_COST || ignoreGold) &&
+      (this.building.type !== 'TOWER' || this.building.hp !== HP.TOWER)
+    ) {
+      return 'RECRUIT'
     }
 
-    // Send army
-    if (this.army) {
-      return true
+    // UPGRADE
+    if (
+      this.building &&
+      this.building.type === 'TOWER' &&
+      (store.player.gold >= UPGRADE_COST || ignoreGold)
+    ) {
+      return 'UPGRADE'
     }
 
-    return false
+    return null
   }
 
   // Prop getters

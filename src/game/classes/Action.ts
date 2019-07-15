@@ -13,20 +13,20 @@ const loader = Loader.shared
 const ACTION_RADIUS = 50
 
 export type ActionType = 'ATTACK' | 'BUILD' | 'RECRUIT' | 'UPGRADE'
-export type ActionStatus = 'pending' | 'running' | 'finished'
+export type ActionStatus = 'PENDING' | 'RUNNING' | 'FINISHED'
 
 interface Props {
   [key: string]: Prop<Primitive>
   duration: Prop<number>
   finishedAt: Prop<number>
-  status: Prop<ActionStatus | null>
+  status: Prop<ActionStatus>
 }
 
 class Action {
   props: Props = {
     duration: createProp(0),
     finishedAt: createProp(0),
-    status: createProp(null),
+    status: createProp('PENDING'),
   }
 
   readonly id: string
@@ -51,6 +51,7 @@ class Action {
     this.icon = new Sprite(this.getIconTexture())
     this.icon.anchor.set(0.5)
     this.icon.scale.set(0.55)
+    this.fill.alpha = 0
 
     this.image.addChild(this.background)
     this.image.addChild(this.fill)
@@ -63,16 +64,26 @@ class Action {
 
     new Animation(
       this.image,
-      (image: Sprite, fraction: number) => {
+      (image: Sprite, fraction: number, context: any) => {
         image.scale.set(fraction)
         image.alpha = fraction
+        context.fill.alpha = fraction
       },
       {
         speed: 0.06,
+        context: {
+          fill: this.fill,
+        },
       }
     )
 
     this.tile.action = this
+
+    setTimeout(() => {
+      if (this.status === 'PENDING') {
+        this.destroy()
+      }
+    }, 1000)
 
     if (store.game) {
       store.game.updateHoveredTileInfo()
@@ -87,7 +98,7 @@ class Action {
     switch (key) {
       case 'status':
         switch (this.status) {
-          case 'finished':
+          case 'FINISHED':
             this.destroy()
             break
         }
@@ -98,16 +109,18 @@ class Action {
     }
   }
   update() {
+    if (this.status === 'PENDING') return
+
     const { finishedAt, duration, status } = this
     const timeDelta = finishedAt + store.ping - Date.now()
     let fraction = Math.round((1 - timeDelta / duration) * 100) / 100
 
-    if (fraction < 0 || status === 'pending') {
-      fraction = 0
+    if (fraction > 1 || status === 'FINISHED') {
+      fraction = 1
     }
 
-    if (fraction > 1 || status === 'finished') {
-      fraction = 1
+    if (fraction < 0) {
+      fraction = 0
     }
 
     const startAngle = -Math.PI / 2
@@ -125,13 +138,6 @@ class Action {
 
     store.removeAction(this.id)
     this.tile.action = null
-
-    if (
-      store.game.predictedActionTile &&
-      store.game.predictedActionTile.id === this.tile.id
-    ) {
-      store.game.predictedActionTile = null
-    }
 
     new Animation(
       this.image,
@@ -174,9 +180,6 @@ class Action {
   }
   get finishedAt() {
     return this.props.finishedAt.current
-  }
-  get order() {
-    return this.props.order.current
   }
   get status() {
     return this.props.status.current

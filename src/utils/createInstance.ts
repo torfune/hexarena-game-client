@@ -51,7 +51,7 @@ const createAction = (data: Data) => {
   ) {
     return null
   }
-  if (status === 'finished') {
+  if (status === 'FINISHED') {
     return null
   }
   const tile = store.getTile(tileId)
