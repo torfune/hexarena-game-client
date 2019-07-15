@@ -5,7 +5,7 @@ const createPixiApp = () => {
   const pixi = new Application({
     resolution: window.devicePixelRatio,
     autoDensity: true,
-    antialias: true,
+    // antialias: true,
   })
 
   pixi.renderer.backgroundColor = hex('#fff')
