@@ -1,11 +1,12 @@
 const changelog = [
   {
-    version: 'Alpha 1.39',
-    points: ['Army arrow animations', 'Spectate next game button', 'Bug fixes'],
-  },
-  {
     version: 'Alpha 1.38',
-    points: ['Faster responsivity for players with higher latency.'],
+    points: [
+      'Faster responsivity for players with higher latency.',
+      'Army arrow animations',
+      'Spectate next game button',
+      'Bug fixes',
+    ],
   },
   {
     version: 'Alpha 1.37',
