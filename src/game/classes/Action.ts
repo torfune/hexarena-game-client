@@ -8,6 +8,7 @@ import Prop from '../../types/Prop'
 import createProp from '../../utils/createProp'
 import { Sprite, Graphics, Loader } from 'pixi.js'
 import Animation from '../classes/Animation'
+import { easeOutQuad, easeInQuad } from '../functions/easing'
 
 const loader = Loader.shared
 const ACTION_RADIUS = 50
@@ -71,6 +72,7 @@ class Action {
       },
       {
         speed: 0.06,
+        ease: easeOutQuad,
         context: {
           fill: this.fill,
         },
@@ -147,6 +149,7 @@ class Action {
       },
       {
         speed: 0.06,
+        ease: easeInQuad,
         onFinish: () => {
           store.game.stage.action.removeChild(this.image)
         },

@@ -31,6 +31,7 @@ import getTileByAxial from '../functions/getTileByAxial'
 import BuildingType from '../../types/BuildingType'
 import Forest from './Forest'
 import Village from './Village'
+import { easeOutQuad, easeInQuad } from '../functions/easing'
 
 const loader = Loader.shared
 
@@ -268,22 +269,16 @@ class Tile {
 
     new Animation(
       this.image.armyIcon,
-      (image, fraction, context) => {
+      (image, fraction) => {
         fraction = 1 - fraction
-
         image.alpha = fraction
-        image.y =
-          context.baseY - ARMY_ICON_OFFSET_Y * store.game.scale * fraction
+        image.y = position.y - ARMY_ICON_OFFSET_Y * fraction
       },
       {
-        context: {
-          stage: store.game.stage['armyIcon'],
-          baseY: position.y,
-        },
-        onFinish: (image, context) => {
-          context.stage.removeChild(image)
-        },
         speed: 0.05,
+        onFinish: image => {
+          store.game.stage['armyIcon'].removeChild(image)
+        },
       }
     )
   }
@@ -529,23 +524,37 @@ class Tile {
   selectArmy() {
     if (!this.image.pattern) return
 
-    this.image.pattern.tint = hex('#fff')
+    const centerPixel = getPixelPosition(this.axial)
 
     for (let i = 0; i < 6; i++) {
       const n = this.neighbors[i]
-
       if (!n) continue
 
-      const direction = invertHexDirection(i)
+      const direction = i
       const image = n.imageSet.arrow[direction]
 
       if (!image) {
         const pixel = getPixelPosition(n.axial)
-        const newImage = createImage('arrow')
-        newImage.x = pixel.x
-        newImage.y = pixel.y
-        newImage.rotation = getRotationBySide(direction)
-        n.imageSet.arrow[direction] = newImage
+        const arrow = createImage('arrow')
+        arrow.x = centerPixel.x
+        arrow.y = centerPixel.y
+        arrow.rotation = getRotationBySide(direction)
+        arrow.alpha = 0
+
+        new Animation(
+          arrow,
+          (image: Sprite, fraction: number) => {
+            image.x = centerPixel.x + (pixel.x - centerPixel.x) * fraction
+            image.y = centerPixel.y + (pixel.y - centerPixel.y) * fraction
+            image.alpha = fraction
+          },
+          {
+            speed: 0.05,
+            ease: easeOutQuad,
+          }
+        )
+
+        n.imageSet.arrow[direction] = arrow
       }
     }
 
@@ -575,14 +584,31 @@ class Tile {
       this.image.pattern.tint = hex(this.owner.pattern)
     }
 
+    const centerPixel = getPixelPosition(this.axial)
+
     for (let i = 0; i < 6; i++) {
       const n = this.neighbors[i]
       if (!n) continue
 
-      const direction = invertHexDirection(i)
+      const direction = i
       const image = n.imageSet.arrow[direction]
+      const pixel = getPixelPosition(n.axial)
       if (image) {
-        destroyImage('arrow', image)
+        new Animation(
+          image,
+          (image: Sprite, fraction: number) => {
+            image.x = centerPixel.x + (pixel.x - centerPixel.x) * (1 - fraction)
+            image.y = centerPixel.y + (pixel.y - centerPixel.y) * (1 - fraction)
+            image.alpha = 1 - fraction
+          },
+          {
+            speed: 0.05,
+            ease: easeInQuad,
+            onFinish: () => {
+              destroyImage('arrow', image)
+            },
+          }
+        )
         n.imageSet.arrow[direction] = null
       }
     }

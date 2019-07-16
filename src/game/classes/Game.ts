@@ -528,7 +528,7 @@ class Game {
     }
 
     // Upgrade hover
-    if (actionType === 'UPGRADE') {
+    if (actionType === 'UPGRADE' && !this.selectedArmyTile && !tile.army) {
       for (let i = 0; i < 6; i++) {
         const n = tile.neighbors[i]
         if (n && !tilesToCapture.includes(n) && !n.owner) {
@@ -561,7 +561,12 @@ class Game {
     }
 
     // Army sending
-    if (store.player && playerId === store.playerId && this.selectedArmyTile) {
+    if (
+      store.player &&
+      playerId === store.playerId &&
+      this.selectedArmyTile &&
+      (!tile.action || tile.action.type !== 'ATTACK')
+    ) {
       let direction = null
 
       for (let i = 0; i < 6; i++) {

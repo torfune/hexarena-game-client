@@ -5,6 +5,7 @@ export const TILE_RADIUS = 73.8
 export const TILE_IMAGES = [
   'gold',
   'fog',
+  'arrow',
   'action',
   'castle',
   'tower',
@@ -16,7 +17,6 @@ export const TILE_IMAGES = [
   'mountain',
   'tree',
   'army',
-  'arrow',
   'border',
   'patternPreview',
   'blackOverlay',
