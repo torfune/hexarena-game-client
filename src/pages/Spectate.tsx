@@ -33,8 +33,8 @@ const Spectate: React.FC = () => {
     store.createGame()
     store.game.render(canvas)
 
-    store.gameIndex = Number(window.location.href.split('?gameIndex=')[1])
-    store.game.spectate()
+    const gameIndex = Number(window.location.href.split('?gameIndex=')[1])
+    store.game.spectate(gameIndex)
 
     return () => {
       if (store.spectating) {
