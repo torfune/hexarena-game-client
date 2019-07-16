@@ -50,7 +50,7 @@ const LeftSection = styled.div`
   align-items: center;
 `
 
-const CancelButton = styled.div`
+const Button = styled.div`
   background: #444;
   border-radius: 4px;
   padding: 10px;
@@ -123,6 +123,46 @@ const Header = () => {
     store.onlinePlayers = []
   }
 
+  const getNextGameIndex = () => {
+    const { gameIndex } = store
+
+    const index = store.runningGames.findIndex(game => {
+      return Number(game.id) === gameIndex
+    })
+
+    if (index === -1) return null
+
+    if (index === store.runningGames.length - 1) {
+      return Number(store.runningGames[0].id)
+    }
+
+    for (let i = index; i < store.runningGames.length; i++) {
+      const id = Number(store.runningGames[i].id)
+      if (id !== gameIndex) {
+        return id
+      }
+    }
+
+    return null
+  }
+
+  const nextGameIndex = getNextGameIndex()
+
+  const handleNextGameClick = () => {
+    const canvas = document.getElementById('game-canvas')
+
+    if (!canvas || nextGameIndex === null || !store._game) return
+
+    // Destroy old game
+    store.game.stopSpectate()
+    store.game.destroy()
+
+    // Create new game
+    store.createGame()
+    store.game.render(canvas)
+    store.game.spectate(nextGameIndex)
+  }
+
   return (
     <Container>
       <LeftSection>
@@ -135,10 +175,17 @@ const Header = () => {
             <img src="/static/icons/spectate.svg" />
             <p>Spectating Game #{store.gameIndex}</p>
             <Link to="/">
-              <CancelButton>
+              <Button>
                 <img src="/static/icons/cross.svg" />
-              </CancelButton>
+              </Button>
             </Link>
+            {nextGameIndex !== null && (
+              <Link to={`/spectate?gameIndex=${nextGameIndex}`}>
+                <Button onClick={handleNextGameClick}>
+                  <img src="/static/icons/right-arrow.svg" />
+                </Button>
+              </Link>
+            )}
           </SpectateSection>
         )}
       </LeftSection>
@@ -160,9 +207,9 @@ const Header = () => {
             </div>
           </TimesWrapper>
 
-          <CancelButton onClick={cancelQueue}>
+          <Button onClick={cancelQueue}>
             <img src="/static/icons/cross.svg" />
-          </CancelButton>
+          </Button>
         </QueueSection>
       ) : (
         <Description>Multiplayer strategy game</Description>
