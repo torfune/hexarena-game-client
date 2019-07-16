@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { PopIn } from '../../../components/Animations'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { BOX_SHADOW, PRIMARY, BLUE } from '../../../constants/react'
+import { BOX_SHADOW, PRIMARY, SECONDARY } from '../../../constants/react'
 import store from '../../../store'
 import React from 'react'
 
@@ -28,24 +28,44 @@ const Container = styled.div`
   }
 `
 
-const ButtonRow = styled.div`
+const ButtonContainer = styled.div`
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   margin-top: 100px;
+  width: 100%;
 `
 
-const Button = styled.div`
-  background: ${props => props.color};
+const ContinueButton = styled.div`
+  background: ${PRIMARY};
   color: #fff;
   font-size: 20px;
   font-weight: 600;
   padding: 8px 64px;
   border-radius: 4px;
   width: 260px;
-  margin: 0 16px;
+  margin: 0 auto;
   transition: 100ms;
   text-align: center;
-  box-shadow: ${BOX_SHADOW};
+  border: 2px solid #b93413;
+  cursor: pointer;
+
+  :hover {
+    transform: scale(1.05);
+  }
+`
+
+const SpectateButton = styled.div`
+  background: #00a8ff;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 6px;
+  border-radius: 4px;
+  width: 160px;
+  margin: 28px auto 0 auto;
+  transition: 100ms;
+  text-align: center;
+  border: 2px solid #0097e6;
   cursor: pointer;
 
   :hover {
@@ -93,12 +113,16 @@ const DefeatModal = () => {
 
       <Container>
         <h2>You have lost your base!</h2>
-
-        <ButtonRow>
+        <ButtonContainer>
           <a href="/game">
-            <Button color={PRIMARY}>Continue</Button>
+            <ContinueButton>Continue</ContinueButton>
           </a>
-        </ButtonRow>
+          <a href={`/spectate?gameIndex=${store.gameIndex}`}>
+            <SpectateButton onClick={handleSpectateClick} color={SECONDARY}>
+              Spectate
+            </SpectateButton>
+          </a>
+        </ButtonContainer>
       </Container>
     </PopIn>
   )
