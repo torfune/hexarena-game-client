@@ -79,8 +79,6 @@ class Game {
     // Add debug global variables
     ;(window as any).g = this
     ;(window as any).s = store
-
-    console.log('Ahoj')
   }
   render(canvas: HTMLElement) {
     this.loop = createGameLoop(this.update, this)

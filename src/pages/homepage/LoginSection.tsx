@@ -13,12 +13,8 @@ import { useAuth } from '../../auth'
 import Heading from './Heading'
 import Spinner from '../../components/Spinner'
 import authHeader from '../../utils/authHeader'
-import getServerHost from '../../utils/getServerHost'
-import Axios from 'axios'
-import Socket from '../../websockets/Socket'
-import getBrowserId from '../../utils/getBrowserId'
 import shadeColor from '../../utils/shade'
-import store from '../../store'
+import Api from '../../Api'
 
 const Container = styled.div``
 
@@ -129,11 +125,7 @@ const LoginSection: React.FC<Props> = ({ play }) => {
   }, [name])
 
   const validateName = (name: string) => {
-    const { WS_HOST } = getServerHost(window.location.hostname)
-
-    Axios.get(
-      `http://${WS_HOST}/users/validate-name/${name.toLowerCase()}`
-    ).then(response => {
+    Api.ws.get(`/users/validate-name/${name.toLowerCase()}`).then(response => {
       setNameValid(response.data)
     })
   }
@@ -144,28 +136,26 @@ const LoginSection: React.FC<Props> = ({ play }) => {
     if (!('getAuthResponse' in loginResponse)) return
 
     try {
-      const { WS_HOST } = getServerHost(window.location.hostname)
-      Axios.get(`http://${WS_HOST}/auth/google`, {
-        params: {
-          idToken: loginResponse.getAuthResponse().id_token,
-        },
-      }).then(response => {
-        const { userId, accessToken, accessTokenExp } = response.data
-        login(userId, accessToken, accessTokenExp)
-      })
+      Api.ws
+        .get(`/auth/google`, {
+          params: {
+            idToken: loginResponse.getAuthResponse().id_token,
+          },
+        })
+        .then(response => {
+          const { userId, accessToken, accessTokenExp } = response.data
+          login(userId, accessToken, accessTokenExp)
+        })
     } catch {
-      store.error = {
-        message: 'Authentication failed.',
-        goHome: true,
-      }
+      console.error('Google authentication failed.')
+      logout()
     }
   }
 
-  const handleGoogleAuthFailure = () => {
-    store.error = {
-      message: 'Authentication failed.',
-      goHome: true,
-    }
+  const handleGoogleAuthFailure = (arg: any) => {
+    console.error('Google authentication failed.')
+    console.log(arg)
+    logout()
   }
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -175,11 +165,10 @@ const LoginSection: React.FC<Props> = ({ play }) => {
   const handleNameSave = async () => {
     if (!nameValid || !accessToken) return
 
-    const { WS_HOST } = getServerHost(window.location.hostname)
     const guestId = localStorage.getItem('browserId')
 
-    await Axios.patch(
-      `http://${WS_HOST}/users/${userId}`,
+    await Api.ws.patch(
+      `/users/${userId}`,
       { name, guestId },
       authHeader(accessToken)
     )
@@ -188,9 +177,8 @@ const LoginSection: React.FC<Props> = ({ play }) => {
   }
 
   const fetchUser = async (accessToken: string) => {
-    const { WS_HOST } = getServerHost(window.location.hostname)
-    const response = await Axios.get(
-      `http://${WS_HOST}/users/${userId}`,
+    const response = await Api.ws.get(
+      `/users/${userId}`,
       authHeader(accessToken)
     )
 

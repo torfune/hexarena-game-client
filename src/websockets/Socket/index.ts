@@ -17,7 +17,8 @@ class Socket {
 
   static connect(host: string) {
     return new Promise(resolve => {
-      this.ws = new WebSocket(`ws://${host}`)
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+      this.ws = new WebSocket(`${wsProtocol}//${host}`)
 
       this.ws.addEventListener('message', this.handleMessage)
       this.ws.addEventListener('error', this.handleError)
