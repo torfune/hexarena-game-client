@@ -11,30 +11,27 @@ import Loader from './components/Loader'
 import { observer } from 'mobx-react-lite'
 ;(window as any).s = store
 
-const App: React.FC = observer(() => {
-  return (
-    <>
-      <GlobalStyle />
-
-      <AuthProvider>
-        <Router>
-          {store.loading || store.error ? (
-            <Loader />
-          ) : (
-            <>
-              <Route
-                path="/"
-                exact
-                render={({ history }) => <Homepage history={history} />}
-              />
-              <Route path="/game" component={Game} />
-              <Route path="/spectate" component={Spectate} />
-            </>
-          )}
-        </Router>
-      </AuthProvider>
-    </>
-  )
-})
+const App: React.FC = observer(() => (
+  <>
+    <GlobalStyle />
+    <AuthProvider>
+      <Router>
+        {store.loading || store.error ? (
+          <Loader />
+        ) : (
+          <>
+            <Route
+              path="/"
+              exact
+              render={({ history }) => <Homepage history={history} />}
+            />
+            <Route path="/game" component={Game} />
+            <Route path="/spectate" component={Spectate} />
+          </>
+        )}
+      </Router>
+    </AuthProvider>
+  </>
+))
 
 ReactDOM.render(<App />, document.getElementById('root'))

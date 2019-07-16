@@ -9,7 +9,6 @@
     "tsc": "tsc"
   },
   "dependencies": {
-    "@types/chart.js": "^2.7.55",
     "axios": "^0.18.0",
     "chart.js": "^2.8.0",
     "mobx": "^5.9.4",
@@ -33,9 +32,11 @@
     "@types/react-router-dom": "^4.3.3",
     "@types/styled-components": "^4.1.14",
     "@types/uuid": "^3.4.4",
-    "awesome-typescript-loader": "^5.2.1",
+    "@types/chart.js": "^2.7.55",
     "copy-webpack-plugin": "^5.0.3",
     "css-loader": "^2.1.1",
+    "html-loader": "^0.5.5",
+    "html-webpack-plugin": "^3.2.0",
     "source-map-loader": "^0.2.4",
     "style-loader": "^0.23.1",
     "ts-loader": "^6.0.2",

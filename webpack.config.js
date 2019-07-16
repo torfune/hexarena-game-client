@@ -1,39 +1,56 @@
 const path = require('path')
 const CopyPlugin = require('copy-webpack-plugin')
+const HtmlWebPackPlugin = require('html-webpack-plugin')
+const { version } = require('./package.json')
 
-module.exports = {
+const config = {
   entry: './src/index.tsx',
-  devtool: 'source-map',
   output: {
-    filename: 'bundle.js',
+    filename: `bundle.${version}.js`,
     path: path.join(__dirname, '/build'),
   },
   module: {
     rules: [
+      {
+        test: /\.html$/,
+        use: 'html-loader',
+      },
       {
         test: /\.tsx?$/,
         use: 'ts-loader',
         exclude: /node_modules/,
       },
       {
-        test: /\.css$/i,
+        test: /\.css$/,
         use: ['style-loader', 'css-loader'],
       },
     ],
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: ['.tsx', '.ts', '.js', '.html'],
   },
   plugins: [
-    new CopyPlugin([
-      { from: './static', to: './static' },
-      { from: './public', to: './' },
-    ]),
+    new CopyPlugin([{ from: './static', to: './static' }]),
+    new HtmlWebPackPlugin({
+      template: './src/index.html',
+      filename: './index.html',
+    }),
   ],
   devServer: {
     historyApiFallback: true,
     inline: false,
-    compress: true,
     hot: false,
   },
+}
+
+module.exports = (_, argv) => {
+  if (argv.mode === 'development') {
+    config.devtool = 'eval'
+  }
+
+  if (argv.mode === 'production') {
+    config.devtool = 'source-map'
+  }
+
+  return config
 }

@@ -9,7 +9,6 @@ const loadImages = () => {
     loader
       .add('action-bg', `${images}/action-bg.png?${version}`)
       .add('action-icon-attack', `${images}/action-icon-attack.png?${version}`)
-      .add('action-icon-empty', `${images}/action-icon-empty.png?${version}`)
       .add('action-icon-heal', `${images}/action-icon-heal.png?${version}`)
       .add(
         'action-icon-recruit',

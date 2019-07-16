@@ -212,7 +212,7 @@ const Header = () => {
           </Button>
         </QueueSection>
       ) : (
-        <Description>Multiplayer strategy game</Description>
+        <Description>Competitive strategy game</Description>
       )}
 
       <Version>Alpha {version.slice(0, 4)}</Version>
