@@ -126,6 +126,14 @@ const Header = () => {
   const getNextGameIndex = () => {
     const { gameIndex } = store
 
+    if (store.runningGames.length === 0) return null
+
+    if (store.status === 'finished') {
+      return Number(store.runningGames[0].id)
+    }
+
+    if (store.runningGames.length === 1) return null
+
     const index = store.runningGames.findIndex(game => {
       return Number(game.id) === gameIndex
     })
