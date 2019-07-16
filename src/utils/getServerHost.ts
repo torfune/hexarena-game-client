@@ -10,7 +10,7 @@ const WS = {
   LIVE: 'us-ws-1.hexarena.io',
 }
 
-const getServerHost = (hostname: string) => {
+const getServerHost = (hostname: string = window.location.hostname) => {
   switch (hostname) {
     case 'localhost':
       return {

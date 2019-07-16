@@ -6,11 +6,11 @@ import { observer } from 'mobx-react-lite'
 import React, { useEffect } from 'react'
 import store from '../store'
 import getServerHost from '../utils/getServerHost'
-import Axios from 'axios'
 import loadImages from '../game/functions/loadImages'
 import Header from './Header'
 import Socket from '../websockets/Socket'
 import { version } from '../../package.json'
+import Api from '../Api'
 
 const Container = styled.div`
   margin-top: 200px;
@@ -55,11 +55,9 @@ const Loader: React.FC = () => {
   }, [])
 
   const initialize = async () => {
-    const { GS_HOST, WS_HOST } = getServerHost(window.location.hostname)
-
     try {
       // GameServer status
-      const { data: status } = await Axios.get(`http://${GS_HOST}/status`)
+      const { data: status } = await Api.gs.get('/status')
 
       const gsVersion = status.version.slice(0, 4)
       const feVersion = version.slice(0, 4)
@@ -86,13 +84,14 @@ const Loader: React.FC = () => {
       }
 
       // GameServer config
-      const { data: config } = await Axios.get(`http://${GS_HOST}/config`)
+      const { data: config } = await Api.gs.get(`/config`)
       store.gsConfig = config
 
       // WebServer status
-      await Axios.get(`http://${WS_HOST}/status`)
+      await Api.ws.get('/status')
 
       // Socket connection
+      const { GS_HOST } = getServerHost()
       await Socket.connect(GS_HOST)
 
       // Load images

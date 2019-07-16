@@ -1,12 +1,10 @@
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import store from '../../store'
-import getServerHost from '../../utils/getServerHost'
 import { useEffect } from 'react'
-import Axios from 'axios'
 import TopPlayer from '../../types/TopPlayer'
 import React from 'react'
-import shadeColor from '../../utils/shade'
+import Api from '../../Api'
 
 const Container = styled.div`
   height: 100%;
@@ -66,8 +64,7 @@ interface Props {
 }
 const TopPlayers: React.FC<Props> = ({ fixedHeight }) => {
   useEffect(() => {
-    const { WS_HOST } = getServerHost(window.location.hostname)
-    Axios.get(`http://${WS_HOST}/users/top-players`).then(response => {
+    Api.ws.get(`/users/top-players`).then(response => {
       store.topPlayers = response.data as TopPlayer[]
     })
   }, [])

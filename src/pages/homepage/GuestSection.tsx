@@ -1,15 +1,11 @@
-import Axios from 'axios'
 import { useState, useEffect, ChangeEvent } from 'react'
 import styled from 'styled-components'
 import Heading from './Heading'
 import PlayButton from './PlayButton'
 import NameInput from './NameInput'
-import getServerHost from '../../utils/getServerHost'
 import { PRIMARY, HOMEPAGE_BREAKPOINT } from '../../constants/react'
 import React from 'react'
-import getBrowserId from '../../utils/getBrowserId'
-import Socket from '../../websockets/Socket'
-import store from '../../store'
+import Api from '../../Api'
 
 const Container = styled.div`
   margin-left: 48px;
@@ -60,9 +56,8 @@ const GuestSection: React.FC<Props> = ({ play }) => {
       return
     }
 
-    const { WS_HOST } = getServerHost(window.location.hostname)
-    const { data: valid } = await Axios.get(
-      `http://${WS_HOST}/users/validate-name/${name.toLowerCase()}`
+    const { data: valid } = await Api.ws.get(
+      `/users/validate-name/${name.toLowerCase()}`
     )
 
     if (valid) {
