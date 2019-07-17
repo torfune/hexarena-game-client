@@ -98,6 +98,15 @@ const MatchFound = () => {
   useEffect(() => {
     if (!store.matchFound) {
       setAccepted(false)
+    } else if (store.matchFound && Notification.permission === 'granted') {
+      const notification = new Notification('MATCH FOUND!', {
+        body: 'Go to HexArena tab to accept the match.',
+        icon: '/static/images/castle.png',
+      })
+
+      notification.onclick = event => {
+        event.preventDefault()
+      }
     }
   }, [store.matchFound])
 
