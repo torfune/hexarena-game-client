@@ -1,18 +1,18 @@
 import styled from 'styled-components'
 import React from 'react'
-import { HUD_SCALE, PRIMARY } from '../../../constants/react'
+import { HUD_SCALE, PRIMARY, COLOR } from '../../../constants/react'
 import store from '../../../store'
 
 const Container = styled.div`
-  background: rgba(255, 255, 255, 0.92);
+  background: ${COLOR.HUD_BACKGROUND};
   top: 0;
   left: 0;
   width: 280px;
   position: absolute;
   user-select: none;
   border-bottom-right-radius: 8px;
-  border-bottom: 1px solid #ddd;
-  border-right: 1px solid #ddd;
+  border-bottom: 1px solid ${COLOR.HUD_BORDER};
+  border-right: 1px solid ${COLOR.HUD_BORDER};
   overflow: hidden;
   padding-top: 16px;
 
@@ -31,6 +31,7 @@ const Icon = styled.img`
   opacity: 0.8;
   margin-left: auto;
   margin-right: 24px;
+  filter: invert(1);
 `
 
 const Heading = styled.p`
@@ -38,7 +39,7 @@ const Heading = styled.p`
   margin-bottom: 12px;
   margin-left: 24px;
   font-weight: 600;
-  color: #444;
+  color: #ccc;
   font-size: 16px;
 `
 

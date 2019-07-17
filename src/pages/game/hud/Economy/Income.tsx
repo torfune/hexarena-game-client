@@ -13,7 +13,7 @@ const IncomeBar = styled.canvas`
   height: 36px;
   width: 200px;
   margin-top: 12px;
-  background: #ddd;
+  background: #666;
   border-radius: 4px;
   overflow: hidden;
 `

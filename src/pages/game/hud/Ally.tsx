@@ -3,21 +3,21 @@ import { observer } from 'mobx-react-lite'
 import React from 'react'
 import Player from '../../../game/classes/Player'
 import Pattern from '../../../components/Pattern'
-import { HUD_SCALE } from '../../../constants/react'
+import { HUD_SCALE, COLOR } from '../../../constants/react'
 import shadeColor from '../../../utils/shade'
 import store from '../../../store'
 
 const Container = styled.div`
   z-index: 2;
-  background: rgba(255, 255, 255, 0.92);
+  background: ${COLOR.HUD_BACKGROUND};
   bottom: 0;
   right: calc(319px * ${HUD_SCALE});
   position: absolute;
   user-select: none;
   border-top-left-radius: 8px;
-  border-top: 1px solid #ddd;
-  border-left: 1px solid #ddd;
-  border-right: 1px solid #ddd;
+  border-top: 1px solid ${COLOR.HUD_BORDER};
+  border-left: 1px solid ${COLOR.HUD_BORDER};
+  border-right: 1px solid ${COLOR.HUD_BORDER};
   overflow: hidden;
   padding: 16px;
 
@@ -35,8 +35,8 @@ const Heading = styled.p`
   text-transform: uppercase;
   margin-bottom: 12px;
   font-weight: 600;
-  color: #333;
-  font-size: 17px;
+  color: #ccc;
+  font-size: 16px;
 
   ${GridCSS};
 `
@@ -57,6 +57,7 @@ const Name = styled.p`
   margin-right: 24px;
   font-size: 20px;
   font-weight: 500;
+  color: #fff;
 `
 
 const Icon = styled.img`
@@ -64,6 +65,7 @@ const Icon = styled.img`
   opacity: 0.7;
   display: block;
   margin: 0 auto;
+  filter: invert(1);
 `
 
 const Value = styled.p`
@@ -71,17 +73,19 @@ const Value = styled.p`
   text-align: center;
   margin-top: 4px;
   font-weight: 500;
+  color: #fff;
 `
 
 const Skull = styled.img`
   width: 40px;
   opacity: 0.8;
+  filter: invert(1);
 `
 
 const DiedText = styled.p`
   font-size: 14px;
   font-weight: 500;
-  color: #666;
+  color: #ccc;
   text-align: center;
   margin-top: 8px;
   padding: 8px 32px;

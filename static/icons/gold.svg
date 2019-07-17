@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="287px" height="287px" viewBox="0 0 287 287" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 55.1 (78136) - https://sketchapp.com -->
-    <title>Group</title>
+    <!-- Generator: Sketch 55.2 (78181) - https://sketchapp.com -->
+    <title>Combined Shape</title>
     <desc>Created with Sketch.</desc>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Group">
-            <circle id="Circle" fill="#000000" cx="143.5" cy="143.5" r="143.5"></circle>
-            <polygon id="Hex" fill="#FFFFFF" points="144 73 205.487804 108.5 205.487804 179.5 144 215 82.5121963 179.5 82.5121963 108.5"></polygon>
+        <g id="gold" fill="#000000" fill-rule="nonzero">
+            <path d="M143.5,287 C64.2471384,287 0,222.752862 0,143.5 C0,64.2471384 64.2471384,0 143.5,0 C222.752862,0 287,64.2471384 287,143.5 C287,222.752862 222.752862,287 143.5,287 Z M144,57 L69.0000002,100.5 L69.0000002,187.5 L144,231 L219,187.5 L219,100.5 L144,57 Z" id="Combined-Shape"></path>
         </g>
     </g>
 </svg>

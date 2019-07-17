@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import store from '../../../store'
 import React from 'react'
-import { HUD_SCALE, CHAT_WIDTH } from '../../../constants/react'
+import { HUD_SCALE, CHAT_WIDTH, COLOR } from '../../../constants/react'
 
 const Container = styled.div<{ spectating: boolean }>`
   position: absolute;
@@ -14,12 +14,12 @@ const Container = styled.div<{ spectating: boolean }>`
 
 const Content = styled.div`
   margin: 0 auto;
-  background: rgba(255, 255, 255, 0.92);
+  background: ${COLOR.HUD_BACKGROUND};
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
-  border: 1px solid #ddd;
+  border: 1px solid ${COLOR.HUD_BORDER};
   border-top: none;
-  color: #333;
+  color: #fff;
   font-size: 18px;
   font-weight: 600;
   padding: 4px 0;

@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 import store from '../../../store'
 import getPlayerGroups from '../../../utils/getPlayerGroups'
 import React from 'react'
-import { HUD_SCALE, CHAT_WIDTH } from '../../../constants/react'
+import { HUD_SCALE, CHAT_WIDTH, COLOR } from '../../../constants/react'
 import shadeColor from '../../../utils/shade'
 
 const GridCSS = css`
@@ -12,7 +12,7 @@ const GridCSS = css`
 `
 
 const Container = styled.div<{ spectating: boolean }>`
-  background: rgba(255, 255, 255, 0.92);
+  background: ${COLOR.HUD_BACKGROUND};
   bottom: 0;
   right: ${props => (props.spectating ? CHAT_WIDTH : 0)};
   min-height: 240px;
@@ -20,8 +20,8 @@ const Container = styled.div<{ spectating: boolean }>`
   position: absolute;
   user-select: none;
   border-top-left-radius: 8px;
-  border-top: 1px solid #ddd;
-  border-left: 1px solid #ddd;
+  border-top: 1px solid ${COLOR.HUD_BORDER};
+  border-left: 1px solid ${COLOR.HUD_BORDER};
   overflow: hidden;
 
   /* Resolution scaling */
@@ -34,6 +34,7 @@ const Icon = styled.img`
   opacity: 0.7;
   display: block;
   margin: 0 auto;
+  filter: invert(1);
 `
 
 const Heading = styled.p`
@@ -43,8 +44,8 @@ const Heading = styled.p`
   margin-bottom: 12px;
   margin-right: 16px;
   font-weight: 600;
-  color: #333;
-  font-size: 17px;
+  color: #ccc;
+  font-size: 16px;
 
   ${GridCSS};
 `
@@ -65,7 +66,7 @@ const Pattern = styled.div<PatternProps>`
   margin-right: 8px;
   position: relative;
   top: -1px;
-  border: 1px solid ${props => shadeColor(props.color, -10)};
+  border: 1px solid ${COLOR.HUD_BACKGROUND};
 `
 
 const Skull = styled.img`
@@ -74,13 +75,14 @@ const Skull = styled.img`
   margin-right: 8px;
   position: relative;
   top: -1px;
+  filter: invert(1);
 `
 
 const Group = styled.div`
-  background: #efefef;
+  background: #444;
   margin-top: 10px;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
+  border-top: 1px solid ${COLOR.HUD_BORDER};
+  border-bottom: 1px solid ${COLOR.HUD_BORDER};
 
   :first-child {
     margin-top: 0;
@@ -102,6 +104,7 @@ const Player = styled.div<PlayerProps>`
 
   p {
     font-weight: 500;
+    color: #fff;
   }
 `
 
@@ -113,7 +116,7 @@ const Leaderboard = observer(() => {
   return (
     <Container spectating={store.spectating}>
       <Heading>
-        <span>Players</span>
+        <span>Leaderboard</span>
         <Icon src="/static/icons/hexagon.svg" />
         <Icon src="/static/icons/village.svg" />
         <Icon src="/static/icons/gold.svg" />

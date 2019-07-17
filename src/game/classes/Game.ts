@@ -941,7 +941,7 @@ class Game {
       fraction = 1
     }
 
-    ctx.fillStyle = '#333'
+    ctx.fillStyle = '#fff'
     ctx.fillRect(0, 0, BAR_WIDTH * fraction, BAR_HEIGHT)
   }
   showNotEnoughGold(tile: Tile) {

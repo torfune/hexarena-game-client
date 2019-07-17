@@ -4,21 +4,21 @@ import { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import Label from '../../../../components/Label'
 import store from '../../../../store'
-import { BLUE, PRIMARY, HUD_SCALE } from '../../../../constants/react'
+import { BLUE, PRIMARY, HUD_SCALE, COLOR } from '../../../../constants/react'
 import React from 'react'
 
 const Container = styled.div`
   z-index: 2;
-  background: rgba(255, 255, 255, 0.92);
+  background: ${COLOR.HUD_BACKGROUND};
   bottom: 0;
   right: calc(319px * ${HUD_SCALE});
   width: 300px;
   position: absolute;
   user-select: none;
   border-top-left-radius: 8px;
-  border-top: 1px solid #ddd;
-  border-left: 1px solid #ddd;
-  border-right: 1px solid #ddd;
+  border-top: 1px solid ${COLOR.HUD_BORDER};
+  border-left: 1px solid ${COLOR.HUD_BORDER};
+  border-right: 1px solid ${COLOR.HUD_BORDER};
   overflow: hidden;
 
   /* Resolution scaling */
@@ -31,22 +31,16 @@ const Header = styled.div`
   justify-content: space-between;
   padding: 12px 16px;
   align-items: center;
-  background: ${props => props.color || '#fff'};
   transition: 100ms;
 
   h2 {
     margin-top: 2px;
     text-transform: uppercase;
-    color: ${props => (props.color ? '#fff' : '#333')};
-    font-size: 17px;
+    color: #ccc;
+    font-size: 16px;
     font-weight: 600;
   }
 `
-
-interface Props {
-  text: string
-  color?: string
-}
 
 const Content = styled.div`
   padding: 0 16px;

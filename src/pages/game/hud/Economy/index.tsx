@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { HUD_SCALE } from '../../../../constants/react'
+import { HUD_SCALE, COLOR } from '../../../../constants/react'
 import { observer } from 'mobx-react-lite'
 import React from 'react'
 import Income from './Income'
@@ -8,15 +8,15 @@ import Chart from './Chart'
 import store from '../../../../store'
 
 const Container = styled.div`
-  background: rgba(255, 255, 255, 0.92);
+  background: ${COLOR.HUD_BACKGROUND};
   bottom: 0;
   left: 0;
   min-height: 240px;
   position: absolute;
   user-select: none;
   border-top-right-radius: 8px;
-  border-top: 1px solid #ddd;
-  border-right: 1px solid #ddd;
+  border-top: 1px solid ${COLOR.HUD_BORDER};
+  border-right: 1px solid ${COLOR.HUD_BORDER};
   overflow: hidden;
 
   /* Resolution scaling */
@@ -27,7 +27,7 @@ const Container = styled.div`
 const GoldSection = styled.div`
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid ${COLOR.HUD_BORDER};
 `
 
 const ChartSection = styled.div`
@@ -36,21 +36,19 @@ const ChartSection = styled.div`
   justify-content: space-between;
 `
 
-const Economy = observer(() => {
-  return (
-    <Container>
-      {!store.spectating && (
-        <GoldSection>
-          <Income />
-          <Gold />
-        </GoldSection>
-      )}
+const Economy = observer(() => (
+  <Container>
+    {!store.spectating && (
+      <GoldSection>
+        <Income />
+        <Gold />
+      </GoldSection>
+    )}
 
-      <ChartSection>
-        <Chart />
-      </ChartSection>
-    </Container>
-  )
-})
+    <ChartSection>
+      <Chart />
+    </ChartSection>
+  </Container>
+))
 
 export default Economy

@@ -767,7 +767,7 @@ class Tile {
         return 'Base'
       }
     } else if (this.village) {
-      return `Village (${this.village.houseCount})`
+      return `Village`
     }
 
     return 'Plains'

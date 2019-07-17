@@ -5,6 +5,7 @@ import { Doughnut } from 'react-chartjs-2'
 import { ChartData, ChartOptions } from 'chart.js'
 import { observer } from 'mobx-react-lite'
 import store from '../../../../store'
+import { COLOR } from '../../../../constants/react'
 
 const Container = styled.div``
 
@@ -19,7 +20,7 @@ const OPTIONS: ChartOptions = {
       fontFamily: 'Montserrat',
       usePointStyle: true,
       fontSize: 14,
-      fontColor: '#000',
+      fontColor: '#fff',
       fontStyle: '500',
       padding: 8,
     },
@@ -36,7 +37,8 @@ const Chart = () => {
         {
           data: store.players.map(p => p.houses),
           backgroundColor: store.players.map(p => p.pattern),
-          borderWidth: 4,
+          borderWidth: 1,
+          borderColor: COLOR.HUD_BACKGROUND,
         },
       ],
     }
