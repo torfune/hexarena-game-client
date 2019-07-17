@@ -24,7 +24,9 @@ import Prop from '../../types/Prop'
 import createProp from '../../utils/createProp'
 import TileImageArray from '../../types/TileImageArray'
 import { Sprite, Loader } from 'pixi.js'
-import getRotationBySide from '../functions/getRotationBySide'
+import getRotationBySide, {
+  getArrowRotationBySide,
+} from '../functions/getRotationBySide'
 import destroyImage from '../functions/destroyImage'
 import axialInDirection from '../../utils/axialInDirection'
 import getTileByAxial from '../functions/getTileByAxial'
@@ -538,8 +540,9 @@ class Tile {
         const arrow = createImage('arrow')
         arrow.x = centerPixel.x
         arrow.y = centerPixel.y
-        arrow.rotation = getRotationBySide(direction)
+        arrow.rotation = getArrowRotationBySide(direction)
         arrow.alpha = 0
+        arrow.scale.set(0)
 
         new Animation(
           arrow,
@@ -547,6 +550,7 @@ class Tile {
             image.x = centerPixel.x + (pixel.x - centerPixel.x) * fraction
             image.y = centerPixel.y + (pixel.y - centerPixel.y) * fraction
             image.alpha = fraction
+            image.scale.set(fraction)
           },
           {
             speed: 0.05,
@@ -600,6 +604,7 @@ class Tile {
             image.x = centerPixel.x + (pixel.x - centerPixel.x) * (1 - fraction)
             image.y = centerPixel.y + (pixel.y - centerPixel.y) * (1 - fraction)
             image.alpha = 1 - fraction
+            image.scale.set(1 - fraction)
           },
           {
             speed: 0.05,
