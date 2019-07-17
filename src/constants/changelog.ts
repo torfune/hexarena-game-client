@@ -1,7 +1,7 @@
 const changelog = [
   {
     version: 'Alpha 1.39',
-    points: ['HTTPS', 'Match found notifications', 'Bug fixes'],
+    points: ['HTTPS', 'Match found notifications', 'Dark HUD', 'Bug fixes'],
   },
   {
     version: 'Alpha 1.38',
