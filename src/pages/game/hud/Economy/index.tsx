@@ -20,7 +20,7 @@ const Container = styled.div`
   overflow: hidden;
 
   /* Resolution scaling */
-  transform-origin: right bottom;
+  transform-origin: left bottom;
   transform: scale(${HUD_SCALE});
 `
 

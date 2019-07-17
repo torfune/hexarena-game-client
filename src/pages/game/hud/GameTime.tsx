@@ -17,8 +17,8 @@ const Content = styled.div`
   background: rgba(255, 255, 255, 0.92);
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
-  border-top: none;
   border: 1px solid #ddd;
+  border-top: none;
   color: #333;
   font-size: 18px;
   font-weight: 600;

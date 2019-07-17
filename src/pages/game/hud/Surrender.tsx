@@ -17,7 +17,7 @@ const Container = styled.div`
   padding-top: 16px;
 
   /* Resolution scaling */
-  transform-origin: right bottom;
+  transform-origin: left top;
   transform: scale(${HUD_SCALE});
 `
 
