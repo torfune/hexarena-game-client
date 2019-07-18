@@ -1,5 +1,9 @@
 const changelog = [
   {
+    version: 'Alpha 1.40',
+    points: ['Improved animations'],
+  },
+  {
     version: 'Alpha 1.39',
     points: ['HTTPS', 'Match found notifications', 'Dark HUD', 'Bug fixes'],
   },
