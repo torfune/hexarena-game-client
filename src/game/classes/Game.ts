@@ -582,14 +582,14 @@ class Game {
           if (!t) continue
 
           // Enemy Mountain
-          // if (
-          //   t.mountain &&
-          //   t.owner &&
-          //   t.ownerId !== playerId &&
-          //   t.ownerId !== store.player.allyId
-          // ) {
-          //   break
-          // }
+          if (
+            t.mountain &&
+            t.owner &&
+            t.ownerId !== playerId &&
+            t.ownerId !== store.player.allyId
+          ) {
+            break
+          }
 
           // Owned Castle & Base
           if (t.ownerId === playerId && t.building) {
@@ -628,7 +628,7 @@ class Game {
           continue
         }
 
-        if (n.owner && (n.mountain || n.building)) {
+        if (n.owner && n.building) {
           continue
         }
 
