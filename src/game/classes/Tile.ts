@@ -55,6 +55,7 @@ class Tile {
   readonly axial: Axial
   readonly bedrock: boolean
   readonly mountain: boolean
+  readonly createdAt: number
   forest: Forest | null = null
   village: Village | null = null
   action: Action | null = null
@@ -74,6 +75,7 @@ class Tile {
     this.axial = axial
     this.bedrock = bedrock
     this.mountain = mountain
+    this.createdAt = Date.now()
 
     if (mountain) {
       const image = this.addImage('mountain')
@@ -104,7 +106,9 @@ class Tile {
           }
         } else if (value === 'TOWER') {
           if (!this.image.tower) {
-            this.addImage('tower')
+            const tower = this.addImage('tower')
+            tower.anchor.set(0.5, 1)
+            tower.y += 60
           }
         } else if (value === null) {
           this.removeImage('base')
@@ -216,6 +220,10 @@ class Tile {
     // this.image.contested.visible = false
   }
   addImage(key: keyof TileImage, animate = true) {
+    if (Date.now() - this.createdAt < 500) {
+      animate = false
+    }
+
     const texture = key === 'background' ? 'pattern' : key
     const pixel = getPixelPosition(this.axial)
     const image = createImage(key, texture)
@@ -226,8 +234,10 @@ class Tile {
 
     if (animate) {
       image.alpha = 0
+      image.scale.set(0)
       new Animation(image, (image: Sprite, fraction: number) => {
         image.alpha = fraction
+        image.scale.set(fraction)
       })
     }
 
@@ -245,6 +255,7 @@ class Tile {
         image,
         (image, fraction) => {
           image.alpha = 1 - fraction
+          image.scale.set(1 - fraction)
         },
         {
           context: {
@@ -480,24 +491,45 @@ class Tile {
       }
 
       const image = this.addImage('pattern', false)
-      image.alpha = 0
       image.tint = hex(newOwner.pattern)
 
-      store.game.animations.push(
-        new Animation(
-          image,
-          (image, fraction) => {
-            image.alpha = fraction
-          },
-          {
-            initialFraction: 0.4,
-            speed: 0.01,
-          }
-        )
-      )
+      if (Date.now() - this.createdAt > 500) {
+        image.alpha = 0
+        image.scale.set(0)
+        setTimeout(() => {
+          new Animation(
+            image,
+            (image, fraction) => {
+              image.alpha = fraction
+              image.scale.set(fraction)
+            },
+            {
+              initialFraction: 0.6,
+              speed: 0.02,
+            }
+          )
+        }, Math.round(Math.random() * 100))
+      }
     } else {
       if (this.image.pattern) {
-        this.removeImage('pattern')
+        const patternImage = this.image.pattern
+        setTimeout(() => {
+          if (this.image.pattern === patternImage) {
+            new Animation(
+              this.image.pattern,
+              (image, fraction) => {
+                image.alpha = 1 - fraction
+                image.scale.set(1 - fraction)
+              },
+              {
+                speed: 0.04,
+                onFinish: image => {
+                  destroyImage('pattern', image)
+                },
+              }
+            )
+          }
+        }, Math.round(Math.random() * 100))
       }
 
       // Create Background
@@ -648,12 +680,15 @@ class Tile {
     }
   }
   updateBorders() {
+    const now = Date.now()
+
     for (let i = 0; i < 6; i++) {
       const n = this.neighbors[i]
 
       if (!n) continue
 
       let showBorder = false
+      let patternPreview = false
       let borderTint = null
 
       // Bedrock -> !Bedrock
@@ -695,6 +730,7 @@ class Tile {
         !store.game.tilesWithPatternPreview.includes(n)
       ) {
         showBorder = true
+        patternPreview = true
       }
 
       // Preview -> Owned
@@ -704,6 +740,7 @@ class Tile {
         !store.game.tilesWithPatternPreview.includes(n)
       ) {
         showBorder = true
+        patternPreview = true
       }
 
       const image = this.imageSet.border[i]
@@ -715,6 +752,20 @@ class Tile {
         newImage.y = pixel.y
         newImage.rotation = getRotationBySide(i)
         newImage.tint = borderTint ? hex(borderTint) : hex('#fff')
+
+        if (!patternPreview && now - this.createdAt > 500) {
+          newImage.alpha = 0
+          new Animation(
+            newImage,
+            (image, fraction) => {
+              image.alpha = fraction
+            },
+            {
+              ease: easeInQuad,
+              speed: 0.06,
+            }
+          )
+        }
 
         this.imageSet.border[i] = newImage
       } else if (!showBorder && image) {
@@ -740,7 +791,7 @@ class Tile {
     this.image.patternPreview.x = pixel.x
     this.image.patternPreview.y = pixel.y
     this.image.patternPreview.tint = hex(pattern)
-    this.image.patternPreview.alpha = 0.5
+    this.image.patternPreview.alpha = 0.3
   }
   removePatternPreview() {
     if (!this.image.patternPreview) return

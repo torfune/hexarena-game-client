@@ -79,7 +79,7 @@ const Skull = styled.img`
 `
 
 const Group = styled.div`
-  background: #444;
+  background: #222;
   margin-top: 10px;
   border-top: 1px solid ${COLOR.HUD_BORDER};
   border-bottom: 1px solid ${COLOR.HUD_BORDER};

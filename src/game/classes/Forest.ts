@@ -43,25 +43,28 @@ class Forest {
 
     const pixel = getPixelPosition(tile.axial)
     const treePosition = shuffle(TREE_POSITION)
+    const now = Date.now()
     for (let i = 0; i < treeCount; i++) {
       const image = createImage('tree')
       image.x = pixel.x + treePosition[i].x
       image.y = pixel.y + treePosition[i].y
       image.anchor.set(0.5, 1)
-      image.scale.y = 0
-      image.scale.x = 0
-      setTimeout(() => {
-        new Animation(
-          image,
-          (image: Sprite, fraction: number) => {
-            image.scale.y = fraction
-            image.scale.x = fraction
-          },
-          {
-            speed: 0.04,
-          }
-        )
-      }, Math.round(Math.random() * 800))
+
+      if (now - this.tile.createdAt > 200) {
+        image.scale.set(0)
+        setTimeout(() => {
+          new Animation(
+            image,
+            (image, fraction) => {
+              image.scale.set(fraction)
+            },
+            {
+              speed: 0.04,
+            }
+          )
+        }, Math.round(Math.random() * 800))
+      }
+
       this.trees.push(image)
     }
 
