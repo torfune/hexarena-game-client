@@ -3,6 +3,7 @@ const changelog = [
     version: 'Alpha 1.40',
     points: [
       'Improved animations',
+      'Mountains are captured by villages',
       'Default vision increased by 1 tile',
       'Matchmaking improvements',
     ],
