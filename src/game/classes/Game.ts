@@ -215,6 +215,7 @@ class Game {
     Socket.send('spectate', String(gameIndex))
     store.gameIndex = gameIndex
     store.spectating = true
+    this.targetScale = MIN_SCALE
   }
   stopSpectate() {
     Socket.send('stopSpectate', String(store.gameIndex))
