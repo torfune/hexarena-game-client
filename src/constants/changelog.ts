@@ -1,7 +1,11 @@
 const changelog = [
   {
     version: 'Alpha 1.40',
-    points: ['Improved animations'],
+    points: [
+      'Improved animations',
+      'Default vision increased by 1 tile',
+      'Matchmaking improvements',
+    ],
   },
   {
     version: 'Alpha 1.39',
