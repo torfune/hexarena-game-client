@@ -894,7 +894,7 @@ class Tile {
     const forestGold = this.forest ? this.forest.treeCount : 0
     if (
       (this.isEmpty() || this.forest) &&
-      (store.game.player.gold >= TOWER_COST - forestGold || ignoreGold)
+      (store.game.player.gold >= CAMP_COST - forestGold || ignoreGold)
     ) {
       return 'CAMP'
     }
