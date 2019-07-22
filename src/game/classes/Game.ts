@@ -291,11 +291,6 @@ class Game {
     // store.onChange('serverTime', () => {
     // })
     // store.onChange('goldAnimation', () => {
-    //   const { goldAnimation } = this
-    //   if (!goldAnimation) return
-    //   const tile = store.getTile(goldAnimation.tileId)
-    //   if (!tile) return
-    //   new GoldAnimation(tile, goldAnimation.count)
     // })
   }
   setupEventListeners() {
@@ -401,7 +396,7 @@ class Game {
       hoveredTile.ownerId === this.playerId &&
       hoveredTile.army &&
       hoveredTile.army.ownerId === this.playerId &&
-      hoveredTile.building &&
+      (hoveredTile.building || hoveredTile.camp) &&
       button !== 2
     ) {
       this.selectArmy(hoveredTile)
@@ -558,7 +553,7 @@ class Game {
     }
 
     // Upgrade hover
-    if (actionType === 'UPGRADE' && !this.selectedArmyTile && !tile.army) {
+    if (actionType === 'CASTLE' && !this.selectedArmyTile && !tile.army) {
       for (let i = 0; i < 6; i++) {
         const n = tile.neighbors[i]
         if (n && !tilesToCapture.includes(n) && !n.owner) {
@@ -567,7 +562,7 @@ class Game {
       }
     }
 
-    // Actions (ATTACK, UPGRADE)
+    // Actions (ATTACK, CASTLE)
     for (let i = 0; i < this.actions.length; i++) {
       const action = this.actions[i]
 
@@ -580,7 +575,7 @@ class Game {
         continue
       }
 
-      if (action.type === 'UPGRADE' && action.owner.id === playerId) {
+      if (action.type === 'CASTLE' && action.owner.id === playerId) {
         for (let j = 0; j < 6; j++) {
           const n = action.tile.neighbors[j]
           if (n && !tilesToCapture.includes(n) && !n.owner) {
@@ -627,14 +622,20 @@ class Game {
             break
           }
 
+          // Owned empty Camp
+          if (t.ownerId === playerId && t.camp) {
+            break
+          }
+
           // Ally tile
           if (t.ownerId && t.ownerId === this.player.allyId) {
             break
           }
 
+          // Enemy structure
           if (t.ownerId !== playerId && !t.bedrock) {
             tilesToCapture.push(t)
-            if (t.mountain || t.forest || t.building) {
+            if (t.mountain || t.forest || t.building || (t.camp && t.army)) {
               break
             }
           }
@@ -695,7 +696,7 @@ class Game {
     for (let i = 0; i < this.actions.length; i++) {
       const action = this.actions[i]
 
-      if (action.type !== 'ATTACK' && action.type !== 'UPGRADE') continue
+      if (action.type !== 'ATTACK' && action.type !== 'CASTLE') continue
 
       const tilesToCapture = this.getTilesToCapture(
         action.tile,
@@ -874,7 +875,7 @@ class Game {
 
         t.addHighlight()
 
-        if (t.building) break
+        if (t.building || t.camp) break
       }
     }
   }
@@ -982,10 +983,10 @@ class Game {
 
     const {
       ATTACK_COST,
-      BUILD_COST,
-      UPGRADE_COST,
       RECRUIT_COST,
-      HP,
+      CAMP_COST,
+      TOWER_COST,
+      CASTLE_COST,
     } = store.gsConfig
 
     const actionType = tile.getActionType(true)
@@ -993,8 +994,9 @@ class Game {
     if (
       !actionType ||
       (actionType === 'ATTACK' && this.player.gold >= ATTACK_COST) ||
-      (actionType === 'BUILD' && this.player.gold >= BUILD_COST) ||
-      (actionType === 'UPGRADE' && this.player.gold >= UPGRADE_COST) ||
+      (actionType === 'TOWER' && this.player.gold >= TOWER_COST) ||
+      (actionType === 'CAMP' && this.player.gold >= CAMP_COST) ||
+      (actionType === 'CASTLE' && this.player.gold >= CASTLE_COST) ||
       (actionType === 'RECRUIT' && this.player.gold >= RECRUIT_COST)
     ) {
       return

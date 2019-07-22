@@ -14,11 +14,9 @@ const loadImages = () => {
         'action-icon-recruit',
         `${images}/action-icon-recruit.png?${version}`
       )
-      .add('action-icon-build', `${images}/action-icon-build.png?${version}`)
-      .add(
-        'action-icon-upgrade',
-        `${images}/action-icon-upgrade.png?${version}`
-      )
+      .add('action-icon-camp', `${images}/action-icon-camp.png?${version}`)
+      .add('action-icon-tower', `${images}/action-icon-tower.png?${version}`)
+      .add('action-icon-castle', `${images}/action-icon-castle.png?${version}`)
       .add('army', `${images}/army.png?${version}`)
       .add('armyIcon', `${images}/army-icon.png?${version}`)
       .add('arrow', `${images}/arrow.png?${version}`)
@@ -31,6 +29,7 @@ const loadImages = () => {
       .add('tree', `${images}/tree.png?${version}`)
       .add('gold', `${images}/gold.png?${version}`)
       .add('mountain', `${images}/mountain.png?${version}`)
+      .add('camp', `${images}/camp.png?${version}`)
       .add('pattern', `${images}/pattern.png?${version}`)
       .add('tower', `${images}/tower.png?${version}`)
       .add('tower-icon', `${images}/tower-icon.png?${version}`)

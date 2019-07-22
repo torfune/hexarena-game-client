@@ -16,6 +16,7 @@ interface TileImage {
   pattern?: Sprite
   patternPreview?: Sprite
   tower?: Sprite
+  camp?: Sprite
   village?: Sprite
 }
 

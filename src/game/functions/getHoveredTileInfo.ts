@@ -14,14 +14,16 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
 
   // GS Config
   const {
-    BUILD_COST,
-    RECRUIT_COST,
-    UPGRADE_COST,
-    ATTACK_DURATION,
     ATTACK_COST,
-    BUILD_DURATION,
-    UPGRADE_DURATION,
+    ATTACK_DURATION,
+    RECRUIT_COST,
     RECRUIT_DURATION,
+    CAMP_COST,
+    CAMP_DURATION,
+    TOWER_COST,
+    TOWER_DURATION,
+    CASTLE_COST,
+    CASTLE_DURATION,
     HP,
   } = store.gsConfig
 
@@ -60,7 +62,7 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
     }
   }
 
-  // Attack
+  // ATTACK
   if (isNeighborToPlayer && !tile.owner && !tile.action) {
     return {
       label: 'Capture Tile',
@@ -72,16 +74,28 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
     }
   }
 
-  // Build
-  const tileGold = tile.forest ? tile.forest.trees.length : 0
+  // CAMP
+  const forestGold = tile.forest ? tile.forest.trees.length : 0
   if (isOwnedByPlayer && (tile.isEmpty() || tile.forest) && !tile.action) {
+    return {
+      label: 'Build Camp',
+      iconSrc: '/static/images/camp-icon.png',
+      structure,
+      duration: `${CAMP_DURATION / 1000}s`,
+      notEnoughGold: store.game.player.gold < CAMP_COST - forestGold,
+      goldCost: CAMP_COST - forestGold,
+    }
+  }
+
+  // TOWER
+  if (isOwnedByPlayer && tile.camp && !tile.action) {
     return {
       label: 'Build Tower',
       iconSrc: '/static/images/tower-icon.png',
       structure,
-      duration: `${BUILD_DURATION / 1000}s`,
-      notEnoughGold: store.game.player.gold < BUILD_COST - tileGold,
-      goldCost: BUILD_COST - tileGold,
+      duration: `${TOWER_DURATION / 1000}s`,
+      notEnoughGold: store.game.player.gold < TOWER_COST,
+      goldCost: TOWER_COST,
     }
   }
 
@@ -113,9 +127,9 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
       label: 'Upgrade to Castle',
       iconSrc: '/static/images/castle-icon.png',
       structure,
-      duration: `${UPGRADE_DURATION / 1000}s`,
-      notEnoughGold: store.game.player.gold < UPGRADE_COST,
-      goldCost: UPGRADE_COST,
+      duration: `${CASTLE_DURATION / 1000}s`,
+      notEnoughGold: store.game.player.gold < CASTLE_COST,
+      goldCost: CASTLE_COST,
     }
   }
 

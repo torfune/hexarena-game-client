@@ -54,7 +54,7 @@ class Army {
       UNIT_POSITION_OFFSET
     )
 
-    const isInside = tile.building
+    const isInside = tile.building || tile.camp
 
     for (let i = 0; i < UNIT_COUNT; i++) {
       if (isInside) {
@@ -168,7 +168,7 @@ class Army {
     )
 
     for (let i = 0; i < UNIT_COUNT; i++) {
-      if (tile.building) {
+      if (tile.building || tile.camp) {
         this.units[i].moveOn(doorPosition.x, doorPosition.y)
       } else {
         this.units[i].moveOn(randomizedPositions[i].x, randomizedPositions[i].y)
@@ -178,8 +178,8 @@ class Army {
     if (
       (sameOwner || allyOwner) &&
       !this.isDestroying &&
-      tile.building &&
-      tile.building.hp === gsConfig.HP[tile.building.type]
+      (tile.camp ||
+        (tile.building && tile.building.hp === gsConfig.HP[tile.building.type]))
     ) {
       tile.addArmy(this)
     }

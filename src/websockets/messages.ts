@@ -13,6 +13,7 @@ import Army from '../game/classes/Army'
 import Village from '../game/classes/Village'
 import Forest from '../game/classes/Forest'
 import updateProps from '../game/functions/updateProps'
+import GoldAnimation from '../game/classes/GoldAnimation'
 
 // Messages: Gameserver -> Frontend
 export type MessageGS =
@@ -85,9 +86,10 @@ const messages: {
       if (!id || !type || !tileId || !ownerId) continue
       if (
         type !== 'ATTACK' &&
-        type !== 'BUILD' &&
         type !== 'RECRUIT' &&
-        type !== 'UPGRADE'
+        type !== 'CAMP' &&
+        type !== 'TOWER' &&
+        type !== 'CASTLE'
       ) {
         continue
       }
@@ -210,6 +212,7 @@ const messages: {
       buildingHp: 'number',
       mountain: 'boolean',
       bedrock: 'boolean',
+      camp: 'boolean',
     }) as {
       id: string | null
       x: number | null
@@ -219,6 +222,7 @@ const messages: {
       buildingHp: number | null
       mountain: boolean
       bedrock: boolean
+      camp: boolean
     }[]
 
     for (let i = 0; i < parsed.length; i++) {
@@ -409,6 +413,12 @@ const messages: {
       tileId: string
       count: number
     }
+
+    const { goldAnimation } = store.game
+    if (!goldAnimation) return
+    const tile: Tile | null = store.game.tiles[goldAnimation.tileId] || null
+    if (!tile) return
+    new GoldAnimation(tile, goldAnimation.count)
   },
   incomeAt: (payload: string) => {
     if (!store.game) return

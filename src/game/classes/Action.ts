@@ -13,7 +13,7 @@ import { easeOutQuad, easeInQuad } from '../functions/easing'
 const loader = Loader.shared
 const ACTION_RADIUS = 50
 
-export type ActionType = 'ATTACK' | 'BUILD' | 'RECRUIT' | 'UPGRADE'
+export type ActionType = 'ATTACK' | 'RECRUIT' | 'CAMP' | 'TOWER' | 'CASTLE'
 export type ActionStatus = 'PENDING' | 'RUNNING' | 'FINISHED'
 
 interface Props {
@@ -178,10 +178,12 @@ class Action {
         } else {
           return loader.resources['action-icon-recruit'].texture
         }
-      case 'BUILD':
-        return loader.resources['action-icon-build'].texture
-      case 'UPGRADE':
-        return loader.resources['action-icon-upgrade'].texture
+      case 'CAMP':
+        return loader.resources['action-icon-camp'].texture
+      case 'TOWER':
+        return loader.resources['action-icon-tower'].texture
+      case 'CASTLE':
+        return loader.resources['action-icon-castle'].texture
     }
   }
 

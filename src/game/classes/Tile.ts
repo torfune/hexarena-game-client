@@ -15,7 +15,6 @@ import getImageAnimation from '../functions/getImageAnimation'
 import shade from '../../utils/shade'
 import Player from './Player'
 import Animation from './Animation'
-import invertHexDirection from '../functions/invertHexDirection'
 import TileImage from '../../types/TileImage'
 import { Axial } from '../../types/coordinates'
 import Action from './Action'
@@ -39,6 +38,7 @@ const loader = Loader.shared
 
 interface Props {
   [key: string]: Prop<Primitive>
+  camp: Prop<boolean>
   buildingHp: Prop<number | null>
   buildingType: Prop<BuildingType | null>
   ownerId: Prop<string | null>
@@ -46,6 +46,7 @@ interface Props {
 
 class Tile {
   props: Props = {
+    camp: createProp(false),
     buildingHp: createProp(null),
     buildingType: createProp(null),
     ownerId: createProp(null),
@@ -92,6 +93,16 @@ class Tile {
     switch (key) {
       case 'ownerId':
         this.updateOwner()
+        break
+
+      case 'camp':
+        if (this.camp && !this.image.camp) {
+          const camp = this.addImage('camp')
+          camp.anchor.set(0.5, 1)
+          camp.y += 68
+        } else if (!this.camp && this.image.camp) {
+          this.removeImage('camp')
+        }
         break
 
       case 'buildingType':
@@ -791,7 +802,13 @@ class Tile {
     return store.game.hoveredTile && store.game.hoveredTile.id === this.id
   }
   isEmpty() {
-    return !this.building && !this.forest && !this.village && !this.mountain
+    return (
+      !this.building &&
+      !this.forest &&
+      !this.village &&
+      !this.mountain &&
+      !this.camp
+    )
   }
   addPatternPreview(pattern: string) {
     if (this.image.pattern) {
@@ -822,6 +839,8 @@ class Tile {
       return 'Mountains'
     } else if (this.forest) {
       return 'Forest'
+    } else if (this.camp) {
+      return 'Camp'
     } else if (this.building) {
       if (this.building.type === 'TOWER') {
         return 'Tower'
@@ -843,9 +862,10 @@ class Tile {
 
     const {
       ATTACK_COST,
-      BUILD_COST,
-      UPGRADE_COST,
       RECRUIT_COST,
+      CAMP_COST,
+      TOWER_COST,
+      CASTLE_COST,
       HP,
     } = store.gsConfig
 
@@ -870,13 +890,18 @@ class Tile {
 
     if (this.ownerId !== store.game.playerId) return null
 
-    // BUILD
+    // CAMP
     const forestGold = this.forest ? this.forest.treeCount : 0
     if (
       (this.isEmpty() || this.forest) &&
-      (store.game.player.gold >= BUILD_COST - forestGold || ignoreGold)
+      (store.game.player.gold >= TOWER_COST - forestGold || ignoreGold)
     ) {
-      return 'BUILD'
+      return 'CAMP'
+    }
+
+    // TOWER
+    if (this.camp && (store.game.player.gold >= TOWER_COST || ignoreGold)) {
+      return 'TOWER'
     }
 
     // RECRUIT
@@ -888,13 +913,13 @@ class Tile {
       return 'RECRUIT'
     }
 
-    // UPGRADE
+    // CASTLE
     if (
       this.building &&
       this.building.type === 'TOWER' &&
-      (store.game.player.gold >= UPGRADE_COST || ignoreGold)
+      (store.game.player.gold >= CASTLE_COST || ignoreGold)
     ) {
-      return 'UPGRADE'
+      return 'CASTLE'
     }
 
     return null
@@ -907,12 +932,13 @@ class Tile {
   get building() {
     const type = this.props.buildingType.current
     const hp = this.props.buildingHp.current
-
     if (type === null || hp === null) {
       return null
     }
-
     return { type, hp }
+  }
+  get camp() {
+    return this.props.camp.current
   }
 }
 

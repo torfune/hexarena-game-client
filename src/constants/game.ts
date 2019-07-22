@@ -14,6 +14,7 @@ export const TILE_IMAGES = [
   'hpFill',
   'armyIcon',
   'mountain',
+  'camp',
   'house',
   'tree',
   'army',
@@ -81,6 +82,7 @@ export const DEBUG_COMMANDS = [
   ['g', 'defeat'],
   ['r', 'dummy_capture'],
   ['t', 'add_village'],
+  ['v', 'add_camp'],
   ['n', 'hp_remove'],
   ['m', 'hp_add'],
 ]

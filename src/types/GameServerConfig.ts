@@ -10,8 +10,6 @@ interface GameServerConfig {
   CHAT_MESSAGE_MAX_LENGTH: number
 
   // MATCH MAKING
-  MIN_PLAYERS: number
-  MAX_PLAYERS: number
   COUNTDOWN_TIME: number
 
   // ARMIES
@@ -24,21 +22,20 @@ interface GameServerConfig {
   CASTLE_VISION: number
 
   // ACTIONS
-  MAX_ACTIONS: number
-  BUILD_DURATION: number
-  RECRUIT_DURATION: number
-  UPGRADE_DURATION: number
-  CUT_DURATION: number
   ATTACK_DURATION: number
+  RECRUIT_DURATION: number
+  CAMP_DURATION: number
+  TOWER_DURATION: number
+  CASTLE_DURATION: number
 
   // GOLD
   MAX_GOLD: number
   START_GOLD: number
-  BUILD_COST: number
-  RECRUIT_COST: number
   ATTACK_COST: number
-  UPGRADE_COST: number
-  CUT_GOLD_GAIN: number
+  RECRUIT_COST: number
+  CAMP_COST: number
+  TOWER_COST: number
+  CASTLE_COST: number
 
   // MANUAL ATTACKS
   DEFAULT_DEFEND_POWER: number
