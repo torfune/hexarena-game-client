@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import React, { useEffect } from 'react'
+import React from 'react'
 import Header from '../../components/Header'
 import PlaySection from './PlaySection'
 import Chat from './Chat'

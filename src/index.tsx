@@ -9,7 +9,6 @@ import store from './store'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import Loader from './components/Loader'
 import { observer } from 'mobx-react-lite'
-;(window as any).s = store
 
 const App: React.FC = observer(() => (
   <>
@@ -26,7 +25,10 @@ const App: React.FC = observer(() => (
               render={({ history }) => <Homepage history={history} />}
             />
             <Route path="/game" component={Game} />
-            <Route path="/spectate" component={Spectate} />
+            <Route
+              path="/spectate"
+              render={({ history }) => <Spectate history={history} />}
+            />
           </>
         )}
       </Router>

@@ -48,8 +48,6 @@ const ReloadButton = styled.div`
 `
 
 const Loader: React.FC = () => {
-  store.routerHistory = history
-
   useEffect(() => {
     initialize()
   }, [])
