@@ -94,6 +94,7 @@ class Game {
     keydown: (event: any) => void
     keyup: (event: any) => void
     wheel: (event: any) => void
+    resize: (event: any) => void
   } | null = null
   changeHandlers: { [key: string]: () => void } = {}
 
@@ -281,18 +282,6 @@ class Game {
     // store.gameIndex = null
     // store.spectating = false
   }
-  setupStoreListeners() {
-    // store.onChange('tiles', () => {
-    // })
-    // store.onChange('actions', () => {
-    // })
-    // store.onChange('players', () => {
-    // })
-    // store.onChange('serverTime', () => {
-    // })
-    // store.onChange('goldAnimation', () => {
-    // })
-  }
   setupEventListeners() {
     this.eventListeners = {
       mousemove: this.handleMouseMove.bind(this),
@@ -301,6 +290,7 @@ class Game {
       keydown: this.handleKeyDown.bind(this),
       keyup: this.handleKeyUp.bind(this),
       wheel: this.handleWheelMove.bind(this),
+      resize: this.updateScreenSize.bind(this),
     }
 
     document.addEventListener('mousemove', this.eventListeners.mousemove)
@@ -310,6 +300,7 @@ class Game {
     document.addEventListener('keyup', this.eventListeners.keyup)
     document.addEventListener('contextmenu', this.handleContextMenu, false)
     document.addEventListener('wheel', this.eventListeners.wheel)
+    window.addEventListener('resize', this.eventListeners.resize)
   }
   clearEventListeners() {
     if (!this.eventListeners) return
@@ -321,6 +312,7 @@ class Game {
     document.removeEventListener('keyup', this.eventListeners.keyup)
     document.removeEventListener('contextmenu', this.handleContextMenu, false)
     document.removeEventListener('wheel', this.eventListeners.wheel)
+    window.removeEventListener('resize', this.eventListeners.resize)
   }
   updateScreenSize() {
     if (!this.pixi) return

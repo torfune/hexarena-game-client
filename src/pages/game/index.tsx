@@ -45,33 +45,23 @@ const GameCanvas = styled.div<GameCanvasProps>`
 `
 
 const GamePage: React.FC<RouteComponentProps> = observer(() => {
-  // Mount / Unmount
   useEffect(() => {
-    if (!store.game) {
-      console.warn(`Game instance not found. Can't render.`)
-      window.location.href = '/'
-      return
-    }
-
-    const canvas = document.getElementById('game-canvas')
-    if (!canvas) throw Error('Cannot find canvas.')
-
-    store.game.render(canvas)
-
-    window.addEventListener(
-      'resize',
-      store.game.updateScreenSize.bind(store.game)
-    )
-
-    return () => {
-      if (!store.game) return
-
-      window.removeEventListener('resize', store.game.updateScreenSize)
-
-      // Force reload
-      window.location.reload()
-    }
+    setTimeout(() => {
+      if (!store.game) {
+        window.location.href = '/'
+        throw new Error('Game instance not found after 1 second.')
+      }
+    }, 1000)
   }, [])
+
+  useEffect(() => {
+    if (store.game && !store.game.pixi) {
+      const canvas = document.getElementById('game-canvas')
+      if (!canvas) throw new Error('Cannot find canvas.')
+
+      store.game.render(canvas)
+    }
+  }, [store.game])
 
   if (store.game && store.game.status === 'aborted') {
     console.warn(`Game aborted.`)

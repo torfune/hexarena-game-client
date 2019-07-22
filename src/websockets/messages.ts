@@ -477,14 +477,6 @@ const messages: {
     if (store.routerHistory && store.routerHistory.push) {
       store.routerHistory.push('/game')
     }
-
-    // if (store.spectating) {
-    //   store.game.destroy()
-    //   store.spectating = false
-    // }
-    // store.reset()
-    // store.createGame()
-    // store.gameIndex = Number(payload)
   },
   status: (payload: string) => {
     if (!store.game) return
