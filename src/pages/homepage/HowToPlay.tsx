@@ -50,14 +50,12 @@ const HowToPlay: React.FC = () => (
       <h2>Buildings &amp; Armies</h2>
 
       <p>
-        Capital is the most important building, when you lose it, you lose the
+        Base is the most important building, when you lose it, you lose the
         game. You can also recruit armies there.
       </p>
-      <p>
-        Tower is the most basic building. It can host and send armies. It can be
-        also used to protect villages and other weak spots.
-      </p>
-      <p>Castle is upgraded Tower. You can recruit armies there.</p>
+      <p>Camp and Tower can host and send armies but can't recruit them.</p>
+      <p>Tower and Castle start with free army and hitpoints.</p>
+      <p>Castle can recruit armies.</p>
     </Section>
   </Container>
 )

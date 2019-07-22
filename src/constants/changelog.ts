@@ -1,5 +1,9 @@
 const changelog = [
   {
+    version: 'Alpha 1.41',
+    points: ['Added camps', 'Bug fixes and small balance changes'],
+  },
+  {
     version: 'Alpha 1.40',
     points: [
       'Improved animations',
