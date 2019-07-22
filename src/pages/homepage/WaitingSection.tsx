@@ -123,7 +123,7 @@ const WaitingSection = () => {
         <StyledSpinner size="40px" thickness="6px" color="#222" />
 
         {runningGame && (
-          <Link to={`/spectate?gameIndex=${runningGame.id}`}>
+          <Link to={`/spectate?game=${runningGame.id}`}>
             <SpectateButton>
               <img src="/static/icons/spectate.svg" />
               <p>Spectate</p>
