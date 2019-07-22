@@ -64,10 +64,9 @@ interface Props {
 }
 const TopPlayers: React.FC<Props> = ({ fixedHeight }) => {
   useEffect(() => {
-    // Api.ws.get(`/users/top-players`).then(response => {
-    //   console.log(response.data)
-    //   store.topPlayers = response.data
-    // })
+    Api.ws.get(`/users/top-players`).then(response => {
+      store.topPlayers = response.data
+    })
   }, [])
 
   let lobbyPlayerNames: string[] = []
