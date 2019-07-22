@@ -19,6 +19,7 @@ import Lobby from './screens/Lobby'
 import Player from '../../game/classes/Player'
 import Surrender from './hud/Surrender'
 import Economy from './hud/Economy'
+import Game from '../../game/classes/Game'
 
 const Container = styled.div`
   width: 100vw;
@@ -47,7 +48,8 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
   // Mount / Unmount
   useEffect(() => {
     if (!store.game) {
-      console.warn(`Game instance not found`)
+      console.warn(`Game instance not found. Can't render.`)
+      window.location.href = '/'
       return
     }
 
@@ -71,64 +73,67 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
     }
   }, [])
 
-  if (!store.game || store.game.status === 'aborted') {
+  if (store.game && store.game.status === 'aborted') {
+    console.warn(`Game aborted.`)
     window.location.href = '/'
-    console.warn(`Game instance not found.`)
     return null
   }
-
-  const { status, player, mode } = store.game
 
   return (
     <Container>
       <GameCanvas
         id="game-canvas"
-        visible={status === 'running' || status === 'finished'}
+        visible={
+          !!store.game &&
+          (store.game.status === 'running' || store.game.status === 'finished')
+        }
       />
 
-      <>
-        {status === 'starting' && <Lobby />}
+      {store.game && (
+        <>
+          {store.game.status === 'starting' && <Lobby />}
 
-        {status === 'running' && player && (
-          <HudContainer>
-            <GameTime />
+          {store.game.status === 'running' && store.game.player && (
+            <HudContainer>
+              <GameTime />
 
-            {player.alive && (
-              <>
-                {(mode === 'DIPLOMACY' ||
-                  mode === 'TEAMS_4' ||
-                  mode === 'TEAMS_6') &&
-                  renderDiplomacy(player)}
+              {store.game.player.alive && (
+                <>
+                  {(store.game.mode === 'DIPLOMACY' ||
+                    store.game.mode === 'TEAMS_4' ||
+                    store.game.mode === 'TEAMS_6') &&
+                    renderDiplomacy(store.game.player)}
 
-                <HoverPreview />
-                <Leaderboard />
-                <Economy />
-                <Performance />
-              </>
-            )}
+                  <HoverPreview />
+                  <Leaderboard />
+                  <Economy />
+                  <Performance />
+                </>
+              )}
 
-            <Surrender />
+              <Surrender />
 
-            {!player.alive && <DefeatModal />}
-          </HudContainer>
-        )}
+              {!store.game.player.alive && <DefeatModal />}
+            </HudContainer>
+          )}
 
-        {status === 'running' && (
-          <>
-            <Flasher />
-            <NotificationManager />
-          </>
-        )}
+          {store.game.status === 'running' && (
+            <>
+              <Flasher />
+              <NotificationManager />
+            </>
+          )}
 
-        {status === 'finished' && <EndScreen />}
+          {store.game.status === 'finished' && <EndScreen />}
 
-        {store.error && status !== 'finished' && (
-          <ErrorModal
-            message={store.error.message}
-            goHome={store.error.goHome || true}
-          />
-        )}
-      </>
+          {store.error && store.game.status !== 'finished' && (
+            <ErrorModal
+              message={store.error.message}
+              goHome={store.error.goHome || true}
+            />
+          )}
+        </>
+      )}
     </Container>
   )
 })
