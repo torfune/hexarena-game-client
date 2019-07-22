@@ -56,6 +56,8 @@ class Unit {
     this.image.alpha = alpha
   }
   destroy() {
+    if (!store.game) return
+
     store.game.stage['army'].removeChild(this.image)
   }
 }

@@ -28,25 +28,28 @@ const OPTIONS: ChartOptions = {
 }
 
 const Chart = () => {
-  const [data, setData] = useState<ChartData | null>(null)
+  // const [data, setData] = useState<ChartData | null>(null)
 
-  useEffect(() => {
-    const data: ChartData = {
-      labels: store.players.map(p => p.name),
-      datasets: [
-        {
-          data: store.players.map(p => p.houses),
-          backgroundColor: store.players.map(p => p.pattern),
-          borderWidth: 1,
-          borderColor: COLOR.HUD_BACKGROUND,
-        },
-      ],
-    }
+  // useEffect(() => {
+  // if (!store.game) return
 
-    setData(data)
-  }, [store.economy])
+  // setData(data)
+  // }, [store.economy])
 
-  if (!data) return null
+  if (!store.game) return null
+
+  const players = Object.values(store.game.players)
+  const data: ChartData = {
+    labels: players.map(p => p.name),
+    datasets: [
+      {
+        data: players.map(p => p.houses),
+        backgroundColor: players.map(p => p.pattern),
+        borderWidth: 1,
+        borderColor: COLOR.HUD_BACKGROUND,
+      },
+    ],
+  }
 
   return (
     <Container>

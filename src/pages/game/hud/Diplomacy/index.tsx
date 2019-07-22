@@ -66,8 +66,6 @@ const ToggleButton = styled.div`
 let flashInterval: NodeJS.Timeout
 
 const Diplomacy = () => {
-  const { players, player, allianceRequests } = store
-
   const [sendingRequest, setSendingRequest] = useState(false)
   const [blueHeader, setBlueHeader] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -88,7 +86,11 @@ const Diplomacy = () => {
     }
   }, [])
 
-  if (!player) return null
+  if (!store.game || !store.game.player) return null
+
+  const { player } = store.game
+  const players = Object.values(store.game.players)
+  const allianceRequests = Object.values(store.game.allianceRequests)
 
   const handleMouseLeave = () => {
     setSendingRequest(false)
@@ -99,23 +101,26 @@ const Diplomacy = () => {
   }
 
   const handleCreate = (id: string) => {
+    if (!store.game) return
     setSendingRequest(false)
     store.game.createRequest(id)
   }
 
   const handleAccept = (id: string) => {
+    if (!store.game) return
     store.game.acceptRequest(id)
     setBlueHeader(false)
   }
 
   const handleDecline = (id: string) => {
+    if (!store.game) return
     store.game.declineRequest(id)
   }
 
   const handleFlash = () => {
     let flash = false
-    for (let i = 0; i < store.allianceRequests.length; i++) {
-      if (store.allianceRequests[i].receiver.id === player.id) {
+    for (let i = 0; i < allianceRequests.length; i++) {
+      if (allianceRequests[i].receiver.id === player.id) {
         flash = true
         break
       }

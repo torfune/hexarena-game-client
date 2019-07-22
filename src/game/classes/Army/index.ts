@@ -72,6 +72,8 @@ class Army {
   }
 
   setProp(key: keyof Props, value: Primitive) {
+    if (!store.game) return
+
     this.props[key].previous = this.props[key].current
     this.props[key].current = value
 
@@ -87,7 +89,7 @@ class Army {
         break
 
       case 'ownerId':
-        const owner = store.getPlayer(this.ownerId)
+        const owner = store.game.players[this.ownerId] || null
         if (owner) {
           this.owner = owner
         }
@@ -98,6 +100,8 @@ class Army {
     }
   }
   update() {
+    if (!store.game) return
+
     if (this.isDestroying) {
       this.alpha -= 0.02
 
@@ -110,7 +114,7 @@ class Army {
           this.units[i].destroy()
         }
 
-        store.removeArmy(this.id)
+        delete store.game.armies[this.id]
         return
       }
     }
@@ -132,11 +136,10 @@ class Army {
     }
   }
   moveOn(tileId: string) {
-    const { gsConfig } = store
-    if (!gsConfig) return
+    const { gsConfig, game } = store
+    if (!gsConfig || !game) return
 
-    const tile = store.getTile(tileId)
-
+    const tile: Tile | null = game.tiles[tileId] || null
     if (!tile) {
       this.destroy()
       return
@@ -152,13 +155,11 @@ class Army {
 
     const sameOwner = tile.owner && tile.owner.id === this.ownerId
     const allyOwner = tile.owner && tile.owner.id === this.owner.allyId
-
     const position = getPixelPosition(tile.axial)
     const doorPosition = {
       x: position.x,
       y: position.y + UNIT_DOOR_OFFSET,
     }
-
     const randomizedPositions = getUniqueRandomizedPositions(
       UNIT_COUNT,
       UNIT_RADIUS,

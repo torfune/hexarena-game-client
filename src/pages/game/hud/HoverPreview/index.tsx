@@ -4,7 +4,6 @@ import StructurePreview from './StructurePreview'
 import { observer } from 'mobx-react-lite'
 import PlayerPreview from './PlayerPreview'
 import store from '../../../../store'
-import { useEffect } from 'react'
 import { Pixel } from '../../../../types/coordinates'
 import React from 'react'
 
@@ -32,13 +31,9 @@ const Container = styled.div.attrs<ContainerProps>(({ cursor }) => ({
 `
 
 const HoverPreview = () => {
-  const { player, hoveredTile, hoveredTileInfo, cursor } = store
+  if (!store.game) return null
 
-  useEffect(() => {
-    if (store._game) {
-      store.game.updateHoveredTileInfo()
-    }
-  }, [store.gold])
+  const { hoveredTile, player, cursor } = store.game
 
   if (!cursor) return null
 
@@ -53,6 +48,9 @@ const HoverPreview = () => {
       </Container>
     )
   }
+
+  // store.game.updateHoveredTileInfo()
+  const { hoveredTileInfo } = store.game
 
   if (!hoveredTileInfo) return null
 

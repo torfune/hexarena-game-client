@@ -24,7 +24,6 @@ const TREE_POSITION = [
 interface Props {
   [key: string]: Prop<Primitive>
   treeCount: Prop<number>
-  nextCutAt: Prop<number | null>
 }
 
 class Forest {
@@ -115,16 +114,15 @@ class Forest {
     )
   }
   destroy() {
-    store.removeForest(this.id)
+    if (!store.game) return
+
+    delete store.game.forests[this.id]
     this.tile.forest = null
   }
 
   // Prop getters
   get treeCount() {
     return this.props.treeCount.current
-  }
-  get nextCutAt() {
-    return this.props.nextCutAt.current
   }
 }
 

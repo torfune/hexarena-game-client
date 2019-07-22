@@ -23,16 +23,19 @@ const Container = styled.div<ContainerProps>`
 
 const Flasher = () => {
   const [opacity, setOpacity] = useState(0)
-  const { flash, status } = store
+
+  if (!store.game) return null
 
   useEffect(() => {
-    if (status !== 'running' || !flash) return
+    if (!store.game || store.game.status !== 'running' || !store.game.flash) {
+      return
+    }
 
     setOpacity(OPACITY)
     setTimeout(() => {
       setOpacity(0)
     }, 100)
-  }, [flash])
+  }, [store.game.flash])
 
   return <Container opacity={opacity} />
 }

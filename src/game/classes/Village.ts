@@ -99,7 +99,9 @@ class Village {
     this.addHouses(toAdd, true)
   }
   destroy() {
-    store.removeVillage(this.id)
+    if (!store.game) return
+
+    delete store.game.villages[this.id]
     this.tile.village = null
     for (let i = 0; i < this.houses.length; i++) {
       destroyImage('house', this.houses[i])

@@ -20,10 +20,12 @@ const Value = styled.p`
 `
 
 const Gold = () => {
+  if (!store.game || !store.game.player) return null
+
   return (
     <Container>
       <Label>Gold</Label>
-      <Value>{store.gold}</Value>
+      <Value>{store.game.player.gold}</Value>
     </Container>
   )
 }

@@ -11,6 +11,7 @@ import EndScreen from './game/screens/EndScreen'
 import GameTime from './game/hud/GameTime'
 import MatchFound from '../components/MatchFound'
 import Economy from './game/hud/Economy'
+import Socket from '../websockets/Socket'
 
 const Container = styled.div`
   width: calc(100vw - ${CHAT_WIDTH});
@@ -20,29 +21,27 @@ const Container = styled.div`
 
 const Spectate: React.FC = () => {
   useEffect(() => {
-    const canvas = document.getElementById('game-canvas')
-    if (!canvas) throw Error('Cannot find canvas.')
-
-    store.spectating = true
-    store.reset()
-
-    if (store._game) {
-      store._game.destroy()
-    }
-
-    store.createGame()
-    store.game.render(canvas)
-
-    const gameIndex = Number(window.location.href.split('?gameIndex=')[1])
-    store.game.spectate(gameIndex)
+    const gameId = window.location.href.split('?game=')[1]
+    Socket.send('spectate', gameId)
 
     return () => {
       if (store.spectating) {
-        store.game.stopSpectate()
+        Socket.send('stopSpectate')
+        store.spectating = false
+      }
+      if (store.game) {
         store.game.destroy()
       }
     }
   }, [])
+
+  useEffect(() => {
+    if (store.game) {
+      const canvas = document.getElementById('game-canvas')
+      if (!canvas) throw Error('Cannot find canvas.')
+      store.game.render(canvas)
+    }
+  }, [store.game])
 
   return (
     <>
@@ -51,12 +50,16 @@ const Spectate: React.FC = () => {
       <Container>
         <div id="game-canvas" />
 
-        <GameTime />
-        <HoverPreview />
-        <Leaderboard />
-        <Economy />
+        {store.game && (
+          <>
+            <GameTime />
+            <HoverPreview />
+            <Leaderboard />
+            <Economy />
 
-        {store.status === 'finished' && <EndScreen />}
+            {store.game.status === 'finished' && <EndScreen />}
+          </>
+        )}
       </Container>
 
       <Chat />

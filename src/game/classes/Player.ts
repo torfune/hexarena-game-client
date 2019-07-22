@@ -41,14 +41,16 @@ class Player {
   }
 
   setProp(key: keyof Props, value: Primitive) {
+    if (!store.game) return
+
     this.props[key].previous = this.props[key].current
     this.props[key].current = value
 
     switch (key) {
       case 'pattern': {
-        const keys = Object.keys(store.idMap.tiles)
+        const keys = Object.keys(store.game.tiles)
         for (let i = keys.length - 1; i >= 0; i--) {
-          const tile = store.idMap.tiles[keys[i]]
+          const tile = store.game.tiles[keys[i]]
           if (tile.image.pattern && tile.ownerId === this.id) {
             tile.image.pattern.tint = hex(String(value))
           }
@@ -58,7 +60,7 @@ class Player {
 
       case 'allyId': {
         if (this.allyId) {
-          this.ally = store.getPlayer(this.allyId)
+          this.ally = store.game.players[this.allyId]
         }
         break
       }

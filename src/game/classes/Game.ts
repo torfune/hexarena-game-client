@@ -17,24 +17,63 @@ import pixelToAxial from '../functions/pixelToAxial'
 import getPixelPosition from '../functions/getPixelPosition'
 import roundToDecimals from '../functions/roundToDecimals'
 import getDebugCommand from '../functions/getDebugCommand'
-// import canAttack from '../functions/canAttack'
 import getHoveredTileInfo from '../functions/getHoveredTileInfo'
 import getTileByAxial from '../functions/getTileByAxial'
 import Tile from './Tile'
 import { Ticker, Application, Container } from 'pixi.js'
 import Action from './Action'
 import uuid = require('uuid/v4')
+import { observable, computed } from 'mobx'
+import AllianceRequest from './AllianceRequest'
+import Army from './Army'
+import Player from './Player'
+import Forest from './Forest'
+import Village from './Village'
+import GameMode from '../../types/GameMode'
+import HoveredTileInfo from '../../types/HoveredTileInfo'
 
 class Game {
+  readonly id: string
+  readonly stage: { [key: string]: Container } = {}
+  @observable actions: Action[] = []
+  @observable allianceRequests: { [key: string]: AllianceRequest } = {}
+  @observable armies: { [key: string]: Army } = {}
+  @observable players: { [key: string]: Player } = {}
+  @observable forests: { [key: string]: Forest } = {}
+  @observable villages: { [key: string]: Village } = {}
+  @observable tiles: { [key: string]: Tile } = {}
+  @observable hoveredTile: Tile | null = null
+  @observable startCountdown: number | null = null
+  @observable incomeAt: number | null = null
+  @observable lastIncomeAt: number | null = null
+  @observable incomeStartedAt: number | null = null
+  @observable serverTime: number | null = null
+  @observable goldAnimation: { tileId: string; count: number } | null = null
+  @observable notification: string | null = null
+  @observable flash: number | null = null
+  @observable showHud: boolean = true
+  @observable fps: number | null = 0
+  @observable ping: number | null = 0
+  @observable status:
+    | 'starting'
+    | 'running'
+    | 'finished'
+    | 'aborted'
+    | null = null
+  @observable time: number | null = null
+  @observable playerId: string | null = null
+  @observable mode: GameMode | null = null
+  @observable spawnTile: Tile | null = null
+  @observable cursor: Pixel | null = null
+  @observable hoveredTileInfo: HoveredTileInfo | null = null // move this to react layer
   scale: number = DEFAULT_SCALE
   targetScale: number = DEFAULT_SCALE
   selectedArmyTile: Tile | null = null
   loop: Ticker | null = null
   pixi: Application | null = null
-  readonly stage: { [key: string]: Container } = {}
   initialized: boolean = false
-  private pingArray: number[] = []
-  private fpsArray: number[] = []
+  pingArray: number[] = []
+  fpsArray: number[] = []
   readonly animations: Array<Animation | GoldAnimation> = []
   camera: Pixel | null = null
   cameraMove: Pixel = { x: 0, y: 0 }
@@ -56,15 +95,34 @@ class Game {
     keyup: (event: any) => void
     wheel: (event: any) => void
   } | null = null
+  changeHandlers: { [key: string]: () => void } = {}
 
-  constructor() {
+  // Computed getters
+  @computed get player() {
+    return this.playerId ? this.players[this.playerId] || null : null
+  }
+  @computed get gold() {
+    return this.player ? this.player.gold : 0
+  }
+  @computed get totalEconomy() {
+    let totalEconomy = 0
+    const keys = Object.keys(this.players)
+    for (let i = 0; i < keys.length; i++) {
+      totalEconomy += this.players[keys[i]].houses
+    }
+    return totalEconomy
+  }
+
+  constructor(id: string) {
+    this.id = id
+
     // Leaving warning
     window.onbeforeunload = () => {
       if (
         !store.error &&
-        store.player &&
-        store.player.alive &&
-        store.status === 'running' &&
+        this.player &&
+        this.player.alive &&
+        this.status === 'running' &&
         store.gsConfig &&
         !store.gsConfig.DEBUG_MODE
       ) {
@@ -74,11 +132,11 @@ class Game {
 
     // Listeners and Images
     this.setupEventListeners()
-    this.setupStoreListeners()
+    // this.setupStoreListeners()
 
-    // Add debug global variables
-    ;(window as any).g = this
-    ;(window as any).s = store
+    // Global debug references
+    ;(window as any).game = this
+    ;(window as any).store = store
   }
   render(canvas: HTMLElement) {
     this.loop = createGameLoop(this.update, this)
@@ -117,11 +175,12 @@ class Game {
       }
     }
 
-    store._game = null
-    store.reset()
+    if (store.game === this) {
+      store.game = null
+    }
   }
   update() {
-    if (!store.actions || !store.armies || !this.camera || !this.pixi) return
+    if (!this.camera || !this.pixi) return
 
     const now = Date.now()
     const fraction = 16.66 / (now - this.lastUpdatedAt)
@@ -133,7 +192,7 @@ class Game {
 
     if (now - this.fpsLastUpdatedAt > 2000) {
       const sum = this.fpsArray.reduce((item, acc) => acc + item, 0)
-      store.fps = Math.round(sum / this.fpsArray.length)
+      this.fps = Math.round(sum / this.fpsArray.length)
       this.fpsLastUpdatedAt = now
     }
 
@@ -146,12 +205,12 @@ class Game {
     }
 
     // Camera
-    if (this.cameraDrag && store.cursor !== null) {
+    if (this.cameraDrag && this.cursor !== null) {
       const { camera, cursor } = this.cameraDrag
 
       this.camera = {
-        x: camera.x - (cursor.x - store.cursor.x),
-        y: camera.y - (cursor.y - store.cursor.y),
+        x: camera.x - (cursor.x - this.cursor.x),
+        y: camera.y - (cursor.y - this.cursor.y),
       }
 
       this.updateStagePosition()
@@ -182,7 +241,7 @@ class Game {
     }
 
     // Zoom
-    if (store.status === 'running') {
+    if (this.status === 'running') {
       if (this.scale !== this.targetScale) {
         const pixel = {
           x: window.innerWidth / 2 - this.camera.x,
@@ -196,13 +255,14 @@ class Game {
     }
 
     // Actions
-    for (let i = 0; i < store.actions.length; i++) {
-      store.actions[i].update()
+    for (let i = 0; i < this.actions.length; i++) {
+      this.actions[i].update()
     }
 
     // Armies
-    for (let i = 0; i < store.armies.length; i++) {
-      store.armies[i].update()
+    const armies = Object.values(this.armies)
+    for (let i = 0; i < armies.length; i++) {
+      armies[i].update()
     }
 
     // Hovered tile
@@ -211,57 +271,32 @@ class Game {
     // Income bar
     this.updateIncomeBar()
   }
-  spectate(gameIndex: number) {
-    Socket.send('spectate', String(gameIndex))
-    store.gameIndex = gameIndex
-    store.spectating = true
-    this.targetScale = MIN_SCALE
+  spectate(gameId: string) {
+    // Socket.send('spectate', gameId)
+    // store.spectating = true
+    // this.targetScale = MIN_SCALE
   }
   stopSpectate() {
-    Socket.send('stopSpectate', String(store.gameIndex))
-    store.gameIndex = null
-    store.spectating = false
+    // Socket.send('stopSpectate')
+    // store.gameIndex = null
+    // store.spectating = false
   }
   setupStoreListeners() {
-    store.onChange('tiles', () => {
-      if (!this.camera && store.spawnTile) {
-        this.setCameraToAxialPosition(store.spawnTile.axial)
-      }
-
-      this.updateBlackOverlays()
-      this.updateBorders()
-      this.updatePatternPreviews()
-    })
-
-    store.onChange('actions', () => {
-      this.updatePatternPreviews()
-    })
-    store.onChange('players', () => {
-      this.updatePatternPreviews()
-    })
-    store.onChange('serverTime', () => {
-      if (store.serverTime) {
-        this.pingArray.push(Date.now() - store.serverTime)
-
-        if (this.pingArray.length > 20) {
-          this.pingArray.shift()
-        }
-
-        const sum = this.pingArray.reduce((item, acc) => acc + item, 0)
-        store.ping = Math.round(sum / this.pingArray.length)
-      }
-    })
-    store.onChange('goldAnimation', () => {
-      const { goldAnimation } = store
-
-      if (!goldAnimation) return
-
-      const tile = store.getTile(goldAnimation.tileId)
-
-      if (!tile) return
-
-      new GoldAnimation(tile, goldAnimation.count)
-    })
+    // store.onChange('tiles', () => {
+    // })
+    // store.onChange('actions', () => {
+    // })
+    // store.onChange('players', () => {
+    // })
+    // store.onChange('serverTime', () => {
+    // })
+    // store.onChange('goldAnimation', () => {
+    //   const { goldAnimation } = this
+    //   if (!goldAnimation) return
+    //   const tile = store.getTile(goldAnimation.tileId)
+    //   if (!tile) return
+    //   new GoldAnimation(tile, goldAnimation.count)
+    // })
   }
   setupEventListeners() {
     this.eventListeners = {
@@ -301,7 +336,7 @@ class Game {
     Socket.send('pattern', pattern)
   }
   handleKeyDown({ key }: KeyboardEvent) {
-    if (store.status !== 'running' || (store.spectating && store.chatFocus)) {
+    if (this.status !== 'running' || (store.spectating && store.chatFocus)) {
       return
     }
 
@@ -329,7 +364,7 @@ class Game {
       return
     }
 
-    const tile = store.hoveredTile
+    const tile = this.hoveredTile
     const command = getDebugCommand(key)
 
     if (!tile || !command) return
@@ -338,7 +373,7 @@ class Game {
   }
   handleKeyUp({ key }: KeyboardEvent) {
     if (
-      store.status !== 'running' ||
+      this.status !== 'running' ||
       !store.gsConfig ||
       (store.spectating && store.chatFocus)
     ) {
@@ -352,24 +387,20 @@ class Game {
       const zoomDirection = key === 'e' ? -1 : 1
       this.targetScale = this.calculateZoomScale(zoomDirection)
     }
-
-    if (key === 'h' && store.gsConfig.DEBUG_MODE) {
-      store.showHud = !store.showHud
-    }
   }
   handleMouseDown(event: MouseEvent) {
-    if (store.status !== 'running' || !store.cursor || !this.camera) return
+    if (this.status !== 'running' || !this.cursor || !this.camera) return
 
     const { clientX: x, clientY: y, button } = event
-    const { hoveredTile } = store
+    const { hoveredTile } = this
 
     // Army - select
     if (
       !this.selectedArmyTile &&
       hoveredTile &&
-      hoveredTile.ownerId === store.playerId &&
+      hoveredTile.ownerId === this.playerId &&
       hoveredTile.army &&
-      hoveredTile.army.ownerId === store.playerId &&
+      hoveredTile.army.ownerId === this.playerId &&
       hoveredTile.building &&
       button !== 2
     ) {
@@ -396,15 +427,15 @@ class Game {
     }
   }
   handleMouseUp(event: MouseEvent) {
-    if (!store.cursor) return
+    if (!this.cursor) return
 
-    const { hoveredTile, playerId } = store
+    const { hoveredTile, playerId } = this
 
     let cursorDelta: number | null = null
     if (this.cameraDrag) {
       cursorDelta =
-        Math.abs(store.cursor.x - this.cameraDrag.cursor.x) +
-        Math.abs(store.cursor.y - this.cameraDrag.cursor.y)
+        Math.abs(this.cursor.x - this.cameraDrag.cursor.x) +
+        Math.abs(this.cursor.y - this.cameraDrag.cursor.y)
       this.cameraDrag = null
     }
 
@@ -456,15 +487,15 @@ class Game {
       }
 
       // Create action
-      if (button && !dragged && store.player) {
+      if (button && !dragged && this.player) {
         const actionType = hoveredTile.getActionType()
         if (!actionType) {
           this.showNotEnoughGold(hoveredTile)
           return
         }
 
-        const action = new Action(uuid(), actionType, hoveredTile, store.player)
-        store.actions.push(action)
+        const action = new Action(uuid(), actionType, hoveredTile, this.player)
+        this.actions.push(action)
 
         const { x, z } = hoveredTile.axial
         Socket.send('action', `${action.id}|${x}|${z}|${actionType}`)
@@ -478,11 +509,11 @@ class Game {
     }
   }
   handleMouseMove({ clientX: x, clientY: y }: MouseEvent) {
-    store.cursor = { x, y }
+    this.cursor = { x, y }
 
     if (this.cameraDrag) {
-      const cursorDeltaX = Math.abs(store.cursor.x - this.cameraDrag.cursor.x)
-      const cursorDeltaY = Math.abs(store.cursor.y - this.cameraDrag.cursor.y)
+      const cursorDeltaX = Math.abs(this.cursor.x - this.cameraDrag.cursor.x)
+      const cursorDeltaY = Math.abs(this.cursor.y - this.cameraDrag.cursor.y)
       if (cursorDeltaX + cursorDeltaY > 32) {
         this.dragged = true
       }
@@ -498,17 +529,17 @@ class Game {
     event.preventDefault()
   }
   updateBorders() {
-    const keys = Object.keys(store.idMap.tiles)
+    const keys = Object.keys(this.tiles)
     for (let i = keys.length - 1; i >= 0; i--) {
-      store.idMap.tiles[keys[i]].updateBorders()
+      this.tiles[keys[i]].updateBorders()
     }
   }
   getHoveredTile() {
-    if (!store.cursor || !this.camera) return
+    if (!this.cursor || !this.camera) return null
 
     const pixel = {
-      x: store.cursor.x - this.camera.x,
-      y: store.cursor.y - this.camera.y,
+      x: this.cursor.x - this.camera.x,
+      y: this.cursor.y - this.camera.y,
     }
 
     const axial = pixelToAxial(pixel)
@@ -522,7 +553,7 @@ class Game {
     const actionType = tile.getActionType()
 
     // Attack hover
-    if (store.playerId === playerId && actionType === 'ATTACK') {
+    if (this.playerId === playerId && actionType === 'ATTACK') {
       tilesToCapture.push(tile)
     }
 
@@ -537,8 +568,8 @@ class Game {
     }
 
     // Actions (ATTACK, UPGRADE)
-    for (let i = 0; i < store.actions.length; i++) {
-      const action = store.actions[i]
+    for (let i = 0; i < this.actions.length; i++) {
+      const action = this.actions[i]
 
       if (
         action.type === 'ATTACK' &&
@@ -561,8 +592,8 @@ class Game {
 
     // Army sending
     if (
-      store.player &&
-      playerId === store.playerId &&
+      this.player &&
+      playerId === this.playerId &&
       this.selectedArmyTile &&
       (!tile.action || tile.action.type !== 'ATTACK')
     ) {
@@ -586,7 +617,7 @@ class Game {
             t.mountain &&
             t.owner &&
             t.ownerId !== playerId &&
-            t.ownerId !== store.player.allyId
+            t.ownerId !== this.player.allyId
           ) {
             break
           }
@@ -597,7 +628,7 @@ class Game {
           }
 
           // Ally tile
-          if (t.ownerId && t.ownerId === store.player.allyId) {
+          if (t.ownerId && t.ownerId === this.player.allyId) {
             break
           }
 
@@ -643,10 +674,10 @@ class Game {
     }
 
     // Allied tiles
-    if (store.player && store.player.allyId) {
+    if (this.player && this.player.allyId) {
       for (let i = tilesToCapture.length - 1; i >= 0; i--) {
         const t = tilesToCapture[i]
-        if (t.owner && t.owner.id === store.player.allyId) {
+        if (t.owner && t.owner.id === this.player.allyId) {
           tilesToCapture.splice(i, 1)
         }
       }
@@ -661,8 +692,8 @@ class Game {
     this.tilesWithPatternPreview = []
 
     // Actions
-    for (let i = 0; i < store.actions.length; i++) {
-      const action = store.actions[i]
+    for (let i = 0; i < this.actions.length; i++) {
+      const action = this.actions[i]
 
       if (action.type !== 'ATTACK' && action.type !== 'UPGRADE') continue
 
@@ -678,9 +709,10 @@ class Game {
 
         this.tilesWithPatternPreview.push(t)
 
-        for (let k = 0; k < store.players.length; k++) {
-          if (store.players[k].id === action.owner.id) {
-            pattern[`${t.axial.x}|${t.axial.z}`] = store.players[k].pattern
+        const players = Object.values(this.players)
+        for (let k = 0; k < players.length; k++) {
+          if (players[k].id === action.owner.id) {
+            pattern[`${t.axial.x}|${t.axial.z}`] = players[k].pattern
             break
           }
         }
@@ -688,10 +720,10 @@ class Game {
     }
 
     // Hovered tile
-    if (store.hoveredTile && store.player) {
+    if (this.hoveredTile && this.player) {
       const tilesToCapture = this.getTilesToCapture(
-        store.hoveredTile,
-        store.player.id
+        this.hoveredTile,
+        this.player.id
       )
 
       for (let i = 0; i < tilesToCapture.length; i++) {
@@ -700,7 +732,7 @@ class Game {
         if (this.tilesWithPatternPreview.includes(t)) continue
 
         this.tilesWithPatternPreview.push(t)
-        pattern[`${t.axial.x}|${t.axial.z}`] = store.player.pattern
+        pattern[`${t.axial.x}|${t.axial.z}`] = this.player.pattern
       }
     }
 
@@ -762,9 +794,9 @@ class Game {
     Socket.send('request', `create|${receiverId}`)
   }
   updateBlackOverlays() {
-    const keys = Object.keys(store.idMap.tiles)
+    const keys = Object.keys(this.tiles)
     for (let i = keys.length - 1; i >= 0; i--) {
-      store.idMap.tiles[keys[i]].updateBlackOverlay()
+      this.tiles[keys[i]].updateBlackOverlay()
     }
   }
   updateHoveredTile() {
@@ -772,28 +804,28 @@ class Game {
     let changed = false
 
     // existing -> non-existing
-    if (store.hoveredTile && !newHoveredTile) {
-      store.hoveredTile.endHover()
-      store.hoveredTile = null
+    if (this.hoveredTile && !newHoveredTile) {
+      this.hoveredTile.endHover()
+      this.hoveredTile = null
       changed = true
     }
 
     // non-existing -> existing
-    if (!store.hoveredTile && newHoveredTile) {
-      store.hoveredTile = newHoveredTile
+    if (!this.hoveredTile && newHoveredTile) {
+      this.hoveredTile = newHoveredTile
       newHoveredTile.startHover()
       changed = true
     }
 
     // existing[A] -> existing[B]
     if (
-      store.hoveredTile &&
+      this.hoveredTile &&
       newHoveredTile &&
-      store.hoveredTile.id !== newHoveredTile.id
+      this.hoveredTile.id !== newHoveredTile.id
     ) {
-      store.hoveredTile.endHover()
-      store.hoveredTile = newHoveredTile
-      store.hoveredTile.startHover()
+      this.hoveredTile.endHover()
+      this.hoveredTile = newHoveredTile
+      this.hoveredTile.startHover()
       changed = true
     }
 
@@ -807,8 +839,8 @@ class Game {
     }
   }
   updateHoveredTileInfo() {
-    store.hoveredTileInfo = store.hoveredTile
-      ? getHoveredTileInfo(store.hoveredTile)
+    this.hoveredTileInfo = this.hoveredTile
+      ? getHoveredTileInfo(this.hoveredTile)
       : null
   }
   updateArmyTileHighlights() {
@@ -825,10 +857,10 @@ class Game {
       }
     }
 
-    if (!store.hoveredTile) return
+    if (!this.hoveredTile) return
 
     for (let i = 0; i < 6; i++) {
-      if (this.selectedArmyTargetTiles[i].includes(store.hoveredTile)) {
+      if (this.selectedArmyTargetTiles[i].includes(this.hoveredTile)) {
         direction = i
         break
       }
@@ -838,7 +870,7 @@ class Game {
       for (let i = 0; i < gsConfig.ARMY_RANGE; i++) {
         const t = this.selectedArmyTargetTiles[direction][i]
 
-        if (!t || !t.owner || t.owner.id !== store.playerId) continue
+        if (!t || !t.owner || t.owner.id !== this.playerId) continue
 
         t.addHighlight()
 
@@ -915,7 +947,7 @@ class Game {
     const BAR_WIDTH = 200
     const BAR_HEIGHT = 36
 
-    const { ping, incomeAt, incomeStartedAt } = store
+    const { incomeAt, incomeStartedAt } = this
     const element = document.getElementById('income-bar-fill')
     const canvas = element as HTMLCanvasElement | null
 
@@ -946,7 +978,7 @@ class Game {
     ctx.fillRect(0, 0, BAR_WIDTH * fraction, BAR_HEIGHT)
   }
   showNotEnoughGold(tile: Tile) {
-    if (!store.player || !store.gsConfig) return
+    if (!this.player || !store.gsConfig) return
 
     const {
       ATTACK_COST,
@@ -960,15 +992,15 @@ class Game {
 
     if (
       !actionType ||
-      (actionType === 'ATTACK' && store.player.gold >= ATTACK_COST) ||
-      (actionType === 'BUILD' && store.player.gold >= BUILD_COST) ||
-      (actionType === 'UPGRADE' && store.player.gold >= UPGRADE_COST) ||
-      (actionType === 'RECRUIT' && store.player.gold >= RECRUIT_COST)
+      (actionType === 'ATTACK' && this.player.gold >= ATTACK_COST) ||
+      (actionType === 'BUILD' && this.player.gold >= BUILD_COST) ||
+      (actionType === 'UPGRADE' && this.player.gold >= UPGRADE_COST) ||
+      (actionType === 'RECRUIT' && this.player.gold >= RECRUIT_COST)
     ) {
       return
     }
 
-    store.notification = `${Date.now()}|Not enough gold`
+    this.notification = `${Date.now()}|Not enough gold`
   }
 }
 

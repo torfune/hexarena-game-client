@@ -42,9 +42,13 @@ const NotificationManager: React.FC = () => {
   const itemsRef = useRef(items)
   itemsRef.current = items
 
+  if (!store.game) return null
+
   useEffect(() => {
-    if (store.notification && store.cursor) {
-      const [key, text] = store.notification.split('|')
+    if (!store.game) return
+
+    if (store.game.notification && store.game.cursor) {
+      const [key, text] = store.game.notification.split('|')
 
       for (let i = 0; i < items.length; i++) {
         if (items[i].key === key) return
@@ -53,8 +57,8 @@ const NotificationManager: React.FC = () => {
       const notification = {
         key,
         position: {
-          x: store.cursor.x,
-          y: store.cursor.y,
+          x: store.game.cursor.x,
+          y: store.game.cursor.y,
         },
         text,
       }
@@ -68,7 +72,7 @@ const NotificationManager: React.FC = () => {
         }
       }, 750)
     }
-  }, [store.notification])
+  }, [store.game.notification])
 
   return (
     <>

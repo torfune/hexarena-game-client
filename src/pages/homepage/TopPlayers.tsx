@@ -46,11 +46,11 @@ const ListHeading = styled.div`
   color: #fff;
 `
 
-const PlayerRow = styled.div<{ color?: string }>`
+const PlayerRow = styled.div<{ highlight?: boolean }>`
   padding: 8px 24px;
   display: grid;
   grid-template-columns: 32px 1fr auto;
-  background: ${props => (props.color ? '#3f3f3f' : null)};
+  background: ${props => (props.highlight ? '#3f3f3f' : null)};
 `
 
 const Value = styled.p`
@@ -64,15 +64,16 @@ interface Props {
 }
 const TopPlayers: React.FC<Props> = ({ fixedHeight }) => {
   useEffect(() => {
-    Api.ws.get(`/users/top-players`).then(response => {
-      store.topPlayers = response.data as TopPlayer[]
-    })
+    // Api.ws.get(`/users/top-players`).then(response => {
+    //   console.log(response.data)
+    //   store.topPlayers = response.data
+    // })
   }, [])
 
-  const lobbyPlayerNames = store.players.map(player => player.name)
-  const namePatternMap: { [name: string]: string } = {}
-  for (const player of store.players) {
-    namePatternMap[player.name] = player.pattern
+  let lobbyPlayerNames: string[] = []
+  if (store.game) {
+    const players = Object.values(store.game.players)
+    lobbyPlayerNames = players.map(player => player.name)
   }
 
   return (
@@ -89,13 +90,7 @@ const TopPlayers: React.FC<Props> = ({ fixedHeight }) => {
         {store.topPlayers.map((topPlayer, index) => (
           <PlayerRow
             key={topPlayer.id}
-            color={
-              lobbyPlayerNames.includes(topPlayer.name) &&
-              store.gameMode !== 'BALANCED_DUEL' &&
-              store.gameMode !== 'RANDOM_DUEL'
-                ? namePatternMap[topPlayer.name]
-                : undefined
-            }
+            highlight={lobbyPlayerNames.includes(topPlayer.name)}
           >
             <Value>{index + 1}.</Value>
             <Value>{topPlayer.name}</Value>

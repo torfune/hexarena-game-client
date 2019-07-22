@@ -152,18 +152,29 @@ const DarkOverlay = styled.div`
 `
 
 const Players: React.FC = () => {
+  const [showSelector, setShowSelector] = useState(false)
+  const transitions = useTransition(showSelector, null, {
+    config: { tension: 400 },
+    from: { transform: 'scale(0)', opacity: 0 },
+    enter: { transform: 'scale(1)', opacity: 1 },
+    leave: { transform: 'scale(0)', opacity: 0 },
+  })
+
+  if (!store.game || !store.game.player || !store.gsConfig) return null
+
   const otherPlayers: Array<{
     name?: string
     pattern?: string
     registered?: boolean
   }> = []
 
+  const players = Object.values(store.game.players)
   for (let i = 0; i < 6; i++) {
-    const player = store.players[i]
+    const player = players[i]
 
-    if (player && player.id === store.playerId) continue
+    if (player && player.id === store.game.playerId) continue
 
-    if (i < store.players.length) {
+    if (i < players.length) {
       otherPlayers.push({
         name: player.name,
         pattern: player.pattern,
@@ -174,17 +185,9 @@ const Players: React.FC = () => {
     }
   }
 
-  const lockedPatterns = store.players
+  const lockedPatterns = players
     .filter(player => player.pattern !== pattern)
     .map(({ pattern }) => pattern)
-
-  const [showSelector, setShowSelector] = useState(false)
-  const transitions = useTransition(showSelector, null, {
-    config: { tension: 400 },
-    from: { transform: 'scale(0)', opacity: 0 },
-    enter: { transform: 'scale(1)', opacity: 1 },
-    leave: { transform: 'scale(0)', opacity: 0 },
-  })
 
   const handlePatternClick = () => {
     setShowSelector(true)
@@ -195,25 +198,23 @@ const Players: React.FC = () => {
   }
 
   const handlePatternSelect = (pattern: string) => {
-    if (lockedPatterns.includes(pattern)) return
+    if (lockedPatterns.includes(pattern) || !store.game) return
 
     store.game.selectPattern(pattern)
     setShowSelector(false)
   }
 
-  if (!store.player || !store.gsConfig) return null
-
   const { PATTERNS } = store.gsConfig
-  const { pattern } = store.player
+  const { pattern } = store.game.player
 
   return (
     <Container>
       <Label>You</Label>
-      <You color={store.player.pattern}>
-        <Pattern color={store.player.pattern} onClick={handlePatternClick} />
-        <Name>{store.player.name}</Name>
-        {store.player.registered && (
-          <UserTypeContainer background={store.player.pattern}>
+      <You color={pattern}>
+        <Pattern color={pattern} onClick={handlePatternClick} />
+        <Name>{store.game.player.name}</Name>
+        {store.game.player.registered && (
+          <UserTypeContainer background={pattern}>
             <Tooltip>Registered user</Tooltip>
             <UserType>R</UserType>
           </UserTypeContainer>
@@ -240,13 +241,7 @@ const Players: React.FC = () => {
         {otherPlayers.map((player, index) => (
           <Player key={index} color={player.pattern}>
             <Pattern color={player.pattern} />
-            <Name>
-              {(store.gameMode === 'BALANCED_DUEL' ||
-                store.gameMode === 'RANDOM_DUEL') &&
-              player.name
-                ? '???'
-                : player.name}
-            </Name>
+            <Name>{player.name}</Name>
             {player.registered && (
               <UserTypeContainer background={player.pattern}>
                 <Tooltip>Registered user</Tooltip>

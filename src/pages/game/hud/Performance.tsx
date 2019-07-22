@@ -33,17 +33,21 @@ const Value = styled.p`
   color: #fff;
 `
 
-const Performance = () => (
-  <Container>
-    <div>
-      <Label>FPS</Label>
-      <Value>{store.fps}</Value>
-    </div>
-    {/*<div>*/}
-    {/*  <Label>PING</Label>*/}
-    {/*  <Value>{store.ping}</Value>*/}
-    {/*</div>*/}
-  </Container>
-)
+const Performance = () => {
+  if (!store.game) return null
+
+  return (
+    <Container>
+      <div>
+        <Label>FPS</Label>
+        <Value>{store.game.fps}</Value>
+      </div>
+      {/*<div>*/}
+      {/*  <Label>PING</Label>*/}
+      {/*  <Value>{store.game.ping}</Value>*/}
+      {/*</div>*/}
+    </Container>
+  )
+}
 
 export default observer(Performance)

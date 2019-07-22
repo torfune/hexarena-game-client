@@ -111,10 +111,12 @@ class Action {
     }
   }
   update() {
-    if (this.status === 'PENDING') return
+    if (this.status === 'PENDING' || !store.game || store.game.ping === null) {
+      return
+    }
 
     const { finishedAt, duration, status } = this
-    const timeDelta = finishedAt + store.ping - Date.now()
+    const timeDelta = finishedAt + store.game.ping - Date.now()
     let fraction = Math.round((1 - timeDelta / duration) * 100) / 100
 
     if (fraction > 1 || status === 'FINISHED') {
@@ -138,7 +140,11 @@ class Action {
   destroy() {
     if (!store.game) return
 
-    store.removeAction(this.id)
+    const index = store.game.actions.indexOf(this)
+    if (index !== -1) {
+      store.game.actions.splice(index, 1)
+    }
+
     this.tile.action = null
 
     new Animation(
@@ -151,7 +157,9 @@ class Action {
         speed: 0.06,
         ease: easeInQuad,
         onFinish: () => {
-          store.game.stage.action.removeChild(this.image)
+          if (store.game) {
+            store.game.stage.action.removeChild(this.image)
+          }
         },
       }
     )

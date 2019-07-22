@@ -161,15 +161,15 @@ class Tile {
     }
   }
   endHover() {
-    const { gsConfig } = store
-    if (!gsConfig) return
+    const { gsConfig, game } = store
+    if (!gsConfig || !game) return
 
     const { building } = this
     if (building && building.hp === gsConfig.HP[building.type]) {
       this.hideHitpoints()
     }
 
-    if (this.owner && store.game.selectedArmyTile !== this) {
+    if (this.owner && game.selectedArmyTile !== this) {
       this.removeHighlight()
     }
   }
@@ -235,10 +235,16 @@ class Tile {
     if (animate) {
       image.alpha = 0
       image.scale.set(0)
-      new Animation(image, (image: Sprite, fraction: number) => {
-        image.alpha = fraction
-        image.scale.set(fraction)
-      })
+      new Animation(
+        image,
+        (image: Sprite, fraction: number) => {
+          image.alpha = fraction
+          image.scale.set(fraction)
+        },
+        {
+          speed: 0.05,
+        }
+      )
     }
 
     return image
@@ -246,7 +252,7 @@ class Tile {
   removeImage(key: keyof TileImage, animate = true) {
     const image = this.image[key]
 
-    if (!image) return
+    if (!image || !store.game) return
 
     delete this.image[key]
 
@@ -273,7 +279,7 @@ class Tile {
   }
   removeArmy() {
     if (!this.army || !this.image.armyIcon) {
-      throw Error('Can not remove non existing army')
+      return
     }
 
     this.army = null
@@ -290,7 +296,9 @@ class Tile {
       {
         speed: 0.05,
         onFinish: image => {
-          store.game.stage['armyIcon'].removeChild(image)
+          if (store.game) {
+            store.game.stage['armyIcon'].removeChild(image)
+          }
         },
       }
     )
@@ -479,7 +487,9 @@ class Tile {
     )
   }
   updateOwner() {
-    const newOwner = this.ownerId ? store.getPlayer(this.ownerId) : null
+    if (!store.game) return
+
+    const newOwner = this.ownerId ? store.game.players[this.ownerId] : null
 
     if (newOwner) {
       if (this.image.pattern) {
@@ -549,14 +559,14 @@ class Tile {
     this.owner = newOwner
 
     // Set camera to capital
-    if (!store.spawnTile && this.ownerId === store.playerId) {
-      store.spawnTile = this
-    } else if (!store.spawnTile && store.spectating) {
-      store.spawnTile = this
+    if (!store.game.spawnTile && this.ownerId === store.game.playerId) {
+      store.game.spawnTile = this
+    } else if (!store.game.spawnTile && store.spectating) {
+      store.game.spawnTile = this
     }
   }
   selectArmy() {
-    if (!this.image.pattern) return
+    if (!this.image.pattern || !store.game) return
 
     const centerPixel = getPixelPosition(this.axial)
 
@@ -680,6 +690,8 @@ class Tile {
     }
   }
   updateBorders() {
+    if (!store.game) return
+
     const now = Date.now()
 
     for (let i = 0; i < 6; i++) {
@@ -775,7 +787,8 @@ class Tile {
     }
   }
   isHovered() {
-    return store.hoveredTile && store.hoveredTile.id === this.id
+    if (!store.game) return false
+    return store.game.hoveredTile && store.game.hoveredTile.id === this.id
   }
   isEmpty() {
     return !this.building && !this.forest && !this.village && !this.mountain
@@ -794,7 +807,7 @@ class Tile {
     this.image.patternPreview.alpha = 0.3
   }
   removePatternPreview() {
-    if (!this.image.patternPreview) return
+    if (!this.image.patternPreview || !store.game) return
 
     if (this.image.pattern) {
       this.image.pattern.visible = true
@@ -824,7 +837,7 @@ class Tile {
     return 'Plains'
   }
   getActionType(ignoreGold: boolean = false) {
-    if (!store.player || !store.gsConfig || this.action) {
+    if (!store.game || !store.gsConfig || this.action || !store.game.player) {
       return null
     }
 
@@ -840,7 +853,7 @@ class Tile {
     let isNeighbor = false
     for (let i = 0; i < 6; i++) {
       const n = this.neighbors[i]
-      if (n && n.ownerId === store.playerId) {
+      if (n && n.ownerId === store.game.playerId) {
         isNeighbor = true
         break
       }
@@ -850,18 +863,18 @@ class Tile {
     if (
       isNeighbor &&
       !this.owner &&
-      (store.player.gold >= ATTACK_COST || ignoreGold)
+      (store.game.player.gold >= ATTACK_COST || ignoreGold)
     ) {
       return 'ATTACK'
     }
 
-    if (this.ownerId !== store.playerId) return null
+    if (this.ownerId !== store.game.playerId) return null
 
     // BUILD
     const forestGold = this.forest ? this.forest.treeCount : 0
     if (
       (this.isEmpty() || this.forest) &&
-      (store.player.gold >= BUILD_COST - forestGold || ignoreGold)
+      (store.game.player.gold >= BUILD_COST - forestGold || ignoreGold)
     ) {
       return 'BUILD'
     }
@@ -869,7 +882,7 @@ class Tile {
     // RECRUIT
     if (
       this.building &&
-      (store.player.gold >= RECRUIT_COST || ignoreGold) &&
+      (store.game.player.gold >= RECRUIT_COST || ignoreGold) &&
       (this.building.type !== 'TOWER' || this.building.hp !== HP.TOWER)
     ) {
       return 'RECRUIT'
@@ -879,7 +892,7 @@ class Tile {
     if (
       this.building &&
       this.building.type === 'TOWER' &&
-      (store.player.gold >= UPGRADE_COST || ignoreGold)
+      (store.game.player.gold >= UPGRADE_COST || ignoreGold)
     ) {
       return 'UPGRADE'
     }

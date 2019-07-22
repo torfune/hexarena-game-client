@@ -3,7 +3,14 @@ import store from '../../store'
 import HoveredTileInfo from '../../types/HoveredTileInfo'
 
 const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
-  if (!store.gsConfig || !store.playerId || !store.player) return null
+  if (
+    !store.gsConfig ||
+    !store.game ||
+    !store.game.playerId ||
+    !store.game.player
+  ) {
+    return null
+  }
 
   // GS Config
   const {
@@ -19,14 +26,14 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
   } = store.gsConfig
 
   let isNeighborToPlayer = false
-  let isOwnedByPlayer = tile.owner && tile.owner.id === store.playerId
+  let isOwnedByPlayer = tile.owner && tile.owner.id === store.game.playerId
 
   for (let i = 0; i < 6; i++) {
     const neighbor = tile.neighbors[i]
 
     if (!neighbor) continue
 
-    if (neighbor.owner && neighbor.owner.id === store.playerId) {
+    if (neighbor.owner && neighbor.owner.id === store.game.playerId) {
       isNeighborToPlayer = true
       break
     }
@@ -44,7 +51,7 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
   // Army send
   if (
     store.game.selectedArmyTile ||
-    (tile.army && tile.ownerId === store.playerId)
+    (tile.army && tile.ownerId === store.game.playerId)
   ) {
     return {
       label: 'Send Army',
@@ -60,7 +67,7 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
       iconSrc: '/static/icons/swords.svg',
       structure,
       duration: `${ATTACK_DURATION / 1000}s`,
-      notEnoughGold: store.player.gold < ATTACK_COST,
+      notEnoughGold: store.game.player.gold < ATTACK_COST,
       goldCost: ATTACK_COST,
     }
   }
@@ -73,7 +80,7 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
       iconSrc: '/static/images/tower-icon.png',
       structure,
       duration: `${BUILD_DURATION / 1000}s`,
-      notEnoughGold: store.player.gold < BUILD_COST - tileGold,
+      notEnoughGold: store.game.player.gold < BUILD_COST - tileGold,
       goldCost: BUILD_COST - tileGold,
     }
   }
@@ -90,7 +97,7 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
       label: 'Repair Building',
       structure,
       duration: `${RECRUIT_DURATION / 1000}s`,
-      notEnoughGold: store.player.gold < RECRUIT_COST,
+      notEnoughGold: store.game.player.gold < RECRUIT_COST,
       goldCost: RECRUIT_COST,
     }
   }
@@ -107,7 +114,7 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
       iconSrc: '/static/images/castle-icon.png',
       structure,
       duration: `${UPGRADE_DURATION / 1000}s`,
-      notEnoughGold: store.player.gold < UPGRADE_COST,
+      notEnoughGold: store.game.player.gold < UPGRADE_COST,
       goldCost: UPGRADE_COST,
     }
   }
@@ -125,7 +132,7 @@ const getHoveredTileInfo = (tile: Tile): HoveredTileInfo | null => {
       iconSrc: '/static/icons/army.svg',
       structure,
       duration: `${RECRUIT_DURATION / 1000}s`,
-      notEnoughGold: store.player.gold < RECRUIT_COST,
+      notEnoughGold: store.game.player.gold < RECRUIT_COST,
       goldCost: RECRUIT_COST,
     }
   }

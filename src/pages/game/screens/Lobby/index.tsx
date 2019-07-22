@@ -39,25 +39,29 @@ const Heading = styled.h2`
   }
 `
 
-const Lobby = () => (
-  <>
-    <Header />
-    <Container>
-      <TopPlayers fixedHeight="calc(100vh - 300px)" />
-      <PlayersSection>
-        <Heading>
-          <p>
-            {store.startCountdown
-              ? `Game starts in ${store.startCountdown} seconds`
-              : '. . .'}
-          </p>
-          {store.gameMode && <p>{store.gameMode.replace('_', ' ')}</p>}
-        </Heading>
-        <Players />
-      </PlayersSection>
-    </Container>
-    <Chat />
-  </>
-)
+const Lobby = () => {
+  if (!store.game) return null
+
+  return (
+    <>
+      <Header />
+      <Container>
+        <TopPlayers fixedHeight="calc(100vh - 300px)" />
+        <PlayersSection>
+          <Heading>
+            <p>
+              {store.game.startCountdown
+                ? `Game starts in ${store.game.startCountdown} seconds`
+                : '. . .'}
+            </p>
+            {store.game.mode && <p>{store.game.mode.replace('_', ' ')}</p>}
+          </Heading>
+          <Players />
+        </PlayersSection>
+      </Container>
+      <Chat />
+    </>
+  )
+}
 
 export default observer(Lobby)

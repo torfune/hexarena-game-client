@@ -29,10 +29,6 @@ interface Props {
 const Homepage: React.FC<Props> = ({ history }) => {
   store.routerHistory = history
 
-  useEffect(() => {
-    store.reset()
-  }, [])
-
   return (
     <Container>
       <Header />

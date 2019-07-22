@@ -5,6 +5,8 @@ import store from '../../store'
 const loader = Loader.shared
 
 const createImage = (imageName: string, textureName?: string) => {
+  if (!store.game) return new Sprite()
+
   const texture = textureName
     ? loader.resources[textureName].texture
     : loader.resources[imageName].texture

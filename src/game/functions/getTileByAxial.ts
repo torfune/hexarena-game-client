@@ -2,15 +2,7 @@ import store from '../../store'
 import { Axial } from '../../types/coordinates'
 
 const getTileByAxial = (axial: Axial) => {
-  return store.getTile(`${axial.x}&${axial.z}`)
-
-  // for (let i = 0; i < store.tiles.length; i++) {
-  //   const { x, z } = store.tiles[i].axial
-  //   if (x === axial.x && z === axial.z) {
-  //     return store.tiles[i]
-  //   }
-  // }
-  // return null
+  return store.game ? store.game.tiles[`${axial.x}&${axial.z}`] || null : null
 }
 
 export default getTileByAxial

@@ -95,11 +95,11 @@ const ContinueButton = styled.div`
 
 const EndScreen = () => {
   const spring = useSpring({ top: 0, from: { top: -4000 } })
-  const groups = getPlayerGroups(store.players)
 
-  if (store.gameTime === undefined) return null
+  if (!store.game || store.game.time === null) return null
 
-  const message = store.gameTime <= 0 ? `Time's up!` : 'The game has finished!'
+  const groups = getPlayerGroups(Object.values(store.game.players))
+  const message = store.game.time <= 0 ? `Time's up!` : 'The game has finished!'
 
   return (
     <Container style={spring} spectating={store.spectating}>

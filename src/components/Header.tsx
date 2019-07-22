@@ -120,22 +120,23 @@ const Header = () => {
   const cancelQueue = () => {
     Socket.send('cancelQueue')
     store.waitingTime = null
-    store.onlinePlayers = []
   }
 
   const getNextGameIndex = () => {
-    const { gameIndex } = store
+    if (!store.game) return
+
+    const gameId = store.game.id
 
     if (store.runningGames.length === 0) return null
 
-    if (store.status === 'finished') {
+    if (store.game.status === 'finished') {
       return Number(store.runningGames[0].id)
     }
 
     if (store.runningGames.length === 1) return null
 
     const index = store.runningGames.findIndex(game => {
-      return Number(game.id) === gameIndex
+      return game.id === gameId
     })
 
     if (index === -1) return null
@@ -145,8 +146,8 @@ const Header = () => {
     }
 
     for (let i = index; i < store.runningGames.length; i++) {
-      const id = Number(store.runningGames[i].id)
-      if (id !== gameIndex) {
+      const id = store.runningGames[i].id
+      if (id !== gameId) {
         return id
       }
     }
@@ -159,16 +160,16 @@ const Header = () => {
   const handleNextGameClick = () => {
     const canvas = document.getElementById('game-canvas')
 
-    if (!canvas || nextGameIndex === null || !store._game) return
+    if (!canvas || nextGameIndex === null || !store.game) return
 
     // Destroy old game
-    store.game.stopSpectate()
-    store.game.destroy()
+    // store.game.stopSpectate()
+    // store.game.destroy()
 
     // Create new game
-    store.createGame()
-    store.game.render(canvas)
-    store.game.spectate(nextGameIndex)
+    // store.createGame()
+    // store.game.render(canvas)
+    // store.game.spectate(nextGameIndex)
   }
 
   return (
@@ -178,10 +179,10 @@ const Header = () => {
           <Link to="/">HexArena.io</Link>
         </Logo>
 
-        {spectating && (
+        {spectating && store.game && (
           <SpectateSection>
             <img src="/static/icons/spectate.svg" />
-            <p>Spectating Game #{store.gameIndex}</p>
+            <p>Spectating Game #{store.game.id}</p>
             <Link to="/">
               <Button>
                 <img src="/static/icons/cross.svg" />

@@ -18,17 +18,11 @@ const IncomeBar = styled.canvas`
   overflow: hidden;
 `
 
-const Income = () => {
-  useEffect(() => {
-    store.incomeStartedAt = Date.now() // - store.ping
-  }, [store.lastIncomeAt])
-
-  return (
-    <Container>
-      <Label>Next income</Label>
-      <IncomeBar id="income-bar-fill" />
-    </Container>
-  )
-}
+const Income = () => (
+  <Container>
+    <Label>Next income</Label>
+    <IncomeBar id="income-bar-fill" />
+  </Container>
+)
 
 export default observer(Income)

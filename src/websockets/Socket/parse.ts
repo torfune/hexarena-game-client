@@ -1,5 +1,6 @@
-import convert from './convert'
 import GameServerMessage from '../../types/GameServerMessage'
+import convertObject from '../convertObject'
+import convert from '../convert'
 
 type ReturnValue =
   | string
@@ -39,18 +40,6 @@ const parse = (
       return convert(payload, type)
     }
   }
-}
-
-const convertObject = (payload: string, type: { [key: string]: string }) => {
-  const properties = payload.split('|')
-  const keys = Object.keys(type)
-  const result: { [key: string]: any } = {}
-
-  for (let j = 0; j < properties.length; j++) {
-    result[keys[j]] = convert(properties[j], type[keys[j]])
-  }
-
-  return result
 }
 
 export default parse

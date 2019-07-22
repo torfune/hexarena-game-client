@@ -109,9 +109,9 @@ const Player = styled.div<PlayerProps>`
 `
 
 const Leaderboard = observer(() => {
-  if (store.players.length === 0) return null
+  if (!store.game) return null
 
-  const groups = getPlayerGroups(store.players)
+  const groups = getPlayerGroups(Object.values(store.game.players))
 
   return (
     <Container spectating={store.spectating}>

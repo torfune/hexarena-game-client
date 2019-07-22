@@ -105,7 +105,7 @@ const RunningGames: React.FC = () => {
         {runningGames.map(game => (
           <Game key={game.id}>
             <div>
-              <h2>Game #{Number(game.id)}</h2>
+              <h2>Game #{game.id}</h2>
             </div>
             <div>
               {game.players.map((player, index) => (
@@ -119,7 +119,7 @@ const RunningGames: React.FC = () => {
                 </Player>
               ))}
 
-              <Link to={`/spectate?gameIndex=${game.id}`}>
+              <Link to={`/spectate?game=${game.id}`}>
                 <button>
                   <img src="/static/icons/spectate.svg" />
                   <p>Spectate</p>

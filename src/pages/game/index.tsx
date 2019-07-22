@@ -44,15 +44,13 @@ const GameCanvas = styled.div<GameCanvasProps>`
 `
 
 const GamePage: React.FC<RouteComponentProps> = observer(() => {
-  const { status, showHud, gameMode, player, spectating, error } = store
-
-  if (status === 'aborted' || store.gameIndex === null) {
-    window.location.href = status === 'aborted' ? '/?play' : '/'
-    return null
-  }
-
   // Mount / Unmount
   useEffect(() => {
+    if (!store.game) {
+      console.warn(`Game instance not found`)
+      return
+    }
+
     const canvas = document.getElementById('game-canvas')
     if (!canvas) throw Error('Cannot find canvas.')
 
@@ -64,12 +62,22 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
     )
 
     return () => {
+      if (!store.game) return
+
       window.removeEventListener('resize', store.game.updateScreenSize)
 
       // Force reload
       window.location.reload()
     }
   }, [])
+
+  if (!store.game || store.game.status === 'aborted') {
+    window.location.href = '/'
+    console.warn(`Game instance not found.`)
+    return null
+  }
+
+  const { status, player, mode } = store.game
 
   return (
     <Container>
@@ -85,11 +93,11 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
           <HudContainer>
             <GameTime />
 
-            {showHud && player.alive && (
+            {player.alive && (
               <>
-                {(gameMode === 'DIPLOMACY' ||
-                  gameMode === 'TEAMS_4' ||
-                  gameMode === 'TEAMS_6') &&
+                {(mode === 'DIPLOMACY' ||
+                  mode === 'TEAMS_4' ||
+                  mode === 'TEAMS_6') &&
                   renderDiplomacy(player)}
 
                 <HoverPreview />
@@ -114,8 +122,11 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
 
         {status === 'finished' && <EndScreen />}
 
-        {error && status !== 'finished' && (
-          <ErrorModal message={error.message} goHome={error.goHome || true} />
+        {store.error && status !== 'finished' && (
+          <ErrorModal
+            message={store.error.message}
+            goHome={store.error.goHome || true}
+          />
         )}
       </>
     </Container>

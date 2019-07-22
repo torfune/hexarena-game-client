@@ -33,11 +33,10 @@ const Content = styled.div`
 `
 
 const GameTime = observer(() => {
-  if (!store.gameTime) return null
+  if (!store.game || store.game.time === null) return null
 
-  const minutes = Math.floor(store.gameTime / 60)
-  const seconds = store.gameTime - minutes * 60
-
+  const minutes = Math.floor(store.game.time / 60)
+  const seconds = store.game.time - minutes * 60
   const formatted = {
     minutes: String(minutes).padStart(2, '0'),
     seconds: String(seconds).padStart(2, '0'),

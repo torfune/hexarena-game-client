@@ -158,7 +158,9 @@ const Ally: React.FC<Props> = ({ ally, playerGold }) => (
         color={ally.pattern}
         disabled={playerGold === 0}
         onClick={() => {
-          store.game.sendGoldToAlly()
+          if (store.game) {
+            store.game.sendGoldToAlly()
+          }
         }}
       >
         Send 1 gold

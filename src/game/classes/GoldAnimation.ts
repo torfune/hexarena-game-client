@@ -36,7 +36,10 @@ class GoldAnimation {
     }
 
     this.updateScale()
-    store.game.animations.push(this)
+
+    if (store.game) {
+      store.game.animations.push(this)
+    }
   }
   update() {
     for (let i = this.coins.length - 1; i >= 0; i--) {
@@ -100,6 +103,8 @@ class Coin {
     this.image.y = position.y - this.offsetY
   }
   destroy() {
+    if (!store.game) return
+
     this.destroyed = true
     store.game.stage['gold'].removeChild(this.image)
   }

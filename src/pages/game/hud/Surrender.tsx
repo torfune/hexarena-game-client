@@ -61,14 +61,18 @@ const Button = styled.div`
   }
 `
 
-const Surrender = () => (
-  <Container>
-    <Row>
-      <Heading>lost game ?</Heading>
-      <Icon src="/static/icons/flag.svg" />
-    </Row>
-    <Button onClick={store.game.surrender.bind(store.game)}>Surrender</Button>
-  </Container>
-)
+const Surrender = () => {
+  if (!store.game) return null
+
+  return (
+    <Container>
+      <Row>
+        <Heading>lost game ?</Heading>
+        <Icon src="/static/icons/flag.svg" />
+      </Row>
+      <Button onClick={store.game.surrender.bind(store.game)}>Surrender</Button>
+    </Container>
+  )
+}
 
 export default Surrender

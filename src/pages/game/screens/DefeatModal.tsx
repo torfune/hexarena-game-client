@@ -105,7 +105,7 @@ const DefeatModal = () => {
     store.spectating = true
   }
 
-  if (!show) return null
+  if (!show || !store.game) return null
 
   return (
     <PopIn>
@@ -117,7 +117,7 @@ const DefeatModal = () => {
           <a href="/game">
             <ContinueButton>Continue</ContinueButton>
           </a>
-          <a href={`/spectate?gameIndex=${store.gameIndex}`}>
+          <a href={`/spectate?gameId=${store.game.id}`}>
             <SpectateButton onClick={handleSpectateClick} color={SECONDARY}>
               Spectate
             </SpectateButton>

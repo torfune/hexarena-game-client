@@ -37,7 +37,9 @@ class Animation {
       this.speed = speed || this.speed
     }
 
-    store.game.animations.push(this)
+    if (store.game) {
+      store.game.animations.push(this)
+    }
   }
   update() {
     this.fraction = roundToDecimals(this.fraction + this.speed, 2)
@@ -57,6 +59,8 @@ class Animation {
     }
   }
   destroy = () => {
+    if (!store.game) return
+
     const index = store.game.animations.indexOf(this)
     if (index !== -1) {
       store.game.animations.splice(index, 1)

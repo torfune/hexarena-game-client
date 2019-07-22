@@ -1,7 +1,10 @@
-const getItemById = (arr: Array<{ id: string }>, id: string) => {
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i].id === id) {
-      return arr[i]
+const getItemById = <T extends { id: string }>(
+  array: T[],
+  id: string
+): T | null => {
+  for (let i = 0; i < array.length; i++) {
+    if (array[i].id === id) {
+      return array[i]
     }
   }
 
