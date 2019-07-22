@@ -4,6 +4,7 @@ import ChatMessage from './types/ChatMessage'
 import TopPlayer from './types/TopPlayer'
 import RunningGame from './types/RunningGame'
 import Game from './game/classes/Game'
+import { History } from 'history'
 
 class Store {
   @observable chatFocus: boolean = false
@@ -26,7 +27,7 @@ class Store {
     message: string
     goHome?: boolean
   }
-  routerHistory?: any
+  routerHistory: History | null = null
 }
 
 const store = new Store()

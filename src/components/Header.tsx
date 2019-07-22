@@ -122,7 +122,7 @@ const Header = () => {
     store.waitingTime = null
   }
 
-  const getNextGameIndex = () => {
+  const getNextGameId = () => {
     if (!store.game) return
 
     const gameId = store.game.id
@@ -130,7 +130,7 @@ const Header = () => {
     if (store.runningGames.length === 0) return null
 
     if (store.game.status === 'finished') {
-      return Number(store.runningGames[0].id)
+      return store.runningGames[0].id
     }
 
     if (store.runningGames.length === 1) return null
@@ -142,7 +142,7 @@ const Header = () => {
     if (index === -1) return null
 
     if (index === store.runningGames.length - 1) {
-      return Number(store.runningGames[0].id)
+      return store.runningGames[0].id
     }
 
     for (let i = index; i < store.runningGames.length; i++) {
@@ -155,21 +155,12 @@ const Header = () => {
     return null
   }
 
-  const nextGameIndex = getNextGameIndex()
+  const nextGameId = getNextGameId()
 
   const handleNextGameClick = () => {
-    const canvas = document.getElementById('game-canvas')
-
-    if (!canvas || nextGameIndex === null || !store.game) return
-
-    // Destroy old game
-    // store.game.stopSpectate()
-    // store.game.destroy()
-
-    // Create new game
-    // store.createGame()
-    // store.game.render(canvas)
-    // store.game.spectate(nextGameIndex)
+    if (nextGameId) {
+      Socket.send('spectate', nextGameId)
+    }
   }
 
   return (
@@ -188,12 +179,10 @@ const Header = () => {
                 <img src="/static/icons/cross.svg" />
               </Button>
             </Link>
-            {nextGameIndex !== null && (
-              <Link to={`/spectate?gameIndex=${nextGameIndex}`}>
-                <Button onClick={handleNextGameClick}>
-                  <img src="/static/icons/right-arrow.svg" />
-                </Button>
-              </Link>
+            {nextGameId !== null && (
+              <Button onClick={handleNextGameClick}>
+                <img src="/static/icons/right-arrow.svg" />
+              </Button>
             )}
           </SpectateSection>
         )}

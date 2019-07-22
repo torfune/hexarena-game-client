@@ -473,7 +473,10 @@ const messages: {
     store.game = new Game(gameId)
     store.waitingTime = null
     store.matchFound = false
-    store.routerHistory.push('/game')
+
+    if (store.routerHistory && store.routerHistory.push) {
+      store.routerHistory.push('/game')
+    }
 
     // if (store.spectating) {
     //   store.game.destroy()
@@ -524,8 +527,11 @@ const messages: {
     }
 
     store.game = new Game(gameId)
-    store.routerHistory.push(`/spectate?game=${gameId}`)
     store.spectating = true
+
+    if (store.routerHistory && store.routerHistory.push) {
+      store.routerHistory.push(`/spectate?game=${gameId}`)
+    }
 
     console.log(`spectate: ${gameId}`)
   },
