@@ -156,6 +156,12 @@ const Header = () => {
   }
 
   const nextGameId = getNextGameId()
+  const gameIndex = store.runningGames.findIndex(game => {
+    if (store.game && game.id === store.game.id) {
+      return true
+    }
+    return false
+  })
 
   const handleNextGameClick = () => {
     if (nextGameId) {
@@ -170,10 +176,10 @@ const Header = () => {
           <Link to="/">HexArena.io</Link>
         </Logo>
 
-        {spectating && store.game && (
+        {spectating && store.game && gameIndex !== -1 && (
           <SpectateSection>
             <img src="/static/icons/spectate.svg" />
-            <p>Spectating Game #{store.game.id}</p>
+            <p>Spectating Game #{gameIndex}</p>
             <Link to="/">
               <Button>
                 <img src="/static/icons/cross.svg" />

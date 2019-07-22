@@ -102,10 +102,10 @@ const RunningGames: React.FC = () => {
       <Heading>Running games</Heading>
 
       <GamesContainer>
-        {runningGames.map(game => (
+        {runningGames.map((game, index) => (
           <Game key={game.id}>
             <div>
-              <h2>Game #{game.id}</h2>
+              <h2>Game #{index}</h2>
             </div>
             <div>
               {game.players.map((player, index) => (
