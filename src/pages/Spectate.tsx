@@ -27,17 +27,9 @@ const Spectate: React.FC<Props> = ({ history }) => {
   store.routerHistory = history
 
   useEffect(() => {
-    const gameId = window.location.href.split('?game=')[1]
-    Socket.send('spectate', gameId)
-
-    return () => {
-      if (store.spectating) {
-        Socket.send('stopSpectate')
-        store.spectating = false
-      }
-      if (store.game) {
-        store.game.destroy()
-      }
+    if (!store.spectating) {
+      const gameId = window.location.href.split('?game=')[1]
+      Socket.send('spectate', gameId)
     }
   }, [])
 

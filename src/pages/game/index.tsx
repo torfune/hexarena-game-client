@@ -46,22 +46,16 @@ const GameCanvas = styled.div<GameCanvasProps>`
 
 const GamePage: React.FC<RouteComponentProps> = observer(() => {
   useEffect(() => {
-    setTimeout(() => {
-      if (!store.game) {
-        window.location.href = '/'
-        throw new Error('Game instance not found after 1 second.')
-      }
-    }, 1000)
-  }, [])
-
-  useEffect(() => {
-    if (store.game && !store.game.pixi) {
-      const canvas = document.getElementById('game-canvas')
-      if (!canvas) throw new Error('Cannot find canvas.')
-
-      store.game.render(canvas)
+    if (!store.game) {
+      window.location.href = '/'
+      throw new Error('Game instance not found after 1 second.')
     }
-  }, [store.game])
+
+    const canvas = document.getElementById('game-canvas')
+    if (!canvas) throw new Error('Cannot find canvas.')
+
+    store.game.render(canvas)
+  }, [])
 
   if (store.game && store.game.status === 'aborted') {
     console.warn(`Game aborted.`)

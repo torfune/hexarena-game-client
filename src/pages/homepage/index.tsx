@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Header from '../../components/Header'
 import PlaySection from './PlaySection'
 import Chat from './Chat'
@@ -28,6 +28,13 @@ interface Props {
 }
 const Homepage: React.FC<Props> = ({ history }) => {
   store.routerHistory = history
+
+  useEffect(() => {
+    if (store.game) {
+      store.game.destroy()
+      store.spectating = false
+    }
+  }, [])
 
   return (
     <Container>

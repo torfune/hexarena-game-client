@@ -148,6 +148,7 @@ class Game {
       this.pixi.stage.addChild(this.stage[TILE_IMAGES[i]])
     }
 
+    this.pixi.view.id = this.id
     canvas.appendChild(this.pixi.view)
   }
   destroy() {
@@ -168,13 +169,16 @@ class Game {
     this.clearEventListeners()
 
     // Remove canvas element
-    const canvasContainer = document.getElementById('game-canvas')
-    if (canvasContainer) {
-      const canvas = canvasContainer.firstChild
-      if (canvas) {
-        canvasContainer.removeChild(canvas)
-      }
+    // const canvasContainer = document.getElementById('game-canvas')
+    const canvas = document.getElementById(this.id)
+    if (canvas) {
+      canvas.remove()
     }
+    // if (canvasContainer) {
+    // if (canvas) {
+    // canvasContainer.removeChild(canvas)
+    // }
+    // }
 
     if (store.game === this) {
       store.game = null

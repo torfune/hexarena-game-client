@@ -473,6 +473,7 @@ const messages: {
     store.game = new Game(gameId)
     store.waitingTime = null
     store.matchFound = false
+    store.spectating = false
 
     if (store.routerHistory && store.routerHistory.push) {
       store.routerHistory.push('/game')
@@ -524,8 +525,6 @@ const messages: {
     if (store.routerHistory && store.routerHistory.push) {
       store.routerHistory.push(`/spectate?game=${gameId}`)
     }
-
-    console.log(`spectate: ${gameId}`)
   },
 }
 
