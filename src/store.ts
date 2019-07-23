@@ -5,6 +5,7 @@ import TopPlayer from './types/TopPlayer'
 import RunningGame from './types/RunningGame'
 import Game from './game/classes/Game'
 import { History } from 'history'
+import User from './models/User'
 
 class Store {
   @observable chatFocus: boolean = false
@@ -18,6 +19,7 @@ class Store {
   @observable loading: boolean = true
   @observable openingTime: number | null = null
   @observable game: Game | null = null
+  @observable user: User | null = null
   @observable waitingTime: {
     current: number
     average: number

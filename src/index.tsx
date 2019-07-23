@@ -10,6 +10,9 @@ import { BrowserRouter as Router, Route } from 'react-router-dom'
 import Loader from './components/Loader'
 import { observer } from 'mobx-react-lite'
 
+// Global debug reference
+;(window as any).store = store
+
 const App: React.FC = observer(() => (
   <>
     <GlobalStyle />

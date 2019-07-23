@@ -15,6 +15,8 @@ import Spinner from '../../components/Spinner'
 import authHeader from '../../utils/authHeader'
 import shadeColor from '../../utils/shade'
 import Api from '../../Api'
+import store from '../../store'
+import { observer } from 'mobx-react-lite'
 
 const Container = styled.div``
 
@@ -93,17 +95,9 @@ interface Props {
   play: () => void
 }
 const LoginSection: React.FC<Props> = ({ play }) => {
-  const [user, setUser] = useState<User | null>(null)
   const [name, setName] = useState('')
   const [nameValid, setNameValid] = useState<boolean | null>(false)
-  const { userId, accessToken, login, logout, loggedIn } = useAuth()
-
-  // Fetch user
-  useEffect(() => {
-    if (userId && accessToken) {
-      fetchUser(accessToken)
-    }
-  }, [userId, accessToken])
+  const { userId, accessToken, login, logout, loggedIn, fetchUser } = useAuth()
 
   // Validate name
   useEffect(() => {
@@ -173,29 +167,16 @@ const LoginSection: React.FC<Props> = ({ play }) => {
       authHeader(accessToken)
     )
 
-    await fetchUser(accessToken)
+    await fetchUser()
   }
 
-  const fetchUser = async (accessToken: string) => {
-    const response = await Api.ws.get(
-      `/users/${userId}`,
-      authHeader(accessToken)
-    )
+  if (loggedIn === null || (loggedIn && !store.user)) return <Placeholder />
 
-    if (!response.data) {
-      logout()
-    } else {
-      setUser(response.data)
-    }
-  }
-
-  if (loggedIn === null || (loggedIn && !user)) return <Placeholder />
-
-  if (loggedIn && user) {
-    if (user.name) {
+  if (loggedIn && store.user) {
+    if (store.user.name) {
       return (
         <Container>
-          <Heading>Logged in as {user.name}</Heading>
+          <Heading>Logged in as {store.user.name}</Heading>
           <PlayButtonWrapper>
             <PlayButton onClick={play}>Play</PlayButton>
           </PlayButtonWrapper>
@@ -249,4 +230,4 @@ const LoginSection: React.FC<Props> = ({ play }) => {
   }
 }
 
-export default LoginSection
+export default observer(LoginSection)

@@ -135,9 +135,8 @@ class Game {
     this.setupEventListeners()
     // this.setupStoreListeners()
 
-    // Global debug references
+    // Global debug reference
     ;(window as any).game = this
-    ;(window as any).store = store
   }
   render(canvas: HTMLElement) {
     this.loop = createGameLoop(this.update, this)

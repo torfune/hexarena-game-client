@@ -97,20 +97,18 @@ const SignInMessage = styled.div`
 `
 
 const Chat = () => {
-  const { user } = useAuth()
-
   const handleKeyDown = ({ key }: KeyboardEvent) => {
     if (
       key !== 'Enter' ||
       !store.chatMessage ||
       !store.gsConfig ||
-      !user ||
-      !user.name
+      !store.user ||
+      !store.user.name
     ) {
       return
     }
 
-    Socket.send('chatMessage', `${user.name}|${store.chatMessage}`)
+    Socket.send('chatMessage', `${store.user.name}|${store.chatMessage}`)
     store.chatMessage = ''
   }
 
@@ -173,7 +171,7 @@ const Chat = () => {
         ))}
       </StyledSimpleBar>
 
-      {user && user.name ? (
+      {store.user && store.user.name ? (
         <Input
           autoFocus
           placeholder="Type your message ..."

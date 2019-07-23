@@ -13,7 +13,6 @@ const Container = styled.div`
 `
 
 const EloSection = styled.div`
-  /* width: 80px; */
   text-align: right;
 
   p {
@@ -35,16 +34,16 @@ const LogoutButton = styled.div`
 `
 
 const Profile = () => {
-  const { user, logout } = useAuth()
+  const { logout } = useAuth()
 
-  if (!user) return null
+  if (!store.user) return null
 
   return (
     <Container>
-      {!!user.elo && (
+      {!!store.user.elo && (
         <EloSection>
           <p>Elo</p>
-          <span>{user.elo}</span>
+          <span>{store.user.elo}</span>
         </EloSection>
       )}
       {!store.waitingTime && (

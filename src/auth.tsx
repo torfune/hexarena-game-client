@@ -3,25 +3,26 @@ import authHeader from './utils/authHeader'
 import Credentials from './types/Credentials'
 import User from './models/User'
 import Api from './Api'
+import store from './store'
 
 interface Auth {
   loggedIn: boolean | null
   userId: string | null
-  user: User | null
   accessToken: string | null
   accessTokenExp: string | null
   login: (userId: string, accessToken: string, accessTokenExp: string) => void
   logout: () => void
+  fetchUser: () => void
 }
 
 export const AuthContext = createContext<Auth>({
   loggedIn: null,
   userId: null,
-  user: null,
   accessToken: null,
   accessTokenExp: null,
   login: () => {},
   logout: () => {},
+  fetchUser: () => {},
 })
 export const useAuth = () => useContext(AuthContext)
 
@@ -31,7 +32,6 @@ interface Props {
 export const AuthProvider: React.FC<Props> = ({ children }) => {
   const [loaded, setLoaded] = useState(false)
   const [loggedIn, setLoggedIn] = useState<boolean | null>(null)
-  const [user, setUser] = useState<User | null>(null)
   const [credentials, setCredentials] = useState<Credentials>({
     userId: null,
     accessToken: null,
@@ -49,7 +49,6 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     }
 
     const expiresIn = Number(accessTokenExp) - Math.floor(Date.now() / 1000)
-
     if (expiresIn > 0) {
       const expiresInDays = Math.floor(expiresIn / 60 / 60 / 24)
       if (expiresInDays < 4) {
@@ -84,12 +83,19 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
         return
       }
 
-      fetchUser(userId, accessToken)
+      fetchUser()
       setLoggedIn(true)
     }
   }, [credentials, loaded])
 
-  const fetchUser = async (userId: string, accessToken: string) => {
+  const fetchUser = async () => {
+    const { userId, accessToken } = credentials
+
+    if (!userId || !accessToken) {
+      console.error(`Can't fetch user.`)
+      return
+    }
+
     const response = await Api.ws.get(
       `/users/${userId}`,
       authHeader(accessToken)
@@ -98,7 +104,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     if (!response.data) {
       logout()
     } else {
-      setUser(response.data)
+      store.user = response.data
     }
   }
 
@@ -121,8 +127,8 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     localStorage.removeItem('accessTokenExp')
 
     setCredentials({ userId: null, accessToken: null, accessTokenExp: null })
-    setUser(null)
     setLoaded(true)
+    store.user = null
   }
 
   return (
@@ -132,9 +138,9 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
         userId: credentials.userId,
         accessToken: credentials.accessToken,
         accessTokenExp: credentials.accessTokenExp,
-        user,
         login,
         logout,
+        fetchUser,
       }}
     >
       {children}
