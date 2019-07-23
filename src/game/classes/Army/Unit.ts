@@ -20,11 +20,12 @@ class Unit {
     this.image.scale.y = UNIT_IMAGE_SCALE
   }
   update(fraction: number) {
-    if (!this.delay || !this.originalPosition || !this.targetPosition) return
+    if (this.delay === null || !this.originalPosition || !this.targetPosition) {
+      return
+    }
 
     const delayedFraction = 1 / ((1 - this.delay) / (fraction - this.delay))
-
-    if (delayedFraction < 0) return
+    if (delayedFraction < 0 && this.delay) return
 
     const easedFraction = easeOutCubic(delayedFraction)
     const delta = {
