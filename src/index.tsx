@@ -2,15 +2,17 @@ import ReactDOM from 'react-dom'
 import React from 'react'
 import Homepage from './pages/homepage'
 import Game from './pages/game'
+import Privacy from './pages/Privacy'
 import Spectate from './pages/Spectate'
 import GlobalStyle from './components/GlobalStyle'
 import { AuthProvider } from './auth'
 import store from './store'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import Loader from './components/Loader'
 import { observer } from 'mobx-react-lite'
 
 // Global debug reference
+import PageNotFound from './pages/PageNotFound'
 ;(window as any).store = store
 
 const App: React.FC = observer(() => (
@@ -21,18 +23,21 @@ const App: React.FC = observer(() => (
         {store.loading || store.error ? (
           <Loader />
         ) : (
-          <>
+          <Switch>
             <Route
-              path="/"
               exact
+              path="/"
               render={({ history }) => <Homepage history={history} />}
             />
             <Route path="/game" component={Game} />
             <Route
+              exact
               path="/spectate"
               render={({ history }) => <Spectate history={history} />}
             />
-          </>
+            <Route exact path="/privacy" component={Privacy} />
+            <Route component={PageNotFound} />
+          </Switch>
         )}
       </Router>
     </AuthProvider>
