@@ -1,5 +1,9 @@
 const changelog = [
   {
+    version: 'Alpha 1.42',
+    points: ['Facebook Login', 'Bug fixes'],
+  },
+  {
     version: 'Alpha 1.41',
     points: ['Added camps', 'Bug fixes and small balance changes'],
   },
