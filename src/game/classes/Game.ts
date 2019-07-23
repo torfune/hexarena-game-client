@@ -511,6 +511,9 @@ class Game {
     }
   }
   handleWheelMove({ deltaY, detail }: WheelEvent) {
+    const chat = document.getElementById('chat')
+    if (chat && chat.matches(':hover')) return
+
     const delta = deltaY || detail
     const zoomDirection = (delta < 0 ? -1 : 1) * -1
 
