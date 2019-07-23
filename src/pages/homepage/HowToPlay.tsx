@@ -16,10 +16,10 @@ const Section = styled.div`
 
   h2 {
     font-weight: 500;
-    margin-bottom: 8px;
+    margin-bottom: 16px;
   }
   p {
-    margin-top: 8px;
+    margin-top: 6px;
     font-size: 18px;
     color: #ccc;
   }
