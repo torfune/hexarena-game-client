@@ -146,7 +146,7 @@ const Chat = () => {
   if (!store.gsConfig) return null
 
   return (
-    <Container>
+    <Container id="chat">
       <Heading>Chat</Heading>
 
       <StyledSimpleBar id="chat-message-container">
