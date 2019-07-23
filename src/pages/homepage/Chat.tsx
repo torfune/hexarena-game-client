@@ -4,7 +4,6 @@ import { observer } from 'mobx-react-lite'
 import store from '../../store'
 import React from 'react'
 import Socket from '../../websockets/Socket'
-import { useAuth } from '../../auth'
 import SimpleBar from 'simplebar-react'
 import 'simplebar/dist/simplebar.min.css'
 import { CHAT_WIDTH } from '../../constants/react'
@@ -97,6 +96,38 @@ const SignInMessage = styled.div`
 `
 
 const Chat = () => {
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    addEventListener('wheel', handleWheelMove)
+
+    return () => {
+      removeEventListener('wheel', handleWheelMove)
+    }
+  }, [])
+
+  let lastScrolled: number | null = null
+
+  const handleWheelMove = (event: any) => {
+    const delta = event.deltaY || event.detail
+    const scrollDirection = (delta < 0 ? -1 : 1) * -1
+    const chat = document.getElementById('chat')
+    const ele = document.querySelector(
+      '#chat-message-container .simplebar-content-wrapper'
+    )
+
+    if (scrollDirection > 0 && chat && chat.matches(':hover')) {
+      setScrolled(true)
+    }
+    if (ele) {
+      if (lastScrolled === ele.scrollTop) {
+        setScrolled(false)
+      }
+
+      lastScrolled = ele.scrollTop
+    }
+  }
+
   const handleKeyDown = ({ key }: KeyboardEvent) => {
     if (
       key !== 'Enter' ||
@@ -110,6 +141,7 @@ const Chat = () => {
 
     Socket.send('chatMessage', `${store.user.name}|${store.chatMessage}`)
     store.chatMessage = ''
+    setScrolled(false)
   }
 
   const handleMessageChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -136,7 +168,7 @@ const Chat = () => {
     const ele = document.querySelector(
       '#chat-message-container .simplebar-content-wrapper'
     )
-    if (ele) {
+    if (ele && !scrolled) {
       ele.scrollTop = ele.scrollHeight
     }
   }, [store.chatMessages, store.chatMessage])
