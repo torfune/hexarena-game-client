@@ -139,15 +139,20 @@ class Game {
     ;(window as any).game = this
   }
   render(canvas: HTMLElement) {
-    this.loop = createGameLoop(this.update, this)
-    this.pixi = createPixiApp()
-
-    for (let i = 0; i < TILE_IMAGES.length; i++) {
-      this.stage[TILE_IMAGES[i]] = new Container()
-      this.pixi.stage.addChild(this.stage[TILE_IMAGES[i]])
+    if (!this.loop) {
+      this.loop = createGameLoop(this.update, this)
     }
 
-    this.pixi.view.id = this.id
+    if (!this.pixi) {
+      this.pixi = createPixiApp()
+      for (let i = 0; i < TILE_IMAGES.length; i++) {
+        this.stage[TILE_IMAGES[i]] = new Container()
+        this.pixi.stage.addChild(this.stage[TILE_IMAGES[i]])
+      }
+
+      this.pixi.view.id = this.id
+    }
+
     canvas.appendChild(this.pixi.view)
   }
   destroy() {
