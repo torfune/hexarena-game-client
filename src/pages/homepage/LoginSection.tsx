@@ -4,11 +4,20 @@ import GoogleLogin, {
   GoogleLoginResponse,
   GoogleLoginResponseOffline,
 } from 'react-google-login'
+import {
+  ReactFacebookLoginInfo,
+  ReactFacebookFailureResponse,
+} from 'react-facebook-login'
+import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
 import PlayButton from './PlayButton'
 import NameInput from './NameInput'
 import React from 'react'
-import { PRIMARY, BOX_SHADOW, GOOGLE_CLIENT_ID } from '../../constants/react'
-import User from '../../models/User'
+import {
+  PRIMARY,
+  BOX_SHADOW,
+  GOOGLE_CLIENT_ID,
+  COLOR,
+} from '../../constants/react'
 import { useAuth } from '../../auth'
 import Heading from './Heading'
 import Spinner from '../../components/Spinner'
@@ -30,21 +39,20 @@ const ChooseNameSection = styled.div`
   margin-top: 4px;
 `
 
-const LoginButton = styled.div`
-  width: 250px;
-  background: ${PRIMARY};
+const LoginButton = styled.div<{ color: string }>`
+  width: 280px;
+  background: ${props => props.color};
   height: 45px;
   margin-top: 16px;
-  text-align: center;
+  padding-left: 12px;
   display: flex;
-  justify-content: center;
   align-items: center;
   font-weight: 500;
   border-radius: 4px;
   font-size: 18px;
   color: #fff;
   transition: 200ms;
-  border: 2px solid ${shadeColor(PRIMARY, -20)};
+  border: 2px solid ${props => shadeColor(props.color, -20)};
 
   :hover {
     transform: scale(1.05);
@@ -141,8 +149,8 @@ const LoginSection: React.FC<Props> = ({ play }) => {
           login(userId, accessToken, accessTokenExp)
         })
     } catch {
-      console.error('Google authentication failed.')
       logout()
+      throw new Error('Google authentication failed.')
     }
   }
 
@@ -168,6 +176,28 @@ const LoginSection: React.FC<Props> = ({ play }) => {
     )
 
     await fetchUser()
+  }
+
+  const handleFacebookAuthResponse = (
+    response: ReactFacebookLoginInfo | ReactFacebookFailureResponse
+  ) => {
+    if (!('accessToken' in response)) return
+
+    try {
+      Api.ws
+        .get(`/auth/facebook`, {
+          params: {
+            accessToken: response.accessToken,
+          },
+        })
+        .then(response => {
+          const { userId, accessToken, accessTokenExp } = response.data
+          login(userId, accessToken, accessTokenExp)
+        })
+    } catch {
+      logout()
+      throw new Error('Facebook authentication failed.')
+    }
   }
 
   if (loggedIn === null || (loggedIn && !store.user)) return <Placeholder />
@@ -217,13 +247,24 @@ const LoginSection: React.FC<Props> = ({ play }) => {
         <GoogleLogin
           clientId={GOOGLE_CLIENT_ID}
           render={(props: any) => (
-            <LoginButton onClick={props.onClick}>
+            <LoginButton color={PRIMARY} onClick={props.onClick}>
               <GoogleIcon src="/static/icons/google.svg" />
               Sign in with Google
             </LoginButton>
           )}
           onSuccess={handleGoogleAuthSuccess}
           onFailure={handleGoogleAuthFailure}
+        />
+        <FacebookLogin
+          appId="2146819318950261"
+          autoLoad={true}
+          callback={handleFacebookAuthResponse}
+          render={(props: any) => (
+            <LoginButton color={COLOR.FACEBOOK} onClick={props.onClick}>
+              <GoogleIcon src="/static/icons/facebook.svg" />
+              Sign in with Facebook
+            </LoginButton>
+          )}
         />
       </Container>
     )
