@@ -131,6 +131,15 @@ class Tile {
 
       case 'buildingHp':
         this.updateHitpoints()
+        if (
+          this.action &&
+          this.action.type === 'RECRUIT' &&
+          this.action.status !== 'FINISHED' &&
+          this.building &&
+          this.building.type !== 'TOWER'
+        ) {
+          this.action.icon.texture = this.action.getIconTexture()
+        }
         break
 
       // case 'hitpoints':
