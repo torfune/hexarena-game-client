@@ -55,6 +55,7 @@ const MessageContent = styled.p<{ infoMessage: boolean }>`
   margin-left: 10px;
   color: ${prop => (prop.infoMessage ? '#bbb' : '#eee')};
   user-select: text;
+  overflow-x: hidden;
 `
 
 const Input = styled.input`
