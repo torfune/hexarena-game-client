@@ -119,11 +119,17 @@ const Chat = () => {
     if (scrollDirection > 0 && chat && chat.matches(':hover')) {
       setScrolled(true)
     }
+
     if (ele) {
       if (lastScrolled === ele.scrollTop) {
         setScrolled(false)
+      } else if (
+        chat &&
+        chat.matches(':hover') &&
+        lastScrolled !== ele.scrollTop
+      ) {
+        setScrolled(true)
       }
-
       lastScrolled = ele.scrollTop
     }
   }
