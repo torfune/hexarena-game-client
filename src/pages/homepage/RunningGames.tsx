@@ -23,7 +23,7 @@ const GamesContainer = styled.div`
 
 const Game = styled.div`
   border: 1px solid #282828;
-  width: 200px;
+  width: 220px;
   border-radius: 4px;
   margin-right: 24px;
   margin-bottom: 24px;
