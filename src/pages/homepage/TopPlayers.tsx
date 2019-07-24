@@ -46,11 +46,10 @@ const ListHeading = styled.div`
   color: #fff;
 `
 
-const PlayerRow = styled.div<{ highlight?: boolean }>`
+const PlayerRow = styled.div`
   padding: 8px 24px;
   display: grid;
   grid-template-columns: 32px 1fr auto;
-  background: ${props => (props.highlight ? '#3f3f3f' : null)};
 `
 
 const Value = styled.p`
@@ -69,12 +68,6 @@ const TopPlayers: React.FC<Props> = ({ fixedHeight }) => {
     })
   }, [])
 
-  let lobbyPlayerNames: string[] = []
-  if (store.game) {
-    const players = Object.values(store.game.players)
-    lobbyPlayerNames = players.map(player => player.name)
-  }
-
   return (
     <Container>
       <Heading>Top 20 players</Heading>
@@ -87,10 +80,7 @@ const TopPlayers: React.FC<Props> = ({ fixedHeight }) => {
 
       <List fixedHeight={fixedHeight}>
         {store.topPlayers.map((topPlayer, index) => (
-          <PlayerRow
-            key={topPlayer.id}
-            highlight={lobbyPlayerNames.includes(topPlayer.name)}
-          >
+          <PlayerRow key={topPlayer.id}>
             <Value>{index + 1}.</Value>
             <Value>{topPlayer.name}</Value>
             <Value>{topPlayer.elo.toLocaleString()}</Value>
