@@ -88,7 +88,6 @@ class Action {
     }, 1000)
 
     if (store.game) {
-      store.game.updateHoveredTileInfo()
       store.game.stage.action.addChild(this.image)
     }
   }

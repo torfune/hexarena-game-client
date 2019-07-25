@@ -1,158 +1,210 @@
 import styled from 'styled-components'
-import ActionLabel from './ActionLabel'
-import { PRIMARY } from '../../../../constants/react'
 import React from 'react'
-import HoveredTileInfo from '../../../../types/HoveredTileInfo'
+import Action, { ActionType } from '../../../../game/classes/Action'
+import { COLOR, PRIMARY } from '../../../../constants/react'
+import { observer } from 'mobx-react-lite'
+import store from '../../../../store'
+import GameServerConfig from '../../../../types/GameServerConfig'
+import Tile from '../../../../game/classes/Tile'
 
-interface ContainerProps {
-  showGold: boolean
-  showDuration: boolean
-}
-
-const getColumns = ({ showGold, showDuration }: ContainerProps) => {
-  let columns = 'auto'
-
-  if (showGold) {
-    columns += ' 1px 52px'
-  }
-
-  if (showDuration) {
-    columns += ' 1px 52px'
-  }
-
-  return columns
-}
-
-const Container = styled.div<ContainerProps>`
-  display: grid;
-  grid-template-columns: ${getColumns};
-  grid-template-rows: auto 6px auto;
-  padding-left: 12px;
-  padding-right: 8px;
-  margin-bottom: 6px;
+const Container = styled.div`
+  display: flex;
+  align-items: center;
 `
 
-interface ValueProps {
-  column: string
-  color?: string
-}
-
-const Value = styled.div<ValueProps>`
-  grid-row: 3;
-  text-align: center;
-  font-weight: 500;
-  font-size: 18px;
-  color: ${props => props.color || '#000'};
-  grid-column: ${props => props.column};
+const Circle = styled.div`
+  border-radius: 50%;
+  background: #222;
+  border: 1px solid ${COLOR.HUD_BORDER};
+  width: 74px;
+  height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
 `
 
-interface IconWrapperProps {
-  column: string
-}
-
-const IconWrapper = styled.div<IconWrapperProps>`
-  grid-row: 1;
-  text-align: center;
-  padding-bottom: 4px;
-  grid-column: ${props => props.column};
-`
-
-interface VerticalLineProps {
-  column: string
-}
-
-const VerticalLine = styled.div<VerticalLineProps>`
-  grid-column: ${props => props.column};
-  grid-row: 1 / span 3;
-  background: #ccc;
-  height: 100%;
-  width: 1px;
-`
-
-const HorizontalLine = styled.div`
-  grid-column: 1 / span 5;
-  grid-row: 2;
-  background: #ccc;
-  height: 1px;
-  width: 100%;
-`
-
-const Structure = styled.div`
-  grid-column: 1;
-  grid-row: 3;
-  font-size: 16px;
-  color: #444;
+const Rectangle = styled.div`
+  border-radius: 12px;
+  background: ${COLOR.HUD_BACKGROUND};
+  border: 1px solid ${COLOR.HUD_BORDER};
   position: relative;
-  top: 2px;
-  padding-bottom: 4px;
-`
-const NotEnoughGold = styled.div`
-  background: #333;
+  left: -30px;
+  padding-left: 42px;
+  display: flex;
   color: #fff;
-  padding: 4px 12px;
-  font-weight: 600;
-  font-size: 14px;
-  text-transform: uppercase;
+  height: 56px;
 `
 
-const Icon = styled.img`
-  height: 20px;
+const MainSection = styled.div`
+  padding-top: 4px;
+  margin-right: 16px;
+`
+
+const CostSection = styled.div`
+  border-left: 1px solid ${COLOR.HUD_BORDER};
+  text-align: center;
+  padding-bottom: 1px;
+`
+
+const CostLabel = styled.p`
+  font-size: 12px;
+  font-weight: 500;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-bottom: 3px;
+  padding-top: 3px;
+  border-bottom: 1px solid ${COLOR.HUD_BORDER};
+  color: #aaa;
+`
+
+const CostValue = styled.p<{ red: boolean }>`
+  font-size: 26px;
+  font-weight: 600;
+  margin-top: 1px;
+  color: ${props => (props.red ? '#e84118' : '#fff')};
+`
+
+const ClickToStart = styled.p`
+  color: #aaa;
+  font-size: 16px;
+  margin-top: 1px;
+`
+
+const NotEnoughGold = styled.div`
+  background: ${PRIMARY};
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 3px;
+`
+
+const Icon = styled.img<{ opaque: boolean }>`
+  height: 34px;
+  filter: invert(1);
+  opacity: ${props => (props.opaque ? '0.6' : 1)};
+`
+
+const Label = styled.p`
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 1px;
 `
 
 interface Props {
-  structure: string
-  label?: string
-  iconSrc?: string
-  goldCost?: number
-  duration?: string
-  notEnoughGold?: boolean
+  actionType: ActionType | 'SEND_ARMY'
+  tile: Tile
 }
+const ActionPreview: React.FC<Props> = ({ actionType, tile }) => {
+  if (!store.game || !store.gsConfig || !store.game.player) return null
 
-const ActionPreview: React.FC<Props> = ({
-  goldCost,
-  label,
-  structure,
-  duration,
-  notEnoughGold,
-  iconSrc,
-}) => {
+  const cost = getActionCost(
+    actionType,
+    store.gsConfig,
+    tile.forest ? tile.forest.treeCount : 0
+  )
+  const gold = store.game.player.gold
+  const enoughGold = gold >= cost
+
   return (
-    <>
-      <Container showGold={!!goldCost} showDuration={!!duration}>
-        <HorizontalLine />
-
-        {label && <ActionLabel label={label} iconSrc={iconSrc} />}
-
-        <Structure>{structure}</Structure>
-
-        {duration && (
-          <>
-            <VerticalLine column="2" />
-
-            <IconWrapper column="3">
-              <Icon src="/static/icons/clock.svg" />
-            </IconWrapper>
-            <Value column="3">{duration}</Value>
-          </>
+    <Container>
+      <Circle>
+        <Icon src={getActionIcon(actionType)} opaque={!enoughGold} />
+      </Circle>
+      <Rectangle>
+        <MainSection>
+          <Label>{getActionLabel(actionType)}</Label>
+          {enoughGold ? (
+            <ClickToStart>{getActionDescription(actionType)}</ClickToStart>
+          ) : (
+            <NotEnoughGold>NOT ENOUGH GOLD</NotEnoughGold>
+          )}
+        </MainSection>
+        {actionType !== 'SEND_ARMY' && (
+          <CostSection>
+            <CostLabel>COST</CostLabel>
+            <CostValue red={!enoughGold}>{cost}</CostValue>
+          </CostSection>
         )}
-
-        {goldCost && (
-          <>
-            <VerticalLine column="4" />
-
-            <IconWrapper column="5">
-              <Icon src="/static/icons/gold.svg" />
-            </IconWrapper>
-            <Value column="5" color={notEnoughGold ? PRIMARY : undefined}>
-              {goldCost}
-            </Value>
-          </>
-        )}
-      </Container>
-
-      {notEnoughGold && <NotEnoughGold>Not enough gold</NotEnoughGold>}
-    </>
+      </Rectangle>
+    </Container>
   )
 }
 
-export default ActionPreview
+const getActionLabel = (actionType: ActionType | 'SEND_ARMY') => {
+  switch (actionType) {
+    case 'ATTACK':
+      return 'Capture Tile'
+    case 'CAMP':
+      return 'Build Camp'
+    case 'TOWER':
+      return 'Build Tower'
+    case 'CASTLE':
+      return 'Build Castle'
+    case 'RECRUIT':
+      return 'Recruit Army'
+    case 'SEND_ARMY':
+      return 'Send army'
+  }
+}
+
+const getActionIcon = (actionType: ActionType | 'SEND_ARMY') => {
+  switch (actionType) {
+    case 'ATTACK':
+      return '/static/icons/attack.svg'
+    case 'CAMP':
+      return '/static/images/camp-icon.png'
+    case 'TOWER':
+      return '/static/images/tower-icon.png'
+    case 'CASTLE':
+      return '/static/images/castle-icon.png'
+    case 'RECRUIT':
+      return '/static/icons/recruit.svg'
+    case 'SEND_ARMY':
+      return '/static/icons/army.svg'
+  }
+}
+
+const getActionCost = (
+  actionType: ActionType | 'SEND_ARMY',
+  gsConfig: GameServerConfig,
+  treeCount: number
+) => {
+  switch (actionType) {
+    case 'ATTACK':
+      return gsConfig.ATTACK_COST
+    case 'CAMP':
+      return gsConfig.CAMP_COST - treeCount
+    case 'TOWER':
+      return gsConfig.TOWER_COST
+    case 'CASTLE':
+      return gsConfig.CASTLE_COST
+    case 'RECRUIT':
+      return gsConfig.RECRUIT_COST
+    case 'SEND_ARMY':
+      return 0
+  }
+}
+
+const getActionDescription = (actionType: ActionType | 'SEND_ARMY') => {
+  if (!store.game) return null
+
+  if (actionType === 'SEND_ARMY') {
+    if (store.game.selectedArmyTile) {
+      if (store.game.hoveredTile !== store.game.selectedArmyTile) {
+        return 'Release to send army'
+      } else {
+        return 'Select direction'
+      }
+    } else {
+      return 'Drag & drop to send army'
+    }
+  }
+
+  return 'Click to start'
+}
+
+export default observer(ActionPreview)

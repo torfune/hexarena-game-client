@@ -856,7 +856,7 @@ class Tile {
       } else if (this.building.type === 'CASTLE') {
         return 'Castle'
       } else if (this.building.type === 'BASE') {
-        return 'Base'
+        return 'Capital'
       }
     } else if (this.village) {
       return `Village`

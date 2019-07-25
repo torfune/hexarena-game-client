@@ -1,21 +1,17 @@
 import styled, { css } from 'styled-components'
 import ActionPreview from './ActionPreview'
-import StructurePreview from './StructurePreview'
 import { observer } from 'mobx-react-lite'
 import PlayerPreview from './PlayerPreview'
 import store from '../../../../store'
 import { Pixel } from '../../../../types/coordinates'
 import React from 'react'
+import StructurePreview from './StructurePreview'
+import { ActionType } from '../../../../game/classes/Action'
 
 const ContainerCSS = css`
-  padding-top: 8px;
-  border-radius: 8px;
-  border-top-left-radius: 4px;
-  background: #fff;
   position: absolute;
   user-select: none;
-  box-shadow: 1px 1px 16px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
+  white-space: nowrap;
 `
 
 interface ContainerProps {
@@ -23,8 +19,8 @@ interface ContainerProps {
 }
 const Container = styled.div.attrs<ContainerProps>(({ cursor }) => ({
   style: {
-    left: `${cursor.x}px`,
-    top: `${cursor.y}px`,
+    left: `${cursor.x + 8}px`,
+    top: `${cursor.y + 8}px`,
   },
 }))<ContainerProps>`
   ${ContainerCSS}
@@ -35,7 +31,7 @@ const HoverPreview = () => {
 
   const { hoveredTile, player, cursor } = store.game
 
-  if (!cursor) return null
+  if (!cursor || !hoveredTile) return null
 
   if (
     hoveredTile &&
@@ -49,18 +45,31 @@ const HoverPreview = () => {
     )
   }
 
-  // store.game.updateHoveredTileInfo()
-  const { hoveredTileInfo } = store.game
+  let actionType: ActionType | 'SEND_ARMY' | null = hoveredTile.getActionType(
+    true
+  )
+  const structure = hoveredTile.getStructureName()
 
-  if (!hoveredTileInfo) return null
+  if (
+    (hoveredTile.army && hoveredTile.ownerId === store.game.playerId) ||
+    store.game.selectedArmyTile
+  ) {
+    actionType = 'SEND_ARMY'
+  }
+
+  if (!actionType) {
+    return (
+      <Container cursor={cursor}>
+        {structure !== 'Plains' ? (
+          <StructurePreview structure={structure} />
+        ) : null}
+      </Container>
+    )
+  }
 
   return (
     <Container cursor={cursor}>
-      {hoveredTileInfo.label ? (
-        <ActionPreview {...hoveredTileInfo} />
-      ) : (
-        <StructurePreview structure={hoveredTileInfo.structure} />
-      )}
+      <ActionPreview actionType={actionType} tile={hoveredTile} />
     </Container>
   )
 }

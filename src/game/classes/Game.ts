@@ -17,7 +17,6 @@ import pixelToAxial from '../functions/pixelToAxial'
 import getPixelPosition from '../functions/getPixelPosition'
 import roundToDecimals from '../functions/roundToDecimals'
 import getDebugCommand from '../functions/getDebugCommand'
-import getHoveredTileInfo from '../functions/getHoveredTileInfo'
 import getTileByAxial from '../functions/getTileByAxial'
 import Tile from './Tile'
 import { Ticker, Application, Container } from 'pixi.js'
@@ -835,17 +834,11 @@ class Game {
 
     if (changed) {
       this.updatePatternPreviews()
-      this.updateHoveredTileInfo()
 
       if (this.selectedArmyTile) {
         this.updateArmyTileHighlights()
       }
     }
-  }
-  updateHoveredTileInfo() {
-    this.hoveredTileInfo = this.hoveredTile
-      ? getHoveredTileInfo(this.hoveredTile)
-      : null
   }
   updateArmyTileHighlights() {
     const { gsConfig } = store
