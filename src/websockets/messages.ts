@@ -89,7 +89,8 @@ const messages: {
         type !== 'RECRUIT' &&
         type !== 'CAMP' &&
         type !== 'TOWER' &&
-        type !== 'CASTLE'
+        type !== 'CASTLE' &&
+        type !== 'HOUSE'
       ) {
         continue
       }

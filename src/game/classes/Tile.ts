@@ -875,6 +875,8 @@ class Tile {
       CAMP_COST,
       TOWER_COST,
       CASTLE_COST,
+      HOUSE_COST,
+      MAX_HOUSES,
       HP,
     } = store.gsConfig
 
@@ -929,6 +931,15 @@ class Tile {
       (store.game.player.gold >= CASTLE_COST || ignoreGold)
     ) {
       return 'CASTLE'
+    }
+
+    // HOUSE
+    if (
+      this.village &&
+      this.village.houseCount < MAX_HOUSES &&
+      (store.game.player.gold >= HOUSE_COST || ignoreGold)
+    ) {
+      return 'HOUSE'
     }
 
     return null

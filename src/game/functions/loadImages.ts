@@ -17,6 +17,7 @@ const loadImages = () => {
       .add('action-icon-camp', `${images}/action-icon-camp.png?${version}`)
       .add('action-icon-tower', `${images}/action-icon-tower.png?${version}`)
       .add('action-icon-castle', `${images}/action-icon-castle.png?${version}`)
+      .add('action-icon-house', `${images}/action-icon-house.png?${version}`)
       .add('army', `${images}/army.png?${version}`)
       .add('armyIcon', `${images}/army-icon.png?${version}`)
       .add('arrow', `${images}/arrow.png?${version}`)

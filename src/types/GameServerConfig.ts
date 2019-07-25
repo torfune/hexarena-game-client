@@ -21,21 +21,26 @@ interface GameServerConfig {
   BASE_VISION: number
   CASTLE_VISION: number
 
-  // ACTIONS
+  // ACTION DURATIONS
   ATTACK_DURATION: number
   RECRUIT_DURATION: number
   CAMP_DURATION: number
   TOWER_DURATION: number
   CASTLE_DURATION: number
+  HOUSE_DURATION: number
 
-  // GOLD
-  MAX_GOLD: number
-  START_GOLD: number
+  // ACTION COSTS
   ATTACK_COST: number
+  HOUSE_COST: number
   RECRUIT_COST: number
   CAMP_COST: number
   TOWER_COST: number
   CASTLE_COST: number
+
+  // ECONOMY
+  START_GOLD: number
+  MAX_GOLD: number
+  BASE_ECONOMY: number
 
   // MANUAL ATTACKS
   DEFAULT_DEFEND_POWER: number
@@ -55,6 +60,8 @@ interface GameServerConfig {
   VILLAGE_BONUS_INTERVAL: number
   VILLAGE_CAMPS: number
   VILLAGE_FORESTS: number
+  MIN_HOUSES: number
+  MAX_HOUSES: number
 
   // ALLIANCES
   REQUEST_TIMEOUT: number

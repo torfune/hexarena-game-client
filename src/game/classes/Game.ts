@@ -492,6 +492,7 @@ class Game {
         this.actions.push(action)
 
         const { x, z } = hoveredTile.axial
+        console.log(`sending action: ${actionType}`)
         Socket.send('action', `${action.id}|${x}|${z}|${actionType}`)
       }
     }

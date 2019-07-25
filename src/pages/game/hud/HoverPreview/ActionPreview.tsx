@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import React from 'react'
-import Action, { ActionType } from '../../../../game/classes/Action'
+import { ActionType } from '../../../../game/classes/Action'
 import { COLOR, PRIMARY } from '../../../../constants/react'
 import { observer } from 'mobx-react-lite'
 import store from '../../../../store'
@@ -146,6 +146,8 @@ const getActionLabel = (actionType: ActionType | 'SEND_ARMY') => {
       return 'Build Castle'
     case 'RECRUIT':
       return 'Recruit Army'
+    case 'HOUSE':
+      return 'Build House'
     case 'SEND_ARMY':
       return 'Send army'
   }
@@ -163,6 +165,8 @@ const getActionIcon = (actionType: ActionType | 'SEND_ARMY') => {
       return '/static/images/castle-icon.png'
     case 'RECRUIT':
       return '/static/icons/recruit.svg'
+    case 'HOUSE':
+      return '/static/images/house-icon.png'
     case 'SEND_ARMY':
       return '/static/icons/army.svg'
   }
@@ -184,6 +188,8 @@ const getActionCost = (
       return gsConfig.CASTLE_COST
     case 'RECRUIT':
       return gsConfig.RECRUIT_COST
+    case 'HOUSE':
+      return gsConfig.HOUSE_COST
     case 'SEND_ARMY':
       return 0
   }
