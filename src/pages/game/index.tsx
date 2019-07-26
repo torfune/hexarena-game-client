@@ -19,6 +19,7 @@ import Lobby from './screens/Lobby'
 import Player from '../../game/classes/Player'
 import Surrender from './hud/Surrender'
 import Economy from './hud/Economy'
+import Spectators from './hud/Spectators'
 
 const Container = styled.div`
   width: 100vw;
@@ -95,6 +96,7 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
               )}
 
               <Surrender />
+              <Spectators />
 
               {!store.game.player.alive && <DefeatModal />}
             </HudContainer>

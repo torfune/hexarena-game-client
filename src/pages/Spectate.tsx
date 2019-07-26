@@ -15,6 +15,7 @@ import Economy from './game/hud/Economy'
 import Socket from '../websockets/Socket'
 import { Link } from 'react-router-dom'
 import shadeColor from '../utils/shade'
+import Spectators from './game/hud/Spectators'
 
 const Container = styled.div`
   width: calc(100vw - ${CHAT_WIDTH});
@@ -101,6 +102,7 @@ const Spectate: React.FC<Props> = ({ history }) => {
           <>
             <GameTime />
             <HoverPreview />
+            <Spectators />
             <Leaderboard />
             <Economy />
             {store.game.status === 'finished' && <EndScreen />}
