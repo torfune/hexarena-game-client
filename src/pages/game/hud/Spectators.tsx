@@ -34,11 +34,15 @@ const Number = styled.div`
   font-size: 32px;
 `
 
-const Spectators = () => (
-  <Container spectating={store.spectating}>
-    <Icon src="/static/icons/spectate.svg" />
-    {store.game && <Number>{store.game.spectators}</Number>}
-  </Container>
-)
+const Spectators = () => {
+  if (!store.game || !store.game.spectators) return null
+
+  return (
+    <Container spectating={store.spectating}>
+      <Icon src="/static/icons/spectate.svg" />
+      <Number>{store.game.spectators}</Number>
+    </Container>
+  )
+}
 
 export default observer(Spectators)
