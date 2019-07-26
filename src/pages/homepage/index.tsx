@@ -13,6 +13,7 @@ import { History } from 'history'
 import RunningGames from './RunningGames'
 import MatchFound from '../../components/MatchFound'
 import HowToPlay from './HowToPlay'
+import Socket from '../../websockets/Socket'
 
 const Container = styled.div``
 
@@ -33,6 +34,7 @@ const Homepage: React.FC<Props> = ({ history }) => {
     if (store.game) {
       store.game.destroy()
       store.spectating = false
+      Socket.send('stopSpectate')
     }
   }, [])
 

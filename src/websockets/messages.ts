@@ -42,6 +42,7 @@ export type MessageGS =
   | 'villages'
   | 'waitingTime'
   | 'message'
+  | 'spectators'
 
 // Handlers: Gameserver -> Frontend
 const messages: {
@@ -527,6 +528,12 @@ const messages: {
       store.routerHistory.push(`/spectate?game=${gameId}`)
     }
   },
+  spectators: (payload: string) => {
+    const spectators = Number(payload)
+    if (store.game) {
+      store.game.spectators = spectators
+    }
+  },
 }
 
 // Messages: Gameserver -> Frontend
@@ -548,5 +555,6 @@ export type MessageFE =
   | 'stopSpectate'
   | 'acceptMatch'
   | 'declineMatch'
+  | 'spectators'
 
 export default messages

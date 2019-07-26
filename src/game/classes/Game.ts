@@ -65,6 +65,7 @@ class Game {
   @observable spawnTile: Tile | null = null
   @observable cursor: Pixel | null = null
   @observable hoveredTileInfo: HoveredTileInfo | null = null // move this to react layer
+  @observable spectators: number | null = 0
   scale: number = DEFAULT_SCALE
   targetScale: number = DEFAULT_SCALE
   selectedArmyTile: Tile | null = null
