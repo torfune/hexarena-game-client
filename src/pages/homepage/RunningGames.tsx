@@ -22,7 +22,7 @@ const GamesContainer = styled.div`
 `
 
 const Game = styled.div`
-  border: 1px solid #282828;
+  border: 1px solid #111;
   width: 220px;
   border-radius: 4px;
   margin-right: 24px;
@@ -30,7 +30,7 @@ const Game = styled.div`
 
   /* Head */
   > div:nth-child(1) {
-    background: #2f2f2f;
+    background: #222;
     padding: 8px 16px;
 
     /* Game ID */
@@ -42,14 +42,14 @@ const Game = styled.div`
 
   /* Body */
   > div:nth-child(2) {
-    background: #323232;
+    background: #282828;
     padding: 12px 16px;
   }
 
   /* Spectate button */
   button {
-    background: #383838;
-    border: 1px solid #282828;
+    background: #333;
+    border: 1px solid #222;
     padding: 6px 12px;
     margin-top: 16px;
     border-radius: 2px;
