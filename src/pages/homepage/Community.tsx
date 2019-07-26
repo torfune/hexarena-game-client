@@ -13,7 +13,7 @@ const ButtonsContainer = styled.div`
 
 const buttonCSS = css`
   width: 200px;
-  border: 2px solid #bbb;
+  /* border: 2px solid #bbb; */
   color: #111;
   font-weight: 500;
   border-radius: 4px;

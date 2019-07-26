@@ -19,7 +19,6 @@ import Lobby from './screens/Lobby'
 import Player from '../../game/classes/Player'
 import Surrender from './hud/Surrender'
 import Economy from './hud/Economy'
-import Game from '../../game/classes/Game'
 
 const Container = styled.div`
   width: 100vw;

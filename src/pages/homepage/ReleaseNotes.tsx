@@ -14,12 +14,12 @@ const Heading = styled.h2`
 `
 
 const ReleaseHead = styled.div`
-  background: #2f2f2f;
+  background: #222;
   font-size: 24px;
   font-weight: 600;
   margin-top: 32px;
   padding: 16px 48px;
-  border: 1px solid #282828;
+  border: 1px solid #111;
   border-bottom: 0;
   color: #fff;
   border-top-left-radius: 4px;
@@ -29,9 +29,9 @@ const ReleaseHead = styled.div`
 const ReleaseBody = styled.div`
   color: #fff;
   margin-bottom: 32px;
-  background: #323232;
+  background: #282828;
   padding: 16px 48px;
-  border: 1px solid #282828;
+  border: 1px solid #111;
   padding-bottom: 32px;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;

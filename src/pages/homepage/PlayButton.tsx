@@ -15,7 +15,7 @@ const PlayButton = styled.a`
   width: 160px;
   height: 45px;
   text-align: center;
-  border: 2px solid ${shadeColor(PRIMARY, -20)};
+  /* border: 2px solid ${shadeColor(PRIMARY, -20)}; */
 
   :hover {
     transform: scale(1.05);

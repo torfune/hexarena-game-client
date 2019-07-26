@@ -6,62 +6,120 @@ import Players from './Players'
 import React from 'react'
 import Chat from '../../../homepage/Chat'
 import Header from '../../../../components/Header'
+import Spinner from '../../../../components/Spinner'
+import getPlayerGroups from '../../../../utils/getPlayerGroups'
+import GameMode from '../../../../types/GameMode'
 
 const Container = styled.div`
   position: absolute;
   top: 0;
-  background: #333;
   width: 66vw;
   height: 100vh;
   padding-left: 64px;
   z-index: 1;
-  padding-top: calc(80px + 48px);
-  display: flex;
+  padding-top: 80px;
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 2fr;
+  grid-gap: 16px;
 `
 
-const PlayersSection = styled.div`
+const CentralSection = styled.div`
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #222;
+  border-left: 1px solid #111;
+  border-right: 1px solid #111;
+  padding-top: 64px;
+  padding-left: 32px;
+  padding-right: 32px;
 `
 
-const Heading = styled.h2`
+const GameMode = styled.div`
   color: #fff;
-  font-size: 32px;
-  font-weight: 500;
-  padding-bottom: 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  text-align: center;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 8px;
 
-  > p:last-child {
-    text-transform: uppercase;
-    font-size: 20px;
+  p {
+    font-size: 24px;
+    font-weight: 500;
     color: #ccc;
+  }
+  h2 {
+    font-size: 64px;
+    font-weight: 600;
   }
 `
 
+const Countdown = styled.div`
+  font-size: 80px;
+  color: #ccc;
+  margin-top: 32px;
+  height: 150px;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+`
+
+const VS = styled.p`
+  font-size: 80px;
+  margin-top: 24px;
+  color: #fff;
+  font-weight: 600;
+  border-top: 1px solid #ccc;
+  padding-top: 8px;
+`
+
 const Lobby = () => {
-  if (!store.game) return null
+  if (!store.game || !store.game.mode) return null
+
+  const [groupLeft, groupRight] = getPlayerGroups(
+    Object.values(store.game.players)
+  )
+
+  const [modeLabelSmall, modeLabelBig] = getModeLabels(store.game.mode)
 
   return (
     <>
       <Header />
       <Container>
-        <TopPlayers fixedHeight="calc(100vh - 300px)" />
-        <PlayersSection>
-          <Heading>
-            <p>
-              {store.game.startCountdown
-                ? `Game starts in ${store.game.startCountdown} seconds`
-                : '. . .'}
-            </p>
-            {store.game.mode && <p>{store.game.mode.replace('_', ' ')}</p>}
-          </Heading>
-          <Players />
-        </PlayersSection>
+        {groupLeft && <Players players={groupLeft.players} />}
+
+        <CentralSection>
+          <GameMode>
+            <p>{modeLabelSmall}</p>
+            <h2>{modeLabelBig}</h2>
+          </GameMode>
+
+          <Countdown>
+            {store.game.startCountdown || (
+              <Spinner size="68px" thickness="2px" color="#aaa" />
+            )}
+          </Countdown>
+
+          <VS>VS</VS>
+        </CentralSection>
+
+        {groupRight && <Players players={groupRight.players} />}
       </Container>
       <Chat />
     </>
   )
+}
+
+const getModeLabels = (mode: GameMode) => {
+  switch (mode) {
+    case 'BALANCED_DUEL':
+      return ['BALANCED', '1v1']
+    case 'RANDOM_DUEL':
+      return ['RANDOM', '1v1']
+    case 'TEAMS_4':
+      return ['BALANCED', '2v2']
+    default:
+      return ['UNKNOWN MODE', '#']
+  }
 }
 
 export default observer(Lobby)

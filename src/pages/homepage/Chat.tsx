@@ -10,12 +10,12 @@ import { CHAT_WIDTH } from '../../constants/react'
 
 const Container = styled.div`
   z-index: 2;
-  background: #2f2f2f;
+  background: #222;
   position: fixed;
   color: #fff;
   right: 0;
   padding-right: 48px;
-  border-left: 1px solid #222;
+  border-left: 1px solid #111;
   padding-left: 48px;
   padding-top: 48px;
   padding-bottom: 32px;

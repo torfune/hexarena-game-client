@@ -12,7 +12,7 @@ const NameInput = styled.input.attrs({
   color: #333;
   width: 250px;
   height: 45px;
-  border: 2px solid #aaa;
+  /* border: 2px solid #aaa; */
 
   :hover,
   :focus {

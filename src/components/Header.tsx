@@ -13,12 +13,12 @@ const Container = styled.div`
   position: fixed;
   top: 0;
   display: flex;
-  background: #222;
+  background: #111111f8;
   padding: 0 64px;
   height: 80px;
   justify-content: flex-end;
   align-items: center;
-  border-bottom: 1px solid #111;
+  border-bottom: 1px solid #000;
   color: #fff;
 `
 
@@ -28,6 +28,12 @@ const Logo = styled.h1`
 
   > a {
     color: #fff;
+  }
+
+  > img {
+    height: 30px;
+    margin-right: 12px;
+    filter: invert(1);
   }
 `
 
@@ -51,23 +57,24 @@ const LeftSection = styled.div`
 `
 
 const Button = styled.div`
-  background: #444;
+  background: #fff;
   border-radius: 4px;
-  padding: 10px;
-  border: 1px solid #2f2f2f;
   font-size: 14px;
   font-weight: 500;
   display: flex;
   align-items: center;
+  justify-content: center;
+  height: 34px;
+  width: 34px;
   margin-left: 16px;
+  transition: 100ms;
 
   > img {
-    height: 12px;
-    filter: invert(1);
+    height: 14px;
   }
 
   :hover {
-    background: #555;
+    background: #aaa;
   }
 `
 
@@ -173,6 +180,7 @@ const Header = () => {
     <Container>
       <LeftSection>
         <Logo>
+          <img src="/static/images/castle-icon.png" />
           <Link to="/">HexArena.io</Link>
         </Logo>
 

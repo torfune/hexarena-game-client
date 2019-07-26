@@ -52,7 +52,7 @@ const LoginButton = styled.div<{ color: string }>`
   font-size: 18px;
   color: #fff;
   transition: 200ms;
-  border: 2px solid ${props => shadeColor(props.color, -20)};
+  /* border: 2px solid ${props => shadeColor(props.color, -20)}; */
 
   :hover {
     transform: scale(1.05);

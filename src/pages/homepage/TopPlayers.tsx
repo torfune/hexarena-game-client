@@ -19,8 +19,8 @@ const Heading = styled.h2`
 `
 
 const List = styled.div<{ fixedHeight?: string }>`
-  background: #323232;
-  border: 1px solid #282828;
+  background: #282828;
+  border: 1px solid #111;
   border-top: 0;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
@@ -38,9 +38,9 @@ const ListHeading = styled.div`
   grid-template-columns: 32px 1fr auto;
   padding: 8px 24px;
   font-weight: 500;
-  background: #2f2f2f;
-  border: 1px solid #282828;
-  border-bottom: 1px solid #282828;
+  background: #222;
+  border: 1px solid #111;
+  border-bottom: 1px solid #111;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
   color: #fff;

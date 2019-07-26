@@ -15,11 +15,11 @@ import shadeColor from '../../utils/shade'
 const Container = styled.div``
 
 const TimesWrapper = styled.div`
-  background: #282828;
+  background: #222;
   width: 190px;
   padding: 12px 20px;
   border-radius: 4px;
-  border: 1px solid #222;
+  border: 1px solid #111;
   display: flex;
   justify-content: space-between;
 `
@@ -46,17 +46,17 @@ const StyledSpinner = styled(Spinner)`
 `
 
 const CancelButton = styled.div`
-  background: #444;
+  background: #333;
   border-radius: 4px;
   padding: 6px 0;
   margin-top: 8px;
-  border: 1px solid #2f2f2f;
+  border: 1px solid #111;
   width: 190px;
   text-align: center;
   font-size: 14px;
 
   :hover {
-    background: #3f3f3f;
+    background: #2f2f2f;
   }
 `
 
@@ -120,7 +120,7 @@ const WaitingSection = () => {
           </div>
         </TimesWrapper>
 
-        <StyledSpinner size="40px" thickness="6px" color="#222" />
+        <StyledSpinner size="64px" thickness="1px" color="#111" />
 
         {runningGame && (
           <Link to={`/spectate?game=${runningGame.id}`}>

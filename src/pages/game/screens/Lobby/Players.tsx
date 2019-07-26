@@ -1,143 +1,55 @@
 import styled from 'styled-components'
-import { BOX_SHADOW } from '../../../../constants/react'
 import { observer } from 'mobx-react-lite'
 import store from '../../../../store'
 import { useTransition } from 'react-spring'
-import PatternSelector from './PatternSelector'
-import shadeColor from '../../../../utils/shade'
-import Tooltip from '../../../../components/Tooltip'
 import React, { useState } from 'react'
+import Player from '../../../../game/classes/Player'
+import PatternSelector from './PatternSelector'
 
-const Container = styled.div``
-
-const Label = styled.p`
-  font-weight: 600;
-  font-size: 14px;
-  color: #ddd;
-  text-transform: uppercase;
-  margin-top: 24px;
-`
-
-interface PatternProps {
-  color?: string
-}
-const Pattern = styled.div<PatternProps>`
-  visibility: ${props => (props.color ? 'visible' : 'hidden')};
-  margin-left: -8px;
-  border-radius: 8px;
-  background: ${props => props.color || '#444'};
-  box-shadow: ${props => (props.color ? BOX_SHADOW : null)};
-  transition: 200ms;
-`
-
-const Name = styled.p`
-  font-weight: 600;
-  font-size: 28px;
-  color: #222;
-  margin-left: 24px;
-  white-space: nowrap;
-`
-
-const UserTypeContainer = styled.div<{ background?: string }>`
-  border-radius: 100%;
-  width: 32px;
-  height: 32px;
-  margin-left: auto;
-  margin-right: 16px;
-  position: relative;
+const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: ${props => props.background};
+  flex-direction: column;
+  height: 840px;
+  /* flex-wrap: wrap; */
+`
+
+const PlayerContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #000;
+  background: #222;
+  border-radius: 12px;
+  height: 240px;
+  width: 220px;
+  padding-top: 8px;
+  position: relative;
+  margin: 16px 0;
+`
+
+const Pattern = styled.div<{ color: string; hoverEffect?: boolean }>`
+  width: 128px;
+  height: 128px;
+  border-radius: 16px;
+  border: 1px solid #000;
+  background: ${props => props.color};
+  transition: 200ms;
 
   :hover {
-    > :first-child {
-      display: block;
-    }
+    transform: ${props => (props.hoverEffect ? 'scale(1.1)' : null)};
   }
 `
 
-const UserType = styled.p`
-  font-weight: 800;
-  font-size: 20px;
+const Name = styled.div`
+  margin-top: 12px;
   color: #fff;
-  text-transform: uppercase;
-  top: 1px;
-`
-
-const You = styled.div<{ color: string }>`
-  display: flex;
-  background: #fff;
-  border-radius: 4px;
-  margin-top: 32px;
-  margin-bottom: 48px;
-  height: 64px;
-  align-items: center;
-  box-shadow: ${BOX_SHADOW};
-  position: relative;
-  width: 80%;
-  border-right: 12px solid ${props => props.color};
-
-  ${Pattern} {
-    width: 80px;
-    height: 80px;
-
-    :hover {
-      transform: scale(1.1);
-      background: ${props => shadeColor(props.color, -10)};
-    }
-  }
-`
-
-const Player = styled.div<{ color?: string }>`
-  display: flex;
-  background: ${props => (props.color ? '#fff' : '#444')};
-  opacity: ${props => (props.color ? 1 : 0.5)};
-  border-radius: 4px;
-  margin-top: 32px;
-  margin-bottom: 16px;
-  height: 44px;
-  align-items: center;
-  box-shadow: ${props => (props.color ? BOX_SHADOW : null)};
-  border-right: 8px solid ${props => props.color || '#444'};
-
-  ${Pattern} {
-    width: 60px;
-    height: 60px;
-  }
-
-  ${Name} {
-    font-size: 20px;
-    margin-left: 10px;
-
-    @media (max-width: 1600px) {
-      font-size: 16px;
-      margin-left: 8px;
-    }
-  }
-
-  ${UserTypeContainer} {
-    width: 24px;
-    height: 24px;
-
-    > :first-child {
-      bottom: 35px;
-    }
-  }
-
-  ${UserType} {
-    font-size: 14px;
-  }
-`
-
-const OtherPlayers = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-column-gap: 64px;
-
-  @media (max-width: 1600px) {
-    grid-column-gap: 40px;
-  }
+  text-align: center;
+  font-weight: 600;
+  font-size: 28px;
+  overflow: hidden;
 `
 
 const DarkOverlay = styled.div`
@@ -151,7 +63,10 @@ const DarkOverlay = styled.div`
   opacity: 0.5;
 `
 
-const Players: React.FC = () => {
+interface Props {
+  players: Player[]
+}
+const Players: React.FC<Props> = ({ players }) => {
   const [showSelector, setShowSelector] = useState(false)
   const transitions = useTransition(showSelector, null, {
     config: { tension: 400 },
@@ -162,30 +77,9 @@ const Players: React.FC = () => {
 
   if (!store.game || !store.game.player || !store.gsConfig) return null
 
-  const otherPlayers: Array<{
-    name?: string
-    pattern?: string
-    registered?: boolean
-  }> = []
-
-  const players = Object.values(store.game.players)
-  for (let i = 0; i < 6; i++) {
-    const player = players[i]
-
-    if (player && player.id === store.game.playerId) continue
-
-    if (i < players.length) {
-      otherPlayers.push({
-        name: player.name,
-        pattern: player.pattern,
-        registered: player.registered,
-      })
-    } else {
-      otherPlayers.push({})
-    }
-  }
-
-  const lockedPatterns = players
+  const { pattern, id: playerId } = store.game.player
+  const { PATTERNS } = store.gsConfig
+  const lockedPatterns = Object.values(store.game.players)
     .filter(player => player.pattern !== pattern)
     .map(({ pattern }) => pattern)
 
@@ -204,53 +98,38 @@ const Players: React.FC = () => {
     setShowSelector(false)
   }
 
-  const { PATTERNS } = store.gsConfig
-  const { pattern } = store.game.player
-
   return (
     <Container>
-      <Label>You</Label>
-      <You color={pattern}>
-        <Pattern color={pattern} onClick={handlePatternClick} />
-        <Name>{store.game.player.name}</Name>
-        {store.game.player.registered && (
-          <UserTypeContainer background={pattern}>
-            <Tooltip>Registered user</Tooltip>
-            <UserType>R</UserType>
-          </UserTypeContainer>
-        )}
-        {transitions.map(
-          ({ item, key, props }) =>
-            item && (
-              <PatternSelector
-                key={key}
-                style={props}
-                allPatterns={PATTERNS}
-                lockedPatterns={lockedPatterns}
-                onPatternSelect={handlePatternSelect}
-              />
-            )
-        )}
-
-        {showSelector && <DarkOverlay onClick={handleClickOutside} />}
-      </You>
-
-      <Label>Other players</Label>
-
-      <OtherPlayers>
-        {otherPlayers.map((player, index) => (
-          <Player key={index} color={player.pattern}>
+      {players.map(player => (
+        <PlayerContainer key={player.id}>
+          {player.id === playerId ? (
+            <Pattern
+              color={player.pattern}
+              onClick={handlePatternClick}
+              hoverEffect
+            />
+          ) : (
             <Pattern color={player.pattern} />
-            <Name>{player.name}</Name>
-            {player.registered && (
-              <UserTypeContainer background={player.pattern}>
-                <Tooltip>Registered user</Tooltip>
-                <UserType>R</UserType>
-              </UserTypeContainer>
+          )}
+          <Name>{player.name}</Name>
+
+          {player.id === playerId &&
+            transitions.map(
+              ({ item, key, props }) =>
+                item && (
+                  <PatternSelector
+                    key={key}
+                    style={props}
+                    allPatterns={PATTERNS}
+                    lockedPatterns={lockedPatterns}
+                    onPatternSelect={handlePatternSelect}
+                  />
+                )
             )}
-          </Player>
-        ))}
-      </OtherPlayers>
+        </PlayerContainer>
+      ))}
+
+      {showSelector && <DarkOverlay onClick={handleClickOutside} />}
     </Container>
   )
 }

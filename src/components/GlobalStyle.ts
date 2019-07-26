@@ -15,11 +15,11 @@ const GlobalStyle = createGlobalStyle`
     min-height: 100vh;
     width: 100vw;
     overflow-x: hidden;
-    background: #333;
+    background: #2a2a2a;
   }
 
   body {
-    background: #333;
+    background: #2a2a2a;
   }
 
   a {
