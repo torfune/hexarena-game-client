@@ -15,7 +15,9 @@ import MatchFound from '../../components/MatchFound'
 import HowToPlay from './HowToPlay'
 import Socket from '../../websockets/Socket'
 
-const Container = styled.div``
+const Container = styled.div`
+  padding-bottom: 128px;
+`
 
 const ContentGrid = styled.div`
   display: flex;
