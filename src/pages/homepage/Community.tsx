@@ -13,7 +13,6 @@ const ButtonsContainer = styled.div`
 
 const buttonCSS = css`
   width: 200px;
-  /* border: 2px solid #bbb; */
   color: #111;
   font-weight: 500;
   border-radius: 4px;
@@ -36,6 +35,13 @@ const DiscordButton = styled.a`
 const RedditButton = styled.a`
   ${buttonCSS};
   margin-left: 16px;
+`
+
+const IoGamesButton = styled.a`
+  ${buttonCSS};
+  margin-left: 16px;
+  padding-left: 16px;
+  width: 180px;
 `
 
 const DiscordIcon = styled.img`
@@ -69,6 +75,9 @@ const Community: React.FC = () => (
         <RedditIcon src="/static/icons/reddit.svg" />
         Reddit
       </RedditButton>
+      <IoGamesButton target="_blank" href="https://iogames.top">
+        More IO Games
+      </IoGamesButton>
     </ButtonsContainer>
   </Container>
 )
