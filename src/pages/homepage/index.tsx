@@ -53,7 +53,7 @@ const Homepage: React.FC<Props> = ({ history }) => {
           <RunningGames />
           <Community />
           <HowToPlay />
-          <ReleaseNotes />
+          {/* <ReleaseNotes /> */}
           <MatchFound />
         </div>
       </ContentGrid>
