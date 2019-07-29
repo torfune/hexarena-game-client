@@ -2,6 +2,7 @@ const changelog = [
   {
     label: 'Update 29/07',
     changes: [
+      'Less mountains',
       'Cheaper armies',
       'Starting gold set to 30',
       'Improved economy scaling',
