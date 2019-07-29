@@ -6,7 +6,6 @@ const changelog = [
       'Cheaper armies',
       'Starting gold set to 30',
       'Improved economy scaling',
-      'Camps not destroyed when cut off',
       'Disabled "Build house" action',
       'Slower "Capture tile" actions',
       'Game length set to 8 minutes',
