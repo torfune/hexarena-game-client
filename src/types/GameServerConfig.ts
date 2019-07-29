@@ -41,6 +41,12 @@ interface GameServerConfig {
   START_GOLD: number
   MAX_GOLD: number
   BASE_ECONOMY: number
+  MIN_HOUSES: number
+  MAX_HOUSES: number
+  VILLAGE_BASE_INCOME: number
+  HOUSE_INCOME: number
+  HOUSE_LOOT: number
+  VILLAGE_GROW_RATE: number
 
   // MANUAL ATTACKS
   DEFAULT_DEFEND_POWER: number
@@ -54,14 +60,6 @@ interface GameServerConfig {
     TOWER: 2
     CASTLE: 3
   }
-
-  // VILLAGES
-  TILES_PER_VILLAGE: number
-  VILLAGE_BONUS_INTERVAL: number
-  VILLAGE_CAMPS: number
-  VILLAGE_FORESTS: number
-  MIN_HOUSES: number
-  MAX_HOUSES: number
 
   // ALLIANCES
   REQUEST_TIMEOUT: number

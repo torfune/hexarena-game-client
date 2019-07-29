@@ -304,7 +304,6 @@ const messages: {
       tilesCount: 'number',
       gold: 'number',
       economy: 'number',
-      houses: 'number',
       alive: 'boolean',
       registered: 'boolean',
       killerName: 'string',
@@ -316,7 +315,6 @@ const messages: {
       tilesCount: number | null
       gold: number | null
       economy: number | null
-      houses: number | null
       alive: boolean
       registered: boolean
       killerName: string | null

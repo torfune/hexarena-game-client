@@ -5,7 +5,6 @@ import PlaySection from './PlaySection'
 import Chat from './Chat'
 import store from '../../store'
 import Community from './Community'
-import ReleaseNotes from './ReleaseNotes'
 import TopPlayers from './TopPlayers'
 import Countdown from './Countdown'
 import { observer } from 'mobx-react-lite'
@@ -14,6 +13,7 @@ import RunningGames from './RunningGames'
 import MatchFound from '../../components/MatchFound'
 import HowToPlay from './HowToPlay'
 import Socket from '../../websockets/Socket'
+import Changelog from './Changelog'
 
 const Container = styled.div`
   padding-bottom: 128px;
@@ -55,7 +55,7 @@ const Homepage: React.FC<Props> = ({ history }) => {
           <RunningGames />
           <Community />
           <HowToPlay />
-          {/* <ReleaseNotes /> */}
+          <Changelog />
           <MatchFound />
         </div>
       </ContentGrid>

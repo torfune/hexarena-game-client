@@ -141,7 +141,7 @@ const Ally: React.FC<Props> = ({ ally, playerGold }) => (
       {ally.alive ? (
         <>
           <Value>{ally.tilesCount}</Value>
-          <Value>{ally.houses}</Value>
+          <Value>{ally.economy}</Value>
           <Value>{ally.gold}</Value>
         </>
       ) : (

@@ -67,7 +67,7 @@ const PlayerPreview: React.FC<Props> = ({ player }) => (
     <Value>{player.tilesCount}</Value>
 
     <Icon src="/static/icons/village.svg" />
-    <Value>{player.houses}</Value>
+    <Value>{player.economy}</Value>
 
     <Icon src="/static/icons/gold.svg" />
     <Value>{player.gold}</Value>

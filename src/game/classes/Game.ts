@@ -105,14 +105,6 @@ class Game {
   @computed get gold() {
     return this.player ? this.player.gold : 0
   }
-  @computed get totalEconomy() {
-    let totalEconomy = 0
-    const keys = Object.keys(this.players)
-    for (let i = 0; i < keys.length; i++) {
-      totalEconomy += this.players[keys[i]].houses
-    }
-    return totalEconomy
-  }
 
   constructor(id: string) {
     this.id = id
@@ -493,7 +485,6 @@ class Game {
         this.actions.push(action)
 
         const { x, z } = hoveredTile.axial
-        console.log(`sending action: ${actionType}`)
         Socket.send('action', `${action.id}|${x}|${z}|${actionType}`)
       }
     }

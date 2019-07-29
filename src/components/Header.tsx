@@ -181,7 +181,11 @@ const Header = () => {
       <LeftSection>
         <Logo>
           <img src="/static/images/castle-icon.png" />
-          <Link to="/">HexArena.io</Link>
+          {store.game && !store.spectating ? (
+            <a href="/">HexArena.io</a>
+          ) : (
+            <Link to="/">HexArena.io</Link>
+          )}
         </Logo>
 
         {spectating && store.game && gameIndex !== -1 && (

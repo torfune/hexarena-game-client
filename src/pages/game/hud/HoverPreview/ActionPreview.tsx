@@ -145,7 +145,7 @@ const getActionLabel = (actionType: ActionType | 'SEND_ARMY') => {
     case 'CASTLE':
       return 'Build Castle'
     case 'RECRUIT':
-      return 'Recruit Army'
+      return 'Train Army'
     case 'HOUSE':
       return 'Build House'
     case 'SEND_ARMY':

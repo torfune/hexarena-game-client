@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import React from 'react'
 
 const Container = styled.div`
-  margin-top: 96px;
+  margin-top: 128px;
   color: #fff;
 `
 

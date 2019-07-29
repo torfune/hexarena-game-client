@@ -2,6 +2,7 @@ import styled, { css } from 'styled-components'
 import ActionPreview from './ActionPreview'
 import { observer } from 'mobx-react-lite'
 import PlayerPreview from './PlayerPreview'
+import VillagePreview from './VillagePreview'
 import store from '../../../../store'
 import { Pixel } from '../../../../types/coordinates'
 import React from 'react'
@@ -27,7 +28,7 @@ const Container = styled.div.attrs<ContainerProps>(({ cursor }) => ({
 `
 
 const HoverPreview = () => {
-  if (!store.game) return null
+  if (!store.game || !store.gsConfig) return null
 
   const { hoveredTile, player, cursor } = store.game
 
@@ -58,13 +59,24 @@ const HoverPreview = () => {
   }
 
   if (!actionType) {
-    return (
-      <Container cursor={cursor}>
-        {structure !== 'Plains' ? (
+    if (hoveredTile.village) {
+      const { VILLAGE_BASE_INCOME, HOUSE_INCOME } = store.gsConfig
+      const villageIncome =
+        VILLAGE_BASE_INCOME +
+        (hoveredTile.village.houseCount - 3) * HOUSE_INCOME
+      return (
+        <Container cursor={cursor}>
+          <VillagePreview villageIncome={villageIncome} />
+        </Container>
+      )
+    } else if (structure !== 'Plains') {
+      return (
+        <Container cursor={cursor}>
           <StructurePreview structure={structure} />
-        ) : null}
-      </Container>
-    )
+        </Container>
+      )
+    }
+    return null
   }
 
   return (

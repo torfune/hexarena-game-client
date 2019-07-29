@@ -43,7 +43,7 @@ const Chart = () => {
     labels: players.map(p => p.name),
     datasets: [
       {
-        data: players.map(p => p.houses),
+        data: players.map(p => p.economy),
         backgroundColor: players.map(p => p.pattern),
         borderWidth: 1,
         borderColor: COLOR.HUD_BACKGROUND,

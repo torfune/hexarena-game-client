@@ -934,13 +934,13 @@ class Tile {
     }
 
     // HOUSE
-    if (
-      this.village &&
-      this.village.houseCount < MAX_HOUSES &&
-      (store.game.player.gold >= HOUSE_COST || ignoreGold)
-    ) {
-      return 'HOUSE'
-    }
+    // if (
+    //   this.village &&
+    //   this.village.houseCount < MAX_HOUSES &&
+    //   (store.game.player.gold >= HOUSE_COST || ignoreGold)
+    // ) {
+    //   return 'HOUSE'
+    // }
 
     return null
   }

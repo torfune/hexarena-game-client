@@ -137,7 +137,7 @@ const Leaderboard = observer(() => {
               </Row>
 
               <p>{player.tilesCount}</p>
-              <p>{player.houses}</p>
+              <p>{player.economy}</p>
               <p>{player.gold}</p>
             </Player>
           ))}

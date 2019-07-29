@@ -60,7 +60,24 @@ const CancelButton = styled.div`
   }
 `
 
+const SpectateSection = styled.div`
+  text-align: left;
+  margin-left: 64px;
+
+  p {
+    display: flex;
+    align-items: center;
+  }
+`
+
+const InfoIcon = styled.img`
+  height: 18px;
+  margin-right: 8px;
+`
+
 const SpectateButton = styled.div`
+  margin-top: 16px;
+  width: 150px;
   display: flex;
   background: ${PRIMARY};
   color: #fff;
@@ -72,9 +89,8 @@ const SpectateButton = styled.div`
   transition: 200ms;
   height: 45px;
   text-align: center;
-  border: 2px solid ${shadeColor(PRIMARY, -20)};
   padding: 0 16px;
-  margin-left: 48px;
+  /* margin-left: 48px; */
 
   > img {
     height: 24px;
@@ -123,12 +139,18 @@ const WaitingSection = () => {
         <StyledSpinner size="64px" thickness="1px" color="#111" />
 
         {runningGame && (
-          <Link to={`/spectate?game=${runningGame.id}`}>
-            <SpectateButton>
-              <img src="/static/icons/spectate.svg" />
-              <p>Spectate</p>
-            </SpectateButton>
-          </Link>
+          <SpectateSection>
+            <p>
+              <InfoIcon src="/static/icons/info-circle.svg" />
+              You can spectate while waiting
+            </p>
+            <Link to={`/spectate?game=${runningGame.id}`}>
+              <SpectateButton>
+                <img src="/static/icons/spectate.svg" />
+                <p>Spectate</p>
+              </SpectateButton>
+            </Link>
+          </SpectateSection>
         )}
       </Row>
 

@@ -57,37 +57,21 @@ const Point = styled.p`
   }
 `
 
-const EditorCredits = styled.p`
-  text-align: right;
-  font-style: italic;
-
-  span {
-    font-weight: 600;
-    font-size: 18px;
-    color: ${PRIMARY};
-  }
-`
-
-const ReleaseNotes = () => (
+const Changelog = () => (
   <Container>
-    <Heading>What's new</Heading>
+    <Heading>Changelog</Heading>
 
     {changelog.map(release => (
-      <Fragment key={release.version}>
-        <ReleaseHead>{release.version}</ReleaseHead>
+      <Fragment key={release.label}>
+        <ReleaseHead>{release.label}</ReleaseHead>
         <ReleaseBody>
-          {release.points.map(point => (
-            <Point key={point}>{point}</Point>
+          {release.changes.map(change => (
+            <Point key={change}>{change}</Point>
           ))}
-          {release.editedBy && (
-            <EditorCredits>
-              Edited by <span>{release.editedBy}</span>
-            </EditorCredits>
-          )}
         </ReleaseBody>
       </Fragment>
     ))}
   </Container>
 )
 
-export default ReleaseNotes
+export default Changelog
