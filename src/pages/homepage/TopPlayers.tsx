@@ -91,114 +91,11 @@ const Elo = styled.p`
 `
 
 const TopPlayers = () => {
-  // useEffect(() => {
-  //   Api.ws.get(`/users/top-players`).then(response => {
-  //     store.topPlayers = response.data
-  //   })
-  // }, [])
-
-  store.topPlayers = [
-    {
-      id: '0',
-      name: 'Matej Strnad',
-      elo: 1800,
-    },
-    {
-      id: '0',
-      name: 'Matej Strnad',
-      elo: 1800,
-    },
-    {
-      id: '0',
-      name: 'Matej Strnad',
-      elo: 1800,
-    },
-    {
-      id: '0',
-      name: 'Matej Strnad',
-      elo: 1800,
-    },
-    {
-      id: '0',
-      name: 'Matej Strnad',
-      elo: 1800,
-    },
-    {
-      id: '0',
-      name: 'Matej Strnad',
-      elo: 1800,
-    },
-    {
-      id: '0',
-      name: 'Matej Strnad',
-      elo: 1800,
-    },
-    {
-      id: '0',
-      name: 'Matej Strnad',
-      elo: 1800,
-    },
-    {
-      id: '0',
-      name: 'Matej Strnad',
-      elo: 1800,
-    },
-    {
-      id: '0',
-      name: 'Matej Strnad',
-      elo: 1800,
-    },
-    {
-      id: '0',
-      name: 'Matej Strnad',
-      elo: 1800,
-    },
-    {
-      id: '0',
-      name: 'Matej Strnad',
-      elo: 1800,
-    },
-    {
-      id: '0',
-      name: 'Matej Strnad',
-      elo: 1800,
-    },
-    {
-      id: '0',
-      name: 'Matej Strnad',
-      elo: 1800,
-    },
-    {
-      id: '0',
-      name: 'Matej Strnad',
-      elo: 1800,
-    },
-    {
-      id: '0',
-      name: 'Matej Strnad',
-      elo: 1800,
-    },
-    {
-      id: '0',
-      name: 'Matej Strnad',
-      elo: 1800,
-    },
-    {
-      id: '0',
-      name: 'Matej Strnad',
-      elo: 1800,
-    },
-    {
-      id: '0',
-      name: 'Matej Strnad',
-      elo: 1800,
-    },
-    {
-      id: '0',
-      name: 'Matej Strnad',
-      elo: 1800,
-    },
-  ]
+  useEffect(() => {
+    Api.ws.get(`/users/top-players`).then(response => {
+      store.topPlayers = response.data
+    })
+  }, [])
 
   return (
     <Container>
