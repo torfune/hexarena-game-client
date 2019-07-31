@@ -6,7 +6,7 @@ import Pattern from '../../components/Pattern'
 import { Link } from 'react-router-dom'
 
 const Container = styled.div`
-  margin-top: 96px;
+  /* margin-top: 96px; */
   color: #fff;
 `
 
@@ -25,7 +25,9 @@ const Game = styled.div`
   border: 1px solid #111;
   width: 220px;
   border-radius: 4px;
-  margin-right: 24px;
+  /* margin-right: 24px; */
+  /* margin-bottom: 24px; */
+  margin-top: 24px;
   margin-bottom: 24px;
 
   /* Head */
@@ -99,36 +101,32 @@ const RunningGames: React.FC = () => {
 
   return (
     <Container>
-      <Heading>Running games</Heading>
+      {runningGames.map((game, index) => (
+        <Game key={game.id}>
+          <div>
+            <h2>Game #{index}</h2>
+          </div>
+          <div>
+            {game.players.map((player, index) => (
+              <Player key={index} opaque={!player.alive}>
+                {player.alive ? (
+                  <Pattern color={player.pattern} />
+                ) : (
+                  <img src="/static/icons/skull.svg" />
+                )}
+                <p>{player.name}</p>
+              </Player>
+            ))}
 
-      <GamesContainer>
-        {runningGames.map((game, index) => (
-          <Game key={game.id}>
-            <div>
-              <h2>Game #{index}</h2>
-            </div>
-            <div>
-              {game.players.map((player, index) => (
-                <Player key={index} opaque={!player.alive}>
-                  {player.alive ? (
-                    <Pattern color={player.pattern} />
-                  ) : (
-                    <img src="/static/icons/skull.svg" />
-                  )}
-                  <p>{player.name}</p>
-                </Player>
-              ))}
-
-              <Link to={`/spectate?game=${game.id}`}>
-                <button>
-                  <img src="/static/icons/spectate.svg" />
-                  <p>Spectate</p>
-                </button>
-              </Link>
-            </div>
-          </Game>
-        ))}
-      </GamesContainer>
+            <Link to={`/spectate?game=${game.id}`}>
+              <button>
+                <img src="/static/icons/spectate.svg" />
+                <p>Spectate</p>
+              </button>
+            </Link>
+          </div>
+        </Game>
+      ))}
     </Container>
   )
 }

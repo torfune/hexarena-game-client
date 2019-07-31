@@ -6,7 +6,7 @@ import React from 'react'
 import Socket from '../../websockets/Socket'
 import SimpleBar from 'simplebar-react'
 import 'simplebar/dist/simplebar.min.css'
-import { CHAT_WIDTH } from '../../constants/react'
+import { CHAT_WIDTH, BREAKPOINT } from '../../constants/react'
 
 const Container = styled.div`
   z-index: 2;
@@ -14,18 +14,22 @@ const Container = styled.div`
   position: fixed;
   color: #fff;
   right: 0;
-  padding-right: 48px;
+  padding-right: 32px;
   border-left: 1px solid #111;
-  padding-left: 48px;
-  padding-top: 48px;
+  padding-left: 32px;
   padding-bottom: 32px;
+  padding-top: 48px;
   top: 80px;
   width: ${CHAT_WIDTH};
   height: calc(100vh - 80px);
+
+  @media (max-width: ${BREAKPOINT.HIDE_CHAT}) {
+    display: none;
+  }
 `
 
 const Heading = styled.h2`
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 500;
 `
 

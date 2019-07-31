@@ -1,15 +1,18 @@
 import styled from 'styled-components'
 import { PRIMARY } from '../../constants/react'
 
-const Heading: React.FC = styled.h3`
-  font-size: 20px;
-  font-weight: 300;
+const Heading = styled.h3<{ red?: boolean }>`
+  font-size: 16px;
   margin-bottom: 8px;
-  color: #fff;
+  font-weight: 600;
+  color: ${props => (props.red ? PRIMARY : '#aaa')};
 
   span {
     color: ${PRIMARY};
-    font-weight: 500;
+    font-weight: 600;
+    white-space: nowrap;
+    font-size: 20px;
+    margin-left: 4px;
   }
 `
 

@@ -3,7 +3,7 @@ const formatTime = (totalSeconds: number) => {
   const seconds = totalSeconds - minutes * 60
 
   const formatted = {
-    minutes: String(minutes).padStart(2, '0'),
+    minutes,
     seconds: String(seconds).padStart(2, '0'),
   }
 

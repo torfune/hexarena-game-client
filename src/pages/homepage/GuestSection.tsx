@@ -3,29 +3,36 @@ import styled from 'styled-components'
 import Heading from './Heading'
 import PlayButton from './PlayButton'
 import NameInput from './NameInput'
-import { PRIMARY, HOMEPAGE_BREAKPOINT } from '../../constants/react'
+import { BREAKPOINT } from '../../constants/react'
 import React from 'react'
 import Api from '../../Api'
 
 const Container = styled.div`
-  margin-left: 48px;
+  width: 240px;
 
-  @media (max-width: ${HOMEPAGE_BREAKPOINT}) {
-    margin-left: 0;
+  @media (max-width: ${BREAKPOINT.MAIN_1}) {
+    margin-top: 48px;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_2}) {
+    margin-top: 0;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_3}) {
+    margin-top: 48px;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_4}) {
+    margin-top: 0;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_5}) {
     margin-top: 48px;
   }
 `
 
-const Row = styled.div`
-  display: flex;
+const InputWrapper = styled.div`
   margin-top: 16px;
-`
-
-const NameTaken = styled.p<{ visible: boolean }>`
-  opacity: ${props => (props.visible ? 1 : 0)};
-  color: ${PRIMARY};
-  font-weight: 500;
-  margin-top: 8px;
 `
 
 interface Props {
@@ -65,25 +72,27 @@ const GuestSection: React.FC<Props> = ({ play }) => {
     } else {
       setInvalidName(true)
       setName('')
+      localStorage.setItem('guestName', '')
     }
   }
 
   return (
     <Container>
-      <Heading>Play as guest</Heading>
+      {invalidName ? (
+        <Heading red>This name is taken</Heading>
+      ) : (
+        <Heading>PLAY AS GUEST</Heading>
+      )}
 
-      <Row>
-        <div>
-          <NameInput
-            placeholder="Nickname"
-            value={name}
-            onChange={handleNameChange}
-          />
-          <NameTaken visible={invalidName}>This name is taken</NameTaken>
-        </div>
+      <InputWrapper>
+        <NameInput
+          placeholder="Nickname"
+          value={name}
+          onChange={handleNameChange}
+        />
+      </InputWrapper>
 
-        <PlayButton onClick={handlePlayClick}>Play</PlayButton>
-      </Row>
+      <PlayButton onClick={handlePlayClick}>Play</PlayButton>
     </Container>
   )
 }

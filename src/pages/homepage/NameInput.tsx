@@ -5,14 +5,13 @@ const NameInput = styled.input.attrs({
 })`
   padding: 8px 16px;
   border-radius: 4px;
-  font-size: 24px;
+  font-size: 18px;
   background: #fff;
   font-weight: 500;
   margin-right: 16px;
   color: #333;
-  width: 250px;
-  height: 45px;
-  /* border: 2px solid #aaa; */
+  width: 240px;
+  height: 40px;
 
   :hover,
   :focus {

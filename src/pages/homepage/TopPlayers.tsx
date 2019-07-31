@@ -5,35 +5,56 @@ import { useEffect } from 'react'
 import TopPlayer from '../../types/TopPlayer'
 import React from 'react'
 import Api from '../../Api'
+import { BREAKPOINT } from '../../constants/react'
 
 const Container = styled.div`
-  height: 100%;
-  margin-right: 64px;
+  grid-column: 1;
+  grid-row: 1 / span 3;
+
+  @media (max-width: ${BREAKPOINT.MAIN_2}) {
+    margin-top: 80px;
+    grid-row: 3;
+  }
+
+  @media (max-width: ${BREAKPOINT.HIDE_CHAT}) {
+    margin-top: 0;
+    grid-row: 1 / span 3;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_4}) {
+    display: none;
+  }
+
+  @media (max-width: ${BREAKPOINT.FINAL}) {
+    display: block;
+    grid-column: 1;
+    grid-row: auto;
+    margin-top: 64px;
+  }
 `
 
 const Heading = styled.h2`
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 500;
   color: #fff;
   margin-bottom: 32px;
 `
 
-const List = styled.div<{ fixedHeight?: string }>`
+const List = styled.div`
   background: #282828;
   border: 1px solid #111;
   border-top: 0;
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-  padding-bottom: 16px;
-  width: 320px;
-  height: ${props => props.fixedHeight || 'auto'};
-  overflow-y: auto;
-  max-height: 830px;
-  min-height: 400px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  width: 100%;
+  max-width: 360px;
+  min-width: 300px;
 `
 
 const ListHeading = styled.div`
-  width: 320px;
+  width: 100%;
   display: grid;
   grid-template-columns: 32px 1fr auto;
   padding: 8px 24px;
@@ -41,9 +62,11 @@ const ListHeading = styled.div`
   background: #222;
   border: 1px solid #111;
   border-bottom: 1px solid #111;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
   color: #fff;
+  max-width: 360px;
+  min-width: 300px;
 `
 
 const PlayerRow = styled.div`
@@ -52,21 +75,130 @@ const PlayerRow = styled.div`
   grid-template-columns: 32px 1fr auto;
 `
 
-const Value = styled.p`
+const Name = styled.p<{ grey?: boolean }>`
   color: #fff;
   font-weight: 600;
-  font-size: 20px;
 `
 
-interface Props {
-  fixedHeight?: string
-}
-const TopPlayers: React.FC<Props> = ({ fixedHeight }) => {
-  useEffect(() => {
-    Api.ws.get(`/users/top-players`).then(response => {
-      store.topPlayers = response.data
-    })
-  }, [])
+const Number = styled.p`
+  color: #aaa;
+  font-weight: 500;
+`
+
+const Elo = styled.p`
+  color: #aaa;
+  font-weight: 500;
+`
+
+const TopPlayers = () => {
+  // useEffect(() => {
+  //   Api.ws.get(`/users/top-players`).then(response => {
+  //     store.topPlayers = response.data
+  //   })
+  // }, [])
+
+  store.topPlayers = [
+    {
+      id: '0',
+      name: 'Matej Strnad',
+      elo: 1800,
+    },
+    {
+      id: '0',
+      name: 'Matej Strnad',
+      elo: 1800,
+    },
+    {
+      id: '0',
+      name: 'Matej Strnad',
+      elo: 1800,
+    },
+    {
+      id: '0',
+      name: 'Matej Strnad',
+      elo: 1800,
+    },
+    {
+      id: '0',
+      name: 'Matej Strnad',
+      elo: 1800,
+    },
+    {
+      id: '0',
+      name: 'Matej Strnad',
+      elo: 1800,
+    },
+    {
+      id: '0',
+      name: 'Matej Strnad',
+      elo: 1800,
+    },
+    {
+      id: '0',
+      name: 'Matej Strnad',
+      elo: 1800,
+    },
+    {
+      id: '0',
+      name: 'Matej Strnad',
+      elo: 1800,
+    },
+    {
+      id: '0',
+      name: 'Matej Strnad',
+      elo: 1800,
+    },
+    {
+      id: '0',
+      name: 'Matej Strnad',
+      elo: 1800,
+    },
+    {
+      id: '0',
+      name: 'Matej Strnad',
+      elo: 1800,
+    },
+    {
+      id: '0',
+      name: 'Matej Strnad',
+      elo: 1800,
+    },
+    {
+      id: '0',
+      name: 'Matej Strnad',
+      elo: 1800,
+    },
+    {
+      id: '0',
+      name: 'Matej Strnad',
+      elo: 1800,
+    },
+    {
+      id: '0',
+      name: 'Matej Strnad',
+      elo: 1800,
+    },
+    {
+      id: '0',
+      name: 'Matej Strnad',
+      elo: 1800,
+    },
+    {
+      id: '0',
+      name: 'Matej Strnad',
+      elo: 1800,
+    },
+    {
+      id: '0',
+      name: 'Matej Strnad',
+      elo: 1800,
+    },
+    {
+      id: '0',
+      name: 'Matej Strnad',
+      elo: 1800,
+    },
+  ]
 
   return (
     <Container>
@@ -78,12 +210,12 @@ const TopPlayers: React.FC<Props> = ({ fixedHeight }) => {
         <p>ELO</p>
       </ListHeading>
 
-      <List fixedHeight={fixedHeight}>
+      <List>
         {store.topPlayers.map((topPlayer, index) => (
-          <PlayerRow key={topPlayer.id}>
-            <Value>{index + 1}.</Value>
-            <Value>{topPlayer.name}</Value>
-            <Value>{topPlayer.elo.toLocaleString()}</Value>
+          <PlayerRow key={index}>
+            <Number>{index + 1}.</Number>
+            <Name>{topPlayer.name}</Name>
+            <Elo>{topPlayer.elo.toLocaleString()}</Elo>
           </PlayerRow>
         ))}
       </List>

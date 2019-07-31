@@ -6,36 +6,66 @@ import { useAuth } from '../../auth'
 import store from '../../store'
 import { observer } from 'mobx-react-lite'
 import WaitingSection from './WaitingSection'
-import { HOMEPAGE_BREAKPOINT } from '../../constants/react'
+import { BREAKPOINT } from '../../constants/react'
 import Profile from './Profile'
 import Socket from '../../websockets/Socket'
 import getBrowserId from '../../utils/getBrowserId'
 
 const Container = styled.div`
   color: #fff;
-  height: 200px;
+  width: 100%;
 
-  @media (max-width: ${HOMEPAGE_BREAKPOINT}) {
-    height: 280px;
+  @media (max-width: ${BREAKPOINT.MAIN_2}) {
+    grid-row: 1;
+    grid-column: 1;
+  }
+
+  @media (max-width: ${BREAKPOINT.HIDE_CHAT}) {
+    grid-column: 2;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_4}) {
+    grid-column: 1;
+  }
+
+  @media (max-width: ${BREAKPOINT.FINAL}) {
+    display: none;
   }
 `
 
 const Heading = styled.h2`
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 500;
 `
 
-const Row = styled.div<{ break?: boolean }>`
+const Row = styled.div`
+  margin-top: 32px;
+  display: flex;
+`
+
+const BreakRow = styled.div`
   margin-top: 32px;
   display: flex;
 
-  ${props =>
-    props.break &&
-    css`
-      @media (max-width: ${HOMEPAGE_BREAKPOINT}) {
-        display: block;
-      }
-    `}
+  @media (max-width: ${BREAKPOINT.MAIN_1}) {
+    display: block;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_2}) {
+    display: flex;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_3}) {
+    display: block;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_4}) {
+    display: flex;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_5}) {
+    display: block;
+  }
 `
 
 const Maintainance = styled.div`
@@ -109,15 +139,24 @@ const PlaySection = () => {
       <Heading>Play</Heading>
 
       {store.waitingTime ? (
-        <Row>
+        <BreakRow>
           <WaitingSection />
           <Profile />
-        </Row>
+        </BreakRow>
       ) : (
-        <Row break={!loggedIn}>
-          <LoginSection play={playAsUser} />
-          {loggedIn ? <Profile /> : <GuestSection play={playAsGuest} />}
-        </Row>
+        <>
+          {loggedIn ? (
+            <BreakRow>
+              <LoginSection play={playAsUser} />
+              <Profile />
+            </BreakRow>
+          ) : (
+            <BreakRow>
+              <LoginSection play={playAsUser} />
+              <GuestSection play={playAsGuest} />
+            </BreakRow>
+          )}
+        </>
       )}
     </Container>
   )

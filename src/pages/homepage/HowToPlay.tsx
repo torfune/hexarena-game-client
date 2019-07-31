@@ -1,14 +1,39 @@
 import styled, { css } from 'styled-components'
 import React from 'react'
-import { PRIMARY } from '../../constants/react'
+import { PRIMARY, BREAKPOINT } from '../../constants/react'
 
 const Container = styled.div`
   margin-top: 96px;
   color: #fff;
+  grid-column: 2;
+  grid-row: 3;
+
+  @media (max-width: ${BREAKPOINT.MAIN_1}) {
+    grid-column: 1 / span 2;
+    grid-row: 4;
+    margin-top: 64px;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_2}) {
+    grid-column: 1;
+    grid-row: 5;
+  }
+
+  @media (max-width: ${BREAKPOINT.HIDE_CHAT}) {
+    grid-column: 1 / span 2;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_4}) {
+    grid-column: 1;
+  }
+
+  @media (max-width: ${BREAKPOINT.FINAL}) {
+    display: none;
+  }
 `
 
 const Heading = styled.h2`
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 500;
 `
 
@@ -20,11 +45,14 @@ const Section = styled.div`
     font-weight: 600;
     margin-bottom: 12px;
     color: ${PRIMARY};
+    font-size: 20px;
+  }
+  p {
+    text-align: justify;
   }
   p,
   li {
-    /* margin-top: 6px; */
-    font-size: 18px;
+    font-size: 16px;
     color: #eee;
     line-height: 32px;
   }
@@ -131,35 +159,6 @@ const HowToPlay: React.FC = () => (
     <Author>
       Written by <span>Slamm</span>
     </Author>
-
-    {/* <Section>
-      <h2>Goal</h2>
-
-      <p>
-        Your goal is to capture your opponent's capital or force him to
-        surrender.
-      </p>
-    </Section>
-
-    <Section>
-      <h2>Villages &amp; Economy</h2>
-
-      <p>Villages are the engine of your economy.</p>
-      <p>Bigger economy generates gold faster.</p>
-      <p>It's important to protect your villages from enemy armies!</p>
-    </Section>
-
-    <Section>
-      <h2>Buildings &amp; Armies</h2>
-
-      <p>
-        Base is the most important building, when you lose it, you lose the
-        game. You can also recruit armies there.
-      </p>
-      <p>Camp and Tower can host and send armies but can't recruit them.</p>
-      <p>Tower and Castle start with free army and hitpoints.</p>
-      <p>Castle can recruit armies.</p>
-    </Section> */}
   </Container>
 )
 

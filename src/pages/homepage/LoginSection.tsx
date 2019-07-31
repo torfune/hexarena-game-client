@@ -17,17 +17,35 @@ import {
   BOX_SHADOW,
   GOOGLE_CLIENT_ID,
   COLOR,
+  BREAKPOINT,
 } from '../../constants/react'
 import { useAuth } from '../../auth'
 import Heading from './Heading'
 import Spinner from '../../components/Spinner'
 import authHeader from '../../utils/authHeader'
-import shadeColor from '../../utils/shade'
 import Api from '../../Api'
 import store from '../../store'
 import { observer } from 'mobx-react-lite'
 
-const Container = styled.div``
+const Container = styled.div`
+  margin-right: 40px;
+
+  @media (max-width: ${BREAKPOINT.MAIN_1}) {
+    margin-right: 0;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_2}) {
+    margin-right: 40px;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_3}) {
+    margin-right: 0;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_4}) {
+    margin-right: 40px;
+  }
+`
 
 const Placeholder = styled.div`
   width: 250px;
@@ -35,32 +53,30 @@ const Placeholder = styled.div`
 `
 
 const ChooseNameSection = styled.div`
-  display: flex;
   margin-top: 4px;
 `
 
 const LoginButton = styled.div<{ color: string }>`
-  width: 280px;
+  width: 240px;
   background: ${props => props.color};
-  height: 45px;
+  height: 40px;
   margin-top: 16px;
   padding-left: 12px;
   display: flex;
   align-items: center;
-  font-weight: 500;
+  font-weight: 600;
   border-radius: 4px;
-  font-size: 18px;
+  font-size: 16px;
   color: #fff;
   transition: 200ms;
-  /* border: 2px solid ${props => shadeColor(props.color, -20)}; */
 
   :hover {
     transform: scale(1.05);
   }
 `
 
-const GoogleIcon = styled.img`
-  height: 24px;
+const Icon = styled.img`
+  height: 18px;
   margin-right: 8px;
 `
 
@@ -69,17 +85,18 @@ const PlayButtonWrapper = styled.div`
 `
 
 const SaveButton = styled.a<{ disabled: boolean }>`
-  display: block;
+  display: flex;
   background: ${props => (props.disabled ? '#888' : PRIMARY)};
+  justify-content: center;
+  align-items: center;
   color: #fff;
-  padding: 8px 0;
   font-weight: 500;
-  font-size: 24px;
+  font-size: 20px;
   box-shadow: ${BOX_SHADOW};
   border-radius: 4px;
-  transition: 200ms;
-  width: 160px;
-  text-align: center;
+  height: 40px;
+  width: 240px;
+  margin-top: 12px;
 
   :hover {
     transform: ${props => !props.disabled && 'scale(1.05)'};
@@ -90,11 +107,6 @@ const NameTaken = styled.p<{ visible: boolean }>`
   opacity: ${props => (props.visible ? 1 : 0)};
   color: ${PRIMARY};
   font-weight: 500;
-`
-
-const SpinnerContainer = styled.div`
-  margin-top: 6px;
-  margin-left: 8px;
 `
 
 let nameValidationTimeout: NodeJS.Timeout | null = null
@@ -161,6 +173,7 @@ const LoginSection: React.FC<Props> = ({ play }) => {
   }
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setNameValid(null)
     setName(event.currentTarget.value)
   }
 
@@ -206,7 +219,9 @@ const LoginSection: React.FC<Props> = ({ play }) => {
     if (store.user.name) {
       return (
         <Container>
-          <Heading>Logged in as {store.user.name}</Heading>
+          <Heading>
+            LOGGED IN AS <span>{store.user.name}</span>
+          </Heading>
           <PlayButtonWrapper>
             <PlayButton onClick={play}>Play</PlayButton>
           </PlayButtonWrapper>
@@ -215,7 +230,7 @@ const LoginSection: React.FC<Props> = ({ play }) => {
     } else {
       return (
         <Container>
-          <Heading>Choose your nickname</Heading>
+          <Heading>CHOOSE YOUR NICKNAME</Heading>
 
           <NameTaken visible={nameValid === false && !!name}>
             Nickname already exists
@@ -227,15 +242,13 @@ const LoginSection: React.FC<Props> = ({ play }) => {
               value={name}
               onChange={handleNameChange}
             />
-            {nameValid === null ? (
-              <SpinnerContainer>
-                <Spinner size="32px" thickness="4px" color="#fff" />
-              </SpinnerContainer>
-            ) : (
-              <SaveButton disabled={!nameValid} onClick={handleNameSave}>
-                Save
-              </SaveButton>
-            )}
+            <SaveButton disabled={!nameValid} onClick={handleNameSave}>
+              {nameValid === null ? (
+                <Spinner size="24px" thickness="2px" color="#fff" />
+              ) : (
+                <p>Save</p>
+              )}
+            </SaveButton>
           </ChooseNameSection>
         </Container>
       )
@@ -243,12 +256,12 @@ const LoginSection: React.FC<Props> = ({ play }) => {
   } else {
     return (
       <Container>
-        <Heading>Sign In</Heading>
+        <Heading>SIGN IN</Heading>
         <GoogleLogin
           clientId={GOOGLE_CLIENT_ID}
           render={(props: any) => (
             <LoginButton color={PRIMARY} onClick={props.onClick}>
-              <GoogleIcon src="/static/icons/google.svg" />
+              <Icon src="/static/icons/google.svg" />
               Sign in with Google
             </LoginButton>
           )}
@@ -261,7 +274,7 @@ const LoginSection: React.FC<Props> = ({ play }) => {
           callback={handleFacebookAuthResponse}
           render={(props: any) => (
             <LoginButton color={COLOR.FACEBOOK} onClick={props.onClick}>
-              <GoogleIcon src="/static/icons/facebook.svg" />
+              <Icon src="/static/icons/facebook.svg" />
               Sign in with Facebook
             </LoginButton>
           )}

@@ -1,64 +1,128 @@
 import styled, { css } from 'styled-components'
 import React from 'react'
+import { BREAKPOINT } from '../../constants/react'
 
 const Container = styled.div`
   margin-top: 128px;
   color: #fff;
+  grid-column: 2;
+  grid-row: 2;
+
+  @media (max-width: ${BREAKPOINT.MAIN_2}) {
+    grid-column: 1;
+    margin-top: 80px;
+  }
+
+  @media (max-width: ${BREAKPOINT.HIDE_CHAT}) {
+    grid-column: 2;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_4}) {
+    grid-column: 1;
+  }
+
+  @media (max-width: ${BREAKPOINT.FINAL}) {
+    margin-top: 0;
+  }
 `
 
 const ButtonsContainer = styled.div`
   margin-top: 32px;
   display: flex;
+
+  @media (max-width: ${BREAKPOINT.MAIN_1}) {
+    flex-direction: column;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_2}) {
+    flex-direction: row;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_3}) {
+    flex-direction: column;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_4}) {
+    flex-direction: row;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_5}) {
+    flex-direction: column;
+  }
 `
 
 const buttonCSS = css`
-  width: 200px;
   color: #111;
   font-weight: 500;
   border-radius: 4px;
-  font-size: 18px;
+  font-size: 16px;
   display: flex;
   align-items: center;
-  height: 45px;
+  height: 40px;
   background: #fff;
-  transition: 400ms;
+  margin-left: 16px;
+  width: 240px;
 
   :hover {
     background: #ddd;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_1}) {
+    margin-left: 0;
+    margin-top: 16px;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_2}) {
+    margin-left: 16px;
+    margin-top: 0;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_3}) {
+    margin-left: 0;
+    margin-top: 16px;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_4}) {
+    margin-left: 16px;
+    margin-top: 0;
+  }
+
+  @media (max-width: ${BREAKPOINT.MAIN_5}) {
+    margin-left: 0;
+    margin-top: 16px;
   }
 `
 
 const DiscordButton = styled.a`
   ${buttonCSS};
+  margin-left: 0 !important;
+  margin-top: 0 !important;
 `
 
 const RedditButton = styled.a`
   ${buttonCSS};
-  margin-left: 16px;
 `
 
 const IoGamesButton = styled.a`
   ${buttonCSS};
-  margin-left: 16px;
   padding-left: 16px;
-  width: 180px;
 `
 
 const DiscordIcon = styled.img`
-  height: 38px;
+  height: 28px;
   margin-right: 4px;
   margin-left: 6px;
   margin-top: 4px;
 `
 
 const RedditIcon = styled.img`
-  height: 26px;
-  margin-left: 12px;
-  margin-right: 12px;
+  height: 20px;
+  margin-left: 10px;
+  margin-right: 8px;
 `
 
 const Heading = styled.h2`
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 500;
 `
 
@@ -75,9 +139,9 @@ const Community: React.FC = () => (
         <RedditIcon src="/static/icons/reddit.svg" />
         Reddit
       </RedditButton>
-      <IoGamesButton target="_blank" href="https://iogames.top">
+      {/* <IoGamesButton target="_blank" href="https://iogames.top">
         More IO Games
-      </IoGamesButton>
+      </IoGamesButton> */}
     </ButtonsContainer>
   </Container>
 )

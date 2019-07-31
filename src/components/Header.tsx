@@ -14,7 +14,7 @@ const Container = styled.div`
   top: 0;
   display: flex;
   background: #111111f8;
-  padding: 0 64px;
+  padding: 0 48px;
   height: 80px;
   justify-content: flex-end;
   align-items: center;
@@ -43,11 +43,19 @@ const Version = styled.p`
   padding-left: 32px;
   border-left: 1px solid #fff;
   font-weight: 200;
+
+  @media (max-width: 1100px) {
+    display: none;
+  }
 `
 
 const Description = styled.p`
   font-size: 28px;
   font-weight: 200;
+
+  @media (max-width: 900px) {
+    display: none;
+  }
 `
 
 const LeftSection = styled.div`

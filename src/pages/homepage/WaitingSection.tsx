@@ -9,7 +9,6 @@ import formatTime from '../../utils/formatTime'
 import { Link } from 'react-router-dom'
 import randomItem from '../../utils/randomItem'
 import RunningGame from '../../types/RunningGame'
-import { PRIMARY } from '../../constants/react'
 import shadeColor from '../../utils/shade'
 
 const Container = styled.div``
@@ -43,6 +42,10 @@ const Label = styled.p`
 
 const StyledSpinner = styled(Spinner)`
   margin-left: 20px;
+
+  /* @media (max-width: 1370px) {
+    display: none;
+  } */
 `
 
 const CancelButton = styled.div`
@@ -52,54 +55,47 @@ const CancelButton = styled.div`
   margin-top: 8px;
   border: 1px solid #111;
   width: 190px;
-  text-align: center;
+  display: flex;
   font-size: 14px;
+  align-items: center;
+  padding-left: 20px;
+
+  > img {
+    height: 12px;
+    margin-right: 12px;
+    filter: invert(1);
+  }
 
   :hover {
     background: #2f2f2f;
   }
 `
 
-const SpectateSection = styled.div`
-  text-align: left;
-  margin-left: 64px;
-
-  p {
-    display: flex;
-    align-items: center;
-  }
-`
-
-const InfoIcon = styled.img`
-  height: 18px;
-  margin-right: 8px;
-`
-
-const SpectateButton = styled.div`
-  margin-top: 16px;
-  width: 150px;
+const SpectateButton = styled.div<{ disabled?: boolean }>`
+  margin-top: 8px;
+  width: 190px;
   display: flex;
-  background: ${PRIMARY};
+  background: ${props => (props.disabled ? '#444' : '#c23616')};
   color: #fff;
   font-weight: 500;
-  font-size: 18px;
+  font-size: 14px;
   align-items: center;
-  justify-content: center;
   border-radius: 4px;
-  transition: 200ms;
-  height: 45px;
   text-align: center;
-  padding: 0 16px;
-  /* margin-left: 48px; */
+  padding: 6px 0;
+  border: 1px solid #111;
+  padding-left: 16px;
+  opacity: ${props => (props.disabled ? 0.4 : 1)};
 
   > img {
-    height: 24px;
+    height: 20px;
     margin-right: 8px;
     filter: invert(1);
   }
 
   :hover {
-    transform: scale(1.05);
+    background: ${props =>
+      !props.disabled ? shadeColor('#c23616', -15) : null};
   }
 `
 
@@ -136,25 +132,26 @@ const WaitingSection = () => {
           </div>
         </TimesWrapper>
 
-        <StyledSpinner size="64px" thickness="1px" color="#111" />
-
-        {runningGame && (
-          <SpectateSection>
-            <p>
-              <InfoIcon src="/static/icons/info-circle.svg" />
-              You can spectate while waiting
-            </p>
-            <Link to={`/spectate?game=${runningGame.id}`}>
-              <SpectateButton>
-                <img src="/static/icons/spectate.svg" />
-                <p>Spectate</p>
-              </SpectateButton>
-            </Link>
-          </SpectateSection>
-        )}
+        {/* <StyledSpinner size="64px" thickness="1px" color="#111" /> */}
       </Row>
 
-      <CancelButton onClick={cancelQueue}>Cancel</CancelButton>
+      {runningGame ? (
+        <Link to={`/spectate?game=${runningGame.id}`}>
+          <SpectateButton>
+            <img src="/static/icons/spectate.svg" />
+            <p>Spectate</p>
+          </SpectateButton>
+        </Link>
+      ) : (
+        <SpectateButton disabled>
+          <img src="/static/icons/spectate.svg" />
+          <p>Spectate</p>
+        </SpectateButton>
+      )}
+      <CancelButton onClick={cancelQueue}>
+        <img src="/static/icons/cross.svg" />
+        <p>Cancel</p>
+      </CancelButton>
     </Container>
   )
 }

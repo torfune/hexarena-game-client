@@ -15,7 +15,7 @@ export const TEXT_SHADOW = '0px 1px 4px rgba(0, 0, 0, 0.2)'
 export const LOGO_SHADOW = '0px 2px 16px rgba(0, 0, 0, 0.3)'
 
 // MISC
-export const CHAT_WIDTH = 'calc(32vw - 64px)'
+export const CHAT_WIDTH = '500px'
 export let HUD_SCALE = (window.innerHeight / 2000) * 2
 if (HUD_SCALE > 1) {
   HUD_SCALE = 1
@@ -26,7 +26,17 @@ export const GOOGLE_CLIENT_ID =
   '110619057119-agls5l4ghp08pmdbfj7mspsf55stoddh.apps.googleusercontent.com'
 
 // BREAKPOINTS
-export const HOMEPAGE_BREAKPOINT = '1870px'
+export const BREAKPOINT = {
+  MAIN_1: '1840px',
+  MAIN_2: '1560px',
+  MAIN_3: '1460px',
+  HIDE_CHAT: '1260px',
+  MAIN_4: '1060px',
+  MAIN_5: '960px',
+  FINAL: '860px',
+  // COMMUNITY_1: '1640px',
+  // COMMUNITY_2: '1170px',
+}
 
 // IFRAME
 export const IFRAME = (() => {
