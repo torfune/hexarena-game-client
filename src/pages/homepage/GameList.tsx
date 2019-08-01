@@ -65,8 +65,8 @@ const Balance = styled.p`
 const Players = styled.div`
   padding: 8px 0;
   margin: 8px 0;
-  border-top: 1px solid #aaa;
-  border-bottom: 1px solid #aaa;
+  border-top: 1px solid #777;
+  border-bottom: 1px solid #777;
   margin-bottom: 16px;
 `
 
@@ -78,7 +78,7 @@ const Versus = styled.div`
 
   div {
     height: 1px;
-    background: #aaa;
+    background: #777;
 
     :nth-child(1) {
       width: 30px;
