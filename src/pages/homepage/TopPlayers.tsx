@@ -99,7 +99,7 @@ const TopPlayers = () => {
 
   return (
     <Container>
-      <Heading>Top 20 players</Heading>
+      <Heading>Top {store.topPlayers.length} players</Heading>
 
       <ListHeading>
         <p>#</p>

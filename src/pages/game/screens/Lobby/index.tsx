@@ -79,8 +79,6 @@ const Lobby = () => {
     Object.values(store.game.players)
   )
 
-  const [modeLabelSmall, modeLabelBig] = getModeLabels(store.game.mode)
-
   return (
     <>
       <Header />
@@ -89,8 +87,8 @@ const Lobby = () => {
 
         <CentralSection>
           <GameMode>
-            <p>{modeLabelSmall}</p>
-            <h2>{modeLabelBig}</h2>
+            <p>{store.game.mode}</p>
+            <h2>{store.game.balanced ? 'BALANCED' : 'RANDOM'}</h2>
           </GameMode>
 
           <Countdown>
@@ -107,19 +105,6 @@ const Lobby = () => {
       <Chat />
     </>
   )
-}
-
-const getModeLabels = (mode: GameMode) => {
-  switch (mode) {
-    case 'BALANCED_DUEL':
-      return ['BALANCED', '1v1']
-    case 'RANDOM_DUEL':
-      return ['RANDOM', '1v1']
-    case 'TEAMS_4':
-      return ['BALANCED', '2v2']
-    default:
-      return ['UNKNOWN MODE', '#']
-  }
 }
 
 export default observer(Lobby)

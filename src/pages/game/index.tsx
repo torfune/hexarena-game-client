@@ -83,9 +83,7 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
 
               {store.game.player.alive && (
                 <>
-                  {(store.game.mode === 'DIPLOMACY' ||
-                    store.game.mode === 'TEAMS_4' ||
-                    store.game.mode === 'TEAMS_6') &&
+                  {store.game.mode === '2v2' &&
                     renderDiplomacy(store.game.player)}
 
                   <HoverPreview />

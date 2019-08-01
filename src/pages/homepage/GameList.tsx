@@ -1,122 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import formatTime from '../../utils/formatTime'
 import { PRIMARY, BREAKPOINT } from '../../constants/react'
-import RunningGames from './RunningGames'
-
-// const RUNNING_GAMES = [
-//   {
-//     id: 'aaaa',
-//     mode: '2v2',
-//     balanced: true,
-//     time: 5,
-//     players: [
-//       [
-//         {
-//           name: 'Mate J',
-//           elo: 1231,
-//           pattern: '#fbc531',
-//         },
-//         {
-//           name: 'rakec',
-//           elo: 1402,
-//           pattern: '#ff6b6b',
-//         },
-//       ],
-//       [
-//         {
-//           name: 'Kata',
-//           elo: 1456,
-//           pattern: '#0abde3',
-//         },
-//         {
-//           name: 'Slamm',
-//           elo: 1312,
-//           pattern: '#fa983a',
-//         },
-//       ],
-//     ],
-//   },
-//   {
-//     id: 'bbbb',
-//     mode: '1v1',
-//     balanced: false,
-//     time: 500,
-//     players: [
-//       [
-//         {
-//           name: 'rakec',
-//           elo: 1500,
-//           pattern: '#fbc531',
-//         },
-//       ],
-//       [
-//         {
-//           name: 'Kata',
-//           elo: 1456,
-//           pattern: '#0abde3',
-//         },
-//       ],
-//     ],
-//   },
-// ]
-
-// const FINISHED_GAMES = [
-//   {
-//     id: 'aaaa',
-//     mode: '2v2',
-//     balanced: true,
-//     time: 123,
-//     players: [
-//       [
-//         {
-//           name: 'Matej Strnad',
-//           eloChange: 31,
-//           pattern: '#fbc531',
-//         },
-//         {
-//           name: 'rakec',
-//           eloChange: -12,
-//           pattern: '#ff6b6b',
-//         },
-//       ],
-//       [
-//         {
-//           name: 'Kata',
-//           eloChange: -21,
-//           pattern: '#0abde3',
-//         },
-//         {
-//           name: 'Slamm',
-//           eloChange: -22,
-//           pattern: '#fa983a',
-//         },
-//       ],
-//     ],
-//   },
-//   {
-//     id: 'bbbb',
-//     mode: '1v1',
-//     balanced: false,
-//     time: 500,
-//     players: [
-//       [
-//         {
-//           name: 'Matej Strnad',
-//           eloChange: 32,
-//           pattern: '#fbc531',
-//         },
-//       ],
-//       [
-//         {
-//           name: 'Kata',
-//           eloChange: -32,
-//           pattern: '#0abde3',
-//         },
-//       ],
-//     ],
-//   },
-// ]
+import Timer from '../../components/Timer'
+import store from '../../store'
+import { observer } from 'mobx-react-lite'
+import { Link } from 'react-router-dom'
 
 const Container = styled.div`
   color: #fff;
@@ -273,71 +162,94 @@ const Time = styled.p<{ grey?: boolean }>`
 `
 
 const GameList = () => {
+  useEffect(() => {
+    store.fetchRunningGames()
+    store.fetchFinishedGames()
+  }, [])
+
   return (
     <Container>
       <Heading>Games</Heading>
-      <SectionHeading>RUNNING</SectionHeading>
+      {store.runningGames.length > 0 && (
+        <>
+          <SectionHeading>RUNNING</SectionHeading>
+          {store.runningGames.map(game => (
+            <Game key={game.id}>
+              <Row>
+                <Mode>{game.mode}</Mode>
+                <Balance>{game.balanced ? 'BALANCED' : 'RANDOM'}</Balance>
+              </Row>
+              <Players>
+                {game.players[0] && runningPlayerGroup(game.players[0])}
+                <Versus>
+                  <div />
+                  <p>VS</p>
+                  <div />
+                </Versus>
+                {game.players[1] && runningPlayerGroup(game.players[1])}
+              </Players>
+              <Row>
+                <Link to={`/spectate?game=${game.id}`}>
+                  <SpectateButton>
+                    <img src="/static/icons/spectate.svg" />
+                    Spectate
+                  </SpectateButton>
+                </Link>
 
-      <RunningGames />
-
-      {/* {RUNNING_GAMES.map(game => (
-        <Game key={game.id}>
-          <Row>
-            <Mode>{game.mode}</Mode>
-            <Balance>{game.balanced ? 'BALANCED' : 'RANDOM'}</Balance>
-          </Row>
-          <Players>
-            {runningPlayerGroup(game.players[0])}
-            <Versus>
-              <div />
-              <p>VS</p>
-              <div />
-            </Versus>
-            {runningPlayerGroup(game.players[1])}
-          </Players>
-          <Row>
-            <SpectateButton>
-              <img src="/static/icons/spectate.svg" />
-              Spectate
-            </SpectateButton>
-            <Time>{formatTime(game.time)}</Time>
-          </Row>
-        </Game>
-      ))}
-      <SectionHeading>FINISHED</SectionHeading>
-      {FINISHED_GAMES.map(game => (
-        <Game key={game.id}>
-          <Row>
-            <Mode>{game.mode}</Mode>
-            <Balance>{game.balanced ? 'BALANCED' : 'RANDOM'}</Balance>
-          </Row>
-          <Players>
-            {finishedPlayerGroup(game.players[0])}
-            <Versus>
-              <div />
-              <p>VS</p>
-              <div />
-            </Versus>
-            {finishedPlayerGroup(game.players[1])}
-          </Players>
-          <Row>
-            <Time grey>{formatTime(game.time)}</Time>
-          </Row>
-        </Game>
-      ))} */}
+                <Timer finishesAt={game.finishesAt} />
+              </Row>
+            </Game>
+          ))}
+        </>
+      )}
+      {store.finishedGames.length > 0 && (
+        <>
+          <SectionHeading>FINISHED</SectionHeading>
+          {store.finishedGames.map(game => (
+            <Game key={game.id}>
+              <Row>
+                <Mode>{game.mode}</Mode>
+                <Balance>{game.balanced ? 'BALANCED' : 'RANDOM'}</Balance>
+              </Row>
+              <Players>
+                {finishedPlayerGroup(game.players[0])}
+                <Versus>
+                  <div />
+                  <p>VS</p>
+                  <div />
+                </Versus>
+                {finishedPlayerGroup(game.players[1])}
+              </Players>
+              <Row>
+                <Time grey>{formatTime(game.time)}</Time>
+              </Row>
+            </Game>
+          ))}
+        </>
+      )}
     </Container>
   )
 }
 
 const runningPlayerGroup = (
-  players: Array<{ name: string; elo: number; pattern: string }>
+  players: Array<{
+    name: string
+    elo: number | null
+    pattern: string
+    alive: boolean
+  }>
 ) => (
   <Group>
     {players.map((p, index) => (
-      <Player key={index}>
-        <Pattern color={p.pattern} />
+      <Player key={index} opaque={!p.alive}>
+        {p.alive ? (
+          <Pattern color={p.pattern} />
+        ) : (
+          <Skull src="/static/icons/skull.svg" />
+        )}
+
         <Name>{p.name}</Name>
-        <Elo>({p.elo})</Elo>
+        {p.elo && <Elo>({p.elo})</Elo>}
       </Player>
     ))}
   </Group>
@@ -369,4 +281,4 @@ const finishedPlayerGroup = (
   </Group>
 )
 
-export default GameList
+export default observer(GameList)

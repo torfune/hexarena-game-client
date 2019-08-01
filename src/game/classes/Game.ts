@@ -33,6 +33,8 @@ import HoveredTileInfo from '../../types/HoveredTileInfo'
 
 class Game {
   readonly id: string
+  readonly mode: GameMode
+  readonly balanced: boolean
   readonly stage: { [key: string]: Container } = {}
   @observable actions: Action[] = []
   @observable allianceRequests: { [key: string]: AllianceRequest } = {}
@@ -61,7 +63,6 @@ class Game {
     | null = null
   @observable time: number | null = null
   @observable playerId: string | null = null
-  @observable mode: GameMode | null = null
   @observable spawnTile: Tile | null = null
   @observable cursor: Pixel | null = null
   @observable hoveredTileInfo: HoveredTileInfo | null = null // move this to react layer
@@ -106,8 +107,10 @@ class Game {
     return this.player ? this.player.gold : 0
   }
 
-  constructor(id: string) {
+  constructor(id: string, mode: GameMode, balanced: boolean) {
     this.id = id
+    this.mode = mode
+    this.balanced = balanced
 
     // Leaving warning
     window.onbeforeunload = () => {

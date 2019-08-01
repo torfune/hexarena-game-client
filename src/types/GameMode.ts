@@ -1,9 +1,3 @@
-type GameMode =
-  | 'DIPLOMACY'
-  | 'FFA'
-  | 'BALANCED_DUEL'
-  | 'RANDOM_DUEL'
-  | 'TEAMS_4'
-  | 'TEAMS_6'
+type GameMode = '1v1' | '2v2' | 'FFA'
 
 export default GameMode

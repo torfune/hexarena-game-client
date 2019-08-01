@@ -2,7 +2,6 @@ import store from '../store'
 import Game from '../game/classes/Game'
 import convert from './convert'
 import convertObject from './convertObject'
-import parseRunningGames from '../utils/parseRunningGames'
 import convertArray from './convertArray'
 import Action from '../game/classes/Action'
 import getItemById from '../utils/getItemById'
@@ -14,6 +13,8 @@ import Village from '../game/classes/Village'
 import Forest from '../game/classes/Forest'
 import updateProps from '../game/functions/updateProps'
 import GoldAnimation from '../game/classes/GoldAnimation'
+import Api from '../Api'
+import RunningGame from '../types/RunningGame'
 
 // Messages: Gameserver -> Frontend
 export type MessageGS =
@@ -23,7 +24,6 @@ export type MessageGS =
   | 'chatMessages'
   | 'flash'
   | 'forests'
-  | 'gameMode'
   | 'gameTime'
   | 'goldAnimation'
   | 'incomeAt'
@@ -32,7 +32,7 @@ export type MessageGS =
   | 'notification'
   | 'playerId'
   | 'players'
-  | 'runningGames'
+  | 'updateRunningGames'
   | 'serverTime'
   | 'startCountdown'
   | 'game'
@@ -382,22 +382,6 @@ const messages: {
     if (!store.game) return
     store.game.flash = convert(payload, 'number') as number | null
   },
-  gameMode: (payload: string) => {
-    if (!store.game) return
-    const mode = convert(payload, 'string') as string | null
-    if (
-      mode !== 'DIPLOMACY' &&
-      mode !== 'FFA' &&
-      mode !== 'BALANCED_DUEL' &&
-      mode !== 'RANDOM_DUEL' &&
-      mode !== 'TEAMS_4' &&
-      mode !== 'TEAMS_6'
-    ) {
-      store.game.mode = null
-    } else {
-      store.game.mode = mode
-    }
-  },
   gameTime: (payload: string) => {
     const time = Number(payload)
     if (store.game) {
@@ -443,9 +427,6 @@ const messages: {
     if (!store.game) return
     store.game.playerId = convert(payload, 'string') as string | null
   },
-  runningGames: (payload: string) => {
-    store.runningGames = parseRunningGames(payload)
-  },
   serverTime: (payload: string) => {
     if (!store.game) return
     store.game.serverTime = convert(payload, 'number') as number | null
@@ -464,13 +445,24 @@ const messages: {
     store.game.startCountdown = convert(payload, 'number') as number | null
   },
   game: (payload: string) => {
-    const gameId = payload
+    const { id, mode, balanced } = convertObject(payload, {
+      id: 'string',
+      mode: 'string',
+      balanced: 'boolean',
+    }) as {
+      id: string | null
+      mode: string | null
+      balanced: boolean
+    }
+    if (!id || !mode || (mode !== '1v1' && mode !== '2v2' && mode !== 'FFA')) {
+      return
+    }
 
     if (store.game) {
       store.game.destroy()
     }
 
-    store.game = new Game(gameId)
+    store.game = new Game(id, mode, balanced)
     store.waitingTime = null
     store.matchFound = false
     store.spectating = false
@@ -512,18 +504,28 @@ const messages: {
     store.waitingTime = { current, average, players }
   },
   spectate: (payload: string) => {
-    const gameId = convert(payload, 'string') as string | null
-    if (!gameId) return
+    const { id, mode, balanced } = convertObject(payload, {
+      id: 'string',
+      mode: 'string',
+      balanced: 'boolean',
+    }) as {
+      id: string | null
+      mode: string | null
+      balanced: boolean
+    }
+    if (!id || !mode || (mode !== '1v1' && mode !== '2v2' && mode !== 'FFA')) {
+      return
+    }
 
     if (store.game) {
       store.game.destroy()
     }
 
-    store.game = new Game(gameId)
+    store.game = new Game(id, mode, balanced)
     store.spectating = true
 
     if (store.routerHistory && store.routerHistory.push) {
-      store.routerHistory.push(`/spectate?game=${gameId}`)
+      store.routerHistory.push(`/spectate?game=${id}`)
     }
   },
   spectators: (payload: string) => {
@@ -531,6 +533,12 @@ const messages: {
     if (store.game) {
       store.game.spectators = spectators
     }
+  },
+
+  // Update requests
+  updateRunningGames: () => {
+    store.fetchRunningGames()
+    store.fetchFinishedGames()
   },
 }
 

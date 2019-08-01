@@ -2,6 +2,7 @@ import GameMode from './GameMode'
 
 interface RunningGamePlayer {
   name: string
+  elo: number | null
   pattern: string
   alive: boolean
 }
@@ -10,7 +11,8 @@ interface RunningGame {
   id: string
   finishesAt: number
   mode: GameMode
-  players: RunningGamePlayer[]
+  balanced: boolean
+  players: RunningGamePlayer[][]
 }
 
 export { RunningGamePlayer }
