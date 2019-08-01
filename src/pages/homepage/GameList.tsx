@@ -89,8 +89,10 @@ const Versus = styled.div`
   }
 
   p {
-    font-size: 10px;
-    font-weight: 600;
+    font-size: 20px;
+    font-weight: 700;
+    color: ${PRIMARY};
+    letter-spacing: -3px;
     margin: 0 8px;
   }
 `
