@@ -87,8 +87,8 @@ const Lobby = () => {
 
         <CentralSection>
           <GameMode>
-            <p>{store.game.mode}</p>
-            <h2>{store.game.balanced ? 'BALANCED' : 'RANDOM'}</h2>
+            <p>{store.game.balanced ? 'BALANCED' : 'RANDOM'}</p>
+            <h2>{store.game.mode}</h2>
           </GameMode>
 
           <Countdown>
