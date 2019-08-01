@@ -5,7 +5,7 @@ import { observer } from 'mobx-react-lite'
 import Header from '../components/Header'
 import Chat from './homepage/Chat'
 import store from '../store'
-import { CHAT_WIDTH, PRIMARY } from '../constants/react'
+import { CHAT_WIDTH, PRIMARY, BREAKPOINT } from '../constants/react'
 import Leaderboard from './game/hud/Leaderboard'
 import HoverPreview from './game/hud/HoverPreview'
 import EndScreen from './game/screens/EndScreen'
@@ -21,6 +21,10 @@ const Container = styled.div`
   width: calc(100vw - ${CHAT_WIDTH});
   height: 100vh;
   overflow: hidden;
+
+  @media (max-width: ${BREAKPOINT.HIDE_CHAT}) {
+    width: 100vw;
+  }
 `
 
 const InfoContainer = styled.div`

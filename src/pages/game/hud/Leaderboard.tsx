@@ -3,7 +3,12 @@ import styled, { css } from 'styled-components'
 import store from '../../../store'
 import getPlayerGroups from '../../../utils/getPlayerGroups'
 import React from 'react'
-import { HUD_SCALE, CHAT_WIDTH, COLOR } from '../../../constants/react'
+import {
+  HUD_SCALE,
+  CHAT_WIDTH,
+  COLOR,
+  BREAKPOINT,
+} from '../../../constants/react'
 import shadeColor from '../../../utils/shade'
 
 const GridCSS = css`
@@ -23,6 +28,10 @@ const Container = styled.div<{ spectating: boolean }>`
   border-top: 1px solid ${COLOR.HUD_BORDER};
   border-left: 1px solid ${COLOR.HUD_BORDER};
   overflow: hidden;
+
+  @media (max-width: ${BREAKPOINT.HIDE_CHAT}) {
+    right: 0;
+  }
 
   /* Resolution scaling */
   transform-origin: right bottom;

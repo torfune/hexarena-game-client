@@ -199,7 +199,7 @@ const Header = () => {
         {spectating && store.game && gameIndex !== -1 && (
           <SpectateSection>
             <img src="/static/icons/spectate.svg" />
-            <p>Spectating Game #{gameIndex}</p>
+            <p>Spectating</p>
             <Link to="/">
               <Button>
                 <img src="/static/icons/cross.svg" />

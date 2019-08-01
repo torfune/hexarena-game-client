@@ -1,6 +1,11 @@
 import styled from 'styled-components'
 import React from 'react'
-import { COLOR, CHAT_WIDTH, HUD_SCALE } from '../../../constants/react'
+import {
+  COLOR,
+  CHAT_WIDTH,
+  HUD_SCALE,
+  BREAKPOINT,
+} from '../../../constants/react'
 import { observer } from 'mobx-react-lite'
 import store from '../../../store'
 
@@ -17,6 +22,10 @@ const Container = styled.div<{ spectating: boolean }>`
   border-left: 1px solid ${COLOR.HUD_BORDER};
   padding-top: 6px;
   padding-bottom: 6px;
+
+  @media (max-width: ${BREAKPOINT.HIDE_CHAT}) {
+    right: 0;
+  }
 
   /* Resolution scaling */
   transform-origin: right top;
