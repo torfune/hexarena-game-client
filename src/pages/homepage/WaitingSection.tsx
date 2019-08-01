@@ -116,7 +116,7 @@ const WaitingSection = () => {
 
   return (
     <Container>
-      <Heading>Finding match</Heading>
+      <Heading>FINDING MATCH</Heading>
 
       <Row>
         <TimesWrapper>

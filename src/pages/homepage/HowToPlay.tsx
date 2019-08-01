@@ -42,10 +42,11 @@ const Section = styled.div`
   margin-bottom: 16px;
 
   h2 {
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: 12px;
     color: ${PRIMARY};
-    font-size: 20px;
+    font-size: 18px;
+    text-transform: uppercase;
   }
   p {
     text-align: justify;
