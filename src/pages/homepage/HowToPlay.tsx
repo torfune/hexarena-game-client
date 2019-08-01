@@ -80,8 +80,8 @@ const HowToPlay: React.FC = () => (
         the end of the timer. You must Claim tiles by buying them or Capture
         tiles with the Armies you send from your structures. By spreading out on
         the map and claiming Villages, you will receive a timed income. With
-        that income you can train Armies, build structures, build Houses, or
-        upgrade structures.
+        that income you can train Armies in Castles, build structures, build
+        Houses, or upgrade structures.
       </p>
     </Section>
 
@@ -132,7 +132,7 @@ const HowToPlay: React.FC = () => (
 
         <li>
           Secure Opponent’s or neutral Villages to gain money over time -
-          destroying them with Armies secures instant income.{' '}
+          destroying them with Armies secures instant income.
         </li>
 
         <li>

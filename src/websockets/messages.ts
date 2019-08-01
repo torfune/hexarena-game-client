@@ -43,6 +43,7 @@ export type MessageGS =
   | 'waitingTime'
   | 'message'
   | 'spectators'
+  | 'ping'
 
 // Handlers: Gameserver -> Frontend
 const messages: {
@@ -533,6 +534,9 @@ const messages: {
     if (store.game) {
       store.game.spectators = spectators
     }
+  },
+  ping: () => {
+    console.log(`ping [${Date.now()}]`)
   },
 
   // Update requests

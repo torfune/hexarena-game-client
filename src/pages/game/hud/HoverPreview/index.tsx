@@ -46,9 +46,11 @@ const HoverPreview = () => {
     )
   }
 
-  let actionType: ActionType | 'SEND_ARMY' | null = hoveredTile.getActionType(
-    true
-  )
+  let actionType:
+    | ActionType
+    | 'SEND_ARMY'
+    | 'REPAIR'
+    | null = hoveredTile.getActionType(true)
   const structure = hoveredTile.getStructureName()
 
   if (
@@ -56,6 +58,14 @@ const HoverPreview = () => {
     store.game.selectedArmyTile
   ) {
     actionType = 'SEND_ARMY'
+  }
+
+  if (
+    actionType === 'RECRUIT' &&
+    hoveredTile.building &&
+    hoveredTile.building.hp < store.gsConfig.HP[hoveredTile.building.type]
+  ) {
+    actionType = 'REPAIR'
   }
 
   if (!actionType) {

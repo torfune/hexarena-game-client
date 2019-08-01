@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom'
 const Container = styled.div`
   color: #fff;
   padding-top: calc(48px + 80px);
+  height: 0;
 
   @media (max-width: ${BREAKPOINT.HIDE_CHAT}) {
     margin-right: 48px;

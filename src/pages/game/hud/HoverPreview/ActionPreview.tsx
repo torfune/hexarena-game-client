@@ -81,9 +81,9 @@ const NotEnoughGold = styled.div`
   margin-top: 3px;
 `
 
-const Icon = styled.img<{ opaque: boolean }>`
+const Icon = styled.img<{ opaque: boolean; dontInvert?: boolean }>`
   height: 34px;
-  filter: invert(1);
+  filter: ${props => (props.dontInvert ? null : 'invert(1)')};
   opacity: ${props => (props.opaque ? '0.6' : 1)};
 `
 
@@ -95,7 +95,7 @@ const Label = styled.p`
 `
 
 interface Props {
-  actionType: ActionType | 'SEND_ARMY'
+  actionType: ActionType | 'SEND_ARMY' | 'REPAIR'
   tile: Tile
 }
 const ActionPreview: React.FC<Props> = ({ actionType, tile }) => {
@@ -112,7 +112,11 @@ const ActionPreview: React.FC<Props> = ({ actionType, tile }) => {
   return (
     <Container>
       <Circle>
-        <Icon src={getActionIcon(actionType)} opaque={!enoughGold} />
+        <Icon
+          src={getActionIcon(actionType)}
+          opaque={!enoughGold}
+          dontInvert={actionType === 'REPAIR'}
+        />
       </Circle>
       <Rectangle>
         <MainSection>
@@ -134,7 +138,7 @@ const ActionPreview: React.FC<Props> = ({ actionType, tile }) => {
   )
 }
 
-const getActionLabel = (actionType: ActionType | 'SEND_ARMY') => {
+const getActionLabel = (actionType: ActionType | 'SEND_ARMY' | 'REPAIR') => {
   switch (actionType) {
     case 'ATTACK':
       return 'Capture Tile'
@@ -146,6 +150,8 @@ const getActionLabel = (actionType: ActionType | 'SEND_ARMY') => {
       return 'Build Castle'
     case 'RECRUIT':
       return 'Train Army'
+    case 'REPAIR':
+      return 'Repair building'
     case 'HOUSE':
       return 'Build House'
     case 'SEND_ARMY':
@@ -153,7 +159,7 @@ const getActionLabel = (actionType: ActionType | 'SEND_ARMY') => {
   }
 }
 
-const getActionIcon = (actionType: ActionType | 'SEND_ARMY') => {
+const getActionIcon = (actionType: ActionType | 'SEND_ARMY' | 'REPAIR') => {
   switch (actionType) {
     case 'ATTACK':
       return '/static/icons/attack.svg'
@@ -165,6 +171,8 @@ const getActionIcon = (actionType: ActionType | 'SEND_ARMY') => {
       return '/static/images/castle-icon.png'
     case 'RECRUIT':
       return '/static/icons/recruit.svg'
+    case 'REPAIR':
+      return '/static/images/hpFill.png'
     case 'HOUSE':
       return '/static/images/house-icon.png'
     case 'SEND_ARMY':
@@ -173,7 +181,7 @@ const getActionIcon = (actionType: ActionType | 'SEND_ARMY') => {
 }
 
 const getActionCost = (
-  actionType: ActionType | 'SEND_ARMY',
+  actionType: ActionType | 'SEND_ARMY' | 'REPAIR',
   gsConfig: GameServerConfig,
   treeCount: number
 ) => {
@@ -188,6 +196,8 @@ const getActionCost = (
       return gsConfig.CASTLE_COST
     case 'RECRUIT':
       return gsConfig.RECRUIT_COST
+    case 'REPAIR':
+      return gsConfig.RECRUIT_COST
     case 'HOUSE':
       return gsConfig.HOUSE_COST
     case 'SEND_ARMY':
@@ -195,7 +205,9 @@ const getActionCost = (
   }
 }
 
-const getActionDescription = (actionType: ActionType | 'SEND_ARMY') => {
+const getActionDescription = (
+  actionType: ActionType | 'SEND_ARMY' | 'REPAIR'
+) => {
   if (!store.game) return null
 
   if (actionType === 'SEND_ARMY') {
