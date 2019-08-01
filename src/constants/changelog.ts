@@ -9,7 +9,6 @@ const changelog = [
       'Cheaper Castles',
       'Tower no longer starts with Army',
       'Faster village grow rate',
-      'Lower village raid reward',
     ],
   },
   {
