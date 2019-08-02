@@ -180,7 +180,7 @@ const GameList = () => {
             <Game key={game.id}>
               <Row>
                 <Mode>{game.mode}</Mode>
-                <Balance>{game.ranked ? 'BALANCED' : 'RANDOM'}</Balance>
+                <Balance>{game.ranked ? 'RANKED' : 'NORMAL'}</Balance>
               </Row>
               <Players>
                 {game.players[0] && runningPlayerGroup(game.players[0])}
