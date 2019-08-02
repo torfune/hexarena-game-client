@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, Fragment } from 'react'
 import styled from 'styled-components'
 import formatTime from '../../utils/formatTime'
 import { PRIMARY, BREAKPOINT } from '../../constants/react'
@@ -6,6 +6,7 @@ import Timer from '../../components/Timer'
 import store from '../../store'
 import { observer } from 'mobx-react-lite'
 import { Link } from 'react-router-dom'
+import FinishedGame from '../../types/FinishedGame'
 
 const Container = styled.div`
   color: #fff;
@@ -183,13 +184,18 @@ const GameList = () => {
                 <Balance>{game.ranked ? 'RANKED' : 'NORMAL'}</Balance>
               </Row>
               <Players>
-                {game.players[0] && runningPlayerGroup(game.players[0])}
-                <Versus>
-                  <div />
-                  <p>VS</p>
-                  <div />
-                </Versus>
-                {game.players[1] && runningPlayerGroup(game.players[1])}
+                {game.players.map((group, index) => (
+                  <Fragment key={index}>
+                    {index > 0 && (
+                      <Versus>
+                        <div />
+                        <p>VS</p>
+                        <div />
+                      </Versus>
+                    )}
+                    {runningPlayerGroup(group)}
+                  </Fragment>
+                ))}
               </Players>
               <Row>
                 <Link to={`/spectate?game=${game.id}`}>
@@ -215,13 +221,18 @@ const GameList = () => {
                 <Balance>{game.ranked ? 'RANKED' : 'NORMAL'}</Balance>
               </Row>
               <Players>
-                {finishedPlayerGroup(game.players[0])}
-                <Versus>
-                  <div />
-                  <p>VS</p>
-                  <div />
-                </Versus>
-                {finishedPlayerGroup(game.players[1])}
+                {game.players.map((group, index) => (
+                  <Fragment key={index}>
+                    {index > 0 && (
+                      <Versus>
+                        <div />
+                        <p>VS</p>
+                        <div />
+                      </Versus>
+                    )}
+                    {finishedPlayerGroup(group)}
+                  </Fragment>
+                ))}
               </Players>
               <Row>
                 <Time grey>{formatTime(game.time)}</Time>

@@ -156,14 +156,14 @@ const Ally: React.FC<Props> = ({ ally, playerGold }) => (
     {ally.alive ? (
       <GoldButton
         color={ally.pattern}
-        disabled={playerGold === 0}
+        disabled={playerGold < 10}
         onClick={() => {
           if (store.game) {
             store.game.sendGoldToAlly()
           }
         }}
       >
-        Send 1 gold
+        Send 10 gold
       </GoldButton>
     ) : (
       <DiedText>Your ally is dead.</DiedText>
