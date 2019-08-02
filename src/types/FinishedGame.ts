@@ -11,7 +11,7 @@ interface FinishedGame {
   id: string
   time: number
   mode: GameMode
-  balanced: boolean
+  ranked: boolean
   players: FinishedGamePlayer[][]
 }
 

@@ -11,7 +11,7 @@ interface RunningGame {
   id: string
   finishesAt: number
   mode: GameMode
-  balanced: boolean
+  ranked: boolean
   players: RunningGamePlayer[][]
 }
 

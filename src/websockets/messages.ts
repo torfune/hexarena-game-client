@@ -446,14 +446,14 @@ const messages: {
     store.game.startCountdown = convert(payload, 'number') as number | null
   },
   game: (payload: string) => {
-    const { id, mode, balanced } = convertObject(payload, {
+    const { id, mode, ranked } = convertObject(payload, {
       id: 'string',
       mode: 'string',
-      balanced: 'boolean',
+      ranked: 'boolean',
     }) as {
       id: string | null
       mode: string | null
-      balanced: boolean
+      ranked: boolean
     }
     if (!id || !mode || (mode !== '1v1' && mode !== '2v2' && mode !== 'FFA')) {
       return
@@ -463,7 +463,7 @@ const messages: {
       store.game.destroy()
     }
 
-    store.game = new Game(id, mode, balanced)
+    store.game = new Game(id, mode, ranked)
     store.waitingTime = null
     store.matchFound = false
     store.spectating = false
@@ -505,14 +505,14 @@ const messages: {
     store.waitingTime = { current, average, players }
   },
   spectate: (payload: string) => {
-    const { id, mode, balanced } = convertObject(payload, {
+    const { id, mode, ranked } = convertObject(payload, {
       id: 'string',
       mode: 'string',
-      balanced: 'boolean',
+      ranked: 'boolean',
     }) as {
       id: string | null
       mode: string | null
-      balanced: boolean
+      ranked: boolean
     }
     if (!id || !mode || (mode !== '1v1' && mode !== '2v2' && mode !== 'FFA')) {
       return
@@ -522,7 +522,7 @@ const messages: {
       store.game.destroy()
     }
 
-    store.game = new Game(id, mode, balanced)
+    store.game = new Game(id, mode, ranked)
     store.spectating = true
 
     if (store.routerHistory && store.routerHistory.push) {

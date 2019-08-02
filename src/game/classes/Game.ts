@@ -34,7 +34,7 @@ import HoveredTileInfo from '../../types/HoveredTileInfo'
 class Game {
   readonly id: string
   readonly mode: GameMode
-  readonly balanced: boolean
+  readonly ranked: boolean
   readonly stage: { [key: string]: Container } = {}
   @observable actions: Action[] = []
   @observable allianceRequests: { [key: string]: AllianceRequest } = {}
@@ -107,10 +107,10 @@ class Game {
     return this.player ? this.player.gold : 0
   }
 
-  constructor(id: string, mode: GameMode, balanced: boolean) {
+  constructor(id: string, mode: GameMode, ranked: boolean) {
     this.id = id
     this.mode = mode
-    this.balanced = balanced
+    this.ranked = ranked
 
     // Leaving warning
     window.onbeforeunload = () => {

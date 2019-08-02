@@ -87,7 +87,7 @@ const Lobby = () => {
 
         <CentralSection>
           <GameMode>
-            <p>{store.game.balanced ? 'BALANCED' : 'RANDOM'}</p>
+            <p>{store.game.ranked ? 'RANKED' : 'NORMAL'}</p>
             <h2>{store.game.mode}</h2>
           </GameMode>
 
