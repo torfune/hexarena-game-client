@@ -1,5 +1,9 @@
 const changelog = [
   {
+    label: 'Update 3/8',
+    changes: ['Castle cost set to 14', 'Less mountains'],
+  },
+  {
     label: 'Update 1/8',
     changes: [
       'UI improvements',
