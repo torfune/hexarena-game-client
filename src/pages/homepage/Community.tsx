@@ -60,7 +60,7 @@ const buttonCSS = css`
   align-items: center;
   height: 40px;
   background: #fff;
-  margin-left: 16px;
+  margin-left: 40px;
   width: 240px;
 
   :hover {
@@ -73,7 +73,7 @@ const buttonCSS = css`
   }
 
   @media (max-width: ${BREAKPOINT.MAIN_2}) {
-    margin-left: 16px;
+    margin-left: 40px;
     margin-top: 0;
   }
 
@@ -83,7 +83,7 @@ const buttonCSS = css`
   }
 
   @media (max-width: ${BREAKPOINT.MAIN_4}) {
-    margin-left: 16px;
+    margin-left: 40px;
     margin-top: 0;
   }
 
@@ -101,6 +101,8 @@ const DiscordButton = styled.a`
 
 const RedditButton = styled.a`
   ${buttonCSS};
+  margin-top: 16px !important;
+  margin-left: 0 !important;
 `
 
 const IoGamesButton = styled.a`
@@ -131,17 +133,19 @@ const Community: React.FC = () => (
     <Heading>Community</Heading>
 
     <ButtonsContainer>
-      <DiscordButton target="_blank" href="https://discord.gg/vwXKyRX">
-        <DiscordIcon src="/static/icons/discord.svg" />
-        Discord
-      </DiscordButton>
-      <RedditButton target="_blank" href="https://www.reddit.com/r/hexarena">
-        <RedditIcon src="/static/icons/reddit.svg" />
-        Reddit
-      </RedditButton>
-      {/* <IoGamesButton target="_blank" href="https://iogames.top">
+      <div>
+        <DiscordButton target="_blank" href="https://discord.gg/vwXKyRX">
+          <DiscordIcon src="/static/icons/discord.svg" />
+          Discord
+        </DiscordButton>
+        <RedditButton target="_blank" href="https://www.reddit.com/r/hexarena">
+          <RedditIcon src="/static/icons/reddit.svg" />
+          Reddit
+        </RedditButton>
+      </div>
+      <IoGamesButton target="_blank" href="https://iogames.space">
         More IO Games
-      </IoGamesButton> */}
+      </IoGamesButton>
     </ButtonsContainer>
   </Container>
 )
