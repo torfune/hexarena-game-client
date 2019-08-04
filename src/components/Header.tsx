@@ -53,7 +53,7 @@ const Description = styled.p`
   font-size: 28px;
   font-weight: 200;
 
-  @media (max-width: 900px) {
+  @media (max-width: 1400px) {
     display: none;
   }
 `
