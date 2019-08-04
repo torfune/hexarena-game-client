@@ -662,6 +662,10 @@ class Game {
           continue
         }
 
+        if (n.camp && n.army && n.owner) {
+          continue
+        }
+
         if (n.ownerId !== playerId && n.ownerId === t.ownerId) {
           tilesToCapture.push(n)
           if (n.village) {

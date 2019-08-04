@@ -6,6 +6,7 @@ import { observer } from 'mobx-react-lite'
 import store from '../store'
 import formatTime from '../utils/formatTime'
 import Socket from '../websockets/Socket'
+import { BREAKPOINT } from '../constants/react'
 
 const Container = styled.div`
   width: 100vw;
@@ -25,6 +26,8 @@ const Container = styled.div`
 const Logo = styled.h1`
   font-size: 42px;
   color: #fff;
+  display: flex;
+  align-items: center;
 
   > a {
     color: #fff;
@@ -34,6 +37,16 @@ const Logo = styled.h1`
     height: 30px;
     margin-right: 12px;
     filter: invert(1);
+  }
+
+  @media (max-width: ${BREAKPOINT.FINAL}) {
+    font-size: 32px;
+    justify-content: center;
+
+    > img {
+      height: 23px;
+      margin-right: 8px;
+    }
   }
 `
 
@@ -62,6 +75,12 @@ const LeftSection = styled.div`
   margin-right: auto;
   display: flex;
   align-items: center;
+
+  @media (max-width: ${BREAKPOINT.FINAL}) {
+    margin-right: 0;
+    width: 100%;
+    justify-content: center;
+  }
 `
 
 const Button = styled.div`

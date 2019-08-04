@@ -2,7 +2,6 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import store from '../../store'
 import { useEffect } from 'react'
-import TopPlayer from '../../types/TopPlayer'
 import React from 'react'
 import Api from '../../Api'
 import { BREAKPOINT } from '../../constants/react'
@@ -38,6 +37,10 @@ const Heading = styled.h2`
   font-weight: 500;
   color: #fff;
   margin-bottom: 32px;
+
+  @media (max-width: ${BREAKPOINT.FINAL}) {
+    text-align: center;
+  }
 `
 
 const List = styled.div`

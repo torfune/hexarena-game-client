@@ -3,7 +3,7 @@ import React from 'react'
 import { BREAKPOINT } from '../../constants/react'
 
 const Container = styled.div`
-  margin-top: 128px;
+  margin-top: 96px;
   color: #fff;
   grid-column: 2;
   grid-row: 2;
@@ -23,6 +23,7 @@ const Container = styled.div`
 
   @media (max-width: ${BREAKPOINT.FINAL}) {
     margin-top: 0;
+    text-align: center;
   }
 `
 

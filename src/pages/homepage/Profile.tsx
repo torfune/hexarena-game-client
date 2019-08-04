@@ -34,6 +34,7 @@ const Container = styled.div`
 
 const EloSection = styled.div`
   text-align: right;
+  margin-bottom: 16px;
 
   p {
     text-transform: uppercase;
@@ -43,7 +44,8 @@ const EloSection = styled.div`
   }
 
   span {
-    font-size: 24px;
+    font-weight: 600;
+    font-size: 20px;
   }
 
   @media (max-width: ${BREAKPOINT.MAIN_1}) {
@@ -68,28 +70,35 @@ const EloSection = styled.div`
 `
 
 const LogoutButton = styled.div`
+  text-align: right;
+
   :hover {
     text-decoration: underline;
   }
 
   @media (max-width: ${BREAKPOINT.MAIN_1}) {
     margin-top: 16px;
+    text-align: left;
   }
 
   @media (max-width: ${BREAKPOINT.MAIN_2}) {
     margin-top: 0;
+    text-align: right;
   }
 
   @media (max-width: ${BREAKPOINT.MAIN_3}) {
     margin-top: 16px;
+    text-align: left;
   }
 
   @media (max-width: ${BREAKPOINT.MAIN_4}) {
     margin-top: 0;
+    text-align: right;
   }
 
   @media (max-width: ${BREAKPOINT.MAIN_5}) {
     margin-top: 16px;
+    text-align: left;
   }
 `
 
@@ -101,10 +110,19 @@ const Profile = () => {
   return (
     <Container>
       {!!store.user.elo && (
-        <EloSection>
-          <p>Elo</p>
-          <span>{store.user.elo}</span>
-        </EloSection>
+        <>
+          <EloSection>
+            <p>Elo</p>
+            <span>{store.user.elo}</span>
+          </EloSection>
+
+          {!!store.user.diamonds && (
+            <EloSection>
+              <p>Diamonds</p>
+              <span>{store.user.diamonds}</span>
+            </EloSection>
+          )}
+        </>
       )}
       {!store.waitingTime && (
         <LogoutButton onClick={logout}>Logout</LogoutButton>
