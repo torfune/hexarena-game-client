@@ -3,15 +3,16 @@ import { observer } from 'mobx-react-lite'
 import React from 'react'
 import Player from '../../../game/classes/Player'
 import Pattern from '../../../components/Pattern'
-import { HUD_SCALE, COLOR } from '../../../constants/react'
+import { COLOR } from '../../../constants/react'
 import shadeColor from '../../../utils/shade'
+import getHudScale from '../../../utils/getHudScale'
 import store from '../../../store'
 
 const Container = styled.div`
   z-index: 2;
   background: ${COLOR.HUD_BACKGROUND};
   bottom: 0;
-  right: calc(319px * ${HUD_SCALE});
+  right: calc(319px * ${getHudScale()});
   position: absolute;
   user-select: none;
   border-top-left-radius: 8px;
@@ -23,7 +24,7 @@ const Container = styled.div`
 
   /* Resolution scaling */
   transform-origin: right bottom;
-  transform: scale(${HUD_SCALE});
+  transform: scale(${getHudScale()});
 `
 
 const GridCSS = css`

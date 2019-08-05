@@ -1,13 +1,9 @@
 import styled from 'styled-components'
 import React from 'react'
-import {
-  COLOR,
-  CHAT_WIDTH,
-  HUD_SCALE,
-  BREAKPOINT,
-} from '../../../constants/react'
+import { COLOR, CHAT_WIDTH, BREAKPOINT } from '../../../constants/react'
 import { observer } from 'mobx-react-lite'
 import store from '../../../store'
+import getHudScale from '../../../utils/getHudScale'
 
 const Container = styled.div<{ spectating: boolean }>`
   background: ${COLOR.HUD_BACKGROUND};
@@ -29,7 +25,7 @@ const Container = styled.div<{ spectating: boolean }>`
 
   /* Resolution scaling */
   transform-origin: right top;
-  transform: scale(${HUD_SCALE});
+  transform: scale(${getHudScale()});
 `
 
 const Icon = styled.img`

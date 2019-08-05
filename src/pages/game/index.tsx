@@ -45,6 +45,8 @@ const GameCanvas = styled.div<GameCanvasProps>`
 `
 
 const GamePage: React.FC<RouteComponentProps> = observer(() => {
+  const [_, refresh] = React.useState(Date.now())
+
   useEffect(() => {
     if (!store.game) {
       window.location.href = '/'
@@ -55,7 +57,17 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
     if (!canvas) throw new Error('Cannot find canvas.')
 
     store.game.render(canvas)
+
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
   }, [])
+
+  const handleResize = () => {
+    refresh(Date.now())
+  }
 
   if (store.game && store.game.status === 'aborted') {
     console.warn(`Game aborted.`)

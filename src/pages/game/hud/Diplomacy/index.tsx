@@ -4,14 +4,15 @@ import { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import Label from '../../../../components/Label'
 import store from '../../../../store'
-import { BLUE, PRIMARY, HUD_SCALE, COLOR } from '../../../../constants/react'
+import { BLUE, PRIMARY, COLOR } from '../../../../constants/react'
 import React from 'react'
+import getHudScale from '../../../../utils/getHudScale'
 
 const Container = styled.div`
   z-index: 2;
   background: ${COLOR.HUD_BACKGROUND};
   bottom: 0;
-  right: calc(319px * ${HUD_SCALE});
+  right: calc(319px * ${getHudScale()});
   width: 300px;
   position: absolute;
   user-select: none;
@@ -23,7 +24,7 @@ const Container = styled.div`
 
   /* Resolution scaling */
   transform-origin: right bottom;
-  transform: scale(${HUD_SCALE});
+  transform: scale(${getHudScale()});
 `
 
 const Header = styled.div`

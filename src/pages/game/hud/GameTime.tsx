@@ -2,7 +2,8 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import store from '../../../store'
 import React from 'react'
-import { HUD_SCALE, CHAT_WIDTH, COLOR } from '../../../constants/react'
+import { CHAT_WIDTH, COLOR } from '../../../constants/react'
+import getHudScale from '../../../utils/getHudScale'
 
 const Container = styled.div<{ spectating: boolean }>`
   position: absolute;
@@ -29,7 +30,7 @@ const Content = styled.div`
 
   /* Resolution scaling */
   transform-origin: center top;
-  transform: scale(${HUD_SCALE});
+  transform: scale(${getHudScale()});
 `
 
 const GameTime = observer(() => {

@@ -16,10 +16,6 @@ export const LOGO_SHADOW = '0px 2px 16px rgba(0, 0, 0, 0.3)'
 
 // MISC
 export const CHAT_WIDTH = '500px'
-export let HUD_SCALE = (window.innerHeight / 2000) * 2
-if (HUD_SCALE > 1) {
-  HUD_SCALE = 1
-}
 
 // WEBSERVER & AUTH
 export const GOOGLE_CLIENT_ID =

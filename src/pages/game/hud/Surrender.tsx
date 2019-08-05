@@ -1,7 +1,8 @@
 import styled from 'styled-components'
 import React from 'react'
-import { HUD_SCALE, PRIMARY, COLOR } from '../../../constants/react'
+import { PRIMARY, COLOR } from '../../../constants/react'
 import store from '../../../store'
+import getHudScale from '../../../utils/getHudScale'
 
 const Container = styled.div`
   background: ${COLOR.HUD_BACKGROUND};
@@ -18,7 +19,7 @@ const Container = styled.div`
 
   /* Resolution scaling */
   transform-origin: left top;
-  transform: scale(${HUD_SCALE});
+  transform: scale(${getHudScale()});
 `
 
 const Row = styled.div`

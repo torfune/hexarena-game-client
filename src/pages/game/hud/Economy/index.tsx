@@ -1,11 +1,12 @@
 import styled from 'styled-components'
-import { HUD_SCALE, COLOR } from '../../../../constants/react'
+import { COLOR } from '../../../../constants/react'
 import { observer } from 'mobx-react-lite'
 import React from 'react'
 import Income from './Income'
 import Gold from './Gold'
 import Chart from './Chart'
 import store from '../../../../store'
+import getHudScale from '../../../../utils/getHudScale'
 
 const Container = styled.div`
   background: ${COLOR.HUD_BACKGROUND};
@@ -21,7 +22,7 @@ const Container = styled.div`
 
   /* Resolution scaling */
   transform-origin: left bottom;
-  transform: scale(${HUD_SCALE});
+  transform: scale(${getHudScale()});
 `
 
 const GoldSection = styled.div`

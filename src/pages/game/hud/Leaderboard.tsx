@@ -3,13 +3,8 @@ import styled, { css } from 'styled-components'
 import store from '../../../store'
 import getPlayerGroups from '../../../utils/getPlayerGroups'
 import React from 'react'
-import {
-  HUD_SCALE,
-  CHAT_WIDTH,
-  COLOR,
-  BREAKPOINT,
-} from '../../../constants/react'
-import shadeColor from '../../../utils/shade'
+import { CHAT_WIDTH, COLOR, BREAKPOINT } from '../../../constants/react'
+import getHudScale from '../../../utils/getHudScale'
 
 const GridCSS = css`
   display: grid;
@@ -35,7 +30,7 @@ const Container = styled.div<{ spectating: boolean }>`
 
   /* Resolution scaling */
   transform-origin: right bottom;
-  transform: scale(${HUD_SCALE});
+  transform: scale(${getHudScale()});
 `
 
 const Icon = styled.img`
