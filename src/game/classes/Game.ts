@@ -546,7 +546,11 @@ class Game {
     const actionType = tile.getActionType()
 
     // Attack hover
-    if (this.playerId === playerId && actionType === 'ATTACK') {
+    if (
+      this.playerId === playerId &&
+      actionType === 'ATTACK' &&
+      !this.selectedArmyTile
+    ) {
       tilesToCapture.push(tile)
     }
 
@@ -633,7 +637,14 @@ class Game {
           // Enemy structure
           if (t.ownerId !== playerId && !t.bedrock) {
             tilesToCapture.push(t)
-            if (t.mountain || t.forest || t.building || (t.camp && t.army)) {
+
+            if (
+              t.mountain ||
+              t.forest ||
+              t.building ||
+              (t.camp && t.army) ||
+              (!t.owner && t.camp)
+            ) {
               break
             }
           }

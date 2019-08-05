@@ -2,11 +2,10 @@ import React, { useEffect, Fragment } from 'react'
 import styled from 'styled-components'
 import formatTime from '../../utils/formatTime'
 import { PRIMARY, BREAKPOINT } from '../../constants/react'
-import Timer from '../../components/Timer'
 import store from '../../store'
 import { observer } from 'mobx-react-lite'
 import { Link } from 'react-router-dom'
-import FinishedGame from '../../types/FinishedGame'
+import Timer from '../../components/Timer'
 
 const Container = styled.div`
   color: #fff;

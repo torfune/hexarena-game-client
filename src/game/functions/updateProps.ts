@@ -16,7 +16,6 @@ const updateProps = <T extends Item>(
     const key = entry[0]
     const value = entry[1]
     if (!Object.keys(item.props).includes(key)) continue
-    if (item.props[key].current === value) continue
     item.setProp(key, value)
   }
 }

@@ -75,8 +75,14 @@ const VS = styled.p`
 const Lobby = () => {
   if (!store.game || !store.game.mode) return null
 
-  const [groupLeft, groupRight] = getPlayerGroups(
-    Object.values(store.game.players)
+  const { playerId } = store.game
+  const groups = getPlayerGroups(Object.values(store.game.players))
+
+  const groupLeft = groups.find(
+    group => !!group.players.find(p => p.id === playerId)
+  )
+  const groupRight = groups.find(
+    group => !group.players.find(p => p.id === playerId)
   )
 
   return (

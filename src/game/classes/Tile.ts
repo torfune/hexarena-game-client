@@ -87,6 +87,8 @@ class Tile {
   }
 
   setProp(key: keyof Props, value: Primitive) {
+    if (this.props[key].current === value) return
+
     this.props[key].previous = this.props[key].current
     this.props[key].current = value
 

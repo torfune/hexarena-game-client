@@ -5,8 +5,6 @@ import formatTime from '../utils/formatTime'
 
 const Container = styled.div``
 
-let interval: NodeJS.Timeout | null = null
-
 interface Props {
   finishesAt: number
   className?: string
@@ -15,13 +13,9 @@ const Timer: React.FC<Props> = ({ finishesAt, className }) => {
   const [time, setTime] = useState(0)
 
   useEffect(() => {
-    interval = setInterval(updateTimer, 1000)
-
+    const interval = setInterval(updateTimer, 1000)
     return () => {
-      if (interval) {
-        clearInterval(interval)
-        interval = null
-      }
+      clearInterval(interval)
     }
   }, [])
 

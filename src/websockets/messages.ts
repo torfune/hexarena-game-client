@@ -535,9 +535,7 @@ const messages: {
       store.game.spectators = spectators
     }
   },
-  ping: () => {
-    console.log(`ping [${Date.now()}]`)
-  },
+  ping: () => {},
 
   // Update requests
   updateRunningGames: () => {

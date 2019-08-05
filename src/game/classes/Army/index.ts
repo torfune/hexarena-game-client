@@ -73,6 +73,7 @@ class Army {
 
   setProp(key: keyof Props, value: Primitive) {
     if (!store.game) return
+    if (this.props[key].current === value && key !== 'tileId') return
 
     this.props[key].previous = this.props[key].current
     this.props[key].current = value
