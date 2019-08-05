@@ -20,8 +20,9 @@ const createImage = (imageName: string, textureName?: string) => {
     image.tint = hex('#eee')
   }
 
-  store.game.stage[imageName].addChild(image)
+  if (!store.game.stage[imageName]) return new Sprite()
 
+  store.game.stage[imageName].addChild(image)
   return image
 }
 
