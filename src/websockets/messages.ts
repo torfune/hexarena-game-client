@@ -44,6 +44,7 @@ export type MessageGS =
   | 'message'
   | 'spectators'
   | 'ping'
+  | 'openingTime'
 
 // Handlers: Gameserver -> Frontend
 const messages: {
@@ -541,6 +542,9 @@ const messages: {
   updateRunningGames: () => {
     store.fetchRunningGames()
     store.fetchFinishedGames()
+  },
+  openingTime: (payload: string) => {
+    store.openingTime = Number(payload)
   },
 }
 

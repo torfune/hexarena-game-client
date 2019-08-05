@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import React from 'react'
+import Heading from './Heading'
 
 const Container = styled.div`
   color: #fff;
 `
 
-const Heading = styled.h2`
+const Title = styled.h2`
   font-size: 32px;
   font-weight: 500;
+  margin-bottom: 32px;
 `
 
 const CountdownTime = styled.p`
@@ -68,7 +70,8 @@ const Countdown: React.FC<Props> = ({ openingTime }) => {
 
   return (
     <Container>
-      <Heading>Game opens in</Heading>
+      <Title>Update is coming</Title>
+      <Heading>GAME OPENS IN</Heading>
 
       <CountdownTime>
         {remainingDate.getUTCDate() - 1}:
