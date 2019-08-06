@@ -3,7 +3,6 @@ import Heading from './Heading'
 import React, { useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import store from '../../store'
-import Spinner from '../../components/Spinner'
 import Socket from '../../websockets/Socket'
 import formatTime from '../../utils/formatTime'
 import { Link } from 'react-router-dom'
@@ -14,7 +13,9 @@ import Toggle from 'react-toggle'
 import 'react-toggle/style.css'
 import { useAuth } from '../../auth'
 
-const Container = styled.div``
+const Container = styled.div`
+  width: 190px;
+`
 
 const TimesWrapper = styled.div`
   background: #222;
