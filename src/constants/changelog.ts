@@ -1,7 +1,7 @@
 const changelog = [
   {
     label: 'Update 6/8',
-    changes: ['Game type toggle', 'Bug fixes'],
+    changes: ['FFA mode', 'Game type toggle', 'Bug fixes'],
   },
   {
     label: 'Update 3/8',
