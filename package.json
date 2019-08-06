@@ -1,6 +1,6 @@
 {
   "name": "hexagor-fe",
-  "version": "1.49.8",
+  "version": "1.49.9",
   "description": "HexArena - Browser client",
   "scripts": {
     "dev": "webpack-dev-server --port 3000 --mode development",
