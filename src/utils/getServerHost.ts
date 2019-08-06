@@ -1,7 +1,7 @@
 const GS = {
   LOCAL: 'localhost:8000',
   DEV: 'us-gs-0.hexarena.io',
-  LIVE: 'us-gs-2.hexarena.io',
+  LIVE: 'us-gs-1.hexarena.io',
 }
 
 const WS = {
