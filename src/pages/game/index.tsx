@@ -50,7 +50,8 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
   useEffect(() => {
     if (!store.game) {
       window.location.href = '/'
-      throw new Error('Game instance not found after 1 second.')
+      console.warn('Game instance not found after 1 second.')
+      return
     }
 
     const canvas = document.getElementById('game-canvas')

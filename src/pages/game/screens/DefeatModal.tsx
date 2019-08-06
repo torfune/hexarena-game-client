@@ -117,7 +117,7 @@ const DefeatModal = () => {
           <a href="/game">
             <ContinueButton>Continue</ContinueButton>
           </a>
-          <a href={`/spectate?gameId=${store.game.id}`}>
+          <a href={`/spectate?game=${store.game.id}`}>
             <SpectateButton onClick={handleSpectateClick} color={SECONDARY}>
               Spectate
             </SpectateButton>
