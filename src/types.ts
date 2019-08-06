@@ -3,6 +3,11 @@ declare module 'simplebar-react' {
   export default class SimpleBar extends React.Component<any, any> {}
 }
 
+declare module 'semantic-ui-react' {
+  import React from 'react'
+  export class Checkbox extends React.Component<any, any> {}
+}
+
 declare module 'react-facebook-login/dist/facebook-login-render-props' {
   import React from 'react'
   export default class FacebookLogin extends React.Component<any, any> {}

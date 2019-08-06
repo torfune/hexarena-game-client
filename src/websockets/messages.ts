@@ -44,6 +44,7 @@ export type MessageGS =
   | 'message'
   | 'spectators'
   | 'ping'
+  | 'queueSettings'
 
 // Handlers: Gameserver -> Frontend
 const messages: {
@@ -535,6 +536,17 @@ const messages: {
       store.game.spectators = spectators
     }
   },
+  queueSettings: (payload: string) => {
+    const { normal, ranked } = convertObject(payload, {
+      normal: 'boolean',
+      ranked: 'boolean',
+    }) as {
+      normal: boolean
+      ranked: boolean
+    }
+
+    store.setQueueSettings({ normal, ranked })
+  },
   ping: () => {},
 
   // Update requests
@@ -544,7 +556,7 @@ const messages: {
   },
 }
 
-// Messages: Gameserver -> Frontend
+// Messages: Frontend -> Gameserver
 export type MessageFE =
   | 'action'
   | 'cancel'
@@ -564,5 +576,6 @@ export type MessageFE =
   | 'acceptMatch'
   | 'declineMatch'
   | 'spectators'
+  | 'queueSettings'
 
 export default messages

@@ -1,5 +1,9 @@
 const changelog = [
   {
+    label: 'Update 6/8',
+    changes: ['Game type toggle', 'Bug fixes'],
+  },
+  {
     label: 'Update 3/8',
     changes: ['Castle cost set to 14', 'Less mountains'],
   },
