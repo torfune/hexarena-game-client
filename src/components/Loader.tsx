@@ -5,12 +5,12 @@ import shadeColor from '../utils/shade'
 import { observer } from 'mobx-react-lite'
 import React, { useEffect } from 'react'
 import store from '../store'
-import getServerHost from '../utils/getServerHost'
 import loadImages from '../game/functions/loadImages'
 import Header from './Header'
 import Socket from '../websockets/Socket'
 import { version } from '../../package.json'
 import Api from '../Api'
+import getGsHost from '../utils/getGsHost'
 
 const Container = styled.div`
   margin-top: 200px;
@@ -89,8 +89,8 @@ const Loader: React.FC = () => {
       await Api.ws.get('/status')
 
       // Socket connection
-      const { GS_HOST } = getServerHost()
-      await Socket.connect(GS_HOST)
+      const gsHost = await getGsHost()
+      await Socket.connect(gsHost)
 
       // Load images
       await loadImages()

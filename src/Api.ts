@@ -1,21 +1,24 @@
-import getServerHost from './utils/getServerHost'
 import Axios, { AxiosRequestConfig } from 'axios'
+import getGsHost from './utils/getGsHost'
+import getWsHost from './utils/getWsHost'
 
-const PROTOCOL = window.location.protocol
-const { GS_HOST, WS_HOST } = getServerHost()
+const { protocol } = window.location
 
 const Api = {
   gs: {
-    get: (path: string, config?: AxiosRequestConfig) => {
-      return Axios.get(`${PROTOCOL}//${GS_HOST + path}`, config)
+    get: async (path: string, config?: AxiosRequestConfig) => {
+      const hostname = await getGsHost()
+      return Axios.get(`${protocol}//${hostname + path}`, config)
     },
   },
   ws: {
     get: (path: string, config?: AxiosRequestConfig) => {
-      return Axios.get(`${PROTOCOL}//${WS_HOST + path}`, config)
+      const hostname = getWsHost()
+      return Axios.get(`${protocol}//${hostname + path}`, config)
     },
     patch: (path: string, data: any, config?: AxiosRequestConfig) => {
-      return Axios.patch(`${PROTOCOL}//${WS_HOST + path}`, data, config)
+      const hostname = getWsHost()
+      return Axios.patch(`${protocol}//${hostname + path}`, data, config)
     },
   },
 }

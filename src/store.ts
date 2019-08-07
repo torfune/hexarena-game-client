@@ -8,6 +8,7 @@ import { History } from 'history'
 import User from './models/User'
 import Api from './Api'
 import FinishedGame from './types/FinishedGame'
+import getWsHost from './utils/getWsHost'
 
 class Store {
   @observable chatFocus: boolean = false
@@ -40,6 +41,7 @@ class Store {
     ranked: localStorage.getItem('queueRanked') === 'true',
   }
   routerHistory: History | null = null
+  gsHost: string | null = null
 
   constructor() {
     if (!this.queueSettings.normal && !this.queueSettings.ranked) {
