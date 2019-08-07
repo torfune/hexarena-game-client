@@ -1,7 +1,25 @@
 import Player from '../../../../game/classes/Player'
 import React from 'react'
+import store from '../../../../store'
 
 const renderWinStatement = (players: Player[]) => {
+  if (store.game && store.game.mode === 'FFA') {
+    const players = Object.values(store.game.players)
+    const winners = players.filter(p => p.alive)
+
+    return (
+      <>
+        Winners:{' '}
+        {winners.map((w, i) => (
+          <span key={w.id}>
+            {i > 0 ? ', ' : ''}
+            {w.name}
+          </span>
+        ))}
+      </>
+    )
+  }
+
   if (players.length === 1 || !players[1].alive) {
     return (
       <>
