@@ -4,6 +4,7 @@ interface User {
   elo: number
   diamonds: number
   neverPlayed: boolean
+  muted: boolean
   auth: {
     type: 'google' | 'facebook'
     id: string
