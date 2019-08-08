@@ -108,7 +108,11 @@ const PlaySection = () => {
   }
 
   const playAsUser = () => {
-    play('playAsUser', `${getBrowserId()}|${userId}|${accessToken}`)
+    const { normal, ranked } = store.queueSettings
+    play(
+      'playAsUser',
+      `${getBrowserId()}|${userId}|${accessToken}|${normal}|${ranked}`
+    )
   }
 
   const play = (message: 'playAsGuest' | 'playAsUser', data: string) => {

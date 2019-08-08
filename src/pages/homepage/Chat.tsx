@@ -7,6 +7,7 @@ import Socket from '../../websockets/Socket'
 import SimpleBar from 'simplebar-react'
 import 'simplebar/dist/simplebar.min.css'
 import { CHAT_WIDTH, BREAKPOINT } from '../../constants/react'
+import { useAuth } from '../../auth'
 
 const Container = styled.div`
   z-index: 2;
@@ -101,6 +102,7 @@ const SignInMessage = styled.div`
 
 const Chat = () => {
   const [scrolled, setScrolled] = useState(false)
+  const { accessToken } = useAuth()
 
   useEffect(() => {
     addEventListener('wheel', handleWheelMove)
@@ -149,7 +151,10 @@ const Chat = () => {
       return
     }
 
-    Socket.send('chatMessage', `${store.user.name}|${store.chatMessage}`)
+    Socket.send(
+      'chatMessage',
+      `${store.user._id}|${accessToken}|${store.chatMessage}`
+    )
     store.chatMessage = ''
     setScrolled(false)
   }
@@ -213,21 +218,36 @@ const Chat = () => {
         ))}
       </StyledSimpleBar>
 
-      {store.user && store.user.name ? (
-        <Input
-          autoFocus
-          placeholder="Type your message ..."
-          maxLength={store.gsConfig.CHAT_MESSAGE_MAX_LENGTH}
-          value={store.chatMessage}
-          onChange={handleMessageChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-        />
-      ) : (
-        <SignInMessage>
-          <img src="/static/icons/info-circle.svg" />
-          <p>Sign in to use chat.</p>
-        </SignInMessage>
+      {(!store.user || !store.user.name) && (
+        <>
+          <SignInMessage>
+            <img src="/static/icons/info-circle.svg" />
+            <p>Sign in to use chat.</p>
+          </SignInMessage>
+        </>
+      )}
+
+      {store.user && store.user.name && (
+        <>
+          {store.user.muted ? (
+            <>
+              <SignInMessage>
+                <img src="/static/icons/info-circle.svg" />
+                <p>Chat muted for offensive language.</p>
+              </SignInMessage>
+            </>
+          ) : (
+            <Input
+              autoFocus
+              placeholder="Type your message ..."
+              maxLength={store.gsConfig.CHAT_MESSAGE_MAX_LENGTH}
+              value={store.chatMessage}
+              onChange={handleMessageChange}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+            />
+          )}
+        </>
       )}
     </Container>
   )

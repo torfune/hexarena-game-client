@@ -877,8 +877,6 @@ class Tile {
       CAMP_COST,
       TOWER_COST,
       CASTLE_COST,
-      HOUSE_COST,
-      MAX_HOUSES,
       HP,
     } = store.gsConfig
 
@@ -921,7 +919,7 @@ class Tile {
     if (
       this.building &&
       (store.game.player.gold >= RECRUIT_COST || ignoreGold) &&
-      (this.building.type === 'CASTLE' || this.building.hp !== HP.TOWER)
+      (this.building.type !== 'TOWER' || this.building.hp !== HP.TOWER)
     ) {
       return 'RECRUIT'
     }

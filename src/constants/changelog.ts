@@ -1,5 +1,16 @@
 const changelog = [
   {
+    label: 'Update 7/8',
+    changes: [
+      "Possible to train Armies in Capital, but it's 50% slower than in Castle",
+      'Smaller FFA map size',
+    ],
+  },
+  {
+    label: 'Update 6/8',
+    changes: ['FFA mode', 'Game type toggle', 'Bug fixes'],
+  },
+  {
     label: 'Update 3/8',
     changes: ['Castle cost set to 14', 'Less mountains'],
   },

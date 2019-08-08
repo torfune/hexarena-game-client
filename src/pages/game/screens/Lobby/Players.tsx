@@ -11,8 +11,7 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  height: 840px;
-  /* flex-wrap: wrap; */
+  height: 700px;
 `
 
 const PlayerContainer = styled.div`
@@ -23,16 +22,16 @@ const PlayerContainer = styled.div`
   border: 1px solid #000;
   background: #222;
   border-radius: 12px;
-  height: 240px;
-  width: 220px;
+  height: 180px;
+  width: 180px;
   padding-top: 8px;
   position: relative;
   margin: 16px 0;
 `
 
 const Pattern = styled.div<{ color: string; hoverEffect?: boolean }>`
-  width: 128px;
-  height: 128px;
+  width: 96px;
+  height: 96px;
   border-radius: 16px;
   border: 1px solid #000;
   background: ${props => props.color};
@@ -44,11 +43,11 @@ const Pattern = styled.div<{ color: string; hoverEffect?: boolean }>`
 `
 
 const Name = styled.div`
-  margin-top: 12px;
+  margin-top: 16px;
   color: #fff;
   text-align: center;
   font-weight: 600;
-  font-size: 28px;
+  font-size: 20px;
   overflow: hidden;
 `
 
