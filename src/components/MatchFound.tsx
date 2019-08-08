@@ -106,6 +106,8 @@ const MatchFound = () => {
 
       notification.onclick = event => {
         event.preventDefault()
+        window.focus()
+        notification.close()
       }
     }
   }, [store.matchFound])
