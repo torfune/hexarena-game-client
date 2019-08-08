@@ -99,13 +99,15 @@ const MatchFound = () => {
     if (!store.matchFound) {
       setAccepted(false)
     } else if (store.matchFound && Notification.permission === 'granted') {
-      const notification = new Notification('MATCH FOUND!', {
-        body: 'Go to HexArena tab to accept the match.',
+      const notification = new Notification('Match Found', {
+        body: 'Click to go to the HexArena tab to accept the match.',
         icon: '/static/images/castle.png',
       })
 
       notification.onclick = event => {
         event.preventDefault()
+        window.focus()
+        notification.close()
       }
     }
   }, [store.matchFound])
