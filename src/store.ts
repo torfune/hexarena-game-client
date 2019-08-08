@@ -8,7 +8,6 @@ import { History } from 'history'
 import User from './models/User'
 import Api from './Api'
 import FinishedGame from './types/FinishedGame'
-import getWsHost from './utils/getWsHost'
 
 class Store {
   @observable chatFocus: boolean = false
@@ -24,30 +23,18 @@ class Store {
   @observable openingTime: number | null = null
   @observable game: Game | null = null
   @observable user: User | null = null
-  @observable waitingTime: {
-    current: number
-    average: number
-    players: number
+  @observable queue: {
+    type: 'NORMAL' | 'RANKED'
+    currentTime: number
+    averageTime: number
+    playerCount: number
   } | null = null
   @observable error?: {
     message: string
     goHome?: boolean
   }
-  @observable queueSettings: {
-    normal: boolean
-    ranked: boolean
-  } = {
-    normal: localStorage.getItem('queueNormal') === 'true',
-    ranked: localStorage.getItem('queueRanked') === 'true',
-  }
   routerHistory: History | null = null
   gsHost: string | null = null
-
-  constructor() {
-    if (!this.queueSettings.normal && !this.queueSettings.ranked) {
-      this.setQueueSettings({ normal: true, ranked: true })
-    }
-  }
 
   async fetchRunningGames() {
     const { data } = await Api.gs.get('/running-games')
@@ -81,12 +68,6 @@ class Store {
     if (!data) return
 
     store.finishedGames = data
-  }
-
-  setQueueSettings(queueSettings: { normal: boolean; ranked: boolean }) {
-    this.queueSettings = queueSettings
-    localStorage.setItem('queueNormal', String(queueSettings.normal))
-    localStorage.setItem('queueRanked', String(queueSettings.ranked))
   }
 }
 

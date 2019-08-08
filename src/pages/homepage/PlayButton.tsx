@@ -1,9 +1,9 @@
 import styled from 'styled-components'
 import { PRIMARY } from '../../constants/react'
 
-const PlayButton = styled.a`
+const PlayButton = styled.a<{ background?: string }>`
   display: flex;
-  background: ${PRIMARY};
+  background: ${props => (props.background ? props.background : PRIMARY)};
   color: #fff;
   font-weight: 600;
   font-size: 18px;

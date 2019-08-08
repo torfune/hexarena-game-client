@@ -40,11 +40,10 @@ export type MessageGS =
   | 'status'
   | 'tiles'
   | 'villages'
-  | 'waitingTime'
+  | 'queue'
   | 'message'
   | 'spectators'
   | 'ping'
-  | 'queueSettings'
 
 // Handlers: Gameserver -> Frontend
 const messages: {
@@ -465,7 +464,7 @@ const messages: {
     }
 
     store.game = new Game(id, mode, ranked)
-    store.waitingTime = null
+    store.queue = null
     store.matchFound = false
     store.spectating = false
 
@@ -487,23 +486,38 @@ const messages: {
       store.game.status = status
     }
   },
-  waitingTime: (payload: string) => {
-    const { current, average, players } = convertObject(payload, {
-      current: 'number',
-      average: 'number',
-      players: 'number',
-    }) as {
-      current: number | null
-      average: number | null
-      players: number | null
+  queue: (payload: string) => {
+    const { type, currentTime, averageTime, playerCount } = convertObject(
+      payload,
+      {
+        type: 'string',
+        currentTime: 'number',
+        averageTime: 'number',
+        playerCount: 'number',
+      }
+    ) as {
+      type: 'NORMAL' | 'RANKED' | null
+      currentTime: number | null
+      averageTime: number | null
+      playerCount: number | null
     }
 
-    if (current === null || average === null || players === null) {
-      store.waitingTime = null
+    if (
+      currentTime === null ||
+      averageTime === null ||
+      playerCount === null ||
+      !type
+    ) {
+      store.queue = null
       return
     }
 
-    store.waitingTime = { current, average, players }
+    store.queue = {
+      type,
+      currentTime,
+      averageTime,
+      playerCount,
+    }
   },
   spectate: (payload: string) => {
     const { id, mode, ranked } = convertObject(payload, {
@@ -536,17 +550,6 @@ const messages: {
       store.game.spectators = spectators
     }
   },
-  queueSettings: (payload: string) => {
-    const { normal, ranked } = convertObject(payload, {
-      normal: 'boolean',
-      ranked: 'boolean',
-    }) as {
-      normal: boolean
-      ranked: boolean
-    }
-
-    store.setQueueSettings({ normal, ranked })
-  },
   ping: () => {},
 
   // Update requests
@@ -576,6 +579,5 @@ export type MessageFE =
   | 'acceptMatch'
   | 'declineMatch'
   | 'spectators'
-  | 'queueSettings'
 
 export default messages

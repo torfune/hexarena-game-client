@@ -6,12 +6,12 @@ const Heading = styled.h3<{ red?: boolean }>`
   margin-bottom: 8px;
   font-weight: 600;
   color: ${props => (props.red ? PRIMARY : '#aaa')};
+  white-space: nowrap;
 
   span {
     color: ${PRIMARY};
-    font-weight: 600;
+    font-weight: 700;
     white-space: nowrap;
-    font-size: 20px;
     margin-left: 4px;
   }
 `

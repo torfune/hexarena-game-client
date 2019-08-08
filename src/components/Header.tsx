@@ -149,11 +149,11 @@ const Label = styled.p`
 `
 
 const Header = () => {
-  const { spectating, waitingTime } = store
+  const { spectating, queue } = store
 
   const cancelQueue = () => {
     Socket.send('cancelQueue')
-    store.waitingTime = null
+    store.queue = null
   }
 
   const getNextGameId = () => {
@@ -233,7 +233,7 @@ const Header = () => {
         )}
       </LeftSection>
 
-      {waitingTime ? (
+      {queue ? (
         <QueueSection>
           <TimesWrapper>
             <div>
@@ -242,11 +242,11 @@ const Header = () => {
               <Label>Players:</Label>
             </div>
             <div>
-              <Time>{formatTime(waitingTime.current)}</Time>
+              <Time>{formatTime(queue.currentTime)}</Time>
               <Time>
-                {waitingTime.average ? formatTime(waitingTime.average) : '-'}
+                {queue.averageTime ? formatTime(queue.averageTime) : '-'}
               </Time>
-              <Time>{waitingTime.players || '-'}</Time>
+              <Time>{queue.playerCount || '-'}</Time>
             </div>
           </TimesWrapper>
 

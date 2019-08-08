@@ -70,7 +70,9 @@ const EloSection = styled.div`
 `
 
 const LogoutButton = styled.div`
+  width: 74px;
   text-align: right;
+  margin-left: auto;
 
   :hover {
     text-decoration: underline;
@@ -79,26 +81,31 @@ const LogoutButton = styled.div`
   @media (max-width: ${BREAKPOINT.MAIN_1}) {
     margin-top: 16px;
     text-align: left;
+    margin-left: 0;
   }
 
   @media (max-width: ${BREAKPOINT.MAIN_2}) {
     margin-top: 0;
     text-align: right;
+    margin-left: auto;
   }
 
   @media (max-width: ${BREAKPOINT.MAIN_3}) {
     margin-top: 16px;
     text-align: left;
+    margin-left: 0;
   }
 
   @media (max-width: ${BREAKPOINT.MAIN_4}) {
     margin-top: 0;
     text-align: right;
+    margin-left: auto;
   }
 
   @media (max-width: ${BREAKPOINT.MAIN_5}) {
     margin-top: 16px;
     text-align: left;
+    margin-left: 0;
   }
 `
 
@@ -124,9 +131,7 @@ const Profile = () => {
           )}
         </>
       )}
-      {!store.waitingTime && (
-        <LogoutButton onClick={logout}>Logout</LogoutButton>
-      )}
+      {!store.queue && <LogoutButton onClick={logout}>Logout</LogoutButton>}
     </Container>
   )
 }

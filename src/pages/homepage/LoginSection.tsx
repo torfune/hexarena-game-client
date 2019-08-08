@@ -112,7 +112,7 @@ const NameTaken = styled.p<{ visible: boolean }>`
 let nameValidationTimeout: NodeJS.Timeout | null = null
 
 interface Props {
-  play: () => void
+  play: (queueType: 'NORMAL' | 'RANKED') => void
 }
 const LoginSection: React.FC<Props> = ({ play }) => {
   const [name, setName] = useState('')
@@ -180,14 +180,7 @@ const LoginSection: React.FC<Props> = ({ play }) => {
   const handleNameSave = async () => {
     if (!nameValid || !accessToken) return
 
-    const guestId = localStorage.getItem('browserId')
-
-    await Api.ws.patch(
-      `/users/${userId}`,
-      { name, guestId },
-      authHeader(accessToken)
-    )
-
+    await Api.ws.patch(`/users/${userId}`, { name }, authHeader(accessToken))
     await fetchUser()
   }
 
@@ -223,7 +216,21 @@ const LoginSection: React.FC<Props> = ({ play }) => {
             LOGGED IN AS <span>{store.user.name}</span>
           </Heading>
           <PlayButtonWrapper>
-            <PlayButton onClick={play}>Play</PlayButton>
+            <PlayButton
+              onClick={() => {
+                play('RANKED')
+              }}
+            >
+              PLAY RANKED
+            </PlayButton>
+            <PlayButton
+              background="#2980b9"
+              onClick={() => {
+                play('NORMAL')
+              }}
+            >
+              PLAY NORMAL
+            </PlayButton>
           </PlayButtonWrapper>
         </Container>
       )

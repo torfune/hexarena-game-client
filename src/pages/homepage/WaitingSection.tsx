@@ -9,8 +9,6 @@ import { Link } from 'react-router-dom'
 import randomItem from '../../utils/randomItem'
 import RunningGame from '../../types/RunningGame'
 import shadeColor from '../../utils/shade'
-import Toggle from 'react-toggle'
-import 'react-toggle/style.css'
 import { useAuth } from '../../auth'
 
 const Container = styled.div`
@@ -95,37 +93,13 @@ const SpectateButton = styled.div<{ disabled?: boolean }>`
   }
 `
 
-const QueueToggles = styled.div`
-  margin-top: 16px;
-  margin-bottom: 16px;
-  display: flex;
-  justify-content: space-evenly;
-
-  > div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .react-toggle-thumb {
-    box-shadow: none !important;
-  }
-`
-
-const ToggleLabel = styled.p`
-  color: #aaa;
-  font-size: 12px;
-  font-weight: 600;
-  margin-bottom: 6px;
-`
-
 const WaitingSection = () => {
   const { loggedIn } = useAuth()
   const [runningGame, setRunningGame] = useState<RunningGame | null>(null)
 
-  if (!store.waitingTime) return null
+  if (!store.queue) return null
 
-  const { current, average, players } = store.waitingTime
+  const { type, currentTime, averageTime, playerCount } = store.queue
 
   useEffect(() => {
     setRunningGame(randomItem(store.runningGames))
@@ -135,21 +109,9 @@ const WaitingSection = () => {
     Socket.send('cancelQueue')
   }
 
-  const handleRankedChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const normal = store.queueSettings.normal
-    const ranked = event.currentTarget.checked
-    Socket.send(`queueSettings`, `${normal}|${ranked}`)
-  }
-
-  const handleNormalChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const normal = event.currentTarget.checked
-    const ranked = store.queueSettings.ranked
-    Socket.send(`queueSettings`, `${normal}|${ranked}`)
-  }
-
   return (
     <Container>
-      <Heading>FINDING MATCH</Heading>
+      <Heading>FINDING {loggedIn ? <span>{type}</span> : null} MATCH</Heading>
 
       <Row>
         <TimesWrapper>
@@ -159,32 +121,12 @@ const WaitingSection = () => {
             <Label>Players:</Label>
           </div>
           <div>
-            <Time>{formatTime(current)}</Time>
-            <Time>{average ? formatTime(average) : '-'}</Time>
-            <Time>{players || '-'}</Time>
+            <Time>{formatTime(currentTime)}</Time>
+            <Time>{averageTime ? formatTime(averageTime) : '-'}</Time>
+            <Time>{playerCount || '-'}</Time>
           </div>
         </TimesWrapper>
       </Row>
-
-      {loggedIn && (
-        <QueueToggles>
-          <div>
-            <ToggleLabel>NORMAL</ToggleLabel>
-            <Toggle
-              checked={store.queueSettings.normal}
-              onChange={handleNormalChange}
-            />
-          </div>
-
-          <div>
-            <ToggleLabel>RANKED</ToggleLabel>
-            <Toggle
-              checked={store.queueSettings.ranked}
-              onChange={handleRankedChange}
-            />
-          </div>
-        </QueueToggles>
-      )}
 
       {runningGame ? (
         <Link to={`/spectate?game=${runningGame.id}`}>

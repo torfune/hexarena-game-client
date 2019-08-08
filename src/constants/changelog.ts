@@ -1,5 +1,12 @@
 const changelog = [
   {
+    label: 'Update 8/8',
+    changes: [
+      'Improved ranked 2v2 Elo gain/lose',
+      'Ranked/Normal queue separation',
+    ],
+  },
+  {
     label: 'Update 7/8',
     changes: [
       "Possible to train Armies in Capital, but it's 50% slower than in Castle",

@@ -68,81 +68,49 @@ const BreakRow = styled.div`
   }
 `
 
-const Maintainance = styled.div`
-  margin-top: 32px;
-  font-size: 18px;
-`
-
-const MAINTENANCE = false
-
 const PlaySection = () => {
   const { loggedIn, userId, accessToken } = useAuth()
-  const [queryLoaded, setQueryLoaded] = useState(false)
-
-  useEffect(() => {
-    if (loggedIn === null) return
-
-    const { href, protocol, pathname, host } = window.location
-
-    const query = href.split('?')[1]
-    if (query && query === 'play') {
-      if (loggedIn) {
-        playAsUser()
-      } else {
-        playAsGuest()
-      }
-
-      const path = `${protocol}//${host}${pathname}`
-      window.history.pushState({ path }, '', path)
-    }
-
-    setQueryLoaded(true)
-  }, [loggedIn])
 
   const playAsGuest = (name?: string) => {
     if (!name) {
       name = localStorage.getItem('guestName') || ''
     }
 
-    play('playAsGuest', `${getBrowserId()}|${name}`)
+    play('playAsGuest', `${getBrowserId()}|${name}`, 'NORMAL')
   }
 
-  const playAsUser = () => {
-    const { normal, ranked } = store.queueSettings
+  const playAsUser = (queueType: 'NORMAL' | 'RANKED') => {
     play(
       'playAsUser',
-      `${getBrowserId()}|${userId}|${accessToken}|${normal}|${ranked}`
+      `${getBrowserId()}|${userId}|${accessToken}|${queueType}`,
+      queueType
     )
   }
 
-  const play = (message: 'playAsGuest' | 'playAsUser', data: string) => {
+  const play = (
+    message: 'playAsGuest' | 'playAsUser',
+    data: string,
+    queueType: 'NORMAL' | 'RANKED'
+  ) => {
     if (Notification.permission === 'default') {
       Notification.requestPermission()
     }
     Socket.send(message, data)
-    store.waitingTime = {
-      current: 0,
-      average: 0,
-      players: 0,
+    store.queue = {
+      type: queueType,
+      currentTime: 0,
+      averageTime: 0,
+      playerCount: 0,
     }
   }
 
-  if (MAINTENANCE) {
-    return (
-      <Container>
-        <Heading>Maintenance</Heading>
-        <Maintainance>Come back in 10 minutes.</Maintainance>
-      </Container>
-    )
-  }
-
-  if (loggedIn === null || !queryLoaded) return <Container />
+  if (loggedIn === null) return <Container />
 
   return (
     <Container>
       <Heading>Play</Heading>
 
-      {store.waitingTime ? (
+      {store.queue ? (
         <BreakRow>
           <WaitingSection />
           <Profile />
