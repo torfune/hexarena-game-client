@@ -1,5 +1,9 @@
 const changelog = [
   {
+    label: 'Update 9/8',
+    changes: ['Fixed Elo bug', 'Slower game pace'],
+  },
+  {
     label: 'Update 8/8',
     changes: [
       'Improved ranked 2v2 Elo gain/lose',
