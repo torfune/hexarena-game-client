@@ -217,19 +217,19 @@ const LoginSection: React.FC<Props> = ({ play }) => {
           </Heading>
           <PlayButtonWrapper>
             <PlayButton
-              onClick={() => {
-                play('RANKED')
-              }}
-            >
-              PLAY RANKED
-            </PlayButton>
-            <PlayButton
               background="#2980b9"
               onClick={() => {
                 play('NORMAL')
               }}
             >
               PLAY NORMAL
+            </PlayButton>
+            <PlayButton
+              onClick={() => {
+                play('RANKED')
+              }}
+            >
+              PLAY RANKED
             </PlayButton>
           </PlayButtonWrapper>
         </Container>
