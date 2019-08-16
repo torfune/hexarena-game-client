@@ -5,6 +5,7 @@ import { useTransition } from 'react-spring'
 import React, { useState } from 'react'
 import Player from '../../../../game/classes/Player'
 import PatternSelector from './PatternSelector'
+import { TRANSITION } from '../../../../constants/react'
 
 const Container = styled.div`
   display: flex;
@@ -67,12 +68,7 @@ interface Props {
 }
 const Players: React.FC<Props> = ({ players }) => {
   const [showSelector, setShowSelector] = useState(false)
-  const transitions = useTransition(showSelector, null, {
-    config: { tension: 400 },
-    from: { transform: 'scale(0)', opacity: 0 },
-    enter: { transform: 'scale(1)', opacity: 1 },
-    leave: { transform: 'scale(0)', opacity: 0 },
-  })
+  const transitions = useTransition(showSelector, null, TRANSITION.SCALE)
 
   if (!store.game || !store.game.player || !store.gsConfig) return null
 

@@ -26,6 +26,10 @@ const GlobalStyle = createGlobalStyle`
     text-decoration: none;
   }
 
+  ul {
+    padding-inline-start: 0;
+  }
+
   @supports (font-variation-settings: normal) {
     html {
       font-family: 'Montserrat', sans-serif;

@@ -69,7 +69,7 @@ const Author = styled.p`
   }
 `
 
-const HowToPlay: React.FC = () => (
+const _HowToPlay: React.FC = () => (
   <Container>
     <Heading>How to play</Heading>
 
@@ -163,4 +163,4 @@ const HowToPlay: React.FC = () => (
   </Container>
 )
 
-export default HowToPlay
+export default _HowToPlay

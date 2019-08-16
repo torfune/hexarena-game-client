@@ -455,7 +455,14 @@ const messages: {
       mode: string | null
       ranked: boolean
     }
-    if (!id || !mode || (mode !== '1v1' && mode !== '2v2' && mode !== 'FFA')) {
+    if (
+      !id ||
+      !mode ||
+      (mode !== '1v1' &&
+        mode !== '2v2' &&
+        mode !== 'FFA' &&
+        mode !== 'TUTORIAL')
+    ) {
       return
     }
 

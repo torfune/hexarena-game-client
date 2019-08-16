@@ -6,7 +6,7 @@ import EndScreen from './screens/EndScreen'
 import ErrorModal from './screens/ErrorModal'
 import GameTime from './hud/GameTime'
 import Leaderboard from './hud/Leaderboard'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Performance from './hud/Performance'
 import store from '../../store'
@@ -20,6 +20,8 @@ import Player from '../../game/classes/Player'
 import Surrender from './hud/Surrender'
 import Economy from './hud/Economy'
 import Spectators from './hud/Spectators'
+import Tutorial from './hud/Tutorial'
+import HowToPlay from '../../components/HowToPlay'
 
 const Container = styled.div`
   width: 100vw;
@@ -45,7 +47,7 @@ const GameCanvas = styled.div<GameCanvasProps>`
 `
 
 const GamePage: React.FC<RouteComponentProps> = observer(() => {
-  const [_, refresh] = React.useState(Date.now())
+  const [_, refresh] = useState(Date.now())
 
   useEffect(() => {
     if (!store.game) {
@@ -65,6 +67,17 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
       window.removeEventListener('resize', handleResize)
     }
   }, [])
+
+  useEffect(() => {
+    if (!store.game) return
+
+    const { mode, status } = store.game
+
+    if (mode === 'TUTORIAL' && status === 'finished') {
+      localStorage.setItem('tutorialFinished', String('true'))
+      console.log(`Tutorial finished.`)
+    }
+  })
 
   const handleResize = () => {
     refresh(Date.now())
@@ -109,6 +122,7 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
               <Surrender />
               <Spectators />
 
+              {store.game.mode === 'TUTORIAL' && <Tutorial />}
               {!store.game.player.alive && <DefeatModal />}
             </HudContainer>
           )}
@@ -130,6 +144,11 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
           )}
         </>
       )}
+
+      <HowToPlay
+        show={store.showGuide}
+        close={() => (store.showGuide = false)}
+      />
     </Container>
   )
 })

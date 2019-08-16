@@ -92,6 +92,22 @@ const PlaySection = () => {
     data: string,
     queueType: 'NORMAL' | 'RANKED'
   ) => {
+    const tutorialFinished = localStorage.getItem('tutorialFinished') === 'true'
+    if (!tutorialFinished) {
+      console.log(`Tutorial not finished! Starting tutorial ...`)
+
+      let guestName = localStorage.getItem('guestName')
+      if (!guestName) {
+        guestName = `Guest ${Math.floor(Math.random() * 10)}`
+      }
+
+      Socket.send(
+        'playTutorial',
+        `${getBrowserId()}|${store.user ? store.user.name : guestName}`
+      )
+      return
+    }
+
     if (Notification.permission === 'default') {
       Notification.requestPermission()
     }

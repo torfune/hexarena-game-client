@@ -6,11 +6,11 @@ import { observer } from 'mobx-react-lite'
 import store from '../store'
 import formatTime from '../utils/formatTime'
 import Socket from '../websockets/Socket'
-import { BREAKPOINT } from '../constants/react'
+import { BREAKPOINT, Z_INDEX } from '../constants/react'
 
 const Container = styled.div`
   width: 100vw;
-  z-index: 100;
+  z-index: ${Z_INDEX.HEADER};
   position: fixed;
   top: 0;
   display: flex;

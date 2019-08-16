@@ -10,11 +10,11 @@ import Countdown from './Countdown'
 import { observer } from 'mobx-react-lite'
 import { History } from 'history'
 import MatchFound from '../../components/MatchFound'
-import HowToPlay from './HowToPlay'
 import Socket from '../../websockets/Socket'
 import Changelog from './Changelog'
 import { CHAT_WIDTH, BREAKPOINT } from '../../constants/react'
 import GameList from './GameList'
+import HowToPlay from '../../components/HowToPlay'
 
 const Container = styled.div`
   padding-bottom: 128px;
@@ -61,12 +61,6 @@ const Row = styled.div`
   }
 `
 
-// const InnerGrid = styled.div`
-//   display: grid;
-//   grid-template-columns: auto 400px;
-//   grid-column-gap: 80px;
-// `
-
 interface Props {
   history: History
 }
@@ -94,7 +88,6 @@ const Homepage: React.FC<Props> = ({ history }) => {
             <PlaySection />
           )}
           <Community />
-          <HowToPlay />
           <Changelog />
           <MatchFound />
         </Grid>

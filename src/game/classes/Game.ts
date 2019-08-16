@@ -128,14 +128,18 @@ class Game {
 
     // Listeners and Images
     this.setupEventListeners()
-    // this.setupStoreListeners()
 
     // Global debug reference
     ;(window as any).game = this
   }
   render(canvas: HTMLElement) {
+    const tutorialFinished = localStorage.getItem('tutorialFinished') === 'true'
+
     if (!this.loop) {
       this.loop = createGameLoop(this.update, this)
+      if (this.mode === 'TUTORIAL' && !tutorialFinished) {
+        this.loop.stop()
+      }
     }
 
     if (!this.pixi) {
@@ -149,6 +153,11 @@ class Game {
     }
 
     canvas.appendChild(this.pixi.view)
+
+    // Tutorial
+    if (this.mode === 'TUTORIAL' && !tutorialFinished) {
+      store.showGuide = true
+    }
   }
   destroy() {
     for (let i = 0; i < TILE_IMAGES.length; i++) {

@@ -110,7 +110,8 @@ class Tile {
       case 'buildingType':
         if (value === 'BASE') {
           if (!this.image.base) {
-            this.addImage('base')
+            const base = this.addImage('base')
+            base.y -= 10
           }
         } else if (value === 'CASTLE') {
           if (!this.image.castle) {

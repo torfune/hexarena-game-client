@@ -6,7 +6,6 @@ import React from 'react'
 
 const Container = styled(animated.div)`
   top: -40px;
-  /* left: calc(-150px + 40px - 8px); */
   box-shadow: ${BOX_SHADOW};
   background: #fff;
   position: absolute;

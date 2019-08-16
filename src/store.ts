@@ -23,6 +23,7 @@ class Store {
   @observable openingTime: number | null = null
   @observable game: Game | null = null
   @observable user: User | null = null
+  @observable showGuide: boolean = false
   @observable queue: {
     type: 'NORMAL' | 'RANKED'
     currentTime: number

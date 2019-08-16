@@ -17,6 +17,21 @@ export const LOGO_SHADOW = '0px 2px 16px rgba(0, 0, 0, 0.3)'
 // MISC
 export const CHAT_WIDTH = '500px'
 
+// Z INDEX
+export const Z_INDEX = {
+  HEADER: 100,
+}
+
+// TRANSITIONS
+export const TRANSITION = {
+  SCALE: {
+    config: { tension: 400 },
+    from: { transform: 'scale(0)', opacity: 0 },
+    enter: { transform: 'scale(1)', opacity: 1 },
+    leave: { transform: 'scale(0)', opacity: 0 },
+  },
+}
+
 // WEBSERVER & AUTH
 export const GOOGLE_CLIENT_ID =
   '110619057119-agls5l4ghp08pmdbfj7mspsf55stoddh.apps.googleusercontent.com'
@@ -30,16 +45,13 @@ export const BREAKPOINT = {
   MAIN_4: '1060px',
   MAIN_5: '960px',
   FINAL: '860px',
-  // COMMUNITY_1: '1640px',
-  // COMMUNITY_2: '1170px',
 }
 
 // IFRAME
 export const IFRAME = (() => {
   try {
     return window.self !== window.top
-  } catch (e) {
+  } catch {
     return true
   }
 })()
-console.log(`IFRAME: ${IFRAME}`)

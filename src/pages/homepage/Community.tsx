@@ -1,6 +1,10 @@
 import styled, { css } from 'styled-components'
-import React from 'react'
+import React, { useState } from 'react'
 import { BREAKPOINT } from '../../constants/react'
+import HowToPlay from '../../components/HowToPlay'
+import Socket from '../../websockets/Socket'
+import getBrowserId from '../../utils/getBrowserId'
+import store from '../../store'
 
 const Container = styled.div`
   margin-top: 96px;
@@ -53,19 +57,27 @@ const ButtonsContainer = styled.div`
 `
 
 const buttonCSS = css`
-  color: #111;
+  color: #fff;
   font-weight: 500;
   border-radius: 4px;
   font-size: 16px;
   display: flex;
   align-items: center;
   height: 40px;
-  background: #fff;
+  background: #222;
   margin-left: 40px;
   width: 240px;
+  border: 1px solid #111;
+  padding-left: 16px;
+
+  > img {
+    height: 22px;
+    margin-right: 12px;
+    filter: invert(1);
+  }
 
   :hover {
-    background: #ddd;
+    background: #282828;
   }
 
   @media (max-width: ${BREAKPOINT.MAIN_1}) {
@@ -107,48 +119,78 @@ const RedditButton = styled.a`
 `
 
 const IoGamesButton = styled.a`
+  display: block;
+  color: #fff;
+  margin-top: 24px;
+  font-weight: 500;
+  width: 140px;
+
+  :hover {
+    color: #aaa;
+  }
+`
+
+const GuideButton = styled.a`
+  ${buttonCSS};
+`
+
+const SandboxButton = styled.a`
   ${buttonCSS};
   padding-left: 16px;
+  margin-top: 16px !important;
 `
 
-const DiscordIcon = styled.img`
-  height: 28px;
-  margin-right: 4px;
-  margin-left: 6px;
-  margin-top: 4px;
-`
+const Community: React.FC = () => {
+  const [showGuide, setShowGuide] = useState(false)
 
-const RedditIcon = styled.img`
-  height: 20px;
-  margin-left: 10px;
-  margin-right: 8px;
-`
+  const playTutorial = () => {
+    let guestName = localStorage.getItem('guestName')
+    if (!guestName) {
+      guestName = `Guest ${Math.floor(Math.random() * 10)}`
+    }
 
-const Heading = styled.h2`
-  font-size: 28px;
-  font-weight: 500;
-`
+    Socket.send(
+      'playTutorial',
+      `${getBrowserId()}|${store.user ? store.user.name : guestName}`
+    )
+  }
 
-const Community: React.FC = () => (
-  <Container>
-    <Heading>Community</Heading>
+  return (
+    <>
+      <Container>
+        <ButtonsContainer>
+          <div>
+            <DiscordButton target="_blank" href="https://discord.gg/vwXKyRX">
+              <img src="/static/icons/discord.svg" />
+              Discord
+            </DiscordButton>
+            <RedditButton
+              target="_blank"
+              href="https://www.reddit.com/r/hexarena"
+            >
+              <img src="/static/icons/reddit.svg" />
+              Reddit
+            </RedditButton>
+          </div>
 
-    <ButtonsContainer>
-      <div>
-        <DiscordButton target="_blank" href="https://discord.gg/vwXKyRX">
-          <DiscordIcon src="/static/icons/discord.svg" />
-          Discord
-        </DiscordButton>
-        <RedditButton target="_blank" href="https://www.reddit.com/r/hexarena">
-          <RedditIcon src="/static/icons/reddit.svg" />
-          Reddit
-        </RedditButton>
-      </div>
-      <IoGamesButton target="_blank" href="https://iogames.space">
-        More IO Games
-      </IoGamesButton>
-    </ButtonsContainer>
-  </Container>
-)
+          <div>
+            <GuideButton onClick={() => setShowGuide(true)}>
+              <img src="/static/icons/book.svg" />
+              How to play
+            </GuideButton>
+            <SandboxButton onClick={playTutorial}>
+              <img src="/static/icons/sandbox.svg" />
+              Sandbox mode
+            </SandboxButton>
+          </div>
+        </ButtonsContainer>
+        <IoGamesButton target="_blank" href="https://iogames.space">
+          More io games
+        </IoGamesButton>
+      </Container>
+      <HowToPlay show={showGuide} close={() => setShowGuide(false)} />
+    </>
+  )
+}
 
 export default Community
