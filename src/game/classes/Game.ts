@@ -558,7 +558,8 @@ class Game {
     if (
       this.playerId === playerId &&
       actionType === 'ATTACK' &&
-      !this.selectedArmyTile
+      !this.selectedArmyTile &&
+      !tile.bedrock
     ) {
       tilesToCapture.push(tile)
     }
