@@ -93,7 +93,7 @@ class Action {
       }
     }, 1000)
 
-    if (store.game) {
+    if (store.game && store.game.stage.action) {
       store.game.stage.action.addChild(this.image)
     }
   }
@@ -164,7 +164,7 @@ class Action {
         speed: 0.06,
         ease: easeInQuad,
         onFinish: () => {
-          if (store.game) {
+          if (store.game && store.game.stage.action) {
             store.game.stage.action.removeChild(this.image)
           }
         },
