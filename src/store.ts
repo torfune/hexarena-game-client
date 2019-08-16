@@ -40,7 +40,8 @@ class Store {
     const { data } = await Api.gs.get('/running-games')
     if (!data) return
 
-    store.runningGames = [...data].sort((a, b) => {
+    // Sort by elo
+    const games = [...data].sort((a, b) => {
       let eloSumA = 0
       for (const players of a.players) {
         for (const player of players) {
@@ -60,6 +61,11 @@ class Store {
       }
 
       return eloSumB - eloSumA
+    })
+
+    // Sort by ranked
+    store.runningGames = games.sort((a, b) => {
+      return b.ranked - a.ranked
     })
   }
 

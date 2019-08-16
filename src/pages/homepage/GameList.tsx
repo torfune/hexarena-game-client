@@ -56,10 +56,16 @@ const Mode = styled.p`
   font-weight: 600;
 `
 
-const Balance = styled.p`
+const RankedBox = styled.div`
+  background: ${PRIMARY};
+  padding: 4px;
+  border-radius: 2px;
+`
+
+const Balance = styled.p<{ ranked: boolean }>`
   font-size: 14px;
   font-weight: 600;
-  color: #aaa;
+  color: ${props => (props.ranked ? '#fff' : '#aaa')};
 `
 
 const Players = styled.div`
@@ -180,7 +186,13 @@ const GameList = () => {
             <Game key={game.id}>
               <Row>
                 <Mode>{game.mode}</Mode>
-                <Balance>{game.ranked ? 'RANKED' : 'NORMAL'}</Balance>
+                {game.ranked ? (
+                  <RankedBox>
+                    <Balance ranked={game.ranked}>RANKED</Balance>
+                  </RankedBox>
+                ) : (
+                  <Balance ranked={game.ranked}>NORMAL</Balance>
+                )}
               </Row>
               <Players>
                 {game.players.map((group, index) => (
@@ -217,7 +229,13 @@ const GameList = () => {
             <Game key={game.id}>
               <Row>
                 <Mode>{game.mode}</Mode>
-                <Balance>{game.ranked ? 'RANKED' : 'NORMAL'}</Balance>
+                {game.ranked ? (
+                  <RankedBox>
+                    <Balance ranked={game.ranked}>RANKED</Balance>
+                  </RankedBox>
+                ) : (
+                  <Balance ranked={game.ranked}>NORMAL</Balance>
+                )}
               </Row>
               <Players>
                 {game.players.map((group, index) => (
