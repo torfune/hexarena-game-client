@@ -5,6 +5,7 @@ import HowToPlay from '../../components/HowToPlay'
 import Socket from '../../websockets/Socket'
 import getBrowserId from '../../utils/getBrowserId'
 import store from '../../store'
+import { version } from '../../../package.json'
 
 const Container = styled.div`
   margin-top: 96px;
@@ -161,14 +162,14 @@ const Community: React.FC = () => {
         <ButtonsContainer>
           <div>
             <DiscordButton target="_blank" href="https://discord.gg/vwXKyRX">
-              <img src="/static/icons/discord.svg" />
+              <img src={`/static/icons/discord.svg?${version}`} />
               Discord
             </DiscordButton>
             <RedditButton
               target="_blank"
               href="https://www.reddit.com/r/hexarena"
             >
-              <img src="/static/icons/reddit.svg" />
+              <img src={`/static/icons/reddit.svg?${version}`} />
               Reddit
             </RedditButton>
           </div>
