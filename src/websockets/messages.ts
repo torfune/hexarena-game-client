@@ -283,7 +283,7 @@ const messages: {
       let village: Village | null = store.game.villages[id] || null
 
       // Create
-      if (!village) {
+      if (!village && houseCount) {
         const tile: Tile | null = store.game.tiles[tileId] || null
         if (!tile) continue
         village = new Village(id, tile, houseCount)
