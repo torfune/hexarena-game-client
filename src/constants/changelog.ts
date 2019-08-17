@@ -1,5 +1,9 @@
 const changelog = [
   {
+    label: 'Update 17/8',
+    changes: ['New Capital texture', 'Sandbox/Tutorial mode'],
+  },
+  {
     label: 'Update 9/8',
     changes: ['Fixed Elo bug', 'Slower game pace'],
   },

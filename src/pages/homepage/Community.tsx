@@ -111,12 +111,14 @@ const DiscordButton = styled.a`
   ${buttonCSS};
   margin-left: 0 !important;
   margin-top: 0 !important;
+  cursor: default;
 `
 
 const RedditButton = styled.a`
   ${buttonCSS};
   margin-top: 16px !important;
   margin-left: 0 !important;
+  cursor: default;
 `
 
 const IoGamesButton = styled.a`
