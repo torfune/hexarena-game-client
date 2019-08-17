@@ -144,10 +144,7 @@ const HowToPlay: React.FC<Props> = ({ show, close }) => {
 
       if (store.game && store.game.loop) {
         store.game.loop.stop()
-        console.log('Stop loop.')
       }
-
-      console.log('Show guide!')
     } else {
       if (store.game && store.game.loop) {
         store.game.loop.start()
