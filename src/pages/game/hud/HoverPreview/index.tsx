@@ -32,7 +32,7 @@ const HoverPreview = () => {
 
   const { hoveredTile, player, cursor } = store.game
 
-  if (!cursor || !hoveredTile) return null
+  if (!cursor || !hoveredTile || hoveredTile.bedrock) return null
 
   if (
     hoveredTile &&

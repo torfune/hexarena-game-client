@@ -486,6 +486,8 @@ class Game {
       }
 
       // Create action
+      if (hoveredTile.bedrock) return
+
       if (button && !dragged && this.player) {
         const actionType = hoveredTile.getActionType()
         if (!actionType) {
