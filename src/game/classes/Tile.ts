@@ -591,41 +591,40 @@ class Tile {
   selectArmy() {
     if (!this.image.pattern || !store.game) return
 
-    const centerPixel = getPixelPosition(this.axial)
+    // const centerPixel = getPixelPosition(this.axial)
+    // for (let i = 0; i < 6; i++) {
+    //   const n = this.neighbors[i]
+    //   if (!n) continue
 
-    for (let i = 0; i < 6; i++) {
-      const n = this.neighbors[i]
-      if (!n) continue
+    //   const direction = i
+    //   const image = n.imageSet.arrow[direction]
 
-      const direction = i
-      const image = n.imageSet.arrow[direction]
+    //   if (!image) {
+    //     const pixel = getPixelPosition(n.axial)
+    //     const arrow = createImage('arrow')
+    //     arrow.x = centerPixel.x
+    //     arrow.y = centerPixel.y
+    //     arrow.rotation = getArrowRotationBySide(direction)
+    //     arrow.alpha = 0
+    //     arrow.scale.set(0)
 
-      if (!image) {
-        const pixel = getPixelPosition(n.axial)
-        const arrow = createImage('arrow')
-        arrow.x = centerPixel.x
-        arrow.y = centerPixel.y
-        arrow.rotation = getArrowRotationBySide(direction)
-        arrow.alpha = 0
-        arrow.scale.set(0)
+    //     new Animation(
+    //       arrow,
+    //       (image: Sprite, fraction: number) => {
+    //         image.x = centerPixel.x + (pixel.x - centerPixel.x) * fraction
+    //         image.y = centerPixel.y + (pixel.y - centerPixel.y) * fraction
+    //         image.alpha = fraction
+    //         image.scale.set(fraction)
+    //       },
+    //       {
+    //         speed: 0.05,
+    //         ease: easeOutQuad,
+    //       }
+    //     )
 
-        new Animation(
-          arrow,
-          (image: Sprite, fraction: number) => {
-            image.x = centerPixel.x + (pixel.x - centerPixel.x) * fraction
-            image.y = centerPixel.y + (pixel.y - centerPixel.y) * fraction
-            image.alpha = fraction
-            image.scale.set(fraction)
-          },
-          {
-            speed: 0.05,
-            ease: easeOutQuad,
-          }
-        )
-
-        n.imageSet.arrow[direction] = arrow
-      }
-    }
+    //     n.imageSet.arrow[direction] = arrow
+    //   }
+    // }
 
     const armyTargetTiles: Tile[][] = []
     for (let i = 0; i < 6; i++) {

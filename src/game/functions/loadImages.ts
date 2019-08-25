@@ -38,6 +38,14 @@ const loadImages = () => {
       .add('hpBackground2', `${images}/hpBackground2.png?${version}`)
       .add('hpBackground3', `${images}/hpBackground3.png?${version}`)
       .add('hpFill', `${images}/hpFill.png?${version}`)
+      .add(
+        'army-drag-arrow-head',
+        `${images}/army-drag-arrow-head.png?${version}`
+      )
+      .add(
+        'army-drag-arrow-body',
+        `${images}/army-drag-arrow-body.png?${version}`
+      )
       .load(resolve)
   })
 }

@@ -30,6 +30,7 @@ import Forest from './Forest'
 import Village from './Village'
 import GameMode from '../../types/GameMode'
 import HoveredTileInfo from '../../types/HoveredTileInfo'
+import ArmyDragArrow from './ArmyDragArrow'
 
 class Game {
   readonly id: string
@@ -98,6 +99,7 @@ class Game {
     resize: (event: any) => void
   } | null = null
   changeHandlers: { [key: string]: () => void } = {}
+  armyDragArrow: ArmyDragArrow | null = null
 
   // Computed getters
   @computed get player() {
@@ -276,6 +278,11 @@ class Game {
     const armies = Object.values(this.armies)
     for (let i = 0; i < armies.length; i++) {
       armies[i].update()
+    }
+
+    // Army drag arrow
+    if (this.armyDragArrow) {
+      this.armyDragArrow.update()
     }
 
     // Hovered tile
@@ -916,8 +923,7 @@ class Game {
     }
 
     this.updateArmyTileHighlights()
-    this.selectedArmyTile.unselectArmy()
-    this.selectedArmyTile = null
+    this.unselectArmy()
 
     for (let i = 0; i < 6; i++) {
       const armyTiles = this.selectedArmyTargetTiles[i]
@@ -942,12 +948,18 @@ class Game {
   selectArmy(tile: Tile) {
     this.selectedArmyTile = tile
     tile.selectArmy()
+
+    this.armyDragArrow = new ArmyDragArrow(tile)
   }
   unselectArmy() {
     if (!this.selectedArmyTile) return
 
     this.selectedArmyTile.unselectArmy()
     this.selectedArmyTile = null
+
+    if (this.armyDragArrow) {
+      this.armyDragArrow.destroy()
+    }
   }
   sendGoldToAlly() {
     Socket.send('sendGold')

@@ -18,6 +18,7 @@ export const TILE_IMAGES = [
   'house',
   'tree',
   'army',
+  'armyDragArrow',
   'border',
   'patternPreview',
   'blackOverlay',

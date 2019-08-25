@@ -178,10 +178,10 @@ const GameList = () => {
 
   return (
     <Container>
-      <Heading>Games</Heading>
+      <Heading>Live Matches</Heading>
       {store.runningGames.length > 0 && (
         <>
-          <SectionHeading>RUNNING</SectionHeading>
+          {/* <SectionHeading>RUNNING</SectionHeading> */}
           {store.runningGames.map(game => (
             <Game key={game.id}>
               <Row>
@@ -224,7 +224,8 @@ const GameList = () => {
       )}
       {store.finishedGames.length > 0 && (
         <>
-          <SectionHeading>FINISHED</SectionHeading>
+          <Heading>Match History</Heading>
+          {/* <SectionHeading>FINISHED</SectionHeading> */}
           {store.finishedGames.map(game => (
             <Game key={game.id}>
               <Row>
