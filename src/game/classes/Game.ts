@@ -657,13 +657,7 @@ class Game {
           if (t.ownerId !== playerId && !t.bedrock) {
             tilesToCapture.push(t)
 
-            if (
-              t.mountain ||
-              t.forest ||
-              t.building ||
-              (t.camp && t.army) ||
-              (!t.owner && t.camp)
-            ) {
+            if (t.mountain || t.forest || t.building || t.village || t.camp) {
               break
             }
           }
