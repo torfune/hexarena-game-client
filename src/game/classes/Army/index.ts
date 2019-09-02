@@ -185,6 +185,42 @@ class Army {
       tile.addArmy(this)
     }
   }
+  leaveBuilding() {
+    const { gsConfig, game } = store
+    if (!gsConfig || !game) return
+
+    this.isMoving = true
+    this.animationFraction = 0
+
+    const position = getPixelPosition(this.tile.axial)
+    const randomizedPositions = getUniqueRandomizedPositions(
+      UNIT_COUNT,
+      UNIT_RADIUS,
+      position,
+      UNIT_POSITION_OFFSET
+    )
+
+    for (let i = 0; i < UNIT_COUNT; i++) {
+      this.units[i].moveOn(randomizedPositions[i].x, randomizedPositions[i].y)
+    }
+  }
+  joinBuilding() {
+    const { gsConfig, game } = store
+    if (!gsConfig || !game) return
+
+    this.isMoving = true
+    this.animationFraction = 0
+
+    const position = getPixelPosition(this.tile.axial)
+    const doorPosition = {
+      x: position.x,
+      y: position.y + UNIT_DOOR_OFFSET,
+    }
+
+    for (let i = 0; i < UNIT_COUNT; i++) {
+      this.units[i].moveOn(doorPosition.x, doorPosition.y)
+    }
+  }
   destroy() {
     this.isDestroying = true
 

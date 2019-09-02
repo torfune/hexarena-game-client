@@ -175,11 +175,13 @@ class Tile {
     // }
   }
   startHover() {
+    if (!store.game) return
+
     if (this.building && !this.army) {
       this.showHitpoints()
     }
 
-    if (this.getActionType()) {
+    if (this.getActionType() && !store.game.selectedArmyTile) {
       this.addHighlight()
     }
   }
@@ -214,22 +216,7 @@ class Tile {
     }
 
     this.army = army
-
-    const pixel = getPixelPosition(this.axial)
-
-    this.image.armyIcon = createImage('armyIcon')
-    this.image.armyIcon.x = pixel.x
-    this.image.armyIcon.y = pixel.y
-    this.image.armyIcon.alpha = 0
-
-    new Animation(
-      this.image.armyIcon,
-      (image, fraction, context) => {
-        image.alpha = fraction
-        image.y = context.baseY - ARMY_ICON_OFFSET_Y * fraction
-      },
-      { context: { baseY: pixel.y }, speed: 0.05 }
-    )
+    this.showArmyIcon()
   }
   addContested() {
     // this.image.contested.visible = true
@@ -301,14 +288,36 @@ class Tile {
     }
   }
   removeArmy() {
-    if (!this.army || !this.image.armyIcon) {
-      return
-    }
+    if (!this.army || !store.game) return
 
     this.army = null
+    this.hideArmyIcon()
+
+    if (store.game.selectedArmyTile === this) {
+      this.unselectArmy()
+    }
+  }
+  showArmyIcon() {
+    const pixel = getPixelPosition(this.axial)
+
+    this.image.armyIcon = createImage('armyIcon')
+    this.image.armyIcon.x = pixel.x
+    this.image.armyIcon.y = pixel.y
+    this.image.armyIcon.alpha = 0
+
+    new Animation(
+      this.image.armyIcon,
+      (image, fraction, context) => {
+        image.alpha = fraction
+        image.y = context.baseY - ARMY_ICON_OFFSET_Y * fraction
+      },
+      { context: { baseY: pixel.y }, speed: 0.05 }
+    )
+  }
+  hideArmyIcon() {
+    if (!this.image.armyIcon) return
 
     const position = getPixelPosition(this.axial)
-
     new Animation(
       this.image.armyIcon,
       (image, fraction) => {
@@ -576,7 +585,7 @@ class Tile {
     }
 
     if (store.game.selectedArmyTile === this) {
-      store.game.unselectArmy()
+      this.unselectArmy()
     }
 
     this.owner = newOwner
@@ -589,98 +598,49 @@ class Tile {
     }
   }
   selectArmy() {
-    if (!this.image.pattern || !store.game) return
-
-    // const centerPixel = getPixelPosition(this.axial)
-    // for (let i = 0; i < 6; i++) {
-    //   const n = this.neighbors[i]
-    //   if (!n) continue
-
-    //   const direction = i
-    //   const image = n.imageSet.arrow[direction]
-
-    //   if (!image) {
-    //     const pixel = getPixelPosition(n.axial)
-    //     const arrow = createImage('arrow')
-    //     arrow.x = centerPixel.x
-    //     arrow.y = centerPixel.y
-    //     arrow.rotation = getArrowRotationBySide(direction)
-    //     arrow.alpha = 0
-    //     arrow.scale.set(0)
-
-    //     new Animation(
-    //       arrow,
-    //       (image: Sprite, fraction: number) => {
-    //         image.x = centerPixel.x + (pixel.x - centerPixel.x) * fraction
-    //         image.y = centerPixel.y + (pixel.y - centerPixel.y) * fraction
-    //         image.alpha = fraction
-    //         image.scale.set(fraction)
-    //       },
-    //       {
-    //         speed: 0.05,
-    //         ease: easeOutQuad,
-    //       }
-    //     )
-
-    //     n.imageSet.arrow[direction] = arrow
-    //   }
-    // }
+    if (!this.image.pattern || !store.game || !this.army) return
 
     const armyTargetTiles: Tile[][] = []
     for (let i = 0; i < 6; i++) {
-      let nextTile = this.neighbors[i]
       armyTargetTiles[i] = []
 
-      if (!nextTile) continue
-
-      armyTargetTiles[i].push(nextTile)
-
-      for (let j = 0; j < 4; j++) {
+      let nextTile = this.neighbors[i]
+      while (nextTile) {
+        armyTargetTiles[i].push(nextTile)
         const lastTile = armyTargetTiles[i][armyTargetTiles[i].length - 1]
         nextTile = lastTile.neighbors[i]
-
-        if (!nextTile) break
-
-        armyTargetTiles[i].push(nextTile)
       }
     }
 
+    this.hideArmyIcon()
+    this.army.leaveBuilding()
     store.game.selectedArmyTargetTiles = armyTargetTiles
   }
   unselectArmy() {
+    if (!store.game || !store.game.selectedArmyTile) return
+
+    if (store.game.armyDragArrow) {
+      store.game.armyDragArrow.destroy()
+    }
+
     if (this.image.pattern && this.owner) {
       this.image.pattern.tint = hex(this.owner.pattern)
     }
 
-    const centerPixel = getPixelPosition(this.axial)
-
     for (let i = 0; i < 6; i++) {
-      const n = this.neighbors[i]
-      if (!n) continue
-
-      const direction = i
-      const image = n.imageSet.arrow[direction]
-      const pixel = getPixelPosition(n.axial)
-      if (image) {
-        new Animation(
-          image,
-          (image: Sprite, fraction: number) => {
-            image.x = centerPixel.x + (pixel.x - centerPixel.x) * (1 - fraction)
-            image.y = centerPixel.y + (pixel.y - centerPixel.y) * (1 - fraction)
-            image.alpha = 1 - fraction
-            image.scale.set(1 - fraction)
-          },
-          {
-            speed: 0.05,
-            ease: easeInQuad,
-            onFinish: () => {
-              destroyImage('arrow', image)
-            },
-          }
-        )
-        n.imageSet.arrow[direction] = null
+      const armyTiles = store.game.selectedArmyTargetTiles[i]
+      for (let j = 0; j < armyTiles.length; j++) {
+        armyTiles[j].removeHighlight()
       }
     }
+
+    if (this.army) {
+      this.showArmyIcon()
+      this.army.joinBuilding()
+    }
+
+    store.game.selectedArmyTile = null
+    store.game.updatePatternPreviews()
   }
   updateNeighbors() {
     const neighbors = []

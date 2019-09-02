@@ -210,16 +210,8 @@ const getActionDescription = (
 ) => {
   if (!store.game) return null
 
-  if (actionType === 'SEND_ARMY') {
-    if (store.game.selectedArmyTile) {
-      if (store.game.hoveredTile !== store.game.selectedArmyTile) {
-        return 'Release to send army'
-      } else {
-        return 'Select direction'
-      }
-    } else {
-      return 'Drag & drop to send army'
-    }
+  if (actionType === 'SEND_ARMY' && !store.game.selectedArmyTile) {
+    return 'Drag & drop to send army'
   }
 
   return 'Click to start'

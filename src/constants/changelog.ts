@@ -1,5 +1,12 @@
 const changelog = [
   {
+    label: 'Update 2/9',
+    changes: [
+      'Army range is infinite',
+      'Ranked games temporarily disabled for 1 day',
+    ],
+  },
+  {
     label: 'Update 17/8',
     changes: ['New Capital texture', 'Sandbox/Tutorial mode'],
   },

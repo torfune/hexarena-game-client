@@ -53,11 +53,12 @@ const HoverPreview = () => {
     | null = hoveredTile.getActionType(true)
   const structure = hoveredTile.getStructureName()
 
-  if (
-    (hoveredTile.army && hoveredTile.ownerId === store.game.playerId) ||
-    store.game.selectedArmyTile
-  ) {
+  if (hoveredTile.army && hoveredTile.ownerId === store.game.playerId) {
     actionType = 'SEND_ARMY'
+  }
+
+  if (store.game.selectedArmyTile) {
+    actionType = null
   }
 
   if (

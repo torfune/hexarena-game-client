@@ -420,7 +420,7 @@ class Game {
       hoveredTile === this.selectedArmyTile &&
       button !== 2
     ) {
-      this.unselectArmy()
+      this.selectedArmyTile.unselectArmy()
       return
     }
 
@@ -468,7 +468,7 @@ class Game {
 
     if (!hoveredTile) {
       if (this.selectedArmyTile) {
-        this.unselectArmy()
+        this.selectedArmyTile.unselectArmy()
       }
       return
     }
@@ -621,9 +621,9 @@ class Game {
       }
 
       if (direction !== null) {
-        for (let i = 0; i < store.gsConfig.ARMY_RANGE; i++) {
-          const t = this.selectedArmyTargetTiles[direction][i]
-
+        const targetTiles = this.selectedArmyTargetTiles[direction]
+        for (let i = 0; i < targetTiles.length; i++) {
+          const t = targetTiles[i]
           if (!t) continue
 
           // Enemy Mountain
@@ -892,13 +892,11 @@ class Game {
     }
 
     if (direction !== null) {
-      for (let i = 0; i < gsConfig.ARMY_RANGE; i++) {
-        const t = this.selectedArmyTargetTiles[direction][i]
-
+      const targetTiles = this.selectedArmyTargetTiles[direction]
+      for (let i = 0; i < targetTiles.length; i++) {
+        const t = targetTiles[i]
         if (!t || !t.owner || t.owner.id !== this.playerId) continue
-
         t.addHighlight()
-
         if (t.building || t.camp) break
       }
     }
@@ -920,17 +918,8 @@ class Game {
     if (index !== null) {
       const { x, z } = this.selectedArmyTile.axial
       Socket.send('sendArmy', `${x}|${z}|${index}`)
-    }
-
-    this.updateArmyTileHighlights()
-    this.unselectArmy()
-
-    for (let i = 0; i < 6; i++) {
-      const armyTiles = this.selectedArmyTargetTiles[i]
-
-      for (let j = 0; j < armyTiles.length; j++) {
-        armyTiles[j].removeHighlight()
-      }
+    } else {
+      this.selectedArmyTile.unselectArmy()
     }
   }
   updateStageScale() {
@@ -950,16 +939,6 @@ class Game {
     tile.selectArmy()
 
     this.armyDragArrow = new ArmyDragArrow(tile)
-  }
-  unselectArmy() {
-    if (!this.selectedArmyTile) return
-
-    this.selectedArmyTile.unselectArmy()
-    this.selectedArmyTile = null
-
-    if (this.armyDragArrow) {
-      this.armyDragArrow.destroy()
-    }
   }
   sendGoldToAlly() {
     Socket.send('sendGold')

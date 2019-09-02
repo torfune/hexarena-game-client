@@ -57,20 +57,28 @@ class ArmyDragArrow {
     this.head.rotation = angle
 
     let canSendArmy = false
-    // const { hoveredTile, selectedArmyTile } = store.game
-    // if ((hoveredTile, selectedArmyTile)) {
-    //   let index = null
-    //   for (let i = 0; i < 6; i++) {
-    //     if (store.game.selectedArmyTargetTiles[i].includes(hoveredTile)) {
-    //       index = i
-    //       break
-    //     }
-    //   }
+    const { hoveredTile, selectedArmyTile } = store.game
+    if (hoveredTile && selectedArmyTile) {
+      let index = null
+      for (let i = 0; i < 6; i++) {
+        if (store.game.selectedArmyTargetTiles[i].includes(hoveredTile)) {
+          index = i
+          break
+        }
+      }
 
-    //   if (index !== null) {
-    //     canSendArmy = true
-    //   }
-    // }
+      if (index !== null) {
+        canSendArmy = true
+      }
+    }
+
+    if (canSendArmy) {
+      this.body.alpha = 0.8
+      this.head.alpha = 1
+    } else {
+      this.body.alpha = 0.2
+      this.head.alpha = 0.4
+    }
   }
 
   destroy() {
