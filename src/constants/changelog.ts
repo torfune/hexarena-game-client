@@ -3,7 +3,7 @@ const changelog = [
     label: 'Update 2/9',
     changes: [
       'Army range is infinite',
-      'Army stops after capturing a Village or a Camp',
+      'Army stops after capturing a Village',
       'Ranked games temporarily disabled for 1 day',
     ],
   },

@@ -14,9 +14,10 @@ class ArmyDragArrow {
     this.tile = tile
 
     this.body.anchor.set(0, 0.5)
+    this.body.scale.y = 2.5
     this.head.anchor.set(0, 0.5)
 
-    this.head.scale.set(1.5)
+    this.head.scale.set(2)
 
     this.update()
   }
@@ -25,7 +26,7 @@ class ArmyDragArrow {
     if (!store.game) return
 
     const pixel = getPixelPosition(this.tile.axial)
-    pixel.y += 20
+    // pixel.y += 40
 
     const { cursor, camera, scale } = store.game
 
@@ -73,8 +74,8 @@ class ArmyDragArrow {
     }
 
     if (canSendArmy) {
-      this.body.alpha = 0.8
-      this.head.alpha = 1
+      this.body.alpha = 0.7
+      this.head.alpha = 0.9
     } else {
       this.body.alpha = 0.2
       this.head.alpha = 0.4
