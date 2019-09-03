@@ -921,6 +921,9 @@ class Game {
     if (index !== null) {
       const { x, z } = this.selectedArmyTile.axial
       Socket.send('sendArmy', `${x}|${z}|${index}`)
+      if (this.armyDragArrow) {
+        this.armyDragArrow.destroy()
+      }
     } else {
       this.selectedArmyTile.unselectArmy()
     }
