@@ -11,11 +11,11 @@ import { Link } from 'react-router-dom'
 
 const Container = styled(animated.div)<{ spectating: boolean }>`
   position: absolute;
-  margin-top: ${props => (props.spectating ? '80px' : 0)};
+  margin-top: ${props => (props.spectating ? '60px' : 0)};
   left: 0;
   width: ${props =>
     props.spectating ? `calc(100vw - ${CHAT_WIDTH})` : '100vw'};
-  height: ${props => (props.spectating ? 'calc(100vh - 80px)' : '100vh')};
+  height: ${props => (props.spectating ? 'calc(100vh - 60px)' : '100vh')};
   background: #00000088;
   border-bottom: 1px solid #222;
   z-index: 11;
