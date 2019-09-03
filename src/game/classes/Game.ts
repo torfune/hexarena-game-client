@@ -661,7 +661,6 @@ class Game {
               t.mountain ||
               t.forest ||
               t.building ||
-              t.village ||
               (t.camp && t.army) ||
               (!t.owner && t.camp)
             ) {

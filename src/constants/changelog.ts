@@ -2,6 +2,8 @@ const changelog = [
   {
     label: 'Update 3/9',
     changes: [
+      'Army range set to 6 tiles',
+      'Army no longer stops after capturing a village',
       'Changed battle mechanics - attacking army no longer captures the tile',
       'Army training time: 8s -> 10s',
       'Fixed glitchy army drag arrow',

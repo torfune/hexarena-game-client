@@ -12,6 +12,9 @@ interface GameServerConfig {
   // MATCH MAKING
   COUNTDOWN_TIME: number
 
+  // ARMIES
+  ARMY_RANGE: number
+
   // VISION
   DEFAULT_VISION: number
   MOUNTAIN_VISION: number

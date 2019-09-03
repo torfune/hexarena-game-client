@@ -598,17 +598,24 @@ class Tile {
     }
   }
   selectArmy() {
-    if (!this.image.pattern || !store.game || !this.army) return
+    if (!this.image.pattern || !store.game || !this.army || !store.gsConfig)
+      return
 
     const armyTargetTiles: Tile[][] = []
     for (let i = 0; i < 6; i++) {
       armyTargetTiles[i] = []
 
-      let nextTile = this.neighbors[i]
-      while (nextTile) {
+      const nextTile = this.neighbors[i]
+      if (nextTile) {
         armyTargetTiles[i].push(nextTile)
+      }
+
+      for (let j = 1; j < store.gsConfig.ARMY_RANGE; j++) {
         const lastTile = armyTargetTiles[i][armyTargetTiles[i].length - 1]
-        nextTile = lastTile.neighbors[i]
+        const nextTile = lastTile.neighbors[i]
+        if (!nextTile) break
+
+        armyTargetTiles[i].push(nextTile)
       }
     }
 
