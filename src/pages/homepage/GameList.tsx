@@ -9,7 +9,7 @@ import Timer from '../../components/Timer'
 
 const Container = styled.div`
   color: #fff;
-  padding-top: calc(48px + 80px);
+  padding-top: calc(48px + 60px);
   height: 0;
 
   @media (max-width: ${BREAKPOINT.HIDE_CHAT}) {
@@ -23,15 +23,9 @@ const Container = styled.div`
 `
 
 const Heading = styled.h2`
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 500;
-`
-
-const SectionHeading = styled.p`
-  margin-top: 32px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #aaa;
+  margin-bottom: 24px;
 `
 
 const Game = styled.div`
@@ -41,8 +35,7 @@ const Game = styled.div`
   border-radius: 8px;
   padding: 12px 24px;
   width: 260px;
-  margin-top: 16px;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 `
 
 const Row = styled.div`
@@ -170,6 +163,10 @@ const Time = styled.p<{ grey?: boolean }>`
   margin-left: auto;
 `
 
+const LiveMatches = styled.div`
+  margin-bottom: 64px;
+`
+
 const GameList = () => {
   useEffect(() => {
     store.fetchRunningGames()
@@ -178,10 +175,9 @@ const GameList = () => {
 
   return (
     <Container>
-      <Heading>Live Matches</Heading>
       {store.runningGames.length > 0 && (
-        <>
-          {/* <SectionHeading>RUNNING</SectionHeading> */}
+        <LiveMatches>
+          <Heading>Live Matches</Heading>
           {store.runningGames.map(game => (
             <Game key={game.id}>
               <Row>
@@ -220,12 +216,11 @@ const GameList = () => {
               </Row>
             </Game>
           ))}
-        </>
+        </LiveMatches>
       )}
       {store.finishedGames.length > 0 && (
         <>
           <Heading>Match History</Heading>
-          {/* <SectionHeading>FINISHED</SectionHeading> */}
           {store.finishedGames.map(game => (
             <Game key={game.id}>
               <Row>

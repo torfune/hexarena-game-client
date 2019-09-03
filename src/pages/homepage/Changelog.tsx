@@ -32,22 +32,22 @@ const Container = styled.div`
 `
 
 const Heading = styled.h2`
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 500;
   color: #fff;
 `
 
 const ReleaseHead = styled.div`
   background: #222;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 500;
-  margin-top: 32px;
-  padding: 16px 32px;
+  margin-top: 24px;
+  padding: 10px 24px;
   border: 1px solid #111;
   border-bottom: 0;
   color: #fff;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
 `
 
 const ReleaseBody = styled.div`
@@ -56,22 +56,22 @@ const ReleaseBody = styled.div`
   background: #282828;
   padding: 0 32px;
   border: 1px solid #111;
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
 `
 
 const Point = styled.p`
-  font-size: 20px;
-  margin-top: 20px;
-  margin-bottom: 20px;
+  font-size: 16px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   position: relative;
   line-height: 32px;
   padding-left: 32px;
 
   ::before {
     content: '';
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     background: ${PRIMARY};
     display: block;
     position: absolute;
@@ -87,7 +87,7 @@ const Changelog = () => (
 
     {changelog.map(release => (
       <Fragment key={release.label}>
-        <ReleaseHead>{release.label}</ReleaseHead>
+        <ReleaseHead>{release.label}/2019</ReleaseHead>
         <ReleaseBody>
           {release.changes.map(change => (
             <Point key={change}>{change}</Point>

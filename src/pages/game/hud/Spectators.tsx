@@ -10,7 +10,7 @@ const Container = styled.div<{ spectating: boolean }>`
   width: 90px;
   position: absolute;
   right: ${props => (props.spectating ? CHAT_WIDTH : 0)};
-  top: ${props => (props.spectating ? '80px' : 0)};
+  top: ${props => (props.spectating ? '60px' : 0)};
   display: flex;
   flex-direction: column;
   border-bottom-left-radius: 8px;

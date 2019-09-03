@@ -19,7 +19,7 @@ const Container = styled.div`
   padding-left: 64px;
   padding-right: 64px;
   z-index: 1;
-  padding-top: 80px;
+  padding-top: 60px;
   display: grid;
   grid-template-columns: 2fr 1.5fr 2fr;
   grid-gap: 16px;

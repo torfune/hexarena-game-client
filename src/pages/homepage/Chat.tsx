@@ -20,9 +20,9 @@ const Container = styled.div`
   padding-left: 32px;
   padding-bottom: 32px;
   padding-top: 48px;
-  top: 80px;
+  top: 60px;
   width: ${CHAT_WIDTH};
-  height: calc(100vh - 80px);
+  height: calc(100vh - 60px);
 
   @media (max-width: ${BREAKPOINT.HIDE_CHAT}) {
     display: none;
@@ -30,13 +30,13 @@ const Container = styled.div`
 `
 
 const Heading = styled.h2`
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 500;
 `
 
 const StyledSimpleBar = styled(SimpleBar)`
-  margin-top: 32px;
-  height: calc(100% - 71px - 56px);
+  margin-top: 24px;
+  height: calc(100% - 100px);
 `
 
 const Message = styled.div`

@@ -33,10 +33,10 @@ const Container = styled.div`
 `
 
 const Heading = styled.h2`
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 500;
   color: #fff;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 
   @media (max-width: ${BREAKPOINT.FINAL}) {
     text-align: center;
@@ -102,7 +102,7 @@ const TopPlayers = () => {
 
   return (
     <Container>
-      <Heading>Top {store.topPlayers.length} players</Heading>
+      <Heading>Leaderboard</Heading>
 
       <ListHeading>
         <p>#</p>

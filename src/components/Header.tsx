@@ -16,7 +16,7 @@ const Container = styled.div`
   display: flex;
   background: #111111f8;
   padding: 0 48px;
-  height: 80px;
+  height: 60px;
   justify-content: flex-end;
   align-items: center;
   border-bottom: 1px solid #000;
@@ -24,7 +24,7 @@ const Container = styled.div`
 `
 
 const Logo = styled.h1`
-  font-size: 42px;
+  font-size: 32px;
   color: #fff;
   display: flex;
   align-items: center;
@@ -34,7 +34,7 @@ const Logo = styled.h1`
   }
 
   > img {
-    height: 30px;
+    height: 22px;
     margin-right: 12px;
     filter: invert(1);
   }
@@ -51,9 +51,9 @@ const Logo = styled.h1`
 `
 
 const Version = styled.p`
-  font-size: 28px;
-  margin-left: 32px;
-  padding-left: 32px;
+  font-size: 22px;
+  margin-left: 24px;
+  padding-left: 24px;
   border-left: 1px solid #fff;
   font-weight: 200;
 
@@ -63,7 +63,7 @@ const Version = styled.p`
 `
 
 const Description = styled.p`
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 200;
 
   @media (max-width: 1400px) {
@@ -91,8 +91,8 @@ const Button = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 34px;
-  width: 34px;
+  height: 28px;
+  width: 28px;
   margin-left: 16px;
   transition: 100ms;
 
@@ -113,12 +113,12 @@ const SpectateSection = styled.div`
   align-items: center;
 
   > img {
-    height: 48px;
+    height: 32px;
     filter: invert(1);
   }
 
   p {
-    font-size: 26px;
+    font-size: 24px;
     margin-left: 16px;
   }
 `
@@ -128,24 +128,10 @@ const QueueSection = styled.div`
   align-items: center;
 `
 
-const TimesWrapper = styled.div`
-  width: 140px;
-  display: flex;
-  justify-content: space-between;
-  margin-right: 16px;
-`
-
 const Time = styled.p`
-  text-align: right;
   color: #fff;
-  font-weight: 300;
-  font-size: 14px;
-`
-
-const Label = styled.p`
-  text-align: right;
-  font-weight: 500;
-  font-size: 14px;
+  font-weight: 400;
+  font-size: 24px;
 `
 
 const Header = () => {
@@ -235,27 +221,13 @@ const Header = () => {
 
       {queue ? (
         <QueueSection>
-          <TimesWrapper>
-            <div>
-              <Label>Current:</Label>
-              <Label>Estimated:</Label>
-              <Label>Players:</Label>
-            </div>
-            <div>
-              <Time>{formatTime(queue.currentTime)}</Time>
-              <Time>
-                {queue.averageTime ? formatTime(queue.averageTime) : '-'}
-              </Time>
-              <Time>{queue.playerCount || '-'}</Time>
-            </div>
-          </TimesWrapper>
-
+          <Time>{formatTime(queue.currentTime)}</Time>
           <Button onClick={cancelQueue}>
             <img src="/static/icons/cross.svg" />
           </Button>
         </QueueSection>
       ) : (
-        <Description>Competitive strategy game</Description>
+        <Description>Realtime Strategy Game</Description>
       )}
 
       <Version>Alpha {version.slice(0, 4)}</Version>

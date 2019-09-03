@@ -7,7 +7,7 @@ import getHudScale from '../../../utils/getHudScale'
 
 const Container = styled.div<{ spectating: boolean }>`
   position: absolute;
-  top: ${props => (props.spectating ? '80px' : 0)};
+  top: ${props => (props.spectating ? '60px' : 0)};
   left: 0;
   width: ${props =>
     props.spectating ? `calc(100vw - ${CHAT_WIDTH})` : '100vw'};

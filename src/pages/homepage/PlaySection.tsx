@@ -34,17 +34,12 @@ const Container = styled.div`
 `
 
 const Heading = styled.h2`
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 500;
 `
 
-const Row = styled.div`
-  margin-top: 32px;
-  display: flex;
-`
-
 const BreakRow = styled.div`
-  margin-top: 32px;
+  margin-top: 24px;
   display: flex;
 
   @media (max-width: ${BREAKPOINT.MAIN_1}) {

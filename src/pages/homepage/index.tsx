@@ -14,7 +14,6 @@ import Socket from '../../websockets/Socket'
 import Changelog from './Changelog'
 import { CHAT_WIDTH, BREAKPOINT } from '../../constants/react'
 import GameList from './GameList'
-import HowToPlay from '../../components/HowToPlay'
 
 const Container = styled.div`
   padding-bottom: 128px;
@@ -22,7 +21,7 @@ const Container = styled.div`
 
 const Grid = styled.div`
   width: calc(100vw - ${CHAT_WIDTH} - 310px);
-  padding-top: calc(48px + 80px);
+  padding-top: calc(48px + 60px);
   padding-left: 48px;
   padding-right: 96px;
   display: grid;
