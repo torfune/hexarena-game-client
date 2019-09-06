@@ -1,5 +1,13 @@
 const changelog = [
   {
+    label: 'Update 6/9',
+    changes: [
+      'Game time: 8m -> 10m',
+      'Bigger world size',
+      'Fixed "same pattern" bug',
+    ],
+  },
+  {
     label: 'Update 3/9',
     changes: [
       'Army range set to 6 tiles',
