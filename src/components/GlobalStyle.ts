@@ -18,10 +18,6 @@ const GlobalStyle = createGlobalStyle`
     background: #2a2a2a;
   }
 
-  body {
-    background: #2a2a2a;
-  }
-
   a {
     text-decoration: none;
   }

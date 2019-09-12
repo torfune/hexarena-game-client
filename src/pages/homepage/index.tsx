@@ -53,10 +53,28 @@ const Grid = styled.div`
 
 const Row = styled.div`
   display: flex;
+  z-index: 10;
+  position: relative;
 
   @media (max-width: ${BREAKPOINT.FINAL}) {
     flex-direction: column;
     align-items: center;
+  }
+`
+
+const OFFSET = '400px'
+const Screenshot = styled.div`
+  position: absolute;
+  top: 0;
+  left: -${OFFSET};
+  opacity: 0.045;
+  z-index: 0;
+  width: calc(100vw + ${OFFSET});
+  height: 4000px;
+  background: url('/static/images/screenshot.png');
+
+  @media (max-width: ${BREAKPOINT.FINAL}) {
+    display: none;
   }
 `
 
@@ -77,6 +95,7 @@ const Homepage: React.FC<Props> = ({ history }) => {
   return (
     <Container>
       <Header />
+      <Screenshot />
 
       <Row>
         <Grid>
