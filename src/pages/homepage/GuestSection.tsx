@@ -79,7 +79,7 @@ const GuestSection: React.FC<Props> = ({ play }) => {
   return (
     <Container>
       {invalidName ? (
-        <Heading red>This name is taken</Heading>
+        <Heading red>Name is taken or invalid</Heading>
       ) : (
         <Heading>PLAY AS GUEST</Heading>
       )}
