@@ -9,8 +9,7 @@ import loadImages from '../game/functions/loadImages'
 import Header from './Header'
 import Socket from '../websockets/Socket'
 import { version } from '../../package.json'
-import Api from '../Api'
-import getGsHost from '../utils/getGsHost'
+import Api, { gsHost } from '../Api'
 
 const Container = styled.div`
   margin-top: 200px;
@@ -70,9 +69,7 @@ const Loader: React.FC = () => {
         }
 
         store.error = {
-          message: `Client and server version doesn't match. Client: ${version} | Server: ${
-            status.version
-          }`,
+          message: `Client and server version doesn't match. Client: ${version} | Server: ${status.version}`,
           goHome: true,
         }
       }
@@ -89,8 +86,8 @@ const Loader: React.FC = () => {
       await Api.ws.get('/status')
 
       // Socket connection
-      const gsHost = await getGsHost()
-      await Socket.connect(gsHost)
+      const host = await gsHost()
+      await Socket.connect(host)
 
       // Load images
       await loadImages()

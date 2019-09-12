@@ -8,6 +8,7 @@ import SimpleBar from 'simplebar-react'
 import 'simplebar/dist/simplebar.min.css'
 import { CHAT_WIDTH, BREAKPOINT } from '../../constants/react'
 import { useAuth } from '../../auth'
+import ChatMessage from './ChatMessage'
 
 const Container = styled.div`
   z-index: 2;
@@ -37,29 +38,6 @@ const Heading = styled.h2`
 const StyledSimpleBar = styled(SimpleBar)`
   margin-top: 24px;
   height: calc(100% - 100px);
-`
-
-const Message = styled.div`
-  display: flex;
-`
-
-const MessageTime = styled.p<{ infoMessage: boolean }>`
-  color: ${prop => (prop.infoMessage ? '#bbb' : '#eee')};
-  user-select: text;
-  font-weight: 300;
-`
-
-const MessageAuthor = styled.p<{ infoMessage: boolean }>`
-  font-weight: 600;
-  user-select: text;
-  white-space: nowrap;
-  color: ${prop => (prop.infoMessage ? '#bbb' : '#eee')};
-`
-
-const MessageContent = styled.p<{ infoMessage: boolean }>`
-  margin-left: 10px;
-  color: ${prop => (prop.infoMessage ? '#bbb' : '#eee')};
-  user-select: text;
 `
 
 const Input = styled.input`
@@ -195,26 +173,8 @@ const Chat = () => {
       <Heading>Chat</Heading>
 
       <StyledSimpleBar id="chat-message-container">
-        {store.chatMessages.map(({ time, playerName, content }, index) => (
-          <Message key={index}>
-            <MessageTime infoMessage={playerName === '[info]'}>
-              [
-              {new Date(time).getHours() < 10
-                ? String(new Date(time).getHours()).padStart(2, '0')
-                : new Date(time).getHours()}
-              :
-              {new Date(time).getMinutes() < 10
-                ? String(new Date(time).getMinutes()).padStart(2, '0')
-                : new Date(time).getMinutes()}
-              ]&nbsp;
-            </MessageTime>
-            <MessageAuthor infoMessage={playerName === '[info]'}>
-              {playerName}:
-            </MessageAuthor>
-            <MessageContent infoMessage={playerName === '[info]'}>
-              {content}
-            </MessageContent>
-          </Message>
+        {store.chatMessages.map((message, index) => (
+          <ChatMessage key={index} {...message} />
         ))}
       </StyledSimpleBar>
 
@@ -229,11 +189,11 @@ const Chat = () => {
 
       {store.user && store.user.name && (
         <>
-          {store.user.muted ? (
+          {store.user.mute ? (
             <>
               <SignInMessage>
                 <img src="/static/icons/info-circle.svg" />
-                <p>Chat muted for offensive language.</p>
+                <p>Chat muted for spamming or offensive language.</p>
               </SignInMessage>
             </>
           ) : (

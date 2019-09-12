@@ -129,6 +129,12 @@ const Profile = () => {
               <span>{store.user.diamonds}</span>
             </EloSection>
           )}
+
+          {!!store.user.moderator && (
+            <EloSection>
+              <p>CHAT MODERATOR</p>
+            </EloSection>
+          )}
         </>
       )}
       {!store.queue && <LogoutButton onClick={logout}>Logout</LogoutButton>}
