@@ -1,10 +1,11 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import store from '../../store'
 import { useEffect } from 'react'
 import React from 'react'
 import Api from '../../Api'
-import { BREAKPOINT } from '../../constants/react'
+import { BREAKPOINT, PRIMARY } from '../../constants/react'
+import shadeColor from '../../utils/shade'
 
 const Container = styled.div`
   grid-column: 1;
@@ -72,10 +73,24 @@ const ListHeading = styled.div`
   min-width: 300px;
 `
 
-const PlayerRow = styled.div`
+const PlayerRow = styled.div<{ highlight?: boolean }>`
   padding: 8px 24px;
   display: grid;
   grid-template-columns: 32px 1fr auto;
+
+  ${props =>
+    props.highlight
+      ? css`
+          background: ${shadeColor(PRIMARY, -10)};
+          border-top: 1px solid #111;
+          border-bottom: 1px solid #111;
+
+          > p {
+            color: #fff !important;
+            font-weight: 600 !important;
+          }
+        `
+      : null}
 `
 
 const Name = styled.p<{ grey?: boolean }>`
@@ -94,6 +109,8 @@ const Elo = styled.p`
 `
 
 const TopPlayers = () => {
+  const { user } = store
+
   useEffect(() => {
     Api.ws.get(`/users/top-players`).then(response => {
       store.topPlayers = response.data
@@ -112,7 +129,10 @@ const TopPlayers = () => {
 
       <List>
         {store.topPlayers.map((topPlayer, index) => (
-          <PlayerRow key={index}>
+          <PlayerRow
+            key={index}
+            highlight={!!user && topPlayer.name === user.name}
+          >
             <Number>{index + 1}.</Number>
             <Name>{topPlayer.name}</Name>
             <Elo>{topPlayer.elo.toLocaleString()}</Elo>
