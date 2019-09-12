@@ -55,6 +55,11 @@ const Row = styled.div`
   display: flex;
   z-index: 10;
   position: relative;
+  width: calc(100vw - ${CHAT_WIDTH});
+
+  @media (max-width: ${BREAKPOINT.HIDE_CHAT}) {
+    width: calc(100vw);
+  }
 
   @media (max-width: ${BREAKPOINT.FINAL}) {
     flex-direction: column;
@@ -95,7 +100,6 @@ const Homepage: React.FC<Props> = ({ history }) => {
   return (
     <Container>
       <Header />
-      <Screenshot />
 
       <Row>
         <Grid>
@@ -112,6 +116,7 @@ const Homepage: React.FC<Props> = ({ history }) => {
         <GameList />
       </Row>
 
+      <Screenshot />
       <Chat />
     </Container>
   )
