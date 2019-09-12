@@ -53,7 +53,7 @@ const Grid = styled.div`
 
 const Row = styled.div`
   display: flex;
-  z-index: 10;
+  z-index: 1;
   position: relative;
   width: calc(100vw - ${CHAT_WIDTH});
 
