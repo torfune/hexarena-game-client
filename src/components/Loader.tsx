@@ -10,6 +10,7 @@ import Header from './Header'
 import Socket from '../websockets/Socket'
 import { version } from '../../package.json'
 import Api, { gsHost } from '../Api'
+import Axios from 'axios'
 
 const Container = styled.div`
   margin-top: 200px;
@@ -49,7 +50,13 @@ const ReloadButton = styled.div`
 const Loader: React.FC = () => {
   useEffect(() => {
     initialize()
+    getBadWords()
   }, [])
+
+  const getBadWords = async () => {
+    const { data } = await Axios.get('http://localhost:5000/bad-words')
+    store.badWords = data
+  }
 
   const initialize = async () => {
     try {

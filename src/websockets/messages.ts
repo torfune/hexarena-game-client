@@ -15,6 +15,7 @@ import updateProps from '../game/functions/updateProps'
 import GoldAnimation from '../game/classes/GoldAnimation'
 import Api from '../Api'
 import RunningGame from '../types/RunningGame'
+import Axios from 'axios'
 
 // Messages: Gameserver -> Frontend
 export type MessageGS =

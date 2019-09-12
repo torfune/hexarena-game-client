@@ -34,6 +34,7 @@ class Store {
     message: string
     goHome?: boolean
   }
+  @observable badWords: string[] = []
   routerHistory: History | null = null
   gsHost: string | null = null
 
