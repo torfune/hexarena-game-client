@@ -785,13 +785,13 @@ class Game {
 
     this.updateBorders()
   }
-  setCameraToAxialPosition(axial: Axial) {
+  setCameraToAxialPosition(axial: Axial, xOffset: number = 0) {
     if (!this.pixi) return
 
     const { innerWidth, innerHeight } = window
     const pixel = getPixelPosition(axial)
     this.camera = {
-      x: innerWidth / 2 - pixel.x * this.scale,
+      x: (innerWidth - xOffset) / 2 - pixel.x * this.scale,
       y: innerHeight / 2 - pixel.y * this.scale,
     }
 
