@@ -6,7 +6,7 @@ import React, { Fragment } from 'react'
 const Container = styled.div`
   margin-top: 96px;
   grid-column: 2;
-  grid-row: 4;
+  grid-row: 3;
 
   @media (max-width: ${BREAKPOINT.MAIN_1}) {
     grid-column: 1 / span 2;
