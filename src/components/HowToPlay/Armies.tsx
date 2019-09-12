@@ -24,7 +24,7 @@ const Armies = () => {
 
       <TabDescription>
         <li>Use Armies to attack your enemy.</li>
-        <li>An Army captures tiles in it's direction until it's blocked.</li>
+        <li>An Army captures 6 tiles in it's direction if it's not blocked.</li>
         <li>Can be trained in Castle and Capital (50% slower).</li>
         <li>Can be blocked by Mountain, Building, Forest or enemy Army.</li>
       </TabDescription>

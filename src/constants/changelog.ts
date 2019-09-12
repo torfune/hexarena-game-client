@@ -1,5 +1,13 @@
 const changelog = [
   {
+    label: 'Update 12/9',
+    changes: [
+      'Slower village grow rate: 1:00 -> 1:30',
+      'Slightly more mountains and forests in 1v1 mode',
+      'Small UI improvements',
+    ],
+  },
+  {
     label: 'Update 6/9',
     changes: [
       'Game time: 8m -> 10m',
