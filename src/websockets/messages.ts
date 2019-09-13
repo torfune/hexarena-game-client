@@ -50,7 +50,7 @@ const messages: {
 } = {
   // Arrays
   chatMessages: (payload: string) => {
-    store.chatMessages = convertArray(payload, {
+    const chatMessages = convertArray(payload, {
       time: 'number',
       playerName: 'string',
       content: 'string',
@@ -59,6 +59,11 @@ const messages: {
       playerName: string
       content: string
     }[]
+    if (!store.chatMessages.length) {
+      store.chatMessages = chatMessages
+    } else {
+      store.chatMessages = store.chatMessages.concat(chatMessages)
+    }
   },
   actions: (payload: string) => {
     if (!store.game) return
