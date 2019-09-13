@@ -15,6 +15,7 @@ import updateProps from '../game/functions/updateProps'
 import GoldAnimation from '../game/classes/GoldAnimation'
 import Api from '../Api'
 import RunningGame from '../types/RunningGame'
+import { CHAT_WIDTH } from '../constants/react'
 
 // Messages: Gameserver -> Frontend
 export type MessageGS =
@@ -545,6 +546,12 @@ const messages: {
     }
 
     store.game = new Game(id, mode, ranked)
+    store.game.scale = 0.2
+    store.game.targetScale = 0.2
+    store.game.setCameraToAxialPosition(
+      { x: 0, z: 0 },
+      Number(CHAT_WIDTH.replace('px', ''))
+    )
     store.spectating = true
 
     if (store.routerHistory && store.routerHistory.push) {
