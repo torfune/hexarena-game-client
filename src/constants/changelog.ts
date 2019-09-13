@@ -1,5 +1,13 @@
 const changelog = [
   {
+    label: 'Update 13/9',
+    changes: [
+      'Default village income: 2g/s -> 1g/s',
+      'Base economy: 6g/s -> 8g/s',
+      '1v1 forest count: 70 -> 80',
+    ],
+  },
+  {
     label: 'Update 12/9',
     changes: [
       'Slower village grow rate: 1:00 -> 1:30',
