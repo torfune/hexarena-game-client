@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import React, { useEffect } from 'react'
 import Header from '../../components/Header'
+import { version } from '../../../package.json'
 import PlaySection from './PlaySection'
 import Chat from './Chat'
 import store from '../../store'
@@ -76,7 +77,7 @@ const Screenshot = styled.div`
   z-index: 0;
   width: calc(100vw + ${OFFSET});
   height: 4000px;
-  background: url('/static/images/screenshot.png');
+  background: url(${`/static/images/screenshot.png?${version}`});
 
   @media (max-width: ${BREAKPOINT.FINAL}) {
     display: none;
