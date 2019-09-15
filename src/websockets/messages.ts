@@ -13,8 +13,6 @@ import Village from '../game/classes/Village'
 import Forest from '../game/classes/Forest'
 import updateProps from '../game/functions/updateProps'
 import GoldAnimation from '../game/classes/GoldAnimation'
-import Api from '../Api'
-import RunningGame from '../types/RunningGame'
 import { CHAT_WIDTH } from '../constants/react'
 
 // Messages: Gameserver -> Frontend
@@ -292,7 +290,9 @@ const messages: {
       }
 
       // Update
-      updateProps(village, parsed[i])
+      if (village) {
+        updateProps(village, parsed[i])
+      }
     }
   },
   players: (payload: string) => {
