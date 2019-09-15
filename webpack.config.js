@@ -48,9 +48,9 @@ module.exports = (_, argv) => {
     config.devtool = 'eval' // 'inline-sourcemap'
   }
 
-  // if (argv.mode === 'production') {
-  //   config.devtool = 'source-map'
-  // }
+  if (argv.mode === 'production') {
+    config.devtool = 'source-map'
+  }
 
   return config
 }
