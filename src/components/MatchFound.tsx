@@ -89,10 +89,16 @@ const MatchFound = () => {
   const handleAcceptClick = () => {
     Socket.send('acceptMatch')
     setAccepted(true)
+    if (store.notification) {
+      store.notification.close()
+    }
   }
 
   const handleDeclineClick = () => {
     Socket.send('declineMatch')
+    if (store.notification) {
+      store.notification.close()
+    }
   }
 
   useEffect(() => {

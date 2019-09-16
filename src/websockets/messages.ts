@@ -480,6 +480,9 @@ const messages: {
     store.queue = null
     store.matchFound = false
     store.spectating = false
+    if (store.notification) {
+      store.notification.close()
+    }
 
     if (store.routerHistory && store.routerHistory.push) {
       store.routerHistory.push('/game')
