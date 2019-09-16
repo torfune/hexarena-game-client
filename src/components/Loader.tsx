@@ -54,37 +54,30 @@ const Loader: React.FC = () => {
 
   const initialize = async () => {
     try {
-      // GameServer status
-      const { data: status } = await Api.gs.get('/status')
+      const [statusRes, configRes] = await Promise.all([
+        Api.gs.get('/status'),
+        Api.gs.get(`/config`),
+        Api.ws.get('/status'),
+      ])
 
-      const gsVersion = status.version.slice(0, 4)
+      // Version check
+      const gsVersion = statusRes.data.version.slice(0, 4)
       const feVersion = version.slice(0, 4)
-
       if (gsVersion !== feVersion) {
-        // Try reload to get latest version
         const lastVersionReloaded = localStorage.getItem('lastVersionReloaded')
         if (lastVersionReloaded !== feVersion) {
           localStorage.setItem('lastVersionReloaded', feVersion)
           window.location.reload()
           return
         }
-
         store.error = {
-          message: `Client and server version doesn't match. Client: ${version} | Server: ${status.version}`,
+          message: `Client and server version doesn't match. Client: ${version} | Server: ${statusRes.data.version}`,
           goHome: true,
         }
       }
 
-      if (status.timeRemaining && status.timeRemaining > 0) {
-        store.openingTime = status.timeRemaining + Date.now()
-      }
-
       // GameServer config
-      const { data: config } = await Api.gs.get(`/config`)
-      store.gsConfig = config
-
-      // WebServer status
-      await Api.ws.get('/status')
+      store.gsConfig = configRes.data
 
       // Socket connection
       const host = await gsHost()
@@ -96,7 +89,7 @@ const Loader: React.FC = () => {
       // Load sounds
       SoundManager.init()
 
-      // Load settings
+      // Local storage
       store.settings.sound = localStorage.getItem('soundEnabled') === 'true'
 
       store.loading = false
