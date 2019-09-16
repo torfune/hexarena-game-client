@@ -24,6 +24,7 @@ class Store {
   @observable game: Game | null = null
   @observable user: User | null = null
   @observable showGuide: boolean = false
+  @observable notification?: Notification
   @observable queue: {
     type: 'NORMAL' | 'RANKED'
     currentTime: number
