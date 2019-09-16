@@ -384,7 +384,7 @@ const messages: {
       let forest: Forest | null = store.game.forests[id] || null
 
       // Create
-      if (!forest) {
+      if (!forest && treeCount) {
         const tile: Tile | null = store.game.tiles[tileId] || null
         if (!tile) continue
         forest = new Forest(id, tile, treeCount)
@@ -392,7 +392,9 @@ const messages: {
       }
 
       // Update
-      updateProps(forest, parsed[i])
+      if (forest) {
+        updateProps(forest, parsed[i])
+      }
     }
   },
 

@@ -6,6 +6,7 @@ const changelog = [
       'Army is no longer wasted when trained in a building with other army inside',
       'Timer is red during last minute of the game',
       '1v1 mountain count: 40 -> 35',
+      'Lot of bug fixes',
     ],
   },
   {
