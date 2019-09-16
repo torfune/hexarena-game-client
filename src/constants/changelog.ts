@@ -1,5 +1,9 @@
 const changelog = [
   {
+    label: 'Update 16/9',
+    changes: ['1v1 mountain count: 40 -> 35'],
+  },
+  {
     label: 'Update 13/9',
     changes: [
       'Default village income: 2g/s -> 1g/s',
