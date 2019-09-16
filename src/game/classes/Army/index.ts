@@ -65,15 +65,15 @@ class Army {
         )
       }
     }
-
-    if (isInside) {
-      this.tile.addArmy(this)
-    }
   }
 
   setProp(key: keyof Props, value: Primitive) {
-    if (!store.game) return
-    if (this.props[key].current === value && key !== 'tileId') return
+    if (
+      !store.game ||
+      (this.props[key].current === value && key !== 'tileId')
+    ) {
+      return
+    }
 
     this.props[key].previous = this.props[key].current
     this.props[key].current = value
@@ -82,21 +82,16 @@ class Army {
       case 'tileId':
         this.moveOn(this.tileId)
         break
-
       case 'destroyed':
         if (this.destroyed) {
           this.destroy()
         }
         break
-
       case 'ownerId':
         const owner = store.game.players[this.ownerId] || null
         if (owner) {
           this.owner = owner
         }
-        break
-
-      default:
         break
     }
   }

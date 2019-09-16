@@ -3,6 +3,7 @@ const changelog = [
     label: 'Update 16/9',
     changes: [
       'Basic sounds',
+      'Army is no longer wasted when trained in a building with other army inside',
       'Timer is red during last minute of the game',
       '1v1 mountain count: 40 -> 35',
     ],
