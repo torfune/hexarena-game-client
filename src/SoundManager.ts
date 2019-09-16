@@ -1,5 +1,8 @@
 import store from './store'
 
+const w = window as any
+const AudioContext = w.AudioContext || w.webkitAudioContext
+
 const SOUNDS = {
   CAPTURE: {
     url: '/static/sounds/click01.mp3',
@@ -29,7 +32,7 @@ const SOUNDS = {
 }
 
 class SoundManager {
-  static context = new AudioContext()
+  static context = new AudioContext() as AudioContext
   static buffers: { [key: string]: AudioBuffer } = {}
 
   static init() {
