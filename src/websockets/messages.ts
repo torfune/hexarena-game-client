@@ -14,6 +14,7 @@ import Forest from '../game/classes/Forest'
 import updateProps from '../game/functions/updateProps'
 import GoldAnimation from '../game/classes/GoldAnimation'
 import { CHAT_WIDTH } from '../constants/react'
+import SoundManager from '../SoundManager'
 
 // Messages: Gameserver -> Frontend
 export type MessageGS =
@@ -232,6 +233,7 @@ const messages: {
       camp: boolean
     }[]
 
+    let playCaptureSound = false
     for (let i = 0; i < parsed.length; i++) {
       const fields = parsed[i]
       const { id, x, z, mountain, bedrock } = fields
@@ -253,11 +255,21 @@ const messages: {
         }
       }
 
+      if (
+        tile.ownerId !== store.game.playerId &&
+        parsed[i].ownerId === store.game.playerId
+      ) {
+        playCaptureSound = true
+      }
+
       // Update
       updateProps(tile, parsed[i])
     }
 
     // Side effects
+    if (playCaptureSound) {
+      SoundManager.play('CAPTURE')
+    }
     if (!store.game.camera && store.game.spawnTile) {
       store.game.setCameraToAxialPosition(store.game.spawnTile.axial)
     }

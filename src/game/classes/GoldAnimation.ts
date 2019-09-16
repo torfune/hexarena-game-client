@@ -3,6 +3,7 @@ import getPixelPosition from '../functions/getPixelPosition'
 import Tile from './Tile'
 import { Sprite } from 'pixi.js'
 import store from '../../store'
+import SoundManager from '../../SoundManager'
 
 const SCALE = 0.2
 const SPEED = 0.6
@@ -40,6 +41,8 @@ class GoldAnimation {
     if (store.game) {
       store.game.animations.push(this)
     }
+
+    SoundManager.play('VILLAGE_RAID')
   }
   update() {
     for (let i = this.coins.length - 1; i >= 0; i--) {

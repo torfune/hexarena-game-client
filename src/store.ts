@@ -25,6 +25,11 @@ class Store {
   @observable user: User | null = null
   @observable showGuide: boolean = false
   @observable notification?: Notification
+  @observable settings: {
+    sound: boolean
+  } = {
+    sound: false,
+  }
   @observable queue: {
     type: 'NORMAL' | 'RANKED'
     currentTime: number

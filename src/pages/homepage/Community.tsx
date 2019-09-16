@@ -6,6 +6,7 @@ import Socket from '../../websockets/Socket'
 import getBrowserId from '../../utils/getBrowserId'
 import store from '../../store'
 import { version } from '../../../package.json'
+import { observer } from 'mobx-react-lite'
 
 const Container = styled.div`
   margin-top: 96px;
@@ -143,6 +144,42 @@ const SandboxButton = styled.a`
   margin-top: 16px !important;
 `
 
+const SoundButton = styled.div`
+  ${buttonCSS};
+  margin-left: 0 !important;
+`
+
+const SoundCheckbox = styled.div<{ checked: boolean }>`
+  width: 20px;
+  height: 20px;
+  background: #282828;
+  margin-left: auto;
+  margin-right: 16px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  > img {
+    filter: invert(1);
+    height: 12px;
+  }
+
+  ${props =>
+    props.checked
+      ? css`
+          border: 2px solid #fff;
+          > img {
+            opacity: 1;
+          }
+        `
+      : css`
+          border: 2px solid #111;
+          > img {
+            opacity: 0;
+          }
+        `}
+`
+
 const Community: React.FC = () => {
   const [showGuide, setShowGuide] = useState(false)
 
@@ -158,9 +195,21 @@ const Community: React.FC = () => {
     )
   }
 
+  const toggleSoundSettings = () => {
+    store.settings.sound = !store.settings.sound
+    localStorage.setItem('soundEnabled', String(store.settings.sound))
+  }
+
   return (
     <>
       <Container>
+        <SoundButton onClick={toggleSoundSettings}>
+          <img src="/static/icons/sound.svg" /> Sounds
+          <SoundCheckbox checked={store.settings.sound}>
+            <img src="/static/icons/check.svg" />
+          </SoundCheckbox>
+        </SoundButton>
+
         <ButtonsContainer>
           <div>
             <DiscordButton target="_blank" href="https://discord.gg/vwXKyRX">
@@ -196,4 +245,4 @@ const Community: React.FC = () => {
   )
 }
 
-export default Community
+export default observer(Community)

@@ -32,7 +32,8 @@ import getTileByAxial from '../functions/getTileByAxial'
 import BuildingType from '../../types/BuildingType'
 import Forest from './Forest'
 import Village from './Village'
-import { easeOutQuad, easeInQuad } from '../functions/easing'
+import { easeInQuad } from '../functions/easing'
+import SoundManager from '../../SoundManager'
 
 const loader = Loader.shared
 
@@ -87,7 +88,7 @@ class Tile {
   }
 
   setProp(key: keyof Props, value: Primitive) {
-    if (this.props[key].current === value) return
+    if (this.props[key].current === value || !store.game) return
 
     this.props[key].previous = this.props[key].current
     this.props[key].current = value
@@ -96,7 +97,6 @@ class Tile {
       case 'ownerId':
         this.updateOwner()
         break
-
       case 'camp':
         if (this.camp && !this.image.camp) {
           const camp = this.addImage('camp')
@@ -106,7 +106,6 @@ class Tile {
           this.removeImage('camp')
         }
         break
-
       case 'buildingType':
         if (value === 'BASE') {
           if (!this.image.base) {
@@ -131,7 +130,6 @@ class Tile {
         }
         this.updateHitpoints()
         break
-
       case 'buildingHp':
         this.updateHitpoints()
         if (
@@ -144,19 +142,14 @@ class Tile {
           this.action.icon.texture = this.action.getIconTexture()
         }
         break
+    }
 
-      // case 'hitpoints':
-      //   if (!this.props.hitpoints.previous && this.hitpoints) {
-      //     this.addHitpoints()
-      //   } else if (this.props.hitpoints.previous && !this.hitpoints) {
-      //     this.removeHitpoints()
-      //   } else {
-      //     this.updateHitpoints()
-      //   }
-      //   break
-
-      default:
-        break
+    // Sounds
+    if (
+      this.ownerId === store.game.playerId &&
+      ((key === 'camp' && value) || (key === 'buildingType' && value))
+    ) {
+      SoundManager.play('BUILDING')
     }
   }
 

@@ -1,7 +1,11 @@
 const changelog = [
   {
     label: 'Update 16/9',
-    changes: ['1v1 mountain count: 40 -> 35'],
+    changes: [
+      'Basic sounds',
+      'Timer is red during last minute of the game',
+      '1v1 mountain count: 40 -> 35',
+    ],
   },
   {
     label: 'Update 13/9',

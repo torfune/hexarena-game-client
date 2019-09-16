@@ -10,6 +10,7 @@ import Header from './Header'
 import Socket from '../websockets/Socket'
 import { version } from '../../package.json'
 import Api, { gsHost } from '../Api'
+import SoundManager from '../SoundManager'
 
 const Container = styled.div`
   margin-top: 200px;
@@ -91,6 +92,12 @@ const Loader: React.FC = () => {
 
       // Load images
       await loadImages()
+
+      // Load sounds
+      SoundManager.init()
+
+      // Load settings
+      store.settings.sound = localStorage.getItem('soundEnabled') === 'true'
 
       store.loading = false
     } catch (err) {

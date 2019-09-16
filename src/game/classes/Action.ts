@@ -9,6 +9,7 @@ import createProp from '../../utils/createProp'
 import { Sprite, Graphics, Loader } from 'pixi.js'
 import Animation from '../classes/Animation'
 import { easeOutQuad, easeInQuad } from '../functions/easing'
+import SoundManager from '../../SoundManager'
 
 const loader = Loader.shared
 const ACTION_RADIUS = 50
@@ -69,6 +70,7 @@ class Action {
     this.image.x = pixel.x
     this.image.y = pixel.y
 
+    SoundManager.play('ACTION')
     new Animation(
       this.image,
       (image: Sprite, fraction: number, context: any) => {

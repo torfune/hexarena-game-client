@@ -53,8 +53,8 @@ const MuteBox = styled.div`
   background: #111;
   color: #fff;
   width: 400px;
-  top: 200px;
-  left: calc(50vw - 200px);
+  top: 300px;
+  right: 50px;
   padding: 32px;
   border: 1px solid #000;
   border-radius: 8px;

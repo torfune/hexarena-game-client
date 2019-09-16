@@ -31,6 +31,7 @@ import Village from './Village'
 import GameMode from '../../types/GameMode'
 import HoveredTileInfo from '../../types/HoveredTileInfo'
 import ArmyDragArrow from './ArmyDragArrow'
+import SoundManager from '../../SoundManager'
 
 class Game {
   readonly id: string
@@ -920,6 +921,7 @@ class Game {
     if (index !== null) {
       const { x, z } = this.selectedArmyTile.axial
       Socket.send('sendArmy', `${x}|${z}|${index}`)
+      SoundManager.play('ARMY_SEND')
       if (this.armyDragArrow) {
         this.armyDragArrow.destroy()
       }
