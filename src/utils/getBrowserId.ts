@@ -1,11 +1,12 @@
 import { v4 as uuid } from 'uuid'
+import LocalStorageManager from '../LocalStorageManager'
 
 const getBrowserId = () => {
-  let browserId = window.localStorage.getItem('browserId')
+  let browserId = LocalStorageManager.get('browserId')
 
   if (!browserId) {
     browserId = uuid()
-    window.localStorage.setItem('browserId', browserId)
+    LocalStorageManager.set('browserId', browserId)
   }
 
   return browserId

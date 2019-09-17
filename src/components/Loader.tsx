@@ -11,6 +11,7 @@ import Socket from '../websockets/Socket'
 import { version } from '../../package.json'
 import Api, { gsHost } from '../Api'
 import SoundManager from '../SoundManager'
+import LocalStorageManager from '../LocalStorageManager'
 
 const Container = styled.div`
   margin-top: 200px;
@@ -64,9 +65,11 @@ const Loader: React.FC = () => {
       const gsVersion = statusRes.data.version.slice(0, 4)
       const feVersion = version.slice(0, 4)
       if (gsVersion !== feVersion) {
-        const lastVersionReloaded = localStorage.getItem('lastVersionReloaded')
+        const lastVersionReloaded = LocalStorageManager.get(
+          'lastVersionReloaded'
+        )
         if (lastVersionReloaded !== feVersion) {
-          localStorage.setItem('lastVersionReloaded', feVersion)
+          LocalStorageManager.set('lastVersionReloaded', feVersion)
           window.location.reload()
           return
         }
@@ -90,7 +93,7 @@ const Loader: React.FC = () => {
       SoundManager.init()
 
       // Local storage
-      store.settings.sound = localStorage.getItem('soundEnabled') === 'true'
+      store.settings.sound = LocalStorageManager.get('soundEnabled') === 'true'
 
       store.loading = false
     } catch (err) {

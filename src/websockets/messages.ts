@@ -109,8 +109,8 @@ const messages: {
         if (status === 'FINISHED') {
           continue
         } else {
-          const tile: Tile | null = store.game.tiles[tileId] || null
-          const owner: Player | null = store.game.players[ownerId] || null
+          const tile = store.game.tiles.get(tileId) || null
+          const owner = store.game.players.get(ownerId) || null
           if (!tile || !owner) continue
           action = new Action(id, type, tile, owner)
         }
@@ -146,17 +146,16 @@ const messages: {
 
       if (!id || !senderId || !receiverId || !timeout) continue
 
-      let request: AllianceRequest | null =
-        store.game.allianceRequests[id] || null
+      let request = store.game.allianceRequests.get(id) || null
       ids.push(id)
 
       // Create
       if (!request) {
-        const sender: Player | null = store.game.players[senderId] || null
-        const receiver: Player | null = store.game.players[receiverId] || null
+        const sender = store.game.players.get(senderId) || null
+        const receiver = store.game.players.get(receiverId) || null
         if (!sender || !receiver) continue
         request = new AllianceRequest(id, sender, receiver)
-        store.game.allianceRequests[id] = request
+        store.game.allianceRequests.set(id, request)
       }
 
       // Update
@@ -168,7 +167,7 @@ const messages: {
     for (let i = entries.length - 1; i >= 0; i--) {
       const { id } = entries[i][1]
       if (!ids.includes(id)) {
-        delete store.game.allianceRequests[id]
+        store.game.allianceRequests.delete(id)
       }
     }
   },
@@ -193,15 +192,15 @@ const messages: {
 
       if (!id || !tileId || !ownerId) continue
 
-      let army: Army | null = store.game.armies[id] || null
+      let army = store.game.armies.get(id) || null
 
       // Create
       if (!army) {
-        const tile: Tile | null = store.game.tiles[tileId] || null
-        const owner: Player | null = store.game.players[ownerId] || null
+        const tile = store.game.tiles.get(tileId) || null
+        const owner = store.game.players.get(ownerId) || null
         if (!tile || !owner || destroyed) continue
         army = new Army(id, tile, owner)
-        store.game.armies[id] = army
+        store.game.armies.set(id, army)
       }
 
       // Update
@@ -240,12 +239,12 @@ const messages: {
 
       if (!id || x === null || z === null) continue
 
-      let tile: Tile | null = store.game.tiles[id] || null
+      let tile = store.game.tiles.get(id) || null
 
       // Create
       if (!tile) {
         tile = new Tile(id, { x, z }, mountain, bedrock)
-        store.game.tiles[id] = tile
+        store.game.tiles.set(id, tile)
         tile.updateNeighbors()
         for (let i = 0; i < 6; i++) {
           const n = tile.neighbors[i]
@@ -296,14 +295,14 @@ const messages: {
 
       if (!id || !tileId || houseCount === null) continue
 
-      let village: Village | null = store.game.villages[id] || null
+      let village = store.game.villages.get(id)
 
       // Create
       if (!village && houseCount) {
-        const tile: Tile | null = store.game.tiles[tileId] || null
+        const tile = store.game.tiles.get(tileId)
         if (!tile) continue
         village = new Village(id, tile, houseCount)
-        store.game.villages[id] = village
+        store.game.villages.set(id, village)
       }
 
       // Update
@@ -339,20 +338,18 @@ const messages: {
       killerName: string | null
     }[]
 
-    const ids: string[] = []
     for (let i = 0; i < parsed.length; i++) {
       const fields = parsed[i]
       const { id, name, pattern, registered } = fields
 
       if (!id || !name || !pattern) continue
 
-      let player: Player | null = store.game.players[id] || null
-      ids.push(id)
+      let player = store.game.players.get(id)
 
       // Create
       if (!player) {
         player = new Player(id, name, pattern, registered)
-        store.game.players[id] = player
+        store.game.players.set(id, player)
       }
 
       // Update
@@ -381,14 +378,14 @@ const messages: {
 
       if (!id || !tileId || treeCount === null) continue
 
-      let forest: Forest | null = store.game.forests[id] || null
+      let forest = store.game.forests.get(id)
 
       // Create
       if (!forest && treeCount) {
-        const tile: Tile | null = store.game.tiles[tileId] || null
+        const tile = store.game.tiles.get(tileId)
         if (!tile) continue
         forest = new Forest(id, tile, treeCount)
-        store.game.forests[id] = forest
+        store.game.forests.set(id, forest)
       }
 
       // Update
@@ -421,7 +418,7 @@ const messages: {
 
     const { goldAnimation } = store.game
     if (!goldAnimation) return
-    const tile: Tile | null = store.game.tiles[goldAnimation.tileId] || null
+    const tile = store.game.tiles.get(goldAnimation.tileId)
     if (!tile) return
     new GoldAnimation(tile, goldAnimation.count)
   },

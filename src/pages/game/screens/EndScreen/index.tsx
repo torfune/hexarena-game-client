@@ -98,7 +98,7 @@ const EndScreen = () => {
 
   if (!store.game || store.game.time === null) return null
 
-  const groups = getPlayerGroups(Object.values(store.game.players))
+  const groups = getPlayerGroups(Array.from(store.game.players.values()))
   const message = store.game.time <= 0 ? `Time's up!` : 'The game has finished!'
 
   return (

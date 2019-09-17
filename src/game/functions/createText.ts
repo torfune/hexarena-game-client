@@ -15,7 +15,10 @@ const createText = (content: string, stageName: string) => {
   text.anchor.set(0.5, 0.5)
 
   if (store.game) {
-    store.game.stage[stageName].addChild(text)
+    const stage = store.game.stage.get(stageName)
+    if (stage) {
+      stage.addChild(text)
+    }
   }
 
   return text

@@ -59,7 +59,10 @@ class Unit {
   destroy() {
     if (!store.game) return
 
-    store.game.stage['army'].removeChild(this.image)
+    const stage = store.game.stage.get('army')
+    if (stage) {
+      stage.removeChild(this.image)
+    }
   }
 }
 

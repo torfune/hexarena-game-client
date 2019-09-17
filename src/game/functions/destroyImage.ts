@@ -2,8 +2,11 @@ import { Sprite } from 'pixi.js'
 import store from '../../store'
 
 const destroyImage = (key: string, image: Sprite) => {
-  if (store.game && store.game.stage[key]) {
-    store.game.stage[key].removeChild(image)
+  if (!store.game) return
+
+  const stage = store.game.stage.get(key)
+  if (stage) {
+    stage.removeChild(image)
   }
 }
 

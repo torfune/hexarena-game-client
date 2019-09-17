@@ -74,7 +74,7 @@ const Players: React.FC<Props> = ({ players }) => {
 
   const { pattern, id: playerId } = store.game.player
   const { PATTERNS } = store.gsConfig
-  const lockedPatterns = Object.values(store.game.players)
+  const lockedPatterns = Array.from(store.game.players.values())
     .filter(player => player.pattern !== pattern)
     .map(({ pattern }) => pattern)
 

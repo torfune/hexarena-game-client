@@ -10,6 +10,7 @@ import { BREAKPOINT } from '../../constants/react'
 import Profile from './Profile'
 import Socket from '../../websockets/Socket'
 import getBrowserId from '../../utils/getBrowserId'
+import LocalStorageManager from '../../LocalStorageManager'
 
 const Container = styled.div`
   color: #fff;
@@ -68,7 +69,7 @@ const PlaySection = () => {
 
   const playAsGuest = (name?: string) => {
     if (!name) {
-      name = localStorage.getItem('guestName') || ''
+      name = LocalStorageManager.get('guestName') || ''
     }
 
     play('playAsGuest', `${getBrowserId()}|${name}`, 'NORMAL')
@@ -87,11 +88,13 @@ const PlaySection = () => {
     data: string,
     queueType: 'NORMAL' | 'RANKED'
   ) => {
-    const tutorialFinished = localStorage.getItem('tutorialFinished') === 'true'
+    const tutorialFinished =
+      LocalStorageManager.get('tutorialFinished') === 'true' ||
+      !LocalStorageManager.supported
     if (!tutorialFinished) {
       console.log(`Tutorial not finished! Starting tutorial ...`)
 
-      let guestName = localStorage.getItem('guestName')
+      let guestName = LocalStorageManager.get('guestName')
       if (!guestName) {
         guestName = `Guest ${Math.floor(Math.random() * 10)}`
       }

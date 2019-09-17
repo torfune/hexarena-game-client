@@ -3,6 +3,15 @@ import store from './store'
 const w = window as any
 const AudioContext = w.AudioContext || w.webkitAudioContext
 
+const isSupported = () => {
+  try {
+    new AudioContext()
+    return true
+  } catch {
+    return false
+  }
+}
+
 const SOUNDS = {
   CAPTURE: {
     url: '/static/sounds/click01.mp3',
@@ -32,15 +41,21 @@ const SOUNDS = {
 }
 
 class SoundManager {
-  static context = new AudioContext() as AudioContext
+  static supported = isSupported()
+  static context: AudioContext | null = null
   static buffers: { [key: string]: AudioBuffer } = {}
 
   static init() {
+    if (!this.supported) return
+
+    this.context = new AudioContext() as AudioContext
+
     for (const [key, sound] of Object.entries(SOUNDS)) {
       const request = new XMLHttpRequest()
       request.open('GET', sound.url, true)
       request.responseType = 'arraybuffer'
       request.onload = () => {
+        if (!this.context) return
         this.context.decodeAudioData(request.response, buffer => {
           this.buffers[key] = buffer
         })
@@ -49,7 +64,7 @@ class SoundManager {
     }
   }
   static play(soundKey: keyof typeof SOUNDS) {
-    if (!store.settings.sound) return
+    if (!store.settings.sound || !this.context) return
 
     const sound = SOUNDS[soundKey]
     const buffer = this.buffers[soundKey]

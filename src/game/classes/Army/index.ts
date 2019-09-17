@@ -88,7 +88,7 @@ class Army {
         }
         break
       case 'ownerId':
-        const owner = store.game.players[this.ownerId] || null
+        const owner = store.game.players.get(this.ownerId)
         if (owner) {
           this.owner = owner
         }
@@ -110,7 +110,7 @@ class Army {
           this.units[i].destroy()
         }
 
-        delete store.game.armies[this.id]
+        store.game.armies.delete(this.id)
         return
       }
     }
@@ -135,7 +135,7 @@ class Army {
     const { gsConfig, game } = store
     if (!gsConfig || !game) return
 
-    const tile: Tile | null = game.tiles[tileId] || null
+    const tile = game.tiles.get(tileId)
     if (!tile) {
       this.destroy()
       return

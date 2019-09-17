@@ -32,19 +32,20 @@ import GameMode from '../../types/GameMode'
 import HoveredTileInfo from '../../types/HoveredTileInfo'
 import ArmyDragArrow from './ArmyDragArrow'
 import SoundManager from '../../SoundManager'
+import LocalStorageManager from '../../LocalStorageManager'
 
 class Game {
   readonly id: string
   readonly mode: GameMode
   readonly ranked: boolean
-  readonly stage: { [key: string]: Container } = {}
+  readonly stage: Map<string, Container> = new Map()
+  @observable allianceRequests: Map<string, AllianceRequest> = new Map()
+  @observable armies: Map<string, Army> = new Map()
+  @observable players: Map<string, Player> = new Map()
+  @observable forests: Map<string, Forest> = new Map()
+  @observable villages: Map<string, Village> = new Map()
+  @observable tiles: Map<string, Tile> = new Map()
   @observable actions: Action[] = []
-  @observable allianceRequests: { [key: string]: AllianceRequest } = {}
-  @observable armies: { [key: string]: Army } = {}
-  @observable players: { [key: string]: Player } = {}
-  @observable forests: { [key: string]: Forest } = {}
-  @observable villages: { [key: string]: Village } = {}
-  @observable tiles: { [key: string]: Tile } = {}
   @observable hoveredTile: Tile | null = null
   @observable startCountdown: number | null = null
   @observable incomeAt: number | null = null
@@ -104,7 +105,7 @@ class Game {
 
   // Computed getters
   @computed get player() {
-    return this.playerId ? this.players[this.playerId] || null : null
+    return this.playerId ? this.players.get(this.playerId) || null : null
   }
   @computed get gold() {
     return this.player ? this.player.gold : 0
@@ -136,7 +137,9 @@ class Game {
     ;(window as any).game = this
   }
   render(canvas: HTMLElement) {
-    const tutorialFinished = localStorage.getItem('tutorialFinished') === 'true'
+    const tutorialFinished =
+      !LocalStorageManager.supported ||
+      LocalStorageManager.get('tutorialFinished') === 'true'
 
     if (!this.loop) {
       this.loop = createGameLoop(this.update, this)
@@ -148,8 +151,9 @@ class Game {
     if (!this.pixi) {
       this.pixi = createPixiApp()
       for (let i = 0; i < TILE_IMAGES.length; i++) {
-        this.stage[TILE_IMAGES[i]] = new Container()
-        this.pixi.stage.addChild(this.stage[TILE_IMAGES[i]])
+        const container = new Container()
+        this.stage.set(TILE_IMAGES[i], container)
+        this.pixi.stage.addChild(container)
       }
 
       this.pixi.view.id = this.id
@@ -164,7 +168,10 @@ class Game {
   }
   destroy() {
     for (let i = 0; i < TILE_IMAGES.length; i++) {
-      this.stage[TILE_IMAGES[i]].removeChildren()
+      const stage = this.stage.get(TILE_IMAGES[i])
+      if (stage) {
+        stage.removeChildren()
+      }
     }
 
     if (this.pixi) {
@@ -180,7 +187,6 @@ class Game {
     this.clearEventListeners()
 
     // Remove canvas element
-    // const canvasContainer = document.getElementById('game-canvas')
     const canvas = document.getElementById(this.id)
     if (canvas) {
       canvas.remove()
@@ -276,7 +282,7 @@ class Game {
     }
 
     // Armies
-    const armies = Object.values(this.armies)
+    const armies = Array.from(this.armies.values())
     for (let i = 0; i < armies.length; i++) {
       armies[i].update()
     }
@@ -291,16 +297,6 @@ class Game {
 
     // Income bar
     this.updateIncomeBar()
-  }
-  spectate(gameId: string) {
-    // Socket.send('spectate', gameId)
-    // store.spectating = true
-    // this.targetScale = MIN_SCALE
-  }
-  stopSpectate() {
-    // Socket.send('stopSpectate')
-    // store.gameIndex = null
-    // store.spectating = false
   }
   setupEventListeners() {
     this.eventListeners = {
@@ -355,21 +351,21 @@ class Game {
       return
     }
 
-    if (key === ' ') {
-      const keys = Object.keys(this.stage)
-      let sum = 0
-      console.log('')
-      console.log('---- ----')
-      for (const k of keys) {
-        const amount = this.stage[k].children.length
-        console.log(`${k}: ${amount}`)
-        sum += amount
-      }
-      console.log('---- ----')
-      console.log(`TOTAL: ${sum}`)
-      console.log('---- ----')
-      return
-    }
+    // if (key === ' ') {
+    //   const keys = Object.keys(this.stage)
+    //   let sum = 0
+    //   console.log('')
+    //   console.log('---- ----')
+    //   for (const k of keys) {
+    //     const amount = this.stage[k].children.length
+    //     console.log(`${k}: ${amount}`)
+    //     sum += amount
+    //   }
+    //   console.log('---- ----')
+    //   console.log(`TOTAL: ${sum}`)
+    //   console.log('---- ----')
+    //   return
+    // }
 
     const tile = this.hoveredTile
     const command = getDebugCommand(key)
@@ -541,9 +537,9 @@ class Game {
     event.preventDefault()
   }
   updateBorders() {
-    const keys = Object.keys(this.tiles)
-    for (let i = keys.length - 1; i >= 0; i--) {
-      this.tiles[keys[i]].updateBorders()
+    const tiles = Array.from(this.tiles)
+    for (let i = tiles.length - 1; i >= 0; i--) {
+      tiles[i][1].updateBorders()
     }
   }
   getHoveredTile() {
@@ -743,7 +739,7 @@ class Game {
 
         this.tilesWithPatternPreview.push(t)
 
-        const players = Object.values(this.players)
+        const players = Array.from(this.players.values())
         for (let k = 0; k < players.length; k++) {
           if (players[k].id === action.owner.id) {
             pattern[`${t.axial.x}|${t.axial.z}`] = players[k].pattern
@@ -828,9 +824,9 @@ class Game {
     Socket.send('request', `create|${receiverId}`)
   }
   updateBlackOverlays() {
-    const keys = Object.keys(this.tiles)
-    for (let i = keys.length - 1; i >= 0; i--) {
-      this.tiles[keys[i]].updateBlackOverlay()
+    const tiles = Array.from(this.tiles)
+    for (let i = tiles.length - 1; i >= 0; i--) {
+      tiles[i][1].updateBlackOverlay()
     }
   }
   updateHoveredTile() {

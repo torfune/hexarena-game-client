@@ -95,7 +95,7 @@ const Lobby = () => {
 
   if (store.game.mode !== 'FFA') {
     const { playerId } = store.game
-    const groups = getPlayerGroups(Object.values(store.game.players))
+    const groups = getPlayerGroups(Array.from(store.game.players.values()))
     const groupLeft = groups.find(
       group => !!group.players.find(p => p.id === playerId)
     )
@@ -111,7 +111,7 @@ const Lobby = () => {
       playersRight = groupRight.players
     }
   } else {
-    const players = Object.values(store.game.players)
+    const players = Array.from(store.game.players.values())
     playersLeft = players.slice(0, 3)
     playersRight = players.slice(3, 6)
   }

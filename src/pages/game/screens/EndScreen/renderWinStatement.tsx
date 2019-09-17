@@ -4,7 +4,7 @@ import store from '../../../../store'
 
 const renderWinStatement = (players: Player[]) => {
   if (store.game && store.game.mode === 'FFA') {
-    const players = Object.values(store.game.players)
+    const players = Array.from(store.game.players.values())
     const winners = players.filter(p => p.alive)
 
     return (

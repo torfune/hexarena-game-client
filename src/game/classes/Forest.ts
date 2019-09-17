@@ -118,7 +118,7 @@ class Forest {
   destroy() {
     if (!store.game) return
 
-    delete store.game.forests[this.id]
+    store.game.forests.delete(this.id)
     this.tile.forest = null
   }
 

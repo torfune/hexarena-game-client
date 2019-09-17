@@ -47,9 +47,9 @@ class Player {
 
     switch (key) {
       case 'pattern': {
-        const keys = Object.keys(store.game.tiles)
-        for (let i = keys.length - 1; i >= 0; i--) {
-          const tile = store.game.tiles[keys[i]]
+        const tiles = Array.from(store.game.tiles.values())
+        for (let i = tiles.length - 1; i >= 0; i--) {
+          const tile = tiles[i]
           if (tile.image.pattern && tile.ownerId === this.id) {
             tile.image.pattern.tint = hex(String(value))
           }
@@ -59,7 +59,7 @@ class Player {
 
       case 'allyId': {
         if (this.allyId) {
-          this.ally = store.game.players[this.allyId]
+          this.ally = store.game.players.get(this.allyId) || null
         }
         break
       }

@@ -4,25 +4,26 @@ import store from '../../store'
 
 const loader = Loader.shared
 
-const createImage = (imageName: string, textureName?: string) => {
+const createImage = (stageName: string, textureName?: string) => {
   if (!store.game) return new Sprite()
 
   const texture = textureName
     ? loader.resources[textureName].texture
-    : loader.resources[imageName].texture
+    : loader.resources[stageName].texture
 
   const image = new Sprite(texture)
 
   image.anchor.set(0.5, 0.5)
 
   // Special properties
-  if (imageName === 'background') {
+  if (stageName === 'background') {
     image.tint = hex('#eee')
   }
 
-  if (!store.game.stage[imageName]) return new Sprite()
+  const stage = store.game.stage.get(stageName)
+  if (!stage) return new Sprite()
 
-  store.game.stage[imageName].addChild(image)
+  stage.addChild(image)
   return image
 }
 

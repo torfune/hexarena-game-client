@@ -268,7 +268,7 @@ class Tile {
         },
         {
           context: {
-            stage: store.game.stage[key],
+            stage: store.game.stage.get(key),
           },
           onFinish: (image, context) => {
             context.stage.removeChild(image)
@@ -277,7 +277,10 @@ class Tile {
         }
       )
     } else {
-      store.game.stage[key].removeChild(image)
+      const stage = store.game.stage.get(key)
+      if (stage) {
+        stage.removeChild(image)
+      }
     }
   }
   removeArmy() {
@@ -322,7 +325,10 @@ class Tile {
         speed: 0.05,
         onFinish: image => {
           if (store.game) {
-            store.game.stage['armyIcon'].removeChild(image)
+            const stage = store.game.stage.get('armyIcon')
+            if (stage) {
+              stage.removeChild(image)
+            }
           }
         },
       }
@@ -514,8 +520,9 @@ class Tile {
   updateOwner() {
     if (!store.game) return
 
-    const newOwner = this.ownerId ? store.game.players[this.ownerId] : null
-
+    const newOwner = this.ownerId
+      ? store.game.players.get(this.ownerId) || null
+      : null
     if (newOwner) {
       if (this.image.pattern) {
         this.removeImage('pattern')
@@ -801,7 +808,10 @@ class Tile {
       this.image.pattern.visible = true
     }
 
-    store.game.stage['patternPreview'].removeChild(this.image.patternPreview)
+    const stage = store.game.stage.get('patternPreview')
+    if (stage) {
+      stage.removeChild(this.image.patternPreview)
+    }
   }
   getStructureName() {
     if (this.bedrock) {

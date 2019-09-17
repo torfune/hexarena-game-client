@@ -28,17 +28,9 @@ const OPTIONS: ChartOptions = {
 }
 
 const Chart = () => {
-  // const [data, setData] = useState<ChartData | null>(null)
-
-  // useEffect(() => {
-  // if (!store.game) return
-
-  // setData(data)
-  // }, [store.economy])
-
   if (!store.game) return null
 
-  const players = Object.values(store.game.players)
+  const players = Array.from(store.game.players.values())
   const data: ChartData = {
     labels: players.map(p => p.name),
     datasets: [

@@ -22,6 +22,7 @@ import Economy from './hud/Economy'
 import Spectators from './hud/Spectators'
 import Tutorial from './hud/Tutorial'
 import HowToPlay from '../../components/HowToPlay'
+import LocalStorageManager from '../../LocalStorageManager'
 
 const Container = styled.div`
   width: 100vw;
@@ -74,7 +75,7 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
     const { mode, status } = store.game
 
     if (mode === 'TUTORIAL' && status === 'finished') {
-      localStorage.setItem('tutorialFinished', String('true'))
+      LocalStorageManager.set('tutorialFinished', String('true'))
       console.log(`Tutorial finished.`)
     }
   })

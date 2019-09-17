@@ -6,6 +6,7 @@ import NameInput from './NameInput'
 import { BREAKPOINT } from '../../constants/react'
 import React from 'react'
 import Api from '../../Api'
+import LocalStorageManager from '../../LocalStorageManager'
 
 const Container = styled.div`
   width: 240px;
@@ -43,10 +44,10 @@ const GuestSection: React.FC<Props> = ({ play }) => {
   const [invalidName, setInvalidName] = useState(false)
 
   useEffect(() => {
-    let guestName = localStorage.getItem('guestName')
+    let guestName = LocalStorageManager.get('guestName')
     if (!guestName) {
       guestName = `Guest ${Math.floor(Math.random() * 10000)}`
-      localStorage.setItem('guestName', guestName)
+      LocalStorageManager.set('guestName', guestName)
     }
     setName(guestName)
   }, [])
@@ -54,7 +55,7 @@ const GuestSection: React.FC<Props> = ({ play }) => {
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value)
     setInvalidName(false)
-    localStorage.setItem('guestName', event.target.value)
+    LocalStorageManager.set('guestName', event.target.value)
   }
 
   const handlePlayClick = async () => {
@@ -72,7 +73,7 @@ const GuestSection: React.FC<Props> = ({ play }) => {
     } else {
       setInvalidName(true)
       setName('')
-      localStorage.setItem('guestName', '')
+      LocalStorageManager.set('guestName', '')
     }
   }
 

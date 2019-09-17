@@ -90,8 +90,8 @@ const Diplomacy = () => {
   if (!store.game || !store.game.player) return null
 
   const { player } = store.game
-  const players = Object.values(store.game.players)
-  const allianceRequests = Object.values(store.game.allianceRequests)
+  const players = Array.from(store.game.players.values())
+  const allianceRequests = Array.from(store.game.allianceRequests.values())
 
   const handleMouseLeave = () => {
     setSendingRequest(false)

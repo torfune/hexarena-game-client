@@ -103,7 +103,7 @@ class Village {
   destroy() {
     if (!store.game) return
 
-    delete store.game.villages[this.id]
+    store.game.villages.delete(this.id)
     this.tile.village = null
     for (let i = 0; i < this.houses.length; i++) {
       destroyImage('house', this.houses[i])

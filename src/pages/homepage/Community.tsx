@@ -7,6 +7,7 @@ import getBrowserId from '../../utils/getBrowserId'
 import store from '../../store'
 import { version } from '../../../package.json'
 import { observer } from 'mobx-react-lite'
+import LocalStorageManager from '../../LocalStorageManager'
 
 const Container = styled.div`
   margin-top: 96px;
@@ -184,7 +185,7 @@ const Community: React.FC = () => {
   const [showGuide, setShowGuide] = useState(false)
 
   const playTutorial = () => {
-    let guestName = localStorage.getItem('guestName')
+    let guestName = LocalStorageManager.get('guestName')
     if (!guestName) {
       guestName = `Guest ${Math.floor(Math.random() * 10)}`
     }
@@ -197,7 +198,7 @@ const Community: React.FC = () => {
 
   const toggleSoundSettings = () => {
     store.settings.sound = !store.settings.sound
-    localStorage.setItem('soundEnabled', String(store.settings.sound))
+    LocalStorageManager.set('soundEnabled', String(store.settings.sound))
   }
 
   return (

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, createContext, useContext } from 'react'
 import authHeader from './utils/authHeader'
 import Credentials from './types/Credentials'
-import User from './models/User'
 import Api from './Api'
 import store from './store'
+import LocalStorageManager from './LocalStorageManager'
 
 interface Auth {
   loggedIn: boolean | null
@@ -39,9 +39,9 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   })
 
   useEffect(() => {
-    const userId = localStorage.getItem('userId')
-    const accessToken = localStorage.getItem('accessToken')
-    const accessTokenExp = localStorage.getItem('accessTokenExp')
+    const userId = LocalStorageManager.get('userId')
+    const accessToken = LocalStorageManager.get('accessToken')
+    const accessTokenExp = LocalStorageManager.get('accessTokenExp')
 
     if (!accessToken || !accessTokenExp || !userId) {
       setLoaded(true)
@@ -113,18 +113,18 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     accessToken: string,
     accessTokenExp: string
   ) => {
-    localStorage.setItem('userId', userId)
-    localStorage.setItem('accessToken', accessToken)
-    localStorage.setItem('accessTokenExp', accessTokenExp)
+    LocalStorageManager.set('userId', userId)
+    LocalStorageManager.set('accessToken', accessToken)
+    LocalStorageManager.set('accessTokenExp', accessTokenExp)
 
     setCredentials({ userId, accessToken, accessTokenExp })
     setLoaded(true)
   }
 
   const logout = () => {
-    localStorage.removeItem('userId')
-    localStorage.removeItem('accessToken')
-    localStorage.removeItem('accessTokenExp')
+    LocalStorageManager.delete('userId')
+    LocalStorageManager.delete('accessToken')
+    LocalStorageManager.delete('accessTokenExp')
 
     setCredentials({ userId: null, accessToken: null, accessTokenExp: null })
     setLoaded(true)
