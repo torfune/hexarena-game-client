@@ -227,7 +227,14 @@ class Tile {
       animate = false
     }
 
-    const texture = key === 'background' ? 'pattern' : key
+    let texture: string = key
+    if (key === 'background') {
+      texture = 'pattern'
+    } else if (key === 'mountain') {
+      texture = `mountain0${Math.floor(Math.random() * 5 + 1)}`
+      console.log(texture)
+    }
+
     const pixel = getPixelPosition(this.axial)
     const image = createImage(key, texture)
 
