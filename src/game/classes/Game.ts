@@ -563,7 +563,7 @@ class Game {
     // Attack hover
     if (
       this.playerId === playerId &&
-      actionType === 'ATTACK' &&
+      actionType === 'CAPTURE' &&
       !this.selectedArmyTile &&
       !tile.bedrock
     ) {
@@ -580,12 +580,12 @@ class Game {
       }
     }
 
-    // Actions (ATTACK, CASTLE)
+    // Actions (CAPTURE, CASTLE)
     for (let i = 0; i < this.actions.length; i++) {
       const action = this.actions[i]
 
       if (
-        action.type === 'ATTACK' &&
+        action.type === 'CAPTURE' &&
         action.owner.id === playerId &&
         !tilesToCapture.includes(action.tile)
       ) {
@@ -608,7 +608,7 @@ class Game {
       this.player &&
       playerId === this.playerId &&
       this.selectedArmyTile &&
-      (!tile.action || tile.action.type !== 'ATTACK')
+      (!tile.action || tile.action.type !== 'CAPTURE')
     ) {
       let direction = null
 
@@ -725,7 +725,7 @@ class Game {
     for (let i = 0; i < this.actions.length; i++) {
       const action = this.actions[i]
 
-      if (action.type !== 'ATTACK' && action.type !== 'CASTLE') continue
+      if (action.type !== 'CAPTURE' && action.type !== 'CASTLE') continue
 
       const tilesToCapture = this.getTilesToCapture(
         action.tile,
@@ -993,7 +993,7 @@ class Game {
     if (!this.player || !store.gsConfig) return
 
     const {
-      ATTACK_COST,
+      CAPTURE_COST,
       RECRUIT_COST,
       CAMP_COST,
       TOWER_COST,
@@ -1004,7 +1004,7 @@ class Game {
 
     if (
       !actionType ||
-      (actionType === 'ATTACK' && this.player.gold >= ATTACK_COST) ||
+      (actionType === 'CAPTURE' && this.player.gold >= tile.captureCost()) ||
       (actionType === 'TOWER' && this.player.gold >= TOWER_COST) ||
       (actionType === 'CAMP' && this.player.gold >= CAMP_COST) ||
       (actionType === 'CASTLE' && this.player.gold >= CASTLE_COST) ||

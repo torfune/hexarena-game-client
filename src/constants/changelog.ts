@@ -1,26 +1,34 @@
 const changelog = [
   {
+    label: 'Update 17/9 - 18/9',
+    changes: [
+      'Terrain based capture costs (forest: 2, mountain: 3)',
+      'Starting gold in 1v1: 30 => 20',
+      'Crash fixes',
+    ],
+  },
+  {
     label: 'Update 16/9',
     changes: [
       'Basic sounds',
       'Army is no longer wasted when trained in a building with other army inside',
       'Timer is red during last minute of the game',
-      '1v1 mountain count: 40 -> 35',
+      '1v1 mountain count: 40 => 35',
       'Lot of bug fixes',
     ],
   },
   {
     label: 'Update 13/9',
     changes: [
-      'Default village income: 2g/s -> 1g/s',
-      'Base economy: 6g/s -> 8g/s',
-      '1v1 forest count: 70 -> 80',
+      'Default village income: 2g/s => 1g/s',
+      'Base economy: 6g/s => 8g/s',
+      '1v1 forest count: 70 => 80',
     ],
   },
   {
     label: 'Update 12/9',
     changes: [
-      'Slower village grow rate: 1:00 -> 1:30',
+      'Slower village grow rate: 1:00 => 1:30',
       'Slightly more mountains and forests in 1v1 mode',
       'Small UI improvements',
     ],
@@ -28,7 +36,7 @@ const changelog = [
   {
     label: 'Update 6/9',
     changes: [
-      'Game time: 8m -> 10m',
+      'Game time: 8m => 10m',
       'Bigger world size',
       'Fixed "same pattern" bug',
     ],
@@ -36,10 +44,10 @@ const changelog = [
   {
     label: 'Update 3/9',
     changes: [
-      'Army range set to 6 tiles',
+      'Army range: 5 => 6',
       'Army no longer stops after capturing a village',
       'Changed battle mechanics - attacking army no longer captures the tile',
-      'Army training time: 8s -> 10s',
+      'Army training time: 8s => 10s',
       'Fixed glitchy army drag arrow',
     ],
   },

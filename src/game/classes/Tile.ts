@@ -232,7 +232,6 @@ class Tile {
       texture = 'pattern'
     } else if (key === 'mountain') {
       texture = `mountain0${Math.floor(Math.random() * 5 + 1)}`
-      console.log(texture)
     }
 
     const pixel = getPixelPosition(this.axial)
@@ -849,7 +848,7 @@ class Tile {
     }
 
     const {
-      ATTACK_COST,
+      CAPTURE_COST,
       RECRUIT_COST,
       CAMP_COST,
       TOWER_COST,
@@ -867,13 +866,13 @@ class Tile {
       }
     }
 
-    // ATTACK
+    // CAPTURE
     if (
       isNeighbor &&
       !this.owner &&
-      (store.game.player.gold >= ATTACK_COST || ignoreGold)
+      (store.game.player.gold >= this.captureCost() || ignoreGold)
     ) {
-      return 'ATTACK'
+      return 'CAPTURE'
     }
 
     if (this.ownerId !== store.game.playerId) return null
@@ -910,16 +909,20 @@ class Tile {
       return 'CASTLE'
     }
 
-    // HOUSE
-    // if (
-    //   this.village &&
-    //   this.village.houseCount < MAX_HOUSES &&
-    //   (store.game.player.gold >= HOUSE_COST || ignoreGold)
-    // ) {
-    //   return 'HOUSE'
-    // }
-
     return null
+  }
+  captureCost() {
+    if (!store.gsConfig) return 1
+
+    const { CAPTURE_COST } = store.gsConfig
+
+    if (this.forest) {
+      return CAPTURE_COST.FOREST
+    } else if (this.mountain) {
+      return CAPTURE_COST.MOUNTAIN
+    } else {
+      return CAPTURE_COST.DEFAULT
+    }
   }
 
   // Prop getters

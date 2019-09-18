@@ -22,7 +22,7 @@ interface GameServerConfig {
   CASTLE_VISION: number
 
   // ACTION DURATIONS
-  ATTACK_DURATION: number
+  CAPTURE_DURATION: number
   RECRUIT_DURATION: number
   CAMP_DURATION: number
   TOWER_DURATION: number
@@ -30,7 +30,11 @@ interface GameServerConfig {
   HOUSE_DURATION: number
 
   // ACTION COSTS
-  ATTACK_COST: number
+  CAPTURE_COST: {
+    DEFAULT: number
+    FOREST: number
+    MOUNTAIN: number
+  }
   HOUSE_COST: number
   RECRUIT_COST: number
   CAMP_COST: number
@@ -38,7 +42,6 @@ interface GameServerConfig {
   CASTLE_COST: number
 
   // ECONOMY
-  START_GOLD: number
   MAX_GOLD: number
   BASE_ECONOMY: number
   MIN_HOUSES: number
@@ -48,9 +51,9 @@ interface GameServerConfig {
   HOUSE_LOOT: number
   VILLAGE_GROW_RATE: number
 
-  // MANUAL ATTACKS
+  // MANUAL CAPTURES
   DEFAULT_DEFEND_POWER: number
-  DEFAULT_ATTACK_POWER: number
+  DEFAULT_CAPTURE_POWER: number
   POWER_PER_NEIGHBOR: number
   MS_PER_POWER: number
 

@@ -76,7 +76,6 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
 
     if (mode === 'TUTORIAL' && status === 'finished') {
       LocalStorageManager.set('tutorialFinished', String('true'))
-      console.log(`Tutorial finished.`)
     }
   })
 

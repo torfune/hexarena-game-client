@@ -74,19 +74,22 @@ class Village {
       image.y = pixel.y + housePosition.y
       image.anchor.set(0.5, 1)
 
+      const scale = 0.5 + Math.random() * 0.5
       if (animate) {
         image.scale.x = 0
         image.scale.y = 0
         new Animation(
           image,
           (image: Sprite, fraction: number) => {
-            image.scale.y = fraction
-            image.scale.x = fraction
+            image.scale.y = scale * fraction
+            image.scale.x = scale * fraction
           },
           {
             speed: 0.04,
           }
         )
+      } else {
+        image.scale.set(scale)
       }
 
       this.houses.push(image)

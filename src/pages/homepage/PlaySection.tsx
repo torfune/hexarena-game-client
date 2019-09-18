@@ -92,8 +92,6 @@ const PlaySection = () => {
       LocalStorageManager.get('tutorialFinished') === 'true' ||
       !LocalStorageManager.supported
     if (!tutorialFinished) {
-      console.log(`Tutorial not finished! Starting tutorial ...`)
-
       let guestName = LocalStorageManager.get('guestName')
       if (!guestName) {
         guestName = `Guest ${Math.floor(Math.random() * 10)}`

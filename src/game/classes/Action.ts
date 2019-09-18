@@ -15,7 +15,7 @@ const loader = Loader.shared
 const ACTION_RADIUS = 50
 
 export type ActionType =
-  | 'ATTACK'
+  | 'CAPTURE'
   | 'RECRUIT'
   | 'CAMP'
   | 'TOWER'
@@ -181,7 +181,7 @@ class Action {
   }
   getIconTexture() {
     switch (this.type) {
-      case 'ATTACK':
+      case 'CAPTURE':
         return loader.resources['action-icon-attack'].texture
       case 'RECRUIT':
         if (

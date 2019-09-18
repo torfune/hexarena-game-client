@@ -92,7 +92,7 @@ const messages: {
 
       if (!id || !type || !tileId || !ownerId) continue
       if (
-        type !== 'ATTACK' &&
+        type !== 'CAPTURE' &&
         type !== 'RECRUIT' &&
         type !== 'CAMP' &&
         type !== 'TOWER' &&

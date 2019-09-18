@@ -140,7 +140,7 @@ const ActionPreview: React.FC<Props> = ({ actionType, tile }) => {
 
 const getActionLabel = (actionType: ActionType | 'SEND_ARMY' | 'REPAIR') => {
   switch (actionType) {
-    case 'ATTACK':
+    case 'CAPTURE':
       return 'Capture Tile'
     case 'CAMP':
       return 'Build Camp'
@@ -161,7 +161,7 @@ const getActionLabel = (actionType: ActionType | 'SEND_ARMY' | 'REPAIR') => {
 
 const getActionIcon = (actionType: ActionType | 'SEND_ARMY' | 'REPAIR') => {
   switch (actionType) {
-    case 'ATTACK':
+    case 'CAPTURE':
       return '/static/icons/attack.svg'
     case 'CAMP':
       return '/static/images/camp-icon.png'
@@ -186,8 +186,9 @@ const getActionCost = (
   treeCount: number
 ) => {
   switch (actionType) {
-    case 'ATTACK':
-      return gsConfig.ATTACK_COST
+    case 'CAPTURE':
+      if (!store.game || !store.game.hoveredTile) return 1
+      return store.game.hoveredTile.captureCost()
     case 'CAMP':
       return gsConfig.CAMP_COST - treeCount
     case 'TOWER':
