@@ -1,7 +1,7 @@
 import chance from './chance'
 import { Pixel } from '../../types/coordinates'
 
-const getRandomizedPosition = (position: Pixel, offset: number) => {
+const randomPixel = (pixel: Pixel, offset: number) => {
   let offsetX = Math.round(Math.random() * offset)
   let offsetY = Math.round(Math.random() * offset)
 
@@ -14,9 +14,9 @@ const getRandomizedPosition = (position: Pixel, offset: number) => {
   }
 
   return {
-    x: position.x + offsetX,
-    y: position.y + offsetY,
+    x: pixel.x + offsetX,
+    y: pixel.y + offsetY,
   }
 }
 
-export default getRandomizedPosition
+export default randomPixel

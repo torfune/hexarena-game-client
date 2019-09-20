@@ -1,4 +1,4 @@
-import Animation from '../classes/Animation'
+import { Animation } from './animate'
 import { Sprite } from 'pixi.js'
 import store from '../../store'
 

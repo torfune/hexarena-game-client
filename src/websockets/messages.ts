@@ -15,6 +15,7 @@ import updateProps from '../game/functions/updateProps'
 import GoldAnimation from '../game/classes/GoldAnimation'
 import { CHAT_WIDTH } from '../constants/react'
 import SoundManager from '../SoundManager'
+import Unit from '../game/classes/Army/Unit'
 
 // Messages: Gameserver -> Frontend
 export type MessageGS =
@@ -44,6 +45,8 @@ export type MessageGS =
   | 'message'
   | 'spectators'
   | 'ping'
+  | 'armyJoinStructure'
+  | 'battle'
 
 // Handlers: Gameserver -> Frontend
 const messages: {
@@ -93,11 +96,9 @@ const messages: {
       if (!id || !type || !tileId || !ownerId) continue
       if (
         type !== 'CAPTURE' &&
-        type !== 'RECRUIT' &&
         type !== 'CAMP' &&
         type !== 'TOWER' &&
-        type !== 'CASTLE' &&
-        type !== 'HOUSE'
+        type !== 'CASTLE'
       ) {
         continue
       }
@@ -178,17 +179,17 @@ const messages: {
       id: 'string',
       tileId: 'string',
       ownerId: 'string',
-      destroyed: 'boolean',
+      unitCount: 'number',
     }) as {
       id: string | null
       tileId: string | null
       ownerId: string | null
-      destroyed: number | null
+      unitCount: number | null
     }[]
 
     for (let i = 0; i < parsed.length; i++) {
       const fields = parsed[i]
-      const { id, tileId, ownerId, destroyed } = fields
+      const { id, tileId, ownerId, unitCount } = fields
 
       if (!id || !tileId || !ownerId) continue
 
@@ -198,8 +199,8 @@ const messages: {
       if (!army) {
         const tile = store.game.tiles.get(tileId) || null
         const owner = store.game.players.get(ownerId) || null
-        if (!tile || !owner || destroyed) continue
-        army = new Army(id, tile, owner)
+        if (!tile || !owner || !unitCount) continue
+        army = new Army(id, tile, owner, unitCount)
         store.game.armies.set(id, army)
       }
 
@@ -220,6 +221,7 @@ const messages: {
       mountain: 'boolean',
       bedrock: 'boolean',
       camp: 'boolean',
+      productionAt: 'number',
     }) as {
       id: string | null
       x: number | null
@@ -230,6 +232,7 @@ const messages: {
       mountain: boolean
       bedrock: boolean
       camp: boolean
+      productionAt: number | null
     }[]
 
     let playCaptureSound = false
@@ -397,8 +400,8 @@ const messages: {
 
   // Objects & Primitives
   flash: (payload: string) => {
-    if (!store.game) return
-    store.game.flash = convert(payload, 'number') as number | null
+    // if (!store.game) return
+    // store.game.flash = convert(payload, 'number') as number | null
   },
   gameTime: (payload: string) => {
     const time = Number(payload)
@@ -447,15 +450,17 @@ const messages: {
   },
   serverTime: (payload: string) => {
     if (!store.game) return
-    store.game.serverTime = convert(payload, 'number') as number | null
 
-    if (store.game.serverTime) {
-      store.game.pingArray.push(Date.now() - store.game.serverTime)
-      if (store.game.pingArray.length > 20) {
-        store.game.pingArray.shift()
+    const serverTime = convert(payload, 'number') as number | null
+    const clientTime = Date.now()
+
+    if (serverTime) {
+      store.game.timeDiffs.push(clientTime - serverTime)
+      if (store.game.timeDiffs.length > 20) {
+        store.game.timeDiffs.shift()
       }
-      const sum = store.game.pingArray.reduce((item, acc) => acc + item, 0)
-      store.game.ping = Math.round(sum / store.game.pingArray.length)
+      const sum = store.game.timeDiffs.reduce((item, acc) => acc + item, 0)
+      store.game.timeDiff = Math.round(sum / store.game.timeDiffs.length)
     }
   },
   startCountdown: (payload: string) => {
@@ -495,7 +500,11 @@ const messages: {
       store.notification.close()
     }
 
-    if (store.routerHistory && store.routerHistory.push) {
+    if (window.location.pathname === '/game') {
+      const canvas = document.getElementById('game-canvas')
+      if (!canvas) throw new Error('Cannot find game canvas.')
+      store.game.render(canvas)
+    } else if (store.routerHistory && store.routerHistory.push) {
       store.routerHistory.push('/game')
     }
   },
@@ -584,6 +593,93 @@ const messages: {
     }
   },
   ping: () => {},
+  armyJoinStructure: (payload: string) => {
+    if (!store.game) return
+
+    const id = convert(payload, 'string') as string | null
+    if (!id) return
+
+    const army = store.game.armies.get(id)
+    if (army) {
+      army.joinBuilding()
+    }
+  },
+  battle: (payload: string) => {
+    if (!store.game) return
+
+    const {
+      attackerId,
+      defenderId,
+      attackerUnitCount,
+      defenderUnitCount,
+    } = convertObject(payload, {
+      attackerId: 'string',
+      defenderId: 'string',
+      attackerUnitCount: 'number',
+      defenderUnitCount: 'number',
+    }) as {
+      attackerId: string
+      defenderId: string
+      attackerUnitCount: number
+      defenderUnitCount: number
+    }
+
+    const attacker = store.game.armies.get(attackerId)
+    const defender = store.game.armies.get(defenderId)
+    if (!attacker || !defender) {
+      console.log(`Battle failed: attacker or defender missing`)
+      return
+    }
+
+    const attackerUnits: Unit[] = []
+    for (let i = attacker.unitCount - attackerUnitCount - 1; i >= 0; i--) {
+      const unit = attacker.units[i]
+      if (unit) {
+        attackerUnits.push(unit)
+        attacker.units.splice(i, 1)
+      }
+    }
+    attacker.props.unitCount.previous = attacker.props.unitCount.current
+    attacker.props.unitCount.current = attackerUnitCount
+
+    const defenderUnits: Unit[] = []
+    for (let i = defender.unitCount - defenderUnitCount - 1; i >= 0; i--) {
+      const unit = defender.units[i]
+      if (unit) {
+        defenderUnits.push(unit)
+        defender.units.splice(i, 1)
+      }
+    }
+    defender.props.unitCount.previous = defender.props.unitCount.current
+    defender.props.unitCount.current = defenderUnitCount
+
+    if (attackerUnits.length !== defenderUnits.length) {
+      console.log(`Battle failed: attacker and defender units not equal`)
+      return
+    }
+
+    for (let i = 0; i < attackerUnits.length; i++) {
+      const attackerUnit = attackerUnits[i]
+      const defenderUnit = defenderUnits[i]
+
+      const attackerPixel = { x: attackerUnit.image.x, y: attackerUnit.image.y }
+      let defenderPixel = { x: defenderUnit.image.x, y: defenderUnit.image.y }
+      if (defenderUnit.targetPixel) {
+        defenderPixel = defenderUnit.targetPixel
+      }
+
+      attackerUnit.fight(defenderPixel)
+      defenderUnit.fight(attackerPixel)
+    }
+
+    if (attackerUnitCount === 0) {
+      attacker.destroy()
+    }
+
+    if (defenderUnitCount === 0) {
+      defender.destroy()
+    }
+  },
 
   // Update requests
   updateRunningGames: () => {

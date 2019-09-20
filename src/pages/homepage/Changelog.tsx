@@ -86,7 +86,7 @@ const Point = styled.p`
 
 const Changelog = () => (
   <Container>
-    <Heading>Changelog</Heading>
+    {/* <Heading>Changelog</Heading>
 
     {changelog.map(release => (
       <Fragment key={release.label}>
@@ -97,7 +97,7 @@ const Changelog = () => (
           ))}
         </ReleaseBody>
       </Fragment>
-    ))}
+    ))} */}
   </Container>
 )
 

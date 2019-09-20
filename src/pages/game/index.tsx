@@ -23,6 +23,8 @@ import Spectators from './hud/Spectators'
 import Tutorial from './hud/Tutorial'
 import HowToPlay from '../../components/HowToPlay'
 import LocalStorageManager from '../../LocalStorageManager'
+import getBrowserId from '../../utils/getBrowserId'
+import Socket from '../../websockets/Socket'
 
 const Container = styled.div`
   width: 100vw;
@@ -51,16 +53,23 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
   const [_, refresh] = useState(Date.now())
 
   useEffect(() => {
-    if (!store.game) {
+    const { game, gsConfig } = store
+    if (!game) {
+      if (gsConfig && gsConfig.DEBUG_MODE) {
+        const name = LocalStorageManager.get('guestName') || ''
+        Socket.send('playAsGuest', `${getBrowserId()}|${name}`)
+        return
+      }
+
       window.location.href = '/'
-      console.warn('Game instance not found after 1 second.')
+      console.log('Game not found, redirect to homepage')
       return
     }
 
     const canvas = document.getElementById('game-canvas')
-    if (!canvas) throw new Error('Cannot find canvas.')
+    if (!canvas) throw new Error('Cannot find game canvas.')
 
-    store.game.render(canvas)
+    game.render(canvas)
 
     window.addEventListener('resize', handleResize)
 

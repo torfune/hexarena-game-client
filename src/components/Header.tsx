@@ -230,7 +230,7 @@ const Header = () => {
         <Description>Realtime Strategy Game</Description>
       )}
 
-      <Version>Alpha {version.slice(0, 4)}</Version>
+      <Version>Alpha {version}</Version>
     </Container>
   )
 }

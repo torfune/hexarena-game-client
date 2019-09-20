@@ -46,11 +46,9 @@ const HoverPreview = () => {
     )
   }
 
-  let actionType:
-    | ActionType
-    | 'SEND_ARMY'
-    | 'REPAIR'
-    | null = hoveredTile.getActionType(true)
+  let actionType: ActionType | 'SEND_ARMY' | null = hoveredTile.getActionType(
+    true
+  )
   const structure = hoveredTile.getStructureName()
 
   if (hoveredTile.army && hoveredTile.ownerId === store.game.playerId) {
@@ -61,19 +59,11 @@ const HoverPreview = () => {
     actionType = null
   }
 
-  if (
-    actionType === 'RECRUIT' &&
-    hoveredTile.building &&
-    hoveredTile.building.hp < store.gsConfig.HP[hoveredTile.building.type]
-  ) {
-    actionType = 'REPAIR'
-  }
-
   if (!actionType) {
     if (hoveredTile.village) {
-      const { VILLAGE_BASE_INCOME, HOUSE_INCOME } = store.gsConfig
+      const { VILLAGE_CAPITAL_INCOME, HOUSE_INCOME } = store.gsConfig
       const villageIncome =
-        VILLAGE_BASE_INCOME +
+        VILLAGE_CAPITAL_INCOME +
         (hoveredTile.village.houseCount - 3) * HOUSE_INCOME
       return (
         <Container cursor={cursor}>

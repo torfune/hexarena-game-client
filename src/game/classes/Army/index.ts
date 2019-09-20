@@ -1,134 +1,79 @@
 import Unit from './Unit'
-import getPixelPosition from '../../functions/getPixelPosition'
-import getUniqueRandomizedPositions from '../../functions/getUniqueRandomizedPositions'
+import pixelFromAxial from '../../functions/pixelFromAxial'
 import store from '../../../store'
 import Tile from '../Tile'
 import Player from '../Player'
-import {
-  UNIT_COUNT,
-  UNIT_RADIUS,
-  UNIT_POSITION_OFFSET,
-  UNIT_MOVEMENT_SPEED,
-  UNIT_DOOR_OFFSET,
-} from '../../../constants/game'
+import { UNIT_SCALE, UNIT_DELAY } from '../../../constants/game'
 import Prop from '../../../types/Prop'
 import Primitive from '../../../types/Primitive'
 import createProp from '../../../utils/createProp'
+import randomUnitPixels, { Area } from '../../functions/randomUnitPixels'
 
 interface Props {
   [key: string]: Prop<Primitive>
   tileId: Prop<string>
   ownerId: Prop<string>
-  destroyed: Prop<boolean>
+  unitCount: Prop<number>
 }
 
 class Army {
   props: Props = {
     tileId: createProp(''),
     ownerId: createProp(''),
-    destroyed: createProp(false),
+    unitCount: createProp(0),
   }
 
   readonly id: string
   tile: Tile
   owner: Player
-  alpha: number = 1
-  animationFraction: number | null = null
-  isDestroying: boolean = false
-  isMoving: boolean = false
   units: Unit[] = []
 
-  constructor(id: string, tile: Tile, owner: Player) {
+  constructor(id: string, tile: Tile, owner: Player, unitCount: number) {
     this.id = id
     this.tile = tile
     this.owner = owner
 
     this.props.tileId = createProp(tile.id)
     this.props.ownerId = createProp(owner.id)
+    this.props.unitCount = createProp(0)
 
-    const position = getPixelPosition(tile.axial)
-    const randomizedPositions = getUniqueRandomizedPositions(
-      UNIT_COUNT,
-      UNIT_RADIUS,
-      position,
-      UNIT_POSITION_OFFSET
-    )
+    this.addUnits(unitCount)
 
-    const isInside = tile.building || tile.camp
-
-    for (let i = 0; i < UNIT_COUNT; i++) {
-      if (isInside) {
-        this.units.push(new Unit(position.x, position.y))
-      } else {
-        this.units.push(
-          new Unit(randomizedPositions[i].x, randomizedPositions[i].y)
-        )
-      }
+    if (tile.building || tile.camp) {
+      tile.addArmy(this)
     }
   }
 
-  setProp(key: keyof Props, value: Primitive) {
-    if (
-      !store.game ||
-      (this.props[key].current === value && key !== 'tileId')
-    ) {
-      return
-    }
-
-    this.props[key].previous = this.props[key].current
-    this.props[key].current = value
-
-    switch (key) {
-      case 'tileId':
-        this.moveOn(this.tileId)
-        break
-      case 'destroyed':
-        if (this.destroyed) {
-          this.destroy()
-        }
-        break
-      case 'ownerId':
-        const owner = store.game.players.get(this.ownerId)
-        if (owner) {
-          this.owner = owner
-        }
-        break
-    }
-  }
-  update() {
+  updateProps(props: string[]) {
     if (!store.game) return
 
-    if (this.isDestroying) {
-      this.alpha -= 0.02
-
-      for (let i = 0; i < UNIT_COUNT; i++) {
-        this.units[i].setAlpha(this.alpha)
+    for (let i = 0; i < props.length; i++) {
+      switch (props[i]) {
+        case 'tileId':
+          this.moveOn(this.tileId)
+          break
+        case 'ownerId':
+          const owner = store.game.players.get(this.ownerId)
+          if (owner) {
+            this.owner = owner
+          }
+          break
+        case 'unitCount':
+          if (this.unitCount === 0) {
+            this.destroy()
+            return
+          }
+          const delta = this.unitCount - this.units.length
+          if (delta > 0) {
+            this.addUnits(delta)
+          } else if (delta < 0) {
+            this.removeUnits(Math.abs(delta))
+          }
+          if (this.tile.army && this.tile.army.id === this.id) {
+            this.tile.updateArmyIcon()
+          }
+          break
       }
-
-      if (this.alpha <= 0) {
-        for (let i = 0; i < UNIT_COUNT; i++) {
-          this.units[i].destroy()
-        }
-
-        store.game.armies.delete(this.id)
-        return
-      }
-    }
-
-    if (!this.isMoving || this.animationFraction === null) return
-
-    this.animationFraction += UNIT_MOVEMENT_SPEED
-    if (this.animationFraction > 1) {
-      this.animationFraction = 1
-    }
-
-    for (let i = 0; i < UNIT_COUNT; i++) {
-      this.units[i].update(this.animationFraction)
-    }
-
-    if (this.animationFraction === 1) {
-      this.isMoving = false
-      this.animationFraction = null
     }
   }
   moveOn(tileId: string) {
@@ -141,87 +86,190 @@ class Army {
       return
     }
 
+    const mergeArmyUnitCount = tile.army ? tile.army.unitCount : 0
+
     if (this.tile.army && this.tile.army.id === this.id) {
       this.tile.removeArmy()
     }
 
     this.tile = tile
-    this.isMoving = true
-    this.animationFraction = 0
 
     const sameOwner = tile.owner && tile.owner.id === this.ownerId
     const allyOwner = tile.owner && tile.owner.id === this.owner.allyId
-    const position = getPixelPosition(tile.axial)
-    const doorPosition = {
-      x: position.x,
-      y: position.y + UNIT_DOOR_OFFSET,
-    }
-    const randomizedPositions = getUniqueRandomizedPositions(
-      UNIT_COUNT,
-      UNIT_RADIUS,
-      position,
-      UNIT_POSITION_OFFSET
-    )
+    const pixel = pixelFromAxial(tile.axial)
+    const area = this.positionArea(tile)
+    const randomPixels = randomUnitPixels(this.units.length, pixel, area)
+    const freeSlots = 6 - mergeArmyUnitCount
 
-    for (let i = 0; i < UNIT_COUNT; i++) {
-      if (tile.building || tile.camp) {
-        this.units[i].moveOn(doorPosition.x, doorPosition.y)
-      } else {
-        this.units[i].moveOn(randomizedPositions[i].x, randomizedPositions[i].y)
+    // let message = `move on ${tile.axial.x}|${tile.axial.z}`
+    // if (mergeArmyUnitCount) {
+    //   message += ` -> ${mergeArmyUnitCount}`
+    // }
+    // this.log(message)
+
+    if (
+      area === 'STRUCTURE' &&
+      tile.army &&
+      tile.army.id !== this.id &&
+      freeSlots > 0
+    ) {
+      const structurePixels = randomUnitPixels(
+        Math.max(this.units.length, freeSlots),
+        pixel,
+        'STRUCTURE'
+      )
+      const edgePixels = randomUnitPixels(
+        this.units.length - freeSlots,
+        pixel,
+        this.edgeArea(tile)
+      )
+      for (let i = 0; i < this.units.length; i++) {
+        if (i < freeSlots) {
+          this.units[i].moveIn(structurePixels[i], i * UNIT_DELAY)
+        } else {
+          this.units[i].moveOn(edgePixels[i - freeSlots], i * UNIT_DELAY)
+        }
+      }
+    } else {
+      for (let i = 0; i < this.units.length; i++) {
+        if (area === 'STRUCTURE') {
+          this.units[i].moveIn(randomPixels[i], i * UNIT_DELAY)
+        } else {
+          this.units[i].moveOn(randomPixels[i], i * UNIT_DELAY)
+        }
       }
     }
 
     if (
+      (tile.building || tile.camp) &&
       (sameOwner || allyOwner) &&
-      !this.isDestroying &&
-      (tile.camp ||
-        (tile.building && tile.building.hp === gsConfig.HP[tile.building.type]))
+      this.unitCount > 0 &&
+      !tile.army
     ) {
       tile.addArmy(this)
+    }
+  }
+  addUnits(count: number) {
+    if (!store.game) return
+
+    const pixel = pixelFromAxial(this.tile.axial)
+    const area = this.positionArea(this.tile)
+    const randomPixels = randomUnitPixels(count, pixel, area)
+
+    const units: Unit[] = []
+    for (let i = 0; i < count; i++) {
+      const unit = new Unit(randomPixels[i])
+      if (area === 'STRUCTURE') {
+        unit.image.scale.x = UNIT_SCALE.SMALL
+        unit.image.scale.y = UNIT_SCALE.SMALL
+      }
+      units.push(unit)
+    }
+
+    const { selectedArmyTile } = store.game
+    const selected = !!selectedArmyTile && selectedArmyTile.id === this.tile.id
+    if (selected) {
+      const edgePixels = randomUnitPixels(
+        count,
+        pixel,
+        this.edgeArea(this.tile)
+      )
+      for (let i = 0; i < units.length; i++) {
+        units[i].moveOn(edgePixels[i])
+      }
+    }
+
+    this.units = this.units.concat(units)
+    store.game.units = store.game.units.concat(units)
+  }
+  removeUnits(count: number) {
+    const animate = !this.tile.building && !this.tile.camp
+    for (let i = count - 1; i >= 0; i--) {
+      this.units[i].destroy(animate)
+      this.units.splice(i, 1)
     }
   }
   leaveBuilding() {
     const { gsConfig, game } = store
     if (!gsConfig || !game) return
 
-    this.isMoving = true
-    this.animationFraction = 0
-
-    const position = getPixelPosition(this.tile.axial)
-    const randomizedPositions = getUniqueRandomizedPositions(
-      UNIT_COUNT,
-      UNIT_RADIUS,
-      position,
-      UNIT_POSITION_OFFSET
+    const pixel = pixelFromAxial(this.tile.axial)
+    const randomPixels = randomUnitPixels(
+      this.units.length,
+      pixel,
+      this.edgeArea(this.tile)
     )
 
-    for (let i = 0; i < UNIT_COUNT; i++) {
-      this.units[i].moveOn(randomizedPositions[i].x, randomizedPositions[i].y)
+    for (let i = 0; i < this.units.length; i++) {
+      this.units[i].moveOn(randomPixels[i])
+      this.units[i].resize('NORMAL')
     }
   }
   joinBuilding() {
     const { gsConfig, game } = store
     if (!gsConfig || !game) return
 
-    this.isMoving = true
-    this.animationFraction = 0
-
-    const position = getPixelPosition(this.tile.axial)
-    const doorPosition = {
-      x: position.x,
-      y: position.y + UNIT_DOOR_OFFSET,
+    if (!this.tile.army) {
+      this.tile.addArmy(this)
     }
 
-    for (let i = 0; i < UNIT_COUNT; i++) {
-      this.units[i].moveOn(doorPosition.x, doorPosition.y)
+    const pixel = pixelFromAxial(this.tile.axial)
+    const randomPixels = randomUnitPixels(this.units.length, pixel, 'STRUCTURE')
+
+    for (let i = 0; i < this.units.length; i++) {
+      this.units[i].moveIn(randomPixels[i])
     }
   }
   destroy() {
-    this.isDestroying = true
+    if (!store.game) return
+
+    this.removeUnits(this.units.length)
 
     if (this.tile.army && this.tile.army === this) {
       this.tile.removeArmy()
+      this.tile.hideArmyIcon()
+      this.tile.updateArmyIcon()
     }
+
+    store.game.armies.delete(this.id)
+  }
+  positionArea(tile: Tile): Area {
+    const sameOwner = tile.owner && tile.owner.id === this.ownerId
+    const structure = tile.building || tile.camp
+
+    if (
+      sameOwner &&
+      (tile.mountain ||
+        (tile.army &&
+          tile.army.unitCount === 6 &&
+          tile.army.id !== this.id &&
+          this.unitCount > 0))
+    ) {
+      return this.edgeArea(tile)
+    } else if (structure) {
+      return 'STRUCTURE'
+    }
+
+    return 'FILL'
+  }
+  edgeArea(tile: Tile) {
+    if (tile.camp) return 'EDGE_CAMP'
+    if (tile.building) {
+      if (tile.building.type === 'TOWER') return 'EDGE_TOWER'
+      if (tile.building.type === 'CASTLE') return 'EDGE_CASTLE'
+      if (tile.building.type === 'CAPITAL') return 'EDGE_CAPITAL'
+    }
+    return 'EDGE_MOUNTAIN'
+  }
+  log(eventMessage?: string) {
+    const id = this.id.split('-')[0].toUpperCase()
+
+    let message = `Army[${id}]: (${this.unitCount})`
+    if (eventMessage) {
+      message += ` - ${eventMessage}`
+    }
+
+    console.log(message)
   }
 
   // Prop getters
@@ -231,8 +279,8 @@ class Army {
   get ownerId() {
     return this.props.ownerId.current
   }
-  get destroyed() {
-    return this.props.destroyed.current
+  get unitCount() {
+    return this.props.unitCount.current
   }
 }
 

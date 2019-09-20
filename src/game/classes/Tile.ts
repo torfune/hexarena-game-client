@@ -1,4 +1,4 @@
-import getPixelPosition from '../functions/getPixelPosition'
+import getPixelPosition from '../functions/pixelFromAxial'
 import Army from './Army'
 import store from '../../store'
 import createImage from '../functions/createImage'
@@ -10,11 +10,13 @@ import {
   HP_FILL_OFFSET_X,
   HP_FILL_OFFSET_Y,
   HP_BACKGROUND_OFFSET,
+  HP_HEIGHT,
+  ARMY_ICON_UPDATE_RATE,
 } from '../../constants/game'
 import getImageAnimation from '../functions/getImageAnimation'
 import shade from '../../utils/shade'
 import Player from './Player'
-import Animation from './Animation'
+import { Animation } from '../functions/animate'
 import TileImage from '../../types/TileImage'
 import { Axial } from '../../types/coordinates'
 import Action from './Action'
@@ -22,18 +24,16 @@ import Primitive from '../../types/Primitive'
 import Prop from '../../types/Prop'
 import createProp from '../../utils/createProp'
 import TileImageArray from '../../types/TileImageArray'
-import { Sprite, Loader } from 'pixi.js'
-import getRotationBySide, {
-  getArrowRotationBySide,
-} from '../functions/getRotationBySide'
+import { Sprite, Loader, Graphics } from 'pixi.js'
+import getRotationBySide from '../functions/getRotationBySide'
 import destroyImage from '../functions/destroyImage'
 import axialInDirection from '../../utils/axialInDirection'
 import getTileByAxial from '../functions/getTileByAxial'
 import BuildingType from '../../types/BuildingType'
 import Forest from './Forest'
 import Village from './Village'
-import { easeInQuad } from '../functions/easing'
 import SoundManager from '../../SoundManager'
+import animate from '../functions/animate'
 
 const loader = Loader.shared
 
@@ -43,6 +43,7 @@ interface Props {
   buildingHp: Prop<number | null>
   buildingType: Prop<BuildingType | null>
   ownerId: Prop<string | null>
+  productionAt: Prop<number | null>
 }
 
 class Tile {
@@ -51,6 +52,7 @@ class Tile {
     buildingHp: createProp(null),
     buildingType: createProp(null),
     ownerId: createProp(null),
+    productionAt: createProp(null),
   }
 
   readonly id: string
@@ -71,6 +73,11 @@ class Tile {
     border: [],
     fog: [],
   }
+  armyIconUpdateTimeout: NodeJS.Timeout | null = null
+  armyIconUnitCount = {
+    current: 0,
+    target: 0,
+  }
 
   constructor(id: string, axial: Axial, mountain: boolean, bedrock: boolean) {
     this.id = id
@@ -87,72 +94,84 @@ class Tile {
     this.updateOwner()
   }
 
-  setProp(key: keyof Props, value: Primitive) {
-    if (this.props[key].current === value || !store.game) return
+  updateProps(props: string[]) {
+    if (!store.game) return
 
-    this.props[key].previous = this.props[key].current
-    this.props[key].current = value
-
-    switch (key) {
-      case 'ownerId':
-        this.updateOwner()
-        break
-      case 'camp':
-        if (this.camp && !this.image.camp) {
-          const camp = this.addImage('camp')
-          camp.anchor.set(0.5, 1)
-          camp.y += 68
-        } else if (!this.camp && this.image.camp) {
-          this.removeImage('camp')
-        }
-        break
-      case 'buildingType':
-        if (value === 'BASE') {
-          if (!this.image.base) {
-            const base = this.addImage('base')
-            base.y -= 10
+    for (let i = 0; i < props.length; i++) {
+      switch (props[i]) {
+        case 'ownerId':
+          this.updateOwner()
+          break
+        case 'camp':
+          if (this.camp && !this.image.camp) {
+            const camp = this.addImage('camp')
+            camp.anchor.set(0.5, 1)
+            camp.y += 60
+          } else if (!this.camp && this.image.camp) {
+            this.removeImage('camp')
           }
-        } else if (value === 'CASTLE') {
-          if (!this.image.castle) {
-            this.addImage('castle')
+          break
+        case 'buildingType':
+          const type = this.building ? this.building.type : null
+          if (type === 'CAPITAL') {
+            if (!this.image.capital) {
+              const capital = this.addImage('capital')
+              capital.y -= 10
+            }
+          } else if (type === 'CASTLE') {
+            if (!this.image.castle) {
+              this.addImage('castle')
+              this.removeImage('tower')
+            }
+          } else if (type === 'TOWER') {
+            if (!this.image.tower) {
+              const tower = this.addImage('tower')
+              tower.anchor.set(0.5, 1)
+              tower.y += 60
+            }
+          } else if (type === null) {
+            this.removeImage('capital')
             this.removeImage('tower')
+            this.removeImage('castle')
+            this.hideProgressBar()
           }
-        } else if (value === 'TOWER') {
-          if (!this.image.tower) {
-            const tower = this.addImage('tower')
-            tower.anchor.set(0.5, 1)
-            tower.y += 60
+          this.updateHitpoints()
+          break
+        case 'buildingHp':
+          this.updateHitpoints()
+          break
+        case 'productionAt':
+          if (this.productionAt) {
+            const { productionTiles } = store.game
+            if (!productionTiles.includes(this)) {
+              productionTiles.push(this)
+            }
+
+            if (this.hpVisible) {
+              this.showProgressBar()
+            }
+          } else {
+            const { productionTiles } = store.game
+            const index = productionTiles.indexOf(this)
+            if (index !== -1) {
+              productionTiles.splice(index, 1)
+            }
+
+            this.updateProduction()
+            this.hideProgressBar()
           }
-        } else if (value === null) {
-          this.removeImage('base')
-          this.removeImage('tower')
-          this.removeImage('castle')
-        }
-        this.updateHitpoints()
-        break
-      case 'buildingHp':
-        this.updateHitpoints()
-        if (
-          this.action &&
-          this.action.type === 'RECRUIT' &&
-          this.action.status !== 'FINISHED' &&
-          this.building &&
-          this.building.type !== 'TOWER'
-        ) {
-          this.action.icon.texture = this.action.getIconTexture()
-        }
-        break
+          break
+      }
     }
 
     // Sounds
-    if (
-      this.ownerId === store.game.playerId &&
-      ((key === 'camp' && value) || (key === 'buildingType' && value))
-    ) {
-      SoundManager.play('BUILDING')
-    }
+    // if (
+    //   this.ownerId === store.game.playerId &&
+    //   ((key === 'camp' && value) || (key === 'buildingType' && value))
+    // ) {
+    //   SoundManager.play('BUILDING')
+    // }
   }
-
   updateImage(key: keyof TileImage) {
     if (this.props[key].current && !this.image[key]) {
       this.addImage(key)
@@ -198,7 +217,7 @@ class Tile {
   }
   addArmy(army: Army) {
     const { gsConfig } = store
-    if (this.army || !gsConfig) return
+    if (!gsConfig) return
 
     if (
       this.hpVisible &&
@@ -209,7 +228,18 @@ class Tile {
     }
 
     this.army = army
+    this.armyIconUnitCount = {
+      current: 0,
+      target: 0,
+    }
     this.showArmyIcon()
+
+    // const structure = this.building
+    //   ? this.building.type.toLowerCase()
+    //   : this.camp
+    //   ? 'camp'
+    //   : 'NO_STRUCTURE'
+    // this.army.log(`join ${structure}`)
   }
   addContested() {
     // this.image.contested.visible = true
@@ -222,9 +252,9 @@ class Tile {
   removeContested() {
     // this.image.contested.visible = false
   }
-  addImage(key: keyof TileImage, animate = true) {
+  addImage(key: keyof TileImage, doAnimate = true) {
     if (Date.now() - this.createdAt < 500) {
-      animate = false
+      doAnimate = false
     }
 
     let texture: string = key
@@ -241,47 +271,46 @@ class Tile {
     image.y = pixel.y
     this.image[key] = image
 
-    if (animate) {
+    if (doAnimate) {
       image.alpha = 0
       image.scale.set(0)
-      new Animation(
+      animate({
         image,
-        (image: Sprite, fraction: number) => {
+        duration: 250,
+        onUpdate: (image, fraction) => {
           image.alpha = fraction
           image.scale.set(fraction)
         },
-        {
-          speed: 0.05,
-        }
-      )
+      })
     }
 
     return image
   }
-  removeImage(key: keyof TileImage, animate = true) {
+  removeImage(key: keyof TileImage, doAnimate = true) {
     const image = this.image[key]
 
     if (!image || !store.game) return
 
     delete this.image[key]
 
-    if (animate) {
-      new Animation(
+    if (doAnimate) {
+      const delay =
+        key === 'tower' || key === 'castle' || key === 'capital' ? 500 : 0
+      animate({
         image,
-        (image, fraction) => {
+        duration: 500,
+        delay,
+        context: store.game.stage.get(key),
+        onUpdate: (image, fraction) => {
           image.alpha = 1 - fraction
           image.scale.set(1 - fraction)
         },
-        {
-          context: {
-            stage: store.game.stage.get(key),
-          },
-          onFinish: (image, context) => {
-            context.stage.removeChild(image)
-          },
-          speed: 0.05,
-        }
-      )
+        onFinish: (image, stage) => {
+          if (stage) {
+            stage.removeChild(image)
+          }
+        },
+      })
     } else {
       const stage = store.game.stage.get(key)
       if (stage) {
@@ -292,65 +321,155 @@ class Tile {
   removeArmy() {
     if (!this.army || !store.game) return
 
+    // const structure = this.building
+    //   ? this.building.type.toLowerCase()
+    //   : this.camp
+    //   ? 'camp'
+    //   : 'NO_STRUCTURE'
+    // this.army.log(`left ${structure}`)
+
     this.army = null
-    this.hideArmyIcon()
 
     if (store.game.selectedArmyTile === this) {
       this.unselectArmy()
+    } else {
+      this.hideArmyIcon()
+      this.updateArmyIcon()
     }
   }
   showArmyIcon() {
     const pixel = getPixelPosition(this.axial)
 
-    this.image.armyIcon = createImage('armyIcon')
-    this.image.armyIcon.x = pixel.x
-    this.image.armyIcon.y = pixel.y
-    this.image.armyIcon.alpha = 0
+    if (!this.image.armyIcon) {
+      // Background
+      this.image.armyIcon = createImage('armyIcon', `armyIcon0`)
+      this.image.armyIcon.x = pixel.x
+      this.image.armyIcon.y = pixel.y
+      this.image.armyIcon.alpha = 0
 
-    new Animation(
-      this.image.armyIcon,
-      (image, fraction, context) => {
+      // Fill
+      const { texture } = loader.resources['armyIconFill']
+      this.image.armyIconFill = new Sprite(texture)
+      this.image.armyIconFill.anchor.set(0.5, 0.5)
+      this.image.armyIconFill.y = -38
+      this.image.armyIcon.addChild(this.image.armyIconFill)
+
+      // Mask
+      const mask = new Graphics()
+      this.image.armyIconFill.mask = mask
+      this.image.armyIcon.addChild(mask)
+      this.updateProduction()
+    }
+
+    let yOffset: number = ARMY_ICON_OFFSET_Y.CAMP
+    if (this.building) {
+      switch (this.building.type) {
+        case 'TOWER':
+          yOffset = ARMY_ICON_OFFSET_Y.TOWER
+          break
+        case 'CASTLE':
+          yOffset = ARMY_ICON_OFFSET_Y.CASTLE
+          break
+        case 'CAPITAL':
+          yOffset = ARMY_ICON_OFFSET_Y.CAPITAL
+          break
+      }
+    }
+
+    animate({
+      image: this.image.armyIcon,
+      duration: 400,
+      ease: 'OUT',
+      onUpdate: (image, fraction) => {
         image.alpha = fraction
-        image.y = context.baseY - ARMY_ICON_OFFSET_Y * fraction
+        image.y = pixel.y - yOffset * fraction
+        image.scale.set(fraction)
       },
-      { context: { baseY: pixel.y }, speed: 0.05 }
-    )
+    })
+
+    this.hideProgressBar(true)
+    this.updateArmyIcon()
   }
   hideArmyIcon() {
     if (!this.image.armyIcon) return
 
-    const position = getPixelPosition(this.axial)
-    new Animation(
-      this.image.armyIcon,
-      (image, fraction) => {
-        fraction = 1 - fraction
-        image.alpha = fraction
-        image.y = position.y - ARMY_ICON_OFFSET_Y * fraction
-      },
-      {
-        speed: 0.05,
-        onFinish: image => {
-          if (store.game) {
-            const stage = store.game.stage.get('armyIcon')
-            if (stage) {
-              stage.removeChild(image)
-            }
-          }
-        },
+    let yOffset: number = ARMY_ICON_OFFSET_Y.CAMP
+    if (this.building) {
+      switch (this.building.type) {
+        case 'TOWER':
+          yOffset = ARMY_ICON_OFFSET_Y.TOWER
+          break
+        case 'CASTLE':
+          yOffset = ARMY_ICON_OFFSET_Y.CASTLE
+          break
+        case 'CAPITAL':
+          yOffset = ARMY_ICON_OFFSET_Y.CAPITAL
+          break
       }
-    )
+    }
+
+    const position = getPixelPosition(this.axial)
+    animate({
+      image: this.image.armyIcon,
+      duration: 400,
+      ease: 'IN',
+      onUpdate: (image, fraction) => {
+        image.alpha = 1 - fraction
+        image.y = position.y - yOffset * (1 - fraction)
+        image.scale.set(1 - fraction)
+      },
+      // TODO: remove image from stage
+      // onFinish: image => {
+      //   if (!store.game) return
+      //   const stage = store.game.stage.get('armyIcon')
+      //   if (stage) {
+      //     stage.removeChild(image)
+      //   }
+      // },
+    })
+  }
+  updateArmyIcon() {
+    if (!this.image.armyIcon) return
+
+    this.armyIconUnitCount.target = this.army ? this.army.unitCount : 0
+
+    if (this.armyIconUpdateTimeout) {
+      clearTimeout(this.armyIconUpdateTimeout)
+      this.armyIconUpdateTimeout = null
+    }
+
+    const { current, target } = this.armyIconUnitCount
+
+    const change = current < target ? 1 : -1
+    const newCurrent = this.armyIconUnitCount.current + change
+    this.armyIconUnitCount.current = newCurrent
+
+    if (newCurrent !== target) {
+      this.armyIconUpdateTimeout = setTimeout(
+        this.updateArmyIcon.bind(this),
+        ARMY_ICON_UPDATE_RATE
+      )
+    }
+
+    const resource = loader.resources[`armyIcon${newCurrent}`]
+    if (!resource) return
+    this.image.armyIcon.texture = resource.texture
   }
   updateHitpoints() {
     const { gsConfig } = store
     if (!gsConfig) return
 
-    // Remove
+    // Hide
     if (!this.building) {
-      this.removeImage('hpBackground')
+      setTimeout(() => {
+        if (!this.building) {
+          this.hideHitpoints()
+        }
+      }, 500)
       return
     }
 
-    // Add
+    // Create
     if (!this.image.hpBackground) {
       const pixel = getPixelPosition(this.axial)
       const image = createImage(
@@ -419,6 +538,9 @@ class Tile {
 
     if (this.building.hp < gsConfig.HP[this.building.type]) {
       this.showHitpoints()
+      this.showProgressBar()
+    } else {
+      this.hideProgressBar()
     }
 
     switch (this.building.hp) {
@@ -448,18 +570,7 @@ class Tile {
       this.building.hp === gsConfig.HP[this.building.type] &&
       !this.isHovered()
     ) {
-      setTimeout(
-        (() => {
-          if (
-            this.building &&
-            this.building.hp === gsConfig.HP[this.building.type] &&
-            !this.isHovered()
-          ) {
-            this.hideHitpoints()
-          }
-        }).bind(this),
-        500
-      )
+      this.hideHitpoints()
     }
   }
   showHitpoints() {
@@ -479,23 +590,20 @@ class Tile {
       animation.destroy()
     }
 
-    new Animation(
-      this.image.hpBackground,
-      (image, fraction, context) => {
+    animate({
+      image: this.image.hpBackground,
+      duration: 400,
+      initialFraction,
+      ease: 'OUT',
+      onUpdate: (image, fraction) => {
         image.alpha = fraction
-        image.y = context.baseY - HP_BACKGROUND_OFFSET[building.type] * fraction
+        image.y = pixel.y - HP_BACKGROUND_OFFSET[building.type] * fraction
+        image.scale.set(fraction)
       },
-      {
-        context: { baseY: pixel.y },
-        initialFraction,
-        speed: 0.05,
-      }
-    )
+    })
   }
   hideHitpoints() {
-    if (!this.hpVisible || !this.building || !this.image.hpBackground) {
-      return
-    }
+    if (!this.hpVisible || !this.image.hpBackground) return
 
     this.hpVisible = false
 
@@ -509,19 +617,138 @@ class Tile {
       animation.destroy()
     }
 
-    new Animation(
-      this.image.hpBackground,
-      (image, fraction, context) => {
-        fraction = 1 - fraction
-        image.alpha = fraction
-        image.y = context.baseY - HP_BACKGROUND_OFFSET[building.type] * fraction
+    let hpOffset = 0
+    if (building) {
+      hpOffset = HP_BACKGROUND_OFFSET[building.type]
+    } else if (this.props.buildingType.previous) {
+      hpOffset = HP_BACKGROUND_OFFSET[this.props.buildingType.previous]
+    }
+
+    animate({
+      image: this.image.hpBackground,
+      duration: 400,
+      initialFraction,
+      ease: 'IN',
+      context: this,
+      onUpdate: (image, fraction) => {
+        image.alpha = 1 - fraction
+        image.y = pixel.y - hpOffset * (1 - fraction)
+        image.scale.set(1 - fraction)
       },
-      {
-        context: { baseY: pixel.y },
-        initialFraction,
-        speed: 0.05,
+      onFinish: (_, tile: Tile) => {
+        if (!tile.building) {
+          tile.removeImage('hpBackground', false)
+        }
+      },
+    })
+  }
+  showProgressBar() {
+    if (
+      !store.game ||
+      !store.gsConfig ||
+      !this.building ||
+      this.image.progressBar ||
+      this.building.hp === store.gsConfig.HP[this.building.type] ||
+      this.building.hp === 0
+    ) {
+      return
+    }
+
+    const building = this.building
+    const pixel = getPixelPosition(this.axial)
+    const yOffset = HP_BACKGROUND_OFFSET[building.type] + HP_HEIGHT
+
+    // Background
+    this.image.progressBar = createImage('progressBar')
+    this.image.progressBar.x = pixel.x
+    this.image.progressBar.y = pixel.y - yOffset
+    this.image.progressBar.alpha = 0
+
+    // Fill
+    const { texture } = loader.resources['progressBarFill']
+    this.image.progressBarFill = new Sprite(texture)
+    this.image.progressBarFill.anchor.set(0.5, 0.5)
+    this.image.progressBar.addChild(this.image.progressBarFill)
+
+    // Mask
+    const mask = new Graphics()
+    this.image.progressBarFill.mask = mask
+    this.image.progressBar.addChild(mask)
+    this.updateProduction()
+
+    // Animation
+    animate({
+      image: this.image.progressBar,
+      duration: 200,
+      ease: 'OUT',
+      onUpdate: (image, fraction) => {
+        image.alpha = fraction
+      },
+    })
+  }
+  hideProgressBar(instantly: boolean = false) {
+    if (!store.game || !this.image.progressBar) return
+
+    const destroyImage = (image: Sprite) => {
+      if (!store.game) return
+      const stage = store.game.stage.get('progressBar')
+      if (stage) {
+        stage.removeChild(image)
       }
-    )
+    }
+
+    if (instantly) {
+      destroyImage(this.image.progressBar)
+    } else {
+      animate({
+        image: this.image.progressBar,
+        duration: 200,
+        ease: 'IN',
+        onUpdate: (image, fraction) => {
+          image.alpha = 1 - fraction
+        },
+        onFinish: destroyImage,
+      })
+    }
+
+    this.image.progressBar = undefined
+  }
+  updateProduction() {
+    if (!store.game || !store.gsConfig) return
+
+    let fraction = 1
+
+    if (this.productionAt) {
+      const timeDelta = this.productionAt + store.game.timeDiff - Date.now()
+      fraction = 1 - timeDelta / store.gsConfig.PRODUCTION_RATE
+    }
+
+    if (fraction > 1) {
+      fraction = 1
+    } else if (fraction < 0) {
+      fraction = 0
+    }
+
+    if (this.image.armyIconFill) {
+      const mask = this.image.armyIconFill.mask as Graphics
+      const height = 60 * fraction
+      mask.clear()
+      mask.beginFill(hex('#0000ff'))
+      mask.drawRect(-17, -8 - height, 34, height)
+      mask.endFill()
+    }
+
+    if (this.image.progressBarFill) {
+      if (this.hasFullHp()) {
+        fraction = 1
+      }
+
+      const mask = this.image.progressBarFill.mask as Graphics
+      mask.clear()
+      mask.beginFill(hex('#0000ff'))
+      mask.drawRect(-27, -2, 54 * fraction, 4)
+      mask.endFill()
+    }
   }
   updateOwner() {
     if (!store.game) return
@@ -544,38 +771,33 @@ class Tile {
       if (Date.now() - this.createdAt > 500) {
         image.alpha = 0
         image.scale.set(0)
-        setTimeout(() => {
-          new Animation(
-            image,
-            (image, fraction) => {
-              image.alpha = fraction
-              image.scale.set(fraction)
-            },
-            {
-              initialFraction: 0.6,
-              speed: 0.02,
-            }
-          )
-        }, Math.round(Math.random() * 100))
+        animate({
+          image,
+          duration: 1000,
+          delay: Math.round(Math.random() * 100),
+          initialFraction: 0.6,
+          onUpdate: (image, fraction) => {
+            image.alpha = fraction
+            image.scale.set(fraction)
+          },
+        })
       }
     } else {
       if (this.image.pattern) {
         const patternImage = this.image.pattern
         setTimeout(() => {
           if (this.image.pattern === patternImage) {
-            new Animation(
-              this.image.pattern,
-              (image, fraction) => {
+            animate({
+              image: this.image.pattern,
+              duration: 400,
+              onUpdate: (image, fraction) => {
                 image.alpha = 1 - fraction
                 image.scale.set(1 - fraction)
               },
-              {
-                speed: 0.04,
-                onFinish: image => {
-                  destroyImage('pattern', image)
-                },
-              }
-            )
+              onFinish: image => {
+                destroyImage('pattern', image)
+              },
+            })
           }
         }, Math.round(Math.random() * 100))
       }
@@ -604,8 +826,9 @@ class Tile {
     }
   }
   selectArmy() {
-    if (!this.image.pattern || !store.game || !this.army || !store.gsConfig)
+    if (!this.image.pattern || !store.game || !this.army || !store.gsConfig) {
       return
+    }
 
     const armyTargetTiles: Tile[][] = []
     for (let i = 0; i < 6; i++) {
@@ -616,12 +839,18 @@ class Tile {
         armyTargetTiles[i].push(nextTile)
       }
 
-      for (let j = 1; j < store.gsConfig.ARMY_RANGE; j++) {
-        const lastTile = armyTargetTiles[i][armyTargetTiles[i].length - 1]
+      let lastTile = armyTargetTiles[i][armyTargetTiles[i].length - 1]
+      let steps = this.army.unitCount
+      while (steps > 0) {
         const nextTile = lastTile.neighbors[i]
         if (!nextTile) break
 
+        lastTile = nextTile
         armyTargetTiles[i].push(nextTile)
+
+        if (nextTile.ownerId !== store.game.playerId) {
+          steps--
+        }
       }
     }
 
@@ -633,7 +862,7 @@ class Tile {
     if (!store.game || !store.game.selectedArmyTile) return
 
     if (store.game.armyDragArrow) {
-      store.game.armyDragArrow.destroy()
+      store.game.armyDragArrow.destroy(false)
     }
 
     if (this.image.pattern && this.owner) {
@@ -758,20 +987,18 @@ class Tile {
         newImage.x = pixel.x
         newImage.y = pixel.y
         newImage.rotation = getRotationBySide(i)
-        newImage.tint = borderTint ? hex(borderTint) : hex('#fff')
+        newImage.tint = borderTint ? hex(borderTint) : hex('#333')
 
         if (!patternPreview && now - this.createdAt > 500) {
           newImage.alpha = 0
-          new Animation(
-            newImage,
-            (image, fraction) => {
+          animate({
+            image: newImage,
+            duration: 200,
+            ease: 'IN',
+            onUpdate: (image, fraction) => {
               image.alpha = fraction
             },
-            {
-              ease: easeInQuad,
-              speed: 0.06,
-            }
-          )
+          })
         }
 
         this.imageSet.border[i] = newImage
@@ -833,7 +1060,7 @@ class Tile {
         return 'Tower'
       } else if (this.building.type === 'CASTLE') {
         return 'Castle'
-      } else if (this.building.type === 'BASE') {
+      } else if (this.building.type === 'CAPITAL') {
         return 'Capital'
       }
     } else if (this.village) {
@@ -847,14 +1074,7 @@ class Tile {
       return null
     }
 
-    const {
-      CAPTURE_COST,
-      RECRUIT_COST,
-      CAMP_COST,
-      TOWER_COST,
-      CASTLE_COST,
-      HP,
-    } = store.gsConfig
+    const { CAMP_COST, TOWER_COST, CASTLE_COST } = store.gsConfig
 
     // Neighbor check
     let isNeighbor = false
@@ -891,15 +1111,6 @@ class Tile {
       return 'TOWER'
     }
 
-    // RECRUIT
-    if (
-      this.building &&
-      (store.game.player.gold >= RECRUIT_COST || ignoreGold) &&
-      (this.building.type !== 'TOWER' || this.building.hp !== HP.TOWER)
-    ) {
-      return 'RECRUIT'
-    }
-
     // CASTLE
     if (
       this.building &&
@@ -924,6 +1135,18 @@ class Tile {
       return CAPTURE_COST.DEFAULT
     }
   }
+  hasFullHp() {
+    if (!this.building || !store.gsConfig) return false
+
+    const { HP } = store.gsConfig
+    return this.building.hp === HP[this.building.type]
+  }
+  clearArmyIconUnitCount() {
+    this.armyIconUnitCount = {
+      current: 0,
+      target: 0,
+    }
+  }
 
   // Prop getters
   get ownerId() {
@@ -939,6 +1162,9 @@ class Tile {
   }
   get camp() {
     return this.props.camp.current
+  }
+  get productionAt() {
+    return this.props.productionAt.current
   }
 }
 

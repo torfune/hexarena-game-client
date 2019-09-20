@@ -5,14 +5,14 @@ export const TILE_RADIUS = 73.8
 export const TILE_IMAGES = [
   'gold',
   'fog',
-  'arrow',
   'action',
   'castle',
   'tower',
-  'base',
+  'capital',
+  'armyIcon',
+  'progressBar',
   'hpBackground',
   'hpFill',
-  'armyIcon',
   'camp',
   'armyDragArrow',
   'mountain',
@@ -39,13 +39,19 @@ export const NEIGHBOR_DIRECTIONS: Axial[] = [
 export const CAMERA_SPEED = 24
 
 // IMAGE OFFSETS
-export const ARMY_ICON_OFFSET_Y = 180
-export const HP_FILL_OFFSET_Y = 10
-export const HP_FILL_OFFSET_X = 26
+export const ARMY_ICON_OFFSET_Y = {
+  CAMP: 155,
+  TOWER: 155,
+  CASTLE: 170,
+  CAPITAL: 184,
+}
+export const HP_FILL_OFFSET_Y = 7
+export const HP_FILL_OFFSET_X = 17
+export const HP_HEIGHT = 40
 export const HP_BACKGROUND_OFFSET = {
-  TOWER: 105,
-  CASTLE: 120,
-  BASE: 130,
+  TOWER: 95,
+  CASTLE: 110,
+  CAPITAL: 124,
 }
 
 // ZOOM
@@ -55,35 +61,30 @@ export const MIN_SCALE = 0.1
 export const DEFAULT_SCALE = 0.5
 
 // ARMIES
-export const UNIT_COUNT = 16
-export const UNIT_POSITION_OFFSET = 70
-export const UNIT_MOVEMENT_SPEED = 0.02
-export const UNIT_RADIUS = 12
-export const UNIT_IMAGE_SCALE = 0.6
-export const UNIT_DOOR_OFFSET = 32
-export const UNIT_MAX_DELAY = 0.4
+export const ARMY_ICON_UPDATE_RATE = 100
+export const UNIT_SPEED = 0.015
+export const UNIT_SIZE = 20
+export const UNIT_DELAY = 0.09
+export const UNIT_SCALE = {
+  SMALL: 0.4,
+  NORMAL: 1.2,
+  LARGE: 2.4,
+}
+export const UNIT_OFFSET = {
+  STRUCTURE: {
+    Y_OFFSET: 24,
+    RADIUS: 24,
+  },
+  FILL: 12,
+  EDGE: {
+    CAMP: 90,
+    TOWER: 100,
+    CASTLE: 115,
+    CAPITAL: 115,
+    MOUNTAIN: 110,
+  },
+}
 
 // COLORS
 export const BEDROCK_BACKGROUND = '#bbb'
 export const BEDROCK_BORDER = '#555'
-
-// DEBUG COMMANDS
-export const DEBUG_COMMANDS = [
-  ['1', 'capture'],
-  ['2', 'add_army'],
-  ['3', 'lose_tile'],
-  ['4', 'add_forest'],
-  ['5', 'building'],
-  ['6', 'add_player'],
-  ['7', 'send_army'],
-  ['8', 'add_gold'],
-  ['c', 'clear'],
-  ['e', 'add_castle'],
-  ['f', 'dummy_send_army'],
-  ['g', 'defeat'],
-  ['r', 'dummy_capture'],
-  ['t', 'add_village'],
-  ['v', 'add_camp'],
-  ['n', 'hp_remove'],
-  ['m', 'hp_add'],
-]

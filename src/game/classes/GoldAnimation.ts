@@ -1,5 +1,5 @@
 import createImage from '../functions/createImage'
-import getPixelPosition from '../functions/getPixelPosition'
+import getPixelPosition from '../functions/pixelFromAxial'
 import Tile from './Tile'
 import { Sprite } from 'pixi.js'
 import store from '../../store'

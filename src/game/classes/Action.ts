@@ -1,4 +1,4 @@
-import getPixelPosition from '../functions/getPixelPosition'
+import getPixelPosition from '../functions/pixelFromAxial'
 import hex from '../functions/hex'
 import store from '../../store'
 import Tile from './Tile'
@@ -7,20 +7,13 @@ import Primitive from '../../types/Primitive'
 import Prop from '../../types/Prop'
 import createProp from '../../utils/createProp'
 import { Sprite, Graphics, Loader } from 'pixi.js'
-import Animation from '../classes/Animation'
-import { easeOutQuad, easeInQuad } from '../functions/easing'
 import SoundManager from '../../SoundManager'
+import animate from '../functions/animate'
 
 const loader = Loader.shared
 const ACTION_RADIUS = 50
 
-export type ActionType =
-  | 'CAPTURE'
-  | 'RECRUIT'
-  | 'CAMP'
-  | 'TOWER'
-  | 'CASTLE'
-  | 'HOUSE'
+export type ActionType = 'CAPTURE' | 'CAMP' | 'TOWER' | 'CASTLE'
 export type ActionStatus = 'PENDING' | 'RUNNING' | 'FINISHED'
 
 interface Props {
@@ -71,21 +64,18 @@ class Action {
     this.image.y = pixel.y
 
     SoundManager.play('ACTION')
-    new Animation(
-      this.image,
-      (image: Sprite, fraction: number, context: any) => {
+
+    animate({
+      image: this.image,
+      duration: 200,
+      context: this.fill,
+      ease: 'OUT',
+      onUpdate: (image, fraction, fill) => {
         image.scale.set(fraction)
         image.alpha = fraction
-        context.fill.alpha = fraction
+        fill.alpha = fraction
       },
-      {
-        speed: 0.06,
-        ease: easeOutQuad,
-        context: {
-          fill: this.fill,
-        },
-      }
-    )
+    })
 
     this.tile.action = this
 
@@ -102,34 +92,27 @@ class Action {
       }
     }
   }
+  updateProps(props: string[]) {
+    if (!store.game) return
 
-  setProp(key: keyof Props, value: Primitive) {
-    if (this.props[key].current === value) return
-
-    this.props[key].previous = this.props[key].current
-    this.props[key].current = value
-
-    switch (key) {
-      case 'status':
-        switch (this.status) {
-          case 'FINISHED':
-            this.destroy()
-            break
-        }
-        break
-
-      default:
-        break
+    for (let i = 0; i < props.length; i++) {
+      switch (props[i]) {
+        case 'status':
+          switch (this.status) {
+            case 'FINISHED':
+              this.destroy()
+              break
+          }
+          break
+      }
     }
   }
   update() {
-    if (this.status === 'PENDING' || !store.game || store.game.ping === null) {
-      return
-    }
+    if (this.status === 'PENDING' || !store.game) return
 
     const { finishedAt, duration, status } = this
-    const timeDelta = finishedAt + store.game.ping - Date.now()
-    let fraction = Math.round((1 - timeDelta / duration) * 100) / 100
+    const timeDelta = finishedAt + store.game.timeDiff - Date.now()
+    let fraction = 1 - timeDelta / duration
 
     if (fraction > 1 || status === 'FINISHED') {
       fraction = 1
@@ -159,48 +142,33 @@ class Action {
 
     this.tile.action = null
 
-    new Animation(
-      this.image,
-      (image: Sprite, fraction: number) => {
+    animate({
+      image: this.image,
+      duration: 200,
+      ease: 'IN',
+      onUpdate: (image, fraction) => {
         image.scale.set(1 - fraction)
         image.alpha = 1 - fraction
       },
-      {
-        speed: 0.06,
-        ease: easeInQuad,
-        onFinish: () => {
-          if (!store.game) return
-
-          const stage = store.game.stage.get('action')
-          if (stage) {
-            stage.removeChild(this.image)
-          }
-        },
-      }
-    )
+      onFinish: image => {
+        if (!store.game) return
+        const stage = store.game.stage.get('action')
+        if (stage) {
+          stage.removeChild(image)
+        }
+      },
+    })
   }
   getIconTexture() {
     switch (this.type) {
       case 'CAPTURE':
         return loader.resources['action-icon-attack'].texture
-      case 'RECRUIT':
-        if (
-          store.gsConfig &&
-          this.tile.building &&
-          this.tile.building.hp < store.gsConfig.HP[this.tile.building.type]
-        ) {
-          return loader.resources['action-icon-heal'].texture
-        } else {
-          return loader.resources['action-icon-recruit'].texture
-        }
       case 'CAMP':
         return loader.resources['action-icon-camp'].texture
       case 'TOWER':
         return loader.resources['action-icon-tower'].texture
       case 'CASTLE':
         return loader.resources['action-icon-castle'].texture
-      case 'HOUSE':
-        return loader.resources['action-icon-house'].texture
     }
   }
 

@@ -112,7 +112,7 @@ const DefeatModal = () => {
       <ScreenOverlay />
 
       <Container>
-        <h2>You have lost your base!</h2>
+        <h2>You have lost your capital!</h2>
         <ButtonContainer>
           <a href="/game">
             <ContinueButton>Continue</ContinueButton>

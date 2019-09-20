@@ -12,22 +12,17 @@ interface GameServerConfig {
   // MATCH MAKING
   COUNTDOWN_TIME: number
 
-  // ARMIES
-  ARMY_RANGE: number
-
   // VISION
   DEFAULT_VISION: number
   MOUNTAIN_VISION: number
-  BASE_VISION: number
+  CAPITAL_VISION: number
   CASTLE_VISION: number
 
   // ACTION DURATIONS
   CAPTURE_DURATION: number
-  RECRUIT_DURATION: number
   CAMP_DURATION: number
   TOWER_DURATION: number
   CASTLE_DURATION: number
-  HOUSE_DURATION: number
 
   // ACTION COSTS
   CAPTURE_COST: {
@@ -35,18 +30,16 @@ interface GameServerConfig {
     FOREST: number
     MOUNTAIN: number
   }
-  HOUSE_COST: number
-  RECRUIT_COST: number
   CAMP_COST: number
   TOWER_COST: number
   CASTLE_COST: number
 
   // ECONOMY
   MAX_GOLD: number
-  BASE_ECONOMY: number
+  CAPITAL_ECONOMY: number
   MIN_HOUSES: number
   MAX_HOUSES: number
-  VILLAGE_BASE_INCOME: number
+  VILLAGE_CAPITAL_INCOME: number
   HOUSE_INCOME: number
   HOUSE_LOOT: number
   VILLAGE_GROW_RATE: number
@@ -58,8 +51,9 @@ interface GameServerConfig {
   MS_PER_POWER: number
 
   // BUILDINGS
+  PRODUCTION_RATE: number
   HP: {
-    BASE: 2
+    CAPITAL: 2
     TOWER: 2
     CASTLE: 3
   }

@@ -23,12 +23,11 @@ class AllianceRequest {
     this.sender = sender
     this.receiver = receiver
   }
-
-  setProp(key: keyof Props, value: Primitive) {
-    if (this.props[key].current === value) return
-
-    this.props[key].previous = this.props[key].current
-    this.props[key].current = value
+  updateProps(props: string[]) {
+    for (let i = 0; i < props.length; i++) {
+      switch (props[i]) {
+      }
+    }
   }
 
   @computed get timeout() {

@@ -81,9 +81,9 @@ const NotEnoughGold = styled.div`
   margin-top: 3px;
 `
 
-const Icon = styled.img<{ opaque: boolean; dontInvert?: boolean }>`
+const Icon = styled.img<{ opaque: boolean }>`
   height: 34px;
-  filter: ${props => (props.dontInvert ? null : 'invert(1)')};
+  filter: invert(1);
   opacity: ${props => (props.opaque ? '0.6' : 1)};
 `
 
@@ -95,7 +95,7 @@ const Label = styled.p`
 `
 
 interface Props {
-  actionType: ActionType | 'SEND_ARMY' | 'REPAIR'
+  actionType: ActionType | 'SEND_ARMY'
   tile: Tile
 }
 const ActionPreview: React.FC<Props> = ({ actionType, tile }) => {
@@ -112,11 +112,7 @@ const ActionPreview: React.FC<Props> = ({ actionType, tile }) => {
   return (
     <Container>
       <Circle>
-        <Icon
-          src={getActionIcon(actionType)}
-          opaque={!enoughGold}
-          dontInvert={actionType === 'REPAIR'}
-        />
+        <Icon src={getActionIcon(actionType)} opaque={!enoughGold} />
       </Circle>
       <Rectangle>
         <MainSection>
@@ -148,12 +144,6 @@ const getActionLabel = (actionType: ActionType | 'SEND_ARMY' | 'REPAIR') => {
       return 'Build Tower'
     case 'CASTLE':
       return 'Build Castle'
-    case 'RECRUIT':
-      return 'Train Army'
-    case 'REPAIR':
-      return 'Repair building'
-    case 'HOUSE':
-      return 'Build House'
     case 'SEND_ARMY':
       return 'Send army'
   }
@@ -169,19 +159,15 @@ const getActionIcon = (actionType: ActionType | 'SEND_ARMY' | 'REPAIR') => {
       return '/static/images/tower-icon.png'
     case 'CASTLE':
       return '/static/images/castle-icon.png'
-    case 'RECRUIT':
-      return '/static/icons/recruit.svg'
     case 'REPAIR':
       return '/static/images/hpFill.png'
-    case 'HOUSE':
-      return '/static/images/house-icon.png'
     case 'SEND_ARMY':
       return '/static/icons/army.svg'
   }
 }
 
 const getActionCost = (
-  actionType: ActionType | 'SEND_ARMY' | 'REPAIR',
+  actionType: ActionType | 'SEND_ARMY',
   gsConfig: GameServerConfig,
   treeCount: number
 ) => {
@@ -195,12 +181,6 @@ const getActionCost = (
       return gsConfig.TOWER_COST
     case 'CASTLE':
       return gsConfig.CASTLE_COST
-    case 'RECRUIT':
-      return gsConfig.RECRUIT_COST
-    case 'REPAIR':
-      return gsConfig.RECRUIT_COST
-    case 'HOUSE':
-      return gsConfig.HOUSE_COST
     case 'SEND_ARMY':
       return 0
   }

@@ -12,7 +12,6 @@ const createImage = (stageName: string, textureName?: string) => {
     : loader.resources[stageName].texture
 
   const image = new Sprite(texture)
-
   image.anchor.set(0.5, 0.5)
 
   // Special properties

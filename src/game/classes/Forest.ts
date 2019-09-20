@@ -4,12 +4,13 @@ import createProp from '../../utils/createProp'
 import Tile from './Tile'
 import { Sprite } from 'pixi.js'
 import createImage from '../functions/createImage'
-import getPixelPosition from '../functions/getPixelPosition'
+import getPixelPosition from '../functions/pixelFromAxial'
 import shuffle from '../../utils/shuffle'
 import destroyImage from '../functions/destroyImage'
 import store from '../../store'
-import Animation from '../classes/Animation'
+import Animation from '../functions/animate'
 import chance from '../functions/chance'
+import animate from '../functions/animate'
 
 const TREE_MARGIN_X = 70
 const TREE_MARGIN_Y = 60
@@ -51,17 +52,14 @@ class Forest {
 
       if (now - this.tile.createdAt > 200) {
         image.scale.set(0)
-        setTimeout(() => {
-          new Animation(
-            image,
-            (image, fraction) => {
-              image.scale.set(fraction)
-            },
-            {
-              speed: 0.04,
-            }
-          )
-        }, Math.round(Math.random() * 800))
+        animate({
+          image,
+          duration: 200,
+          delay: Math.round(Math.random() * 800),
+          onUpdate: (image, fraction) => {
+            image.scale.set(fraction)
+          },
+        })
       }
 
       this.trees.push(image)
@@ -70,20 +68,16 @@ class Forest {
     tile.forest = this
   }
 
-  setProp(key: keyof Props, value: Primitive) {
-    if (this.props[key].current === value) return
-
-    this.props[key].previous = this.props[key].current
-    this.props[key].current = value
-
-    switch (key) {
-      case 'treeCount':
-        this.updateTrees()
-        if (this.treeCount === 0) {
-          this.destroy()
-        }
-
-        break
+  updateProps(props: string[]) {
+    for (let i = 0; i < props.length; i++) {
+      switch (props[i]) {
+        case 'treeCount':
+          this.updateTrees()
+          if (this.treeCount === 0) {
+            this.destroy()
+          }
+          break
+      }
     }
   }
   updateTrees() {
@@ -99,21 +93,19 @@ class Forest {
     }
   }
   treeFallAnimation(image: Sprite) {
-    const direction = chance(50) ? -1 : 1
-
-    new Animation(
+    animate({
       image,
-      (image: Sprite, fraction: number) => {
+      duration: 800,
+      context: chance(50) ? -1 : 1,
+      ease: 'IN',
+      onUpdate: (image, fraction, direction) => {
         image.rotation = (Math.PI / 2) * fraction * direction
         image.alpha = 1 - fraction
       },
-      {
-        speed: 0.02,
-        onFinish: (image: Sprite) => {
-          destroyImage('tree', image)
-        },
-      }
-    )
+      onFinish: image => {
+        destroyImage('tree', image)
+      },
+    })
   }
   destroy() {
     if (!store.game) return

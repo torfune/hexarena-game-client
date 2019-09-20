@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import styled, { css } from 'styled-components'
+import React from 'react'
+import styled from 'styled-components'
 import LoginSection from './LoginSection'
 import GuestSection from './GuestSection'
 import { useAuth } from '../../auth'

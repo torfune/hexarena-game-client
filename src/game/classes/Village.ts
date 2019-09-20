@@ -4,11 +4,12 @@ import createProp from '../../utils/createProp'
 import Tile from './Tile'
 import { Sprite } from 'pixi.js'
 import createImage from '../functions/createImage'
-import getPixelPosition from '../functions/getPixelPosition'
+import getPixelPosition from '../functions/pixelFromAxial'
 import shuffle from '../../utils/shuffle'
 import destroyImage from '../functions/destroyImage'
 import store from '../../store'
-import Animation from '../classes/Animation'
+import Animation from '../functions/animate'
+import animate from '../functions/animate'
 
 const HOUSE_MARGIN_X = 70
 const HOUSE_MARGIN_Y = 40
@@ -49,22 +50,19 @@ class Village {
     tile.village = this
   }
 
-  setProp(key: keyof Props, value: Primitive) {
-    if (this.props[key].current === value) return
-
-    this.props[key].previous = this.props[key].current
-    this.props[key].current = value
-
-    switch (key) {
-      case 'houseCount':
-        this.updateHouses()
-        if (this.houseCount === 0) {
-          this.destroy()
-        }
-        break
+  updateProps(props: string[]) {
+    for (let i = 0; i < props.length; i++) {
+      switch (props[i]) {
+        case 'houseCount':
+          this.updateHouses()
+          if (this.houseCount === 0) {
+            this.destroy()
+          }
+          break
+      }
     }
   }
-  addHouses(count: number, animate: boolean = false) {
+  addHouses(count: number, preventAnimation: boolean = true) {
     const pixel = getPixelPosition(this.tile.axial)
 
     for (let i = 0; i < count; i++) {
@@ -74,20 +72,16 @@ class Village {
       image.y = pixel.y + housePosition.y
       image.anchor.set(0.5, 1)
 
-      const scale = 0.8 + Math.random() * 0.4
-      if (animate) {
-        image.scale.x = 0
-        image.scale.y = 0
-        new Animation(
+      const scale = 0.9 + Math.random() * 0.2
+      if (!preventAnimation) {
+        image.scale.set(0)
+        animate({
           image,
-          (image: Sprite, fraction: number) => {
-            image.scale.y = scale * fraction
-            image.scale.x = scale * fraction
+          duration: 200,
+          onUpdate: (image, fraction) => {
+            image.scale.set(scale * fraction)
           },
-          {
-            speed: 0.04,
-          }
-        )
+        })
       } else {
         image.scale.set(scale)
       }

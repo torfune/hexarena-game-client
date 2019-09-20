@@ -1,67 +1,145 @@
 import createImage from '../../functions/createImage'
-import { easeOutCubic } from '../../functions/easing'
-import { UNIT_IMAGE_SCALE, UNIT_MAX_DELAY } from '../../../constants/game'
-import roundToDecimals from '../../functions/roundToDecimals'
+import { UNIT_SPEED, UNIT_SCALE } from '../../../constants/game'
 import { Pixel } from '../../../types/coordinates'
 import { Sprite } from 'pixi.js'
 import store from '../../../store'
+import animate, { easeFunction } from '../../functions/animate'
 
 class Unit {
-  image: Sprite = createImage('army')
-  targetPosition: Pixel | null = null
-  originalPosition: Pixel | null = null
-  delay: number | null = null
+  image: Sprite = createImage('army', 'unit')
+  targetPixel: Pixel | null = null
+  originPixel: Pixel | null = null
+  targetScale = UNIT_SCALE.NORMAL
+  originScale = UNIT_SCALE.NORMAL
+  delay: number = 0
+  fraction: number = 1
+  destroying: boolean = false
+  animateAlpha: boolean = false
 
-  constructor(x: number, y: number) {
-    this.image.x = x
-    this.image.y = y
-
-    this.image.scale.x = UNIT_IMAGE_SCALE
-    this.image.scale.y = UNIT_IMAGE_SCALE
+  constructor(pixel: Pixel) {
+    this.image.x = pixel.x
+    this.image.y = pixel.y
+    this.image.scale.x = UNIT_SCALE.NORMAL
+    this.image.scale.y = UNIT_SCALE.NORMAL
   }
-  update(fraction: number) {
-    if (this.delay === null || !this.originalPosition || !this.targetPosition) {
+  update() {
+    if (!this.originPixel || !this.targetPixel) {
       return
     }
 
-    const delayedFraction = 1 / ((1 - this.delay) / (fraction - this.delay))
-    if (delayedFraction < 0 && this.delay) return
-
-    const easedFraction = easeOutCubic(delayedFraction)
-    const delta = {
-      x: this.targetPosition.x - this.originalPosition.x,
-      y: this.targetPosition.y - this.originalPosition.y,
+    this.fraction += UNIT_SPEED
+    if (this.fraction > 1) {
+      this.fraction = 1
     }
 
-    this.image.x = this.originalPosition.x + delta.x * easedFraction
-    this.image.y = this.originalPosition.y + delta.y * easedFraction
+    const delayedFraction =
+      1 / ((1 - this.delay) / (this.fraction - this.delay))
+    if (delayedFraction < 0 && this.delay > 0) return
+
+    const easedFraction = easeFunction('OUT')(delayedFraction)
+    const delta = {
+      x: this.targetPixel.x - this.originPixel.x,
+      y: this.targetPixel.y - this.originPixel.y,
+    }
+    const rotation = Math.atan2(
+      this.targetPixel.x - this.originPixel.x,
+      -(this.targetPixel.y - this.originPixel.y)
+    )
+
+    this.image.x = this.originPixel.x + delta.x * easedFraction
+    this.image.y = this.originPixel.y + delta.y * easedFraction
+    this.image.rotation = rotation
+
+    if (this.originScale !== this.targetScale) {
+      this.image.scale.set(
+        this.originScale + (this.targetScale - this.originScale) * easedFraction
+      )
+    }
+
+    if (this.animateAlpha) {
+      this.image.alpha = 1 - this.fraction
+    }
+
+    if (this.destroying && this.fraction === 1) {
+      this.clear()
+    }
   }
-  moveOn(x: number, y: number) {
-    this.targetPosition = { x, y }
-    this.originalPosition = {
+  moveOn(pixel: Pixel, delay?: number) {
+    this.targetPixel = pixel
+    this.originPixel = {
       x: this.image.x,
       y: this.image.y,
     }
-
-    this.delay = roundToDecimals(Math.random() * UNIT_MAX_DELAY, 2)
+    this.originScale = UNIT_SCALE.NORMAL
+    this.targetScale = UNIT_SCALE.NORMAL
+    this.image.scale.set(UNIT_SCALE.NORMAL)
+    this.delay = delay || 0
+    this.fraction = 0
+    this.animateAlpha = false
+    this.image.alpha = 1
   }
-  setAlpha(alpha: number) {
-    if (alpha < 0) {
-      alpha = 0
+  moveIn(pixel: Pixel, delay?: number) {
+    this.moveOn(pixel, delay)
+    this.resize('SMALL')
+    this.animateAlpha = true
+  }
+  resize(size: 'SMALL' | 'NORMAL') {
+    if (size === 'SMALL') {
+      this.originScale = UNIT_SCALE.NORMAL
+      this.targetScale = UNIT_SCALE.SMALL
+    } else {
+      this.originScale = UNIT_SCALE.SMALL
+      this.targetScale = UNIT_SCALE.NORMAL
+    }
+  }
+  fight(pixel: Pixel) {
+    this.moveOn(pixel)
+    this.destroy(false)
+  }
+  destroy(doAnimate: boolean = true) {
+    this.destroying = true
+
+    if (doAnimate) {
+      this.originScale = UNIT_SCALE.NORMAL
+      this.targetScale = UNIT_SCALE.NORMAL
+    } else {
+      this.animateAlpha = true
+      if (this.fraction === 1) {
+        this.clear()
+      }
+      return
     }
 
-    if (alpha > 1) {
-      alpha = 1
-    }
-
-    this.image.alpha = alpha
+    animate({
+      image: this.image,
+      delay: 400,
+      duration: 300,
+      context: this,
+      ease: 'OUT',
+      onUpdate: (image, fraction) => {
+        image.alpha = 1 - fraction
+        image.scale.set(
+          UNIT_SCALE.NORMAL + (UNIT_SCALE.LARGE - UNIT_SCALE.NORMAL) * fraction
+        )
+      },
+      onFinish: (_, unit) => {
+        if (this.fraction === 1) {
+          unit.clear()
+        }
+      },
+    })
   }
-  destroy() {
+  clear() {
     if (!store.game) return
 
     const stage = store.game.stage.get('army')
     if (stage) {
       stage.removeChild(this.image)
+    }
+
+    const index = store.game.units.indexOf(this)
+    if (index !== -1) {
+      store.game.units.splice(index, 1)
     }
   }
 }

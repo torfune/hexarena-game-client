@@ -1,8 +1,8 @@
-import { DEBUG_COMMANDS } from '../../constants/game'
+import DEBUG_COMMANDS from '../../constants/debugCommands'
 
 const getDebugCommand = (key: string) => {
   for (const command of DEBUG_COMMANDS) {
-    if (command[0] === key) {
+    if (command[0] === key.toUpperCase()) {
       return command[1]
     }
   }

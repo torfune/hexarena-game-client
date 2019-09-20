@@ -2,12 +2,15 @@ import { Sprite } from 'pixi.js'
 
 interface TileImage {
   armyIcon?: Sprite
+  armyIconFill?: Sprite
   background?: Sprite
-  base?: Sprite
+  capital?: Sprite
   blackOverlay?: Sprite
   castle?: Sprite
   contested?: Sprite
   forest?: Sprite
+  progressBar?: Sprite
+  progressBarFill?: Sprite
   hpBackground?: Sprite
   hpFill1?: Sprite
   hpFill2?: Sprite

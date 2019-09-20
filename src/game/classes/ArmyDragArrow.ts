@@ -1,9 +1,15 @@
 import { Sprite } from 'pixi.js'
 import createImage from '../functions/createImage'
 import Tile from './Tile'
-import getPixelPosition from '../functions/getPixelPosition'
+import getPixelPosition from '../functions/pixelFromAxial'
 import store from '../../store'
 import destroyImage from '../functions/destroyImage'
+import animate from '../functions/animate'
+
+const SCALE = {
+  BODY_X: 2,
+  HEAD: 2,
+}
 
 class ArmyDragArrow {
   tile: Tile
@@ -13,11 +19,10 @@ class ArmyDragArrow {
   constructor(tile: Tile) {
     this.tile = tile
 
-    this.body.anchor.set(0, 0.5)
-    this.body.scale.y = 2.5
-    this.head.anchor.set(0, 0.5)
-
-    this.head.scale.set(2)
+    this.body.anchor.set(0.5, 1)
+    this.body.scale.x = SCALE.BODY_X
+    this.head.anchor.set(0.5, 1)
+    this.head.scale.set(SCALE.HEAD)
 
     this.update()
   }
@@ -26,7 +31,6 @@ class ArmyDragArrow {
     if (!store.game) return
 
     const pixel = getPixelPosition(this.tile.axial)
-    // pixel.y += 40
 
     const { cursor, camera, scale } = store.game
 
@@ -42,15 +46,15 @@ class ArmyDragArrow {
       y: pixelCursor.y - pixel.y,
     }
 
-    const angle =
-      Math.atan2(pixelCursor.x - pixel.x, -(pixelCursor.y - pixel.y)) -
-      Math.PI / 2
-
+    const angle = Math.atan2(
+      pixelCursor.x - pixel.x,
+      -(pixelCursor.y - pixel.y)
+    )
     const arrowLength = Math.sqrt(Math.pow(delta.x, 2) + Math.pow(delta.y, 2))
 
     this.body.x = pixel.x
     this.body.y = pixel.y
-    this.body.width = arrowLength
+    this.body.height = arrowLength + 30
     this.body.rotation = angle
 
     this.head.x = pixel.x + delta.x
@@ -74,23 +78,52 @@ class ArmyDragArrow {
     }
 
     if (canSendArmy) {
-      this.body.alpha = 0.7
-      this.head.alpha = 0.9
+      this.body.alpha = 0.6
+      this.head.alpha = 1
     } else {
       this.body.alpha = 0.2
-      this.head.alpha = 0.4
+      this.head.alpha = 1
     }
   }
 
-  destroy() {
+  destroy(doAnimate: boolean = true) {
     if (!store.game) return
-
-    destroyImage('armyDragArrow', this.body)
-    destroyImage('armyDragArrow', this.head)
 
     if (store.game.armyDragArrow === this) {
       store.game.armyDragArrow = null
     }
+
+    if (!doAnimate) {
+      destroyImage('armyDragArrow', this.body)
+      destroyImage('armyDragArrow', this.head)
+      return
+    }
+
+    const bodyHeight = this.body.height
+
+    animate({
+      image: this.body,
+      duration: 200,
+      onUpdate: (image, fraction) => {
+        image.alpha = 0.6 * (1 - fraction)
+        image.scale.x = SCALE.BODY_X * (1 - fraction)
+        image.height = bodyHeight * (1 - fraction)
+      },
+      onFinish: image => {
+        destroyImage('armyDragArrow', image)
+      },
+    })
+    animate({
+      image: this.head,
+      duration: 200,
+      onUpdate: (image, fraction) => {
+        image.alpha = 1 - fraction
+        image.scale.set(SCALE.HEAD + 2 * fraction)
+      },
+      onFinish: image => {
+        destroyImage('armyDragArrow', image)
+      },
+    })
   }
 }
 

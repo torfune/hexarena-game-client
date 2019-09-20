@@ -1,3 +1,3 @@
-type BuildingType = 'BASE' | 'TOWER' | 'CASTLE'
+type BuildingType = 'CAPITAL' | 'TOWER' | 'CASTLE'
 
 export default BuildingType

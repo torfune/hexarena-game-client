@@ -38,30 +38,27 @@ class Player {
     this.registered = registered
   }
 
-  setProp(key: keyof Props, value: Primitive) {
+  updateProps(props: string[]) {
     if (!store.game) return
-    if (this.props[key].current === value) return
 
-    this.props[key].previous = this.props[key].current
-    this.props[key].current = value
-
-    switch (key) {
-      case 'pattern': {
-        const tiles = Array.from(store.game.tiles.values())
-        for (let i = tiles.length - 1; i >= 0; i--) {
-          const tile = tiles[i]
-          if (tile.image.pattern && tile.ownerId === this.id) {
-            tile.image.pattern.tint = hex(String(value))
+    for (let i = 0; i < props.length; i++) {
+      switch (props[i]) {
+        case 'pattern': {
+          const tiles = Array.from(store.game.tiles.values())
+          for (let i = tiles.length - 1; i >= 0; i--) {
+            const tile = tiles[i]
+            if (tile.image.pattern && tile.ownerId === this.id) {
+              tile.image.pattern.tint = hex(this.pattern)
+            }
           }
+          break
         }
-        break
-      }
-
-      case 'allyId': {
-        if (this.allyId) {
-          this.ally = store.game.players.get(this.allyId) || null
+        case 'allyId': {
+          if (this.allyId) {
+            this.ally = store.game.players.get(this.allyId) || null
+          }
+          break
         }
-        break
       }
     }
   }

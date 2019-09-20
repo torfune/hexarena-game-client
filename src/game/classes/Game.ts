@@ -12,9 +12,9 @@ import createGameLoop from '../functions/createGameLoop'
 import createPixiApp from '../functions/createPixiApp'
 import store from '../../store'
 import { Pixel, Axial } from '../../types/coordinates'
-import Animation from './Animation'
+import { Animation } from '../functions/animate'
 import pixelToAxial from '../functions/pixelToAxial'
-import getPixelPosition from '../functions/getPixelPosition'
+import getPixelPosition from '../functions/pixelFromAxial'
 import roundToDecimals from '../functions/roundToDecimals'
 import getDebugCommand from '../functions/getDebugCommand'
 import getTileByAxial from '../functions/getTileByAxial'
@@ -33,6 +33,7 @@ import HoveredTileInfo from '../../types/HoveredTileInfo'
 import ArmyDragArrow from './ArmyDragArrow'
 import SoundManager from '../../SoundManager'
 import LocalStorageManager from '../../LocalStorageManager'
+import Unit from './Army/Unit'
 
 class Game {
   readonly id: string
@@ -40,7 +41,6 @@ class Game {
   readonly ranked: boolean
   readonly stage: Map<string, Container> = new Map()
   @observable allianceRequests: Map<string, AllianceRequest> = new Map()
-  @observable armies: Map<string, Army> = new Map()
   @observable players: Map<string, Player> = new Map()
   @observable forests: Map<string, Forest> = new Map()
   @observable villages: Map<string, Village> = new Map()
@@ -51,13 +51,12 @@ class Game {
   @observable incomeAt: number | null = null
   @observable lastIncomeAt: number | null = null
   @observable incomeStartedAt: number | null = null
-  @observable serverTime: number | null = null
   @observable goldAnimation: { tileId: string; count: number } | null = null
   @observable notification: string | null = null
   @observable flash: number | null = null
   @observable showHud: boolean = true
   @observable fps: number | null = 0
-  @observable ping: number | null = 0
+  @observable timeDiff: number = 0
   @observable status:
     | 'starting'
     | 'running'
@@ -68,15 +67,18 @@ class Game {
   @observable playerId: string | null = null
   @observable spawnTile: Tile | null = null
   @observable cursor: Pixel | null = null
-  @observable hoveredTileInfo: HoveredTileInfo | null = null // move this to react layer
+  @observable hoveredTileInfo: HoveredTileInfo | null = null
   @observable spectators: number | null = 0
+  armies: Map<string, Army> = new Map()
+  units: Unit[] = []
+  productionTiles: Tile[] = []
   scale: number = DEFAULT_SCALE
   targetScale: number = DEFAULT_SCALE
   selectedArmyTile: Tile | null = null
   loop: Ticker | null = null
   pixi: Application | null = null
   initialized: boolean = false
-  pingArray: number[] = []
+  timeDiffs: number[] = []
   fpsArray: number[] = []
   readonly animations: Array<Animation | GoldAnimation> = []
   camera: Pixel | null = null
@@ -281,15 +283,21 @@ class Game {
       this.actions[i].update()
     }
 
-    // Armies
-    const armies = Array.from(this.armies.values())
-    for (let i = 0; i < armies.length; i++) {
-      armies[i].update()
+    // Units
+    for (let i = 0; i < this.units.length; i++) {
+      if (this.units[i].fraction !== 1) {
+        this.units[i].update()
+      }
     }
 
     // Army drag arrow
     if (this.armyDragArrow) {
       this.armyDragArrow.update()
+    }
+
+    // Production tiles
+    for (let i = 0; i < this.productionTiles.length; i++) {
+      this.productionTiles[i].updateProduction()
     }
 
     // Hovered tile
@@ -344,28 +352,30 @@ class Game {
     }
 
     this.keyDown[key] = true
-    this.updateCameraMove()
 
     if (key === 'Escape') {
       Socket.send('cancel')
       return
     }
 
-    // if (key === ' ') {
-    //   const keys = Object.keys(this.stage)
-    //   let sum = 0
-    //   console.log('')
-    //   console.log('---- ----')
-    //   for (const k of keys) {
-    //     const amount = this.stage[k].children.length
-    //     console.log(`${k}: ${amount}`)
-    //     sum += amount
-    //   }
-    //   console.log('---- ----')
-    //   console.log(`TOTAL: ${sum}`)
-    //   console.log('---- ----')
-    //   return
-    // }
+    if (key === ' ') {
+      const keys = this.stage.keys()
+      let sum = 0
+      console.log('')
+      console.log('---- ----')
+      for (const k of Array.from(keys)) {
+        const stage = this.stage.get(k)
+        if (stage) {
+          const amount = stage.children.length
+          console.log(`${k}: ${amount}`)
+          sum += amount
+        }
+      }
+      console.log('---- ----')
+      console.log(`TOTAL: ${sum}`)
+      console.log('---- ----')
+      return
+    }
 
     const tile = this.hoveredTile
     const command = getDebugCommand(key)
@@ -384,7 +394,6 @@ class Game {
     }
 
     this.keyDown[key] = false
-    this.updateCameraMove()
 
     if (key === 'e' || key === 'q') {
       const zoomDirection = key === 'e' ? -1 : 1
@@ -621,49 +630,62 @@ class Game {
 
       if (direction !== null) {
         const targetTiles = this.selectedArmyTargetTiles[direction]
+        const { army } = this.selectedArmyTile
+        let steps = army ? army.unitCount : 0
         for (let i = 0; i < targetTiles.length; i++) {
           const t = targetTiles[i]
-          if (!t) continue
-
-          // Enemy Mountain
-          if (
-            t.mountain &&
-            t.owner &&
-            t.ownerId !== playerId &&
-            t.ownerId !== this.player.allyId
-          ) {
-            break
-          }
-
-          // Owned Castle & Base
-          if (t.ownerId === playerId && t.building) {
-            break
-          }
-
-          // Owned empty Camp
-          if (t.ownerId === playerId && t.camp) {
-            break
-          }
+          if (!t) break
 
           // Ally tile
           if (t.ownerId && t.ownerId === this.player.allyId) {
             break
           }
 
-          // Enemy structure
-          if (t.ownerId !== playerId && !t.bedrock) {
-            tilesToCapture.push(t)
-
-            if (
-              t.mountain ||
-              t.forest ||
-              t.building ||
-              (t.camp && t.army) ||
-              (!t.owner && t.camp)
+          // Mountain
+          if (t.mountain) {
+            // - neutral
+            if (!t.owner) {
+              steps -= store.gsConfig.CAPTURE_COST.MOUNTAIN - 1
+            }
+            // - enemy
+            else if (
+              t.owner &&
+              t.ownerId !== playerId &&
+              t.ownerId !== this.player.allyId
             ) {
               break
             }
           }
+
+          // Forest - enemy/neutral
+          else if (t.ownerId !== playerId && t.forest) {
+            steps -= store.gsConfig.CAPTURE_COST.FOREST - 1
+          }
+
+          // Structure - owned
+          else if (t.ownerId === playerId && (t.building || t.camp)) {
+            break
+          }
+
+          // Structure - enemy/neutral
+          else if (t.ownerId !== playerId && !t.bedrock) {
+            if (t.building || (t.camp && t.army) || (!t.owner && t.camp)) {
+              tilesToCapture.push(t)
+              break
+            }
+          }
+
+          // Out of steps
+          if (steps <= 0) break
+
+          // Add to array
+          if (t.ownerId !== playerId) {
+            steps--
+            tilesToCapture.push(t)
+          }
+
+          // Out of steps
+          if (steps <= 0) break
         }
       }
     }
@@ -794,25 +816,6 @@ class Game {
 
     this.updateStageScale()
     this.updateStagePosition()
-  }
-  updateCameraMove() {
-    this.cameraMove = { x: 0, y: 0 }
-
-    // if (this.keyDown['d']) {
-    //   this.cameraMove.x--
-    // }
-
-    // if (this.keyDown['a']) {
-    //   this.cameraMove.x++
-    // }
-
-    // if (this.keyDown['s']) {
-    //   this.cameraMove.y--
-    // }
-
-    // if (this.keyDown['w']) {
-    //   this.cameraMove.y++
-    // }
   }
   acceptRequest(senderId: string) {
     Socket.send('request', `accept|${senderId}`)
@@ -992,13 +995,7 @@ class Game {
   showNotEnoughGold(tile: Tile) {
     if (!this.player || !store.gsConfig) return
 
-    const {
-      CAPTURE_COST,
-      RECRUIT_COST,
-      CAMP_COST,
-      TOWER_COST,
-      CASTLE_COST,
-    } = store.gsConfig
+    const { CAMP_COST, TOWER_COST, CASTLE_COST } = store.gsConfig
 
     const actionType = tile.getActionType(true)
 
@@ -1007,8 +1004,7 @@ class Game {
       (actionType === 'CAPTURE' && this.player.gold >= tile.captureCost()) ||
       (actionType === 'TOWER' && this.player.gold >= TOWER_COST) ||
       (actionType === 'CAMP' && this.player.gold >= CAMP_COST) ||
-      (actionType === 'CASTLE' && this.player.gold >= CASTLE_COST) ||
-      (actionType === 'RECRUIT' && this.player.gold >= RECRUIT_COST)
+      (actionType === 'CASTLE' && this.player.gold >= CASTLE_COST)
     ) {
       return
     }
