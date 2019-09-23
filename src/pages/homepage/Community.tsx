@@ -8,6 +8,7 @@ import store from '../../store'
 import { version } from '../../../package.json'
 import { observer } from 'mobx-react-lite'
 import LocalStorageManager from '../../LocalStorageManager'
+import { Link } from 'react-router-dom'
 
 const Container = styled.div`
   margin-top: 96px;
@@ -112,7 +113,7 @@ const buttonCSS = css`
 const DiscordButton = styled.a`
   ${buttonCSS};
   margin-left: 0 !important;
-  margin-top: 0 !important;
+  margin-top: 16px !important;
   cursor: default;
 `
 
@@ -181,6 +182,10 @@ const SoundCheckbox = styled.div<{ checked: boolean }>`
         `}
 `
 
+const MatchHistoryButton = styled.div`
+  ${buttonCSS};
+`
+
 const Community: React.FC = () => {
   const [showGuide, setShowGuide] = useState(false)
 
@@ -213,6 +218,14 @@ const Community: React.FC = () => {
 
         <ButtonsContainer>
           <div>
+            {store.user && (
+              <Link to="/match-history">
+                <MatchHistoryButton>
+                  <img src={`/static/icons/history.svg?${version}`} />
+                  Match history
+                </MatchHistoryButton>
+              </Link>
+            )}
             <DiscordButton target="_blank" href="https://discord.gg/vwXKyRX">
               <img src={`/static/icons/discord.svg?${version}`} />
               Discord

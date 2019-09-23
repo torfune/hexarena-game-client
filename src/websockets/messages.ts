@@ -684,7 +684,6 @@ const messages: {
   // Update requests
   updateRunningGames: () => {
     store.fetchRunningGames()
-    store.fetchFinishedGames()
   },
 }
 
