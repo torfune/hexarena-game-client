@@ -4,6 +4,7 @@ import Homepage from './pages/homepage'
 import Game from './pages/game'
 import Privacy from './pages/Privacy'
 import Spectate from './pages/Spectate'
+import MatchHistory from './pages/MatchHistory'
 import GlobalStyle from './components/GlobalStyle'
 import { AuthProvider } from './auth'
 import store from './store'
@@ -36,6 +37,7 @@ const App: React.FC = observer(() => (
               render={({ history }) => <Spectate history={history} />}
             />
             <Route exact path="/privacy" component={Privacy} />
+            <Route path="/match-history" component={MatchHistory} />
             <Route component={PageNotFound} />
           </Switch>
         )}

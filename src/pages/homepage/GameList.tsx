@@ -170,7 +170,6 @@ const LiveMatches = styled.div`
 const GameList = () => {
   useEffect(() => {
     store.fetchRunningGames()
-    store.fetchFinishedGames()
   }, [])
 
   return (
@@ -218,42 +217,6 @@ const GameList = () => {
           ))}
         </LiveMatches>
       )}
-      {store.finishedGames.length > 0 && (
-        <>
-          <Heading>Match History</Heading>
-          {store.finishedGames.map(game => (
-            <Game key={game.id}>
-              <Row>
-                <Mode>{game.mode}</Mode>
-                {game.ranked ? (
-                  <RankedBox>
-                    <Balance ranked={game.ranked}>RANKED</Balance>
-                  </RankedBox>
-                ) : (
-                  <Balance ranked={game.ranked}>NORMAL</Balance>
-                )}
-              </Row>
-              <Players>
-                {game.players.map((group, index) => (
-                  <Fragment key={index}>
-                    {index > 0 && (
-                      <Versus>
-                        <div />
-                        <p>VS</p>
-                        <div />
-                      </Versus>
-                    )}
-                    {finishedPlayerGroup(group)}
-                  </Fragment>
-                ))}
-              </Players>
-              <Row>
-                <Time grey>{formatTime(game.time)}</Time>
-              </Row>
-            </Game>
-          ))}
-        </>
-      )}
     </Container>
   )
 }
@@ -277,32 +240,6 @@ const runningPlayerGroup = (
 
         <Name>{p.name}</Name>
         {p.elo && <Elo>({p.elo})</Elo>}
-      </Player>
-    ))}
-  </Group>
-)
-
-const finishedPlayerGroup = (
-  players: Array<{ name: string; eloChange: number; pattern: string }>
-) => (
-  <Group>
-    {players.map((p, index) => (
-      <Player key={index} opaque={p.eloChange < 0}>
-        {p.eloChange > 0 ? (
-          <>
-            <Pattern color={p.pattern}>
-              <img src="/static/icons/crown.svg" />
-            </Pattern>
-            <Name>{p.name}</Name>
-            <Elo red>(+{p.eloChange})</Elo>
-          </>
-        ) : (
-          <>
-            <Skull src="/static/icons/skull.svg" />
-            <Name>{p.name}</Name>
-            <Elo>({p.eloChange})</Elo>
-          </>
-        )}
       </Player>
     ))}
   </Group>

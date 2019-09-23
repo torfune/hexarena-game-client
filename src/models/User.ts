@@ -13,6 +13,7 @@ interface User {
   mute: {
     mutedAt: number
     mutedBy: string
+    messages: string[]
   } | null
   auth: Auth
   createdAt: number
