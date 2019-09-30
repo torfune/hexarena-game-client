@@ -118,7 +118,7 @@ class ArmyDragArrow {
       duration: 200,
       onUpdate: (image, fraction) => {
         image.alpha = 1 - fraction
-        image.scale.set(SCALE.HEAD + 2 * fraction)
+        image.scale.set(SCALE.HEAD + 1 * fraction)
       },
       onFinish: image => {
         destroyImage('armyDragArrow', image)

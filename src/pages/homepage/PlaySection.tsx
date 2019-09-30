@@ -88,21 +88,21 @@ const PlaySection = () => {
     data: string,
     queueType: 'NORMAL' | 'RANKED'
   ) => {
-    const tutorialFinished =
-      LocalStorageManager.get('tutorialFinished') === 'true' ||
-      !LocalStorageManager.supported
-    if (!tutorialFinished) {
-      let guestName = LocalStorageManager.get('guestName')
-      if (!guestName) {
-        guestName = `Guest ${Math.floor(Math.random() * 10)}`
-      }
+    // const tutorialFinished =
+    //   LocalStorageManager.get('tutorialFinished') === 'true' ||
+    //   !LocalStorageManager.supported
+    // if (!tutorialFinished) {
+    //   let guestName = LocalStorageManager.get('guestName')
+    //   if (!guestName) {
+    //     guestName = `Guest ${Math.floor(Math.random() * 10)}`
+    //   }
 
-      Socket.send(
-        'playTutorial',
-        `${getBrowserId()}|${store.user ? store.user.name : guestName}`
-      )
-      return
-    }
+    //   Socket.send(
+    //     'playTutorial',
+    //     `${getBrowserId()}|${store.user ? store.user.name : guestName}`
+    //   )
+    //   return
+    // }
 
     if (Notification.permission === 'default') {
       Notification.requestPermission()
