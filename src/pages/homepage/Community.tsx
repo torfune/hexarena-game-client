@@ -204,12 +204,12 @@ const Community: React.FC = () => {
   return (
     <>
       <Container>
-        <SoundButton onClick={toggleSoundSettings}>
+        {/* <SoundButton onClick={toggleSoundSettings}>
           <img src="/static/icons/sound.svg" /> Sounds
           <SoundCheckbox checked={store.settings.sound}>
             <img src="/static/icons/check.svg" />
           </SoundCheckbox>
-        </SoundButton>
+        </SoundButton> */}
 
         <ButtonsContainer>
           <div>
@@ -227,10 +227,10 @@ const Community: React.FC = () => {
           </div>
 
           <div>
-            <GuideButton onClick={() => setShowGuide(true)}>
+            {/* <GuideButton onClick={() => setShowGuide(true)}>
               <img src="/static/icons/book.svg" />
               How to play
-            </GuideButton>
+            </GuideButton> */}
             <SandboxButton onClick={playTutorial}>
               <img src="/static/icons/sandbox.svg" />
               Sandbox mode

@@ -99,7 +99,7 @@ class ArmyDragArrow {
       return
     }
 
-    const bodyHeight = this.body.height
+    // const bodyHeight = this.body.height
 
     animate({
       image: this.body,
@@ -107,7 +107,6 @@ class ArmyDragArrow {
       onUpdate: (image, fraction) => {
         image.alpha = 0.6 * (1 - fraction)
         image.scale.x = SCALE.BODY_X * (1 - fraction)
-        image.height = bodyHeight * (1 - fraction)
       },
       onFinish: image => {
         destroyImage('armyDragArrow', image)
@@ -115,7 +114,7 @@ class ArmyDragArrow {
     })
     animate({
       image: this.head,
-      duration: 200,
+      duration: 150,
       onUpdate: (image, fraction) => {
         image.alpha = 1 - fraction
         image.scale.set(SCALE.HEAD + 1 * fraction)
