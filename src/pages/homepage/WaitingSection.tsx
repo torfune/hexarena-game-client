@@ -12,7 +12,8 @@ import { useAuth } from '../../auth'
 import Heading from '../../components/Heading'
 
 const Container = styled.div`
-  width: 190px;
+  width: 240px;
+  margin-right: 40px;
 `
 
 const TimesWrapper = styled.div`

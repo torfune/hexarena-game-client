@@ -1,11 +1,11 @@
 import React, { useEffect, Fragment } from 'react'
 import styled from 'styled-components'
-import formatTime from '../../utils/formatTime'
 import { PRIMARY, BREAKPOINT } from '../../constants/react'
 import store from '../../store'
 import { observer } from 'mobx-react-lite'
 import { Link } from 'react-router-dom'
 import Timer from '../../components/Timer'
+import Heading from '../../components/Heading'
 
 const Container = styled.div`
   color: #fff;
@@ -20,12 +20,6 @@ const Container = styled.div`
     margin-right: 0px;
     padding-top: 64px;
   }
-`
-
-const Heading = styled.h2`
-  font-size: 24px;
-  font-weight: 500;
-  margin-bottom: 24px;
 `
 
 const Game = styled.div`
