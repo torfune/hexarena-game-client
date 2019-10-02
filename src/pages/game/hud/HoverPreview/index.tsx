@@ -70,7 +70,7 @@ const HoverPreview = () => {
           <VillagePreview villageIncome={villageIncome} />
         </Container>
       )
-    } else if (structure !== 'Plains') {
+    } else if (structure) {
       return (
         <Container cursor={cursor}>
           <StructurePreview structure={structure} />

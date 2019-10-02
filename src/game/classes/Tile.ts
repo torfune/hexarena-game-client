@@ -1050,7 +1050,7 @@ class Tile {
     if (this.bedrock) {
       return 'Edge of the World'
     } else if (this.mountain) {
-      return 'Mountains'
+      return 'Mountain'
     } else if (this.forest) {
       return 'Forest'
     } else if (this.camp) {
@@ -1067,7 +1067,7 @@ class Tile {
       return `Village`
     }
 
-    return 'Plains'
+    return null
   }
   getActionType(ignoreGold: boolean = false) {
     if (!store.game || !store.gsConfig || this.action || !store.game.player) {

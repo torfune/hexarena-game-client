@@ -135,9 +135,12 @@ const ActionPreview: React.FC<Props> = ({ actionType, tile }) => {
 }
 
 const getActionLabel = (actionType: ActionType | 'SEND_ARMY' | 'REPAIR') => {
+  if (!store.game || !store.game.hoveredTile) return
+
   switch (actionType) {
     case 'CAPTURE':
-      return 'Capture Tile'
+      const structure = store.game.hoveredTile.getStructureName()
+      return `Capture ${structure || 'Tile'}`
     case 'CAMP':
       return 'Build Camp'
     case 'TOWER':
@@ -150,9 +153,14 @@ const getActionLabel = (actionType: ActionType | 'SEND_ARMY' | 'REPAIR') => {
 }
 
 const getActionIcon = (actionType: ActionType | 'SEND_ARMY' | 'REPAIR') => {
+  if (!store.game || !store.game.hoveredTile) return
+
   switch (actionType) {
     case 'CAPTURE':
-      return '/static/icons/attack.svg'
+      const structure = store.game.hoveredTile.getStructureName()
+      return `/static/images/${
+        structure ? structure.toLowerCase() : 'tile'
+      }-icon.png`
     case 'CAMP':
       return '/static/images/camp-icon.png'
     case 'TOWER':

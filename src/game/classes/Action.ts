@@ -52,6 +52,9 @@ class Action {
     this.icon = new Sprite(this.getIconTexture())
     this.icon.anchor.set(0.5)
     this.icon.scale.set(0.55)
+    if (this.type === 'CAPTURE') {
+      this.icon.tint = hex(this.owner.pattern)
+    }
     this.fill.alpha = 0
 
     this.image.addChild(this.background)
