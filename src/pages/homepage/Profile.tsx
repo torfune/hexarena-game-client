@@ -4,110 +4,61 @@ import React from 'react'
 import { useAuth } from '../../auth'
 import store from '../../store'
 import { observer } from 'mobx-react-lite'
+import shadeColor from '../../utils/shade'
 
 const Container = styled.div`
-  margin-left: auto;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  background: #282828;
+  border: 1px solid #111;
+  border-radius: 4px;
+  padding: 12px 16px;
+  width: 240px;
+  margin-top: 38px;
+`
 
-  @media (max-width: ${BREAKPOINT.MAIN_1}) {
-    margin-top: 48px;
+const Stats = styled.div`
+  margin-bottom: 6px;
+  font-size: 14px;
+
+  > p {
+    font-size: 16px;
+    color: #fff;
+    font-weight: 600;
+    margin-bottom: 14px;
   }
 
-  @media (max-width: ${BREAKPOINT.MAIN_2}) {
-    margin-top: 0;
-  }
-
-  @media (max-width: ${BREAKPOINT.MAIN_3}) {
-    margin-top: 48px;
-  }
-
-  @media (max-width: ${BREAKPOINT.MAIN_4}) {
-    margin-top: 0;
-  }
-
-  @media (max-width: ${BREAKPOINT.MAIN_5}) {
-    margin-top: 48px;
+  > div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
   }
 `
 
-const EloSection = styled.div`
-  text-align: right;
-  margin-bottom: 16px;
+const StatLabel = styled.p`
+  font-weight: 400;
+  color: #ddd;
+`
 
-  p {
-    text-transform: uppercase;
-    font-weight: 600;
-    color: ${PRIMARY};
-    font-size: 20px;
-  }
-
-  span {
-    font-weight: 600;
-    font-size: 20px;
-  }
-
-  @media (max-width: ${BREAKPOINT.MAIN_1}) {
-    text-align: left;
-  }
-
-  @media (max-width: ${BREAKPOINT.MAIN_2}) {
-    text-align: right;
-  }
-
-  @media (max-width: ${BREAKPOINT.MAIN_3}) {
-    text-align: left;
-  }
-
-  @media (max-width: ${BREAKPOINT.MAIN_4}) {
-    text-align: right;
-  }
-
-  @media (max-width: ${BREAKPOINT.MAIN_5}) {
-    text-align: left;
-  }
+const StatValue = styled.p`
+  margin-left: auto;
+  font-weight: 600;
+  color: ${shadeColor(PRIMARY, 40)};
 `
 
 const LogoutButton = styled.div`
-  width: 74px;
+  font-size: 12px;
   text-align: right;
-  margin-left: auto;
+  color: #aaa;
 
   :hover {
     text-decoration: underline;
-  }
-
-  @media (max-width: ${BREAKPOINT.MAIN_1}) {
-    margin-top: 16px;
-    text-align: left;
-    margin-left: 0;
-  }
-
-  @media (max-width: ${BREAKPOINT.MAIN_2}) {
-    margin-top: 0;
-    text-align: right;
-    margin-left: auto;
-  }
-
-  @media (max-width: ${BREAKPOINT.MAIN_3}) {
-    margin-top: 16px;
-    text-align: left;
-    margin-left: 0;
-  }
-
-  @media (max-width: ${BREAKPOINT.MAIN_4}) {
-    margin-top: 0;
-    text-align: right;
-    margin-left: auto;
-  }
-
-  @media (max-width: ${BREAKPOINT.MAIN_5}) {
-    margin-top: 16px;
-    text-align: left;
-    margin-left: 0;
+    color: #fff;
   }
 `
+
+const Moderator = styled.div``
 
 const Profile = () => {
   const { logout } = useAuth()
@@ -118,26 +69,27 @@ const Profile = () => {
     <Container>
       {!!store.user.elo && (
         <>
-          <EloSection>
-            <p>Elo</p>
-            <span>{store.user.elo}</span>
-          </EloSection>
+          <Stats>
+            <p>Your stats</p>
 
-          {!!store.user.diamonds && (
-            <EloSection>
-              <p>Diamonds</p>
-              <span>{store.user.diamonds}</span>
-            </EloSection>
-          )}
+            <div>
+              <StatLabel>Elo:</StatLabel>
+              <StatValue>{store.user.elo}</StatValue>
+            </div>
+            <div>
+              <StatLabel>Winrate:</StatLabel>
+              <StatValue>-</StatValue>
+            </div>
+            <div>
+              <StatLabel>Games played:</StatLabel>
+              <StatValue>-</StatValue>
+            </div>
+          </Stats>
 
-          {!!store.user.moderator && (
-            <EloSection>
-              <p>CHAT MODERATOR</p>
-            </EloSection>
-          )}
+          {!!store.user.moderator && <Moderator>CHAT MODERATOR</Moderator>}
         </>
       )}
-      {!store.queue && <LogoutButton onClick={logout}>Logout</LogoutButton>}
+      {!store.queue && <LogoutButton onClick={logout}>Sign out</LogoutButton>}
     </Container>
   )
 }

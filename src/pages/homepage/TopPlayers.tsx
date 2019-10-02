@@ -6,6 +6,7 @@ import React from 'react'
 import Api from '../../Api'
 import { BREAKPOINT, PRIMARY } from '../../constants/react'
 import shadeColor from '../../utils/shade'
+import Heading from '../../components/Heading'
 
 const Container = styled.div`
   grid-column: 1;
@@ -33,23 +34,12 @@ const Container = styled.div`
   }
 `
 
-const Heading = styled.h2`
-  font-size: 24px;
-  font-weight: 500;
-  color: #fff;
-  margin-bottom: 24px;
-
-  @media (max-width: ${BREAKPOINT.FINAL}) {
-    text-align: center;
-  }
-`
-
 const List = styled.div`
   background: #282828;
   border: 1px solid #111;
   border-top: 0;
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
   padding-top: 8px;
   padding-bottom: 8px;
   width: 100%;
@@ -61,14 +51,15 @@ const ListHeading = styled.div`
   width: 100%;
   display: grid;
   grid-template-columns: 32px 1fr auto;
-  padding: 8px 24px;
-  font-weight: 500;
+  padding: 10px 24px;
+  font-weight: 400;
   background: #222;
   border: 1px solid #111;
   border-bottom: 1px solid #111;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  color: #fff;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  height: 40px;
+  color: #aaa;
   max-width: 360px;
   min-width: 300px;
 `
@@ -87,25 +78,28 @@ const PlayerRow = styled.div<{ highlight?: boolean }>`
 
           > p {
             color: #fff !important;
-            font-weight: 600 !important;
+            font-weight: 500 !important;
+          }
+          > p:first-child {
+            font-weight: 200 !important;
           }
         `
       : null}
 `
 
 const Name = styled.p<{ grey?: boolean }>`
-  color: #fff;
-  font-weight: 600;
+  color: #eee;
+  font-weight: 400;
 `
 
 const Number = styled.p`
   color: #aaa;
-  font-weight: 500;
+  font-weight: 200;
 `
 
 const Elo = styled.p`
-  color: #aaa;
-  font-weight: 500;
+  color: #eee;
+  font-weight: 400;
 `
 
 const TopPlayers = () => {

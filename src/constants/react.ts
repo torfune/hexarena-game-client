@@ -13,6 +13,10 @@ export const COLOR = {
 export const BOX_SHADOW = '0px 2px 16px 0px rgba(0, 0, 0, 0.2)'
 export const TEXT_SHADOW = '0px 1px 4px rgba(0, 0, 0, 0.2)'
 export const LOGO_SHADOW = '0px 2px 16px rgba(0, 0, 0, 0.3)'
+export const SHADOW = {
+  BUTTON: '0px 2px 8px #00000044',
+  BUTTON_HOVER: '0px 2px 12px #00000066',
+}
 
 // MISC
 export const CHAT_WIDTH = '500px'

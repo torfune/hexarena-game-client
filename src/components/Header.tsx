@@ -51,22 +51,10 @@ const Logo = styled.h1`
 `
 
 const Version = styled.p`
-  font-size: 22px;
-  margin-left: 24px;
-  padding-left: 24px;
-  border-left: 1px solid #fff;
+  font-size: 16px;
   font-weight: 200;
 
   @media (max-width: 1100px) {
-    display: none;
-  }
-`
-
-const Description = styled.p`
-  font-size: 22px;
-  font-weight: 200;
-
-  @media (max-width: 1400px) {
     display: none;
   }
 `
@@ -85,19 +73,18 @@ const LeftSection = styled.div`
 
 const Button = styled.div`
   background: #fff;
-  border-radius: 4px;
+  border-radius: 50%;
   font-size: 14px;
-  font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 28px;
-  width: 28px;
-  margin-left: 16px;
+  height: 24px;
+  width: 24px;
+  margin-left: 12px;
   transition: 100ms;
 
   > img {
-    height: 14px;
+    height: 10px;
   }
 
   :hover {
@@ -126,11 +113,12 @@ const SpectateSection = styled.div`
 const QueueSection = styled.div`
   display: flex;
   align-items: center;
+  margin-right: 32px;
 `
 
 const Time = styled.p`
   color: #fff;
-  font-weight: 400;
+  font-weight: 300;
   font-size: 24px;
 `
 
@@ -219,18 +207,16 @@ const Header = () => {
         )}
       </LeftSection>
 
-      {queue ? (
+      {queue && (
         <QueueSection>
           <Time>{formatTime(queue.currentTime)}</Time>
           <Button onClick={cancelQueue}>
             <img src="/static/icons/cross.svg" />
           </Button>
         </QueueSection>
-      ) : (
-        <Description>Realtime Strategy Game</Description>
       )}
 
-      <Version>Alpha {version}</Version>
+      <Version>{version}</Version>
     </Container>
   )
 }

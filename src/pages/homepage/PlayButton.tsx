@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { PRIMARY } from '../../constants/react'
+import { PRIMARY, SHADOW } from '../../constants/react'
 
 const PlayButton = styled.a<{ background?: string }>`
   display: flex;
@@ -7,7 +7,6 @@ const PlayButton = styled.a<{ background?: string }>`
   color: #fff;
   font-weight: 600;
   font-size: 18px;
-  margin-top: 16px;
   align-items: center;
   justify-content: center;
   border-radius: 4px;
@@ -15,9 +14,11 @@ const PlayButton = styled.a<{ background?: string }>`
   height: 40px;
   text-align: center;
   width: 240px;
+  box-shadow: ${SHADOW.BUTTON};
 
   :hover {
     transform: scale(1.05);
+    box-shadow: ${SHADOW.BUTTON_HOVER};
   }
 `
 

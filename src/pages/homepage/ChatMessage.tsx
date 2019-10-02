@@ -7,17 +7,18 @@ import authHeader from '../../utils/authHeader'
 import { useAuth } from '../../auth'
 
 const Container = styled.div`
+  margin-bottom: 2px;
   display: flex;
 `
 
 const Time = styled.p<{ grey: boolean }>`
-  color: ${prop => (prop.grey ? '#bbb' : '#eee')};
+  color: #777;
   user-select: text;
   font-weight: 300;
 `
 
 const Author = styled.div<{ grey: boolean; moderator: boolean }>`
-  font-weight: 600;
+  font-weight: 400;
   user-select: text;
   white-space: nowrap;
   position: relative;
@@ -44,8 +45,9 @@ const Author = styled.div<{ grey: boolean; moderator: boolean }>`
 
 const Content = styled.p<{ grey: boolean }>`
   margin-left: 10px;
-  color: ${prop => (prop.grey ? '#bbb' : '#eee')};
+  color: ${prop => (prop.grey ? '#bbb' : '#fff')};
   user-select: text;
+  font-weight: 500;
 `
 
 const MuteBox = styled.div`

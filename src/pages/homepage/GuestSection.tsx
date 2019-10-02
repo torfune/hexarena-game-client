@@ -1,12 +1,12 @@
 import { useState, useEffect, ChangeEvent } from 'react'
 import styled from 'styled-components'
-import Heading from './Heading'
 import PlayButton from './PlayButton'
 import NameInput from './NameInput'
 import { BREAKPOINT } from '../../constants/react'
 import React from 'react'
 import Api from '../../Api'
 import LocalStorageManager from '../../LocalStorageManager'
+import Heading from '../../components/Heading'
 
 const Container = styled.div`
   width: 240px;
@@ -34,6 +34,7 @@ const Container = styled.div`
 
 const InputWrapper = styled.div`
   margin-top: 16px;
+  margin-bottom: 16px;
 `
 
 interface Props {
@@ -80,9 +81,9 @@ const GuestSection: React.FC<Props> = ({ play }) => {
   return (
     <Container>
       {invalidName ? (
-        <Heading red>Name is taken or invalid</Heading>
+        <Heading>Name is taken or invalid</Heading>
       ) : (
-        <Heading>PLAY AS GUEST</Heading>
+        <Heading>Play as guest</Heading>
       )}
 
       <InputWrapper>

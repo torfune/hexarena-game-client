@@ -1,5 +1,4 @@
 import styled from 'styled-components'
-import Heading from './Heading'
 import React, { useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import store from '../../store'
@@ -10,6 +9,7 @@ import randomItem from '../../utils/randomItem'
 import RunningGame from '../../types/RunningGame'
 import shadeColor from '../../utils/shade'
 import { useAuth } from '../../auth'
+import Heading from '../../components/Heading'
 
 const Container = styled.div`
   width: 190px;
@@ -26,7 +26,6 @@ const TimesWrapper = styled.div`
 `
 
 const Row = styled.div`
-  margin-top: 24px;
   display: flex;
   align-items: center;
 `
@@ -111,7 +110,7 @@ const WaitingSection = () => {
 
   return (
     <Container>
-      <Heading>FINDING {loggedIn ? <span>{type}</span> : null} MATCH</Heading>
+      <Heading>Finding match</Heading>
 
       <Row>
         <TimesWrapper>

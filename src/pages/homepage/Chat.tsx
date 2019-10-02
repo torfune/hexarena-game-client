@@ -30,35 +30,32 @@ const Container = styled.div`
   }
 `
 
-const Heading = styled.h2`
-  font-size: 24px;
-  font-weight: 500;
-`
-
 const StyledSimpleBar = styled(SimpleBar)`
-  margin-top: 24px;
-  height: calc(100% - 100px);
+  height: calc(100% - 56px);
 `
 
 const Input = styled.input`
   display: block;
   width: 100%;
-  background: transparent;
   outline: none;
   border: none;
   border-radius: 4px;
   font-size: 16px;
   height: 40px;
-  border: 1px solid #555;
   color: #fff;
   position: relative;
-  padding: 0 8px;
+  padding: 0 12px;
   margin-top: 16px;
+  background: #1a1a1a;
+  transition: 100ms;
+
+  ::placeholder {
+    font-size: 14px;
+  }
 
   :hover,
   :focus {
-    background: #383838;
-    border-color: #888;
+    background: #181818;
   }
 `
 
@@ -170,8 +167,6 @@ const Chat = () => {
 
   return (
     <Container id="chat">
-      <Heading>Chat</Heading>
-
       <StyledSimpleBar id="chat-message-container">
         {store.chatMessages.map((message, index) => (
           <ChatMessage key={index} {...message} />

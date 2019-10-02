@@ -34,13 +34,7 @@ const Container = styled.div`
   }
 `
 
-const Heading = styled.h2`
-  font-size: 24px;
-  font-weight: 500;
-`
-
 const BreakRow = styled.div`
-  margin-top: 24px;
   display: flex;
 
   @media (max-width: ${BREAKPOINT.MAIN_1}) {
@@ -66,6 +60,7 @@ const BreakRow = styled.div`
 
 const PlaySection = () => {
   const { loggedIn, userId, accessToken } = useAuth()
+  const { user } = store
 
   const playAsGuest = (name?: string) => {
     if (!name) {
@@ -120,8 +115,6 @@ const PlaySection = () => {
 
   return (
     <Container>
-      <Heading>Play</Heading>
-
       {store.queue ? (
         <BreakRow>
           <WaitingSection />

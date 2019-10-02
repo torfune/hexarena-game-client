@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { useState, useEffect, ChangeEvent } from 'react'
 import GoogleLogin, {
   GoogleLoginResponse,
@@ -18,14 +18,15 @@ import {
   GOOGLE_CLIENT_ID,
   COLOR,
   BREAKPOINT,
+  SHADOW,
 } from '../../constants/react'
 import { useAuth } from '../../auth'
-import Heading from './Heading'
 import Spinner from '../../components/Spinner'
 import authHeader from '../../utils/authHeader'
 import Api from '../../Api'
 import store from '../../store'
 import { observer } from 'mobx-react-lite'
+import Heading from '../../components/Heading'
 
 const Container = styled.div`
   margin-right: 40px;
@@ -69,19 +70,17 @@ const LoginButton = styled.div<{ color: string }>`
   font-size: 16px;
   color: #fff;
   transition: 200ms;
+  box-shadow: ${SHADOW.BUTTON};
 
   :hover {
     transform: scale(1.05);
+    box-shadow: ${SHADOW.BUTTON_HOVER};
   }
 `
 
 const Icon = styled.img`
   height: 18px;
   margin-right: 8px;
-`
-
-const PlayButtonWrapper = styled.div`
-  margin-top: 24px;
 `
 
 const SaveButton = styled.a<{ disabled: boolean }>`
@@ -92,21 +91,22 @@ const SaveButton = styled.a<{ disabled: boolean }>`
   color: #fff;
   font-weight: 500;
   font-size: 20px;
-  box-shadow: ${BOX_SHADOW};
   border-radius: 4px;
   height: 40px;
   width: 240px;
   margin-top: 12px;
+  transition: 200ms;
 
-  :hover {
-    transform: ${props => !props.disabled && 'scale(1.05)'};
-  }
-`
+  ${props =>
+    !props.disabled &&
+    css`
+      box-shadow: ${SHADOW.BUTTON};
 
-const NameTaken = styled.p<{ visible: boolean }>`
-  opacity: ${props => (props.visible ? 1 : 0)};
-  color: ${PRIMARY};
-  font-weight: 500;
+      :hover {
+        transform: scale(1.05);
+        box-shadow: ${SHADOW.BUTTON_HOVER};
+      }
+    `}
 `
 
 let nameValidationTimeout: NodeJS.Timeout | null = null
@@ -213,35 +213,26 @@ const LoginSection: React.FC<Props> = ({ play }) => {
       return (
         <Container>
           <Heading>
-            LOGGED IN AS <span>{store.user.name}</span>
+            Logged in as <span>{store.user.name}</span>
           </Heading>
-          <PlayButtonWrapper>
-            <PlayButton
-              // background="#2980b9"
-              onClick={() => {
-                play('NORMAL')
-              }}
-            >
-              PLAY!
-            </PlayButton>
-            {/* <PlayButton
-              onClick={() => {
-                play('RANKED')
-              }}
-            >
-              PLAY RANKED
-            </PlayButton> */}
-          </PlayButtonWrapper>
+
+          <PlayButton
+            onClick={() => {
+              play('NORMAL')
+            }}
+          >
+            Play
+          </PlayButton>
         </Container>
       )
     } else {
       return (
         <Container>
-          <Heading>CHOOSE YOUR NICKNAME</Heading>
-
-          <NameTaken visible={nameValid === false && !!name}>
-            Nickname already exists
-          </NameTaken>
+          <Heading>
+            {nameValid === false && !!name
+              ? 'This nickname is taken'
+              : 'Choose your nickname'}
+          </Heading>
 
           <ChooseNameSection>
             <NameInput
@@ -263,7 +254,7 @@ const LoginSection: React.FC<Props> = ({ play }) => {
   } else {
     return (
       <Container>
-        <Heading>SIGN IN</Heading>
+        <Heading>Sign in</Heading>
         <GoogleLogin
           clientId={GOOGLE_CLIENT_ID}
           render={(props: any) => (

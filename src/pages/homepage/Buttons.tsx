@@ -10,7 +10,7 @@ import { observer } from 'mobx-react-lite'
 import LocalStorageManager from '../../LocalStorageManager'
 
 const Container = styled.div`
-  margin-top: 96px;
+  margin-top: 64px;
   color: #fff;
   grid-column: 2;
   grid-row: 2;
@@ -63,24 +63,25 @@ const buttonCSS = css`
   color: #fff;
   font-weight: 500;
   border-radius: 4px;
-  font-size: 16px;
+  font-size: 14px;
   display: flex;
   align-items: center;
-  height: 40px;
-  background: #222;
+  height: 34px;
+  background: #282828;
   margin-left: 40px;
   width: 240px;
   border: 1px solid #111;
   padding-left: 16px;
+  transition: 100ms;
 
   > img {
-    height: 22px;
+    height: 18px;
     margin-right: 12px;
     filter: invert(1);
   }
 
   :hover {
-    background: #282828;
+    background: #242424;
   }
 
   @media (max-width: ${BREAKPOINT.MAIN_1}) {
@@ -124,14 +125,14 @@ const RedditButton = styled.a`
 `
 
 const IoGamesButton = styled.a`
-  display: block;
-  color: #fff;
+  color: #ccc;
   margin-top: 24px;
   font-weight: 500;
-  width: 140px;
+  font-size: 14px;
 
   :hover {
-    color: #aaa;
+    color: #fff;
+    text-decoration: underline;
   }
 `
 
@@ -181,7 +182,7 @@ const SoundCheckbox = styled.div<{ checked: boolean }>`
         `}
 `
 
-const Community: React.FC = () => {
+const Buttons: React.FC = () => {
   const [showGuide, setShowGuide] = useState(false)
 
   const playTutorial = () => {
@@ -246,4 +247,4 @@ const Community: React.FC = () => {
   )
 }
 
-export default observer(Community)
+export default observer(Buttons)
