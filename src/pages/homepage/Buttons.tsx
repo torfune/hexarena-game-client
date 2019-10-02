@@ -8,6 +8,7 @@ import store from '../../store'
 import { version } from '../../../package.json'
 import { observer } from 'mobx-react-lite'
 import LocalStorageManager from '../../LocalStorageManager'
+import { Link } from 'react-router-dom'
 
 const Container = styled.div`
   margin-top: 64px;
@@ -29,13 +30,12 @@ const Container = styled.div`
   }
 
   @media (max-width: ${BREAKPOINT.FINAL}) {
-    margin-top: 0;
+    margin-bottom: 0;
     text-align: center;
   }
 `
 
 const ButtonsContainer = styled.div`
-  margin-top: 32px;
   display: flex;
 
   @media (max-width: ${BREAKPOINT.MAIN_1}) {
@@ -72,7 +72,7 @@ const buttonCSS = css`
   width: 240px;
   border: 1px solid #111;
   padding-left: 16px;
-  transition: 100ms;
+  transition: 100ms background-color;
 
   > img {
     height: 18px;
@@ -86,40 +86,40 @@ const buttonCSS = css`
 
   @media (max-width: ${BREAKPOINT.MAIN_1}) {
     margin-left: 0;
-    margin-top: 16px;
+    margin-bottom: 16px;
   }
 
   @media (max-width: ${BREAKPOINT.MAIN_2}) {
     margin-left: 40px;
-    margin-top: 0;
+    margin-bottom: 0;
   }
 
   @media (max-width: ${BREAKPOINT.MAIN_3}) {
     margin-left: 0;
-    margin-top: 16px;
+    margin-bottom: 16px;
   }
 
   @media (max-width: ${BREAKPOINT.MAIN_4}) {
     margin-left: 40px;
-    margin-top: 0;
+    margin-bottom: 0;
   }
 
   @media (max-width: ${BREAKPOINT.MAIN_5}) {
     margin-left: 0;
-    margin-top: 16px;
+    margin-bottom: 16px;
   }
 `
 
 const DiscordButton = styled.a`
   ${buttonCSS};
   margin-left: 0 !important;
-  margin-top: 0 !important;
+  margin-bottom: 16px !important;
   cursor: default;
 `
 
 const RedditButton = styled.a`
   ${buttonCSS};
-  margin-top: 16px !important;
+  margin-bottom: 16px !important;
   margin-left: 0 !important;
   cursor: default;
 `
@@ -143,7 +143,7 @@ const GuideButton = styled.a`
 const SandboxButton = styled.a`
   ${buttonCSS};
   padding-left: 16px;
-  margin-top: 16px !important;
+  margin-bottom: 16px !important;
 `
 
 const SoundButton = styled.div`
@@ -180,6 +180,11 @@ const SoundCheckbox = styled.div<{ checked: boolean }>`
             opacity: 0;
           }
         `}
+`
+
+const MatchHistoryButton = styled.div`
+  ${buttonCSS};
+  margin-bottom: 16px !important;
 `
 
 const Buttons: React.FC = () => {
@@ -236,6 +241,14 @@ const Buttons: React.FC = () => {
               <img src="/static/icons/sandbox.svg" />
               Sandbox mode
             </SandboxButton>
+            {store.user && (
+              <Link to="/match-history">
+                <MatchHistoryButton>
+                  <img src={`/static/icons/history.svg?${version}`} />
+                  Match history
+                </MatchHistoryButton>
+              </Link>
+            )}
           </div>
         </ButtonsContainer>
         <IoGamesButton target="_blank" href="https://iogames.space">
