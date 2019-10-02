@@ -566,6 +566,7 @@ class Game {
   getTilesToCapture(tile: Tile, playerId: string) {
     if (!store.gsConfig) return []
 
+    const { CAPTURE_COST } = store.gsConfig
     const tilesToCapture = []
     const actionType = tile.getActionType()
 
@@ -645,7 +646,7 @@ class Game {
           if (t.mountain) {
             // - neutral
             if (!t.owner) {
-              steps -= store.gsConfig.CAPTURE_COST.MOUNTAIN - 1
+              steps -= CAPTURE_COST.MOUNTAIN - 1
             }
             // - enemy
             else if (
@@ -659,7 +660,8 @@ class Game {
 
           // Forest - enemy/neutral
           else if (t.ownerId !== playerId && t.forest) {
-            steps -= store.gsConfig.CAPTURE_COST.FOREST - 1
+            const cost = t.forest.treeCount * CAPTURE_COST.TREE
+            steps -= cost - 1
           }
 
           // Structure - owned

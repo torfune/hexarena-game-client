@@ -1128,7 +1128,7 @@ class Tile {
     const { CAPTURE_COST } = store.gsConfig
 
     if (this.forest) {
-      return CAPTURE_COST.FOREST
+      return this.forest.treeCount * CAPTURE_COST.TREE
     } else if (this.mountain) {
       return CAPTURE_COST.MOUNTAIN
     } else {

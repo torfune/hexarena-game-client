@@ -27,7 +27,7 @@ interface GameServerConfig {
   // ACTION COSTS
   CAPTURE_COST: {
     DEFAULT: number
-    FOREST: number
+    TREE: number
     MOUNTAIN: number
   }
   CAMP_COST: number
