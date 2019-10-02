@@ -202,13 +202,15 @@ const MatchHistory = () => {
   const getYourGames = async () => {
     setFilter('YOUR_GAMES')
     const { data } = await Api.ws.get(`/games/${userId}`)
-    setGames(data)
+    const games = data as FinishedGame[]
+    setGames(games.reverse())
   }
 
   const getAllGames = async () => {
     setFilter('ALL_GAMES')
     const { data } = await Api.ws.get('/games')
-    setGames(data)
+    const games = data as FinishedGame[]
+    setGames(games.reverse())
   }
 
   useEffect(() => {
