@@ -67,7 +67,7 @@ const Profile = () => {
 
   const { gamesWon, gamesLost, elo } = store.user
   const gamesTotal = gamesWon + gamesLost
-  const winrate = gamesWon * (100 / gamesTotal)
+  const winrate = gamesTotal ? Math.round(gamesWon * (100 / gamesTotal)) : 0
 
   return (
     <Container>
