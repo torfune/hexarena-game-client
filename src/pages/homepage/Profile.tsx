@@ -65,24 +65,28 @@ const Profile = () => {
 
   if (!store.user) return null
 
+  const { gamesWon, gamesLost, elo } = store.user
+  const gamesTotal = gamesWon + gamesLost
+  const winrate = gamesWon * (100 / gamesTotal)
+
   return (
     <Container>
-      {!!store.user.elo && (
+      {!!elo && (
         <>
           <Stats>
             <p>Your stats</p>
 
             <div>
               <StatLabel>Elo:</StatLabel>
-              <StatValue>{store.user.elo}</StatValue>
+              <StatValue>{elo}</StatValue>
             </div>
             <div>
               <StatLabel>Winrate:</StatLabel>
-              <StatValue>-</StatValue>
+              <StatValue>{winrate}%</StatValue>
             </div>
             <div>
               <StatLabel>Games played:</StatLabel>
-              <StatValue>-</StatValue>
+              <StatValue>{gamesWon + gamesLost}</StatValue>
             </div>
           </Stats>
 
@@ -95,3 +99,11 @@ const Profile = () => {
 }
 
 export default observer(Profile)
+
+// won = 2
+// lost = 1
+
+// winrate = 66%
+
+// part = 100 / 3
+// won * part = winrate

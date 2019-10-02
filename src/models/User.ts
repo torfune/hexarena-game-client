@@ -17,6 +17,8 @@ interface User {
   } | null
   auth: Auth
   createdAt: number
+  gamesWon: number
+  gamesLost: number
 }
 
 export default User
