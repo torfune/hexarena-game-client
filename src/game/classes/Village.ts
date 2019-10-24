@@ -77,7 +77,7 @@ class Village {
         image.scale.set(0)
         animate({
           image,
-          duration: 200,
+          duration: 500,
           onUpdate: (image, fraction) => {
             image.scale.set(scale * fraction)
           },
@@ -95,7 +95,7 @@ class Village {
 
     if (toAdd <= 0) return
 
-    this.addHouses(toAdd, true)
+    this.addHouses(toAdd, false)
   }
   destroy() {
     if (!store.game) return
