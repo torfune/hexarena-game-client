@@ -193,18 +193,13 @@ class Game {
     if (canvas) {
       canvas.remove()
     }
-    // if (canvasContainer) {
-    // if (canvas) {
-    // canvasContainer.removeChild(canvas)
-    // }
-    // }
 
     if (store.game === this) {
       store.game = null
     }
   }
   update() {
-    if (!this.camera || !this.pixi) return
+    if (!this.camera || !this.pixi || !this.cursor) return
 
     const now = Date.now()
     const fraction = 16.66 / (now - this.lastUpdatedAt)
@@ -258,23 +253,29 @@ class Game {
       if (cameraChange.x || cameraChange.y) {
         this.camera.x += cameraChange.x
         this.camera.y += cameraChange.y
-
-        this.pixi.stage.x = this.camera.x
-        this.pixi.stage.y = this.camera.y
+        this.updateStagePosition()
       }
     }
 
     // Zoom
     if (this.status === 'running') {
       if (this.scale !== this.targetScale) {
-        const pixel = {
-          x: window.innerWidth / 2 - this.camera.x,
-          y: window.innerHeight / 2 - this.camera.y,
-        }
-        const axial = pixelToAxial(pixel)
+        const step = roundToDecimals((this.targetScale - this.scale) / 5, 4)
 
-        this.scale = this.targetScale
-        this.setCameraToAxialPosition(axial)
+        let newScale = this.scale
+        if (step !== 0) {
+          newScale += step
+        } else {
+          newScale = this.targetScale
+        }
+
+        const cameraOffset = this.calculateZoomOffset(this.scale, newScale)
+        this.camera.x += cameraOffset.x
+        this.camera.y += cameraOffset.y
+        this.scale = newScale
+
+        this.updateStageScale()
+        this.updateStagePosition()
       }
     }
 
@@ -430,6 +431,7 @@ class Game {
       return
     }
 
+    // Camera drag
     this.cameraDrag = {
       cursor: { x, y },
       camera: {
@@ -534,6 +536,8 @@ class Game {
     }
   }
   handleWheelMove({ deltaY, detail }: WheelEvent) {
+    if (!this.camera) return
+
     const chat = document.getElementById('chat')
     if (chat && chat.matches(':hover')) return
 
@@ -554,12 +558,10 @@ class Game {
   getHoveredTile() {
     if (!this.cursor || !this.camera) return null
 
-    const pixel = {
+    const axial = pixelToAxial({
       x: this.cursor.x - this.camera.x,
       y: this.cursor.y - this.camera.y,
-    }
-
-    const axial = pixelToAxial(pixel)
+    })
 
     return getTileByAxial(axial)
   }
@@ -958,7 +960,28 @@ class Game {
     if (roundedScale >= MIN_SCALE && roundedScale <= MAX_SCALE) {
       return roundedScale
     }
-    return this.scale
+    return this.targetScale
+  }
+  calculateZoomOffset(oldScale: number, newScale: number) {
+    if (!this.cursor || !this.camera) return { x: 0, y: 0 }
+
+    const oldScaledCursor = {
+      x: (this.cursor.x - this.camera.x) * oldScale,
+      y: (this.cursor.y - this.camera.y) * oldScale,
+    }
+    const newScaledCursor = {
+      x: (this.cursor.x - this.camera.x) * newScale,
+      y: (this.cursor.y - this.camera.y) * newScale,
+    }
+    const deltaScaledCursor = {
+      x: oldScaledCursor.x - newScaledCursor.x,
+      y: oldScaledCursor.y - newScaledCursor.y,
+    }
+
+    return {
+      x: deltaScaledCursor.x / newScale,
+      y: deltaScaledCursor.y / newScale,
+    }
   }
   updateIncomeBar() {
     const BAR_WIDTH = 200
