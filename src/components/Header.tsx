@@ -6,7 +6,7 @@ import { observer } from 'mobx-react-lite'
 import store from '../store'
 import formatTime from '../utils/formatTime'
 import Socket from '../websockets/Socket'
-import { BREAKPOINT, Z_INDEX } from '../constants/react'
+import { BREAKPOINT, Z_INDEX, PRIMARY } from '../constants/react'
 
 const Container = styled.div`
   width: 100vw;
@@ -20,6 +20,7 @@ const Container = styled.div`
   justify-content: flex-end;
   align-items: center;
   border-bottom: 1px solid #000;
+  border-top: 4px solid ${PRIMARY};
   color: #fff;
 `
 
@@ -28,6 +29,7 @@ const Logo = styled.h1`
   color: #fff;
   display: flex;
   align-items: center;
+  position: relative;
 
   > a {
     color: #fff;
@@ -48,6 +50,19 @@ const Logo = styled.h1`
       margin-right: 8px;
     }
   }
+`
+
+const AlphaBadge = styled.div`
+  background: ${PRIMARY};
+  border-radius: 24px;
+  padding: 2px 10px;
+  color: #fff;
+  font-weight: 600;
+  position: absolute;
+  top: 38px;
+  right: -20px;
+  font-size: 12px;
+  box-shadow: 0px 2px 8px #00000044;
 `
 
 const Version = styled.p`
@@ -187,6 +202,7 @@ const Header = () => {
           ) : (
             <Link to="/">HexArena.io</Link>
           )}
+          <AlphaBadge>Alpha</AlphaBadge>
         </Logo>
 
         {spectating && store.game && gameIndex !== -1 && (
