@@ -9,7 +9,7 @@ import WaitingSection from './WaitingSection'
 import { BREAKPOINT } from '../../constants/react'
 import Profile from './Profile'
 import Socket from '../../websockets/Socket'
-import getBrowserId from '../../utils/getBrowserId'
+import getGuestId from '../../utils/getGuestId'
 import LocalStorageManager from '../../LocalStorageManager'
 
 const Container = styled.div`
@@ -60,29 +60,9 @@ const BreakRow = styled.div`
 
 const PlaySection = () => {
   const { loggedIn, userId, accessToken } = useAuth()
-  const { user } = store
+  // const { user } = store
 
-  const playAsGuest = (name?: string) => {
-    if (!name) {
-      name = LocalStorageManager.get('guestName') || ''
-    }
-
-    play('playAsGuest', `${getBrowserId()}|${name}`, 'NORMAL')
-  }
-
-  const playAsUser = (queueType: 'NORMAL' | 'RANKED') => {
-    play(
-      'playAsUser',
-      `${getBrowserId()}|${userId}|${accessToken}|${queueType}`,
-      queueType
-    )
-  }
-
-  const play = (
-    message: 'playAsGuest' | 'playAsUser',
-    data: string,
-    queueType: 'NORMAL' | 'RANKED'
-  ) => {
+  const play = () => {
     // const tutorialFinished =
     //   LocalStorageManager.get('tutorialFinished') === 'true' ||
     //   !LocalStorageManager.supported
@@ -94,17 +74,19 @@ const PlaySection = () => {
 
     //   Socket.send(
     //     'playTutorial',
-    //     `${getBrowserId()}|${store.user ? store.user.name : guestName}`
+    //     `${getGuestId()}|${store.user ? store.user.name : guestName}`
     //   )
     //   return
     // }
 
+    const guestName = LocalStorageManager.get('guestName') || ''
+    const guestId = getGuestId()
+
     if (Notification.permission === 'default') {
       Notification.requestPermission()
     }
-    Socket.send(message, data)
+    Socket.send('play', `${userId}|${guestId}|${accessToken}|${guestName}`)
     store.queue = {
-      type: queueType,
       currentTime: 0,
       averageTime: 0,
       playerCount: 0,
@@ -124,13 +106,13 @@ const PlaySection = () => {
         <>
           {loggedIn ? (
             <BreakRow>
-              <LoginSection play={playAsUser} />
+              <LoginSection play={play} />
               <Profile />
             </BreakRow>
           ) : (
             <BreakRow>
-              <LoginSection play={playAsUser} />
-              <GuestSection play={playAsGuest} />
+              <LoginSection play={play} />
+              <GuestSection play={play} />
             </BreakRow>
           )}
         </>

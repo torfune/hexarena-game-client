@@ -1,3 +1,3 @@
-type GameStatus = 'pending' | 'starting' | 'running' | 'finished'
+type GameStatus = 'STARTING' | 'RUNNING' | 'FINISHED' | 'ABORTED'
 
 export default GameStatus

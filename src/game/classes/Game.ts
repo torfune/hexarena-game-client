@@ -34,11 +34,11 @@ import ArmyDragArrow from './ArmyDragArrow'
 import SoundManager from '../../SoundManager'
 import LocalStorageManager from '../../LocalStorageManager'
 import Unit from './Army/Unit'
+import GameStatus from '../../types/GameStatus'
 
 class Game {
   readonly id: string
   readonly mode: GameMode
-  readonly ranked: boolean
   readonly stage: Map<string, Container> = new Map()
   @observable allianceRequests: Map<string, AllianceRequest> = new Map()
   @observable players: Map<string, Player> = new Map()
@@ -57,12 +57,7 @@ class Game {
   @observable showHud: boolean = true
   @observable fps: number | null = 0
   @observable timeDiff: number = 0
-  @observable status:
-    | 'starting'
-    | 'running'
-    | 'finished'
-    | 'aborted'
-    | null = null
+  @observable status: GameStatus
   @observable time: number | null = null
   @observable playerId: string | null = null
   @observable spawnTile: Tile | null = null
@@ -113,10 +108,10 @@ class Game {
     return this.player ? this.player.gold : 0
   }
 
-  constructor(id: string, mode: GameMode, ranked: boolean) {
+  constructor(id: string, mode: GameMode, status: GameStatus) {
     this.id = id
     this.mode = mode
-    this.ranked = ranked
+    this.status = status
 
     // Leaving warning
     window.onbeforeunload = () => {
@@ -124,7 +119,7 @@ class Game {
         !store.error &&
         this.player &&
         this.player.alive &&
-        this.status === 'running' &&
+        this.status === 'RUNNING' &&
         store.gsConfig &&
         !store.gsConfig.DEBUG_MODE
       ) {
@@ -258,7 +253,7 @@ class Game {
     }
 
     // Zoom
-    if (this.status === 'running') {
+    if (this.status === 'RUNNING') {
       if (this.scale !== this.targetScale) {
         const step = roundToDecimals((this.targetScale - this.scale) / 5, 4)
 
@@ -302,7 +297,9 @@ class Game {
     }
 
     // Hovered tile
-    this.updateHoveredTile()
+    if (this.status === 'RUNNING') {
+      this.updateHoveredTile()
+    }
 
     // Income bar
     this.updateIncomeBar()
@@ -348,7 +345,7 @@ class Game {
     Socket.send('pattern', pattern)
   }
   handleKeyDown({ key }: KeyboardEvent) {
-    if (this.status !== 'running' || (store.spectating && store.chatFocus)) {
+    if (this.status !== 'RUNNING' || (store.spectating && store.chatFocus)) {
       return
     }
 
@@ -387,7 +384,7 @@ class Game {
   }
   handleKeyUp({ key }: KeyboardEvent) {
     if (
-      this.status !== 'running' ||
+      this.status !== 'RUNNING' ||
       !store.gsConfig ||
       (store.spectating && store.chatFocus)
     ) {
@@ -402,7 +399,7 @@ class Game {
     }
   }
   handleMouseDown(event: MouseEvent) {
-    if (this.status !== 'running' || !this.cursor || !this.camera) return
+    if (this.status !== 'RUNNING' || !this.cursor || !this.camera) return
 
     const { clientX: x, clientY: y, button } = event
     const { hoveredTile } = this
@@ -957,10 +954,13 @@ class Game {
     const scale = this.scale + zoomDirection * this.scale * ZOOM_SPEED
     const roundedScale = roundToDecimals(scale, 2)
 
-    if (roundedScale >= MIN_SCALE && roundedScale <= MAX_SCALE) {
-      return roundedScale
+    if (roundedScale < MIN_SCALE) {
+      return MIN_SCALE
+    } else if (roundedScale > MAX_SCALE) {
+      return MAX_SCALE
     }
-    return this.targetScale
+
+    return roundedScale
   }
   calculateZoomOffset(oldScale: number, newScale: number) {
     if (!this.cursor || !this.camera) return { x: 0, y: 0 }

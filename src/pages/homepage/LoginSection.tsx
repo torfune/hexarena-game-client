@@ -112,7 +112,7 @@ const SaveButton = styled.a<{ disabled: boolean }>`
 let nameValidationTimeout: NodeJS.Timeout | null = null
 
 interface Props {
-  play: (queueType: 'NORMAL' | 'RANKED') => void
+  play: () => void
 }
 const LoginSection: React.FC<Props> = ({ play }) => {
   const [name, setName] = useState('')
@@ -216,13 +216,7 @@ const LoginSection: React.FC<Props> = ({ play }) => {
             Logged in as <span>{store.user.name}</span>
           </Heading>
 
-          <PlayButton
-            onClick={() => {
-              play('NORMAL')
-            }}
-          >
-            Play
-          </PlayButton>
+          <PlayButton onClick={() => play()}>Play</PlayButton>
         </Container>
       )
     } else {

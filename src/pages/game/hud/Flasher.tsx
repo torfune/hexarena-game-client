@@ -27,7 +27,7 @@ const Flasher = () => {
   if (!store.game) return null
 
   useEffect(() => {
-    if (!store.game || store.game.status !== 'running' || !store.game.flash) {
+    if (!store.game || store.game.status !== 'RUNNING' || !store.game.flash) {
       return
     }
 

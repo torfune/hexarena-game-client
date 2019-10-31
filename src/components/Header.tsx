@@ -152,7 +152,7 @@ const Header = () => {
 
     if (store.runningGames.length === 0) return null
 
-    if (store.game.status === 'finished') {
+    if (store.game.status === 'FINISHED') {
       return store.runningGames[0].id
     }
 

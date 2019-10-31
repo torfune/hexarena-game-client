@@ -109,7 +109,7 @@ const Spectate: React.FC<Props> = ({ history }) => {
             <Spectators />
             <Leaderboard />
             <Economy />
-            {store.game.status === 'finished' && <EndScreen />}
+            {store.game.status === 'FINISHED' && <EndScreen />}
           </>
         ) : (
           <InfoContainer>

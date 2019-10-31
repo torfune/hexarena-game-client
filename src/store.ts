@@ -29,7 +29,6 @@ class Store {
     sound: false,
   }
   @observable queue: {
-    type: 'NORMAL' | 'RANKED'
     currentTime: number
     averageTime: number
     playerCount: number

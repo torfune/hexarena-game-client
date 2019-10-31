@@ -1,3 +1,3 @@
-type GameMode = '1v1' | '2v2' | 'FFA' | 'TUTORIAL'
+type GameMode = 'DUEL' | 'TEAMS_2v2' | 'FFA_6' | 'TUTORIAL'
 
 export default GameMode

@@ -23,7 +23,7 @@ import Spectators from './hud/Spectators'
 import Tutorial from './hud/Tutorial'
 import HowToPlay from '../../components/HowToPlay'
 import LocalStorageManager from '../../LocalStorageManager'
-import getBrowserId from '../../utils/getBrowserId'
+import getGuestId from '../../utils/getGuestId'
 import Socket from '../../websockets/Socket'
 
 const Container = styled.div`
@@ -56,8 +56,8 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
     const { game, gsConfig } = store
     if (!game) {
       if (gsConfig && gsConfig.DEBUG_MODE) {
-        const name = LocalStorageManager.get('guestName') || ''
-        Socket.send('playAsGuest', `${getBrowserId()}|${name}`)
+        const guestName = LocalStorageManager.get('guestName') || ''
+        Socket.send('play', `${null}|${getGuestId()}|${null}|${guestName}`)
         return
       }
 
@@ -83,7 +83,7 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
 
     const { mode, status } = store.game
 
-    if (mode === 'TUTORIAL' && status === 'finished') {
+    if (mode === 'TUTORIAL' && status === 'FINISHED') {
       LocalStorageManager.set('tutorialFinished', String('true'))
     }
   })
@@ -92,7 +92,7 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
     refresh(Date.now())
   }
 
-  if (store.game && store.game.status === 'aborted') {
+  if (store.game && store.game.status === 'ABORTED') {
     console.warn(`Game aborted.`)
     window.location.href = '/'
     return null
@@ -104,21 +104,21 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
         id="game-canvas"
         visible={
           !!store.game &&
-          (store.game.status === 'running' || store.game.status === 'finished')
+          (store.game.status === 'RUNNING' || store.game.status === 'FINISHED')
         }
       />
 
       {store.game && (
         <>
-          {store.game.status === 'starting' && <Lobby />}
+          {store.game.status === 'STARTING' && <Lobby />}
 
-          {store.game.status === 'running' && store.game.player && (
+          {store.game.status === 'RUNNING' && store.game.player && (
             <HudContainer>
               <GameTime />
 
               {store.game.player.alive && (
                 <>
-                  {store.game.mode === '2v2' &&
+                  {store.game.mode === 'TEAMS_2v2' &&
                     renderDiplomacy(store.game.player)}
 
                   <HoverPreview />
@@ -136,16 +136,16 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
             </HudContainer>
           )}
 
-          {store.game.status === 'running' && (
+          {store.game.status === 'RUNNING' && (
             <>
               <Flasher />
               <NotificationManager />
             </>
           )}
 
-          {store.game.status === 'finished' && <EndScreen />}
+          {store.game.status === 'FINISHED' && <EndScreen />}
 
-          {store.error && store.game.status !== 'finished' && (
+          {store.error && store.game.status !== 'FINISHED' && (
             <ErrorModal
               message={store.error.message}
               goHome={store.error.goHome || true}

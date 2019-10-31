@@ -93,7 +93,7 @@ const Lobby = () => {
   let playersLeft: Player[] = []
   let playersRight: Player[] = []
 
-  if (store.game.mode !== 'FFA') {
+  if (store.game.mode !== 'FFA_6') {
     const { playerId } = store.game
     const groups = getPlayerGroups(Array.from(store.game.players.values()))
     const groupLeft = groups.find(
@@ -122,9 +122,8 @@ const Lobby = () => {
       <Container>
         <Players players={playersLeft} />
 
-        <CentralSection ffa={store.game.mode === 'FFA'}>
+        <CentralSection ffa={store.game.mode === 'FFA_6'}>
           <GameMode>
-            <p>{store.game.ranked ? 'RANKED' : 'NORMAL'}</p>
             <h2>{store.game.mode}</h2>
           </GameMode>
 
@@ -134,7 +133,7 @@ const Lobby = () => {
             )}
           </Countdown>
 
-          {store.game.mode !== 'FFA' && <VS>VS</VS>}
+          {store.game.mode !== 'FFA_6' && <VS>VS</VS>}
         </CentralSection>
 
         <Players players={playersRight} />

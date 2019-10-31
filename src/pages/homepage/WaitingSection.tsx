@@ -94,12 +94,11 @@ const SpectateButton = styled.div<{ disabled?: boolean }>`
 `
 
 const WaitingSection = () => {
-  const { loggedIn } = useAuth()
   const [runningGame, setRunningGame] = useState<RunningGame | null>(null)
 
   if (!store.queue) return null
 
-  const { type, currentTime, averageTime, playerCount } = store.queue
+  const { currentTime, averageTime, playerCount } = store.queue
 
   useEffect(() => {
     setRunningGame(randomItem(store.runningGames))

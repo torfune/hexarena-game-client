@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { BREAKPOINT } from '../../constants/react'
 import HowToPlay from '../../components/HowToPlay'
 import Socket from '../../websockets/Socket'
-import getBrowserId from '../../utils/getBrowserId'
+import getGuestId from '../../utils/getGuestId'
 import store from '../../store'
 import { version } from '../../../package.json'
 import { observer } from 'mobx-react-lite'
@@ -198,7 +198,7 @@ const Buttons: React.FC = () => {
 
     Socket.send(
       'playTutorial',
-      `${getBrowserId()}|${store.user ? store.user.name : guestName}`
+      `${getGuestId()}|${store.user ? store.user.name : guestName}`
     )
   }
 

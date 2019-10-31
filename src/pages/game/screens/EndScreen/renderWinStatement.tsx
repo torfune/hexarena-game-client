@@ -3,7 +3,7 @@ import React from 'react'
 import store from '../../../../store'
 
 const renderWinStatement = (players: Player[]) => {
-  if (store.game && store.game.mode === 'FFA') {
+  if (store.game && store.game.mode === 'FFA_6') {
     const players = Array.from(store.game.players.values())
     const winners = players.filter(p => p.alive)
 

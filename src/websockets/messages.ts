@@ -468,22 +468,27 @@ const messages: {
     store.game.startCountdown = convert(payload, 'number') as number | null
   },
   game: (payload: string) => {
-    const { id, mode, ranked } = convertObject(payload, {
+    const { id, mode, status } = convertObject(payload, {
       id: 'string',
       mode: 'string',
-      ranked: 'boolean',
+      status: 'string',
     }) as {
       id: string | null
       mode: string | null
-      ranked: boolean
+      status: string | null
     }
     if (
       !id ||
       !mode ||
-      (mode !== '1v1' &&
-        mode !== '2v2' &&
-        mode !== 'FFA' &&
-        mode !== 'TUTORIAL')
+      (mode !== 'DUEL' &&
+        mode !== 'TEAMS_2v2' &&
+        mode !== 'FFA_6' &&
+        mode !== 'TUTORIAL') ||
+      !status ||
+      (status !== 'STARTING' &&
+        status !== 'RUNNING' &&
+        status !== 'FINISHED' &&
+        status !== 'ABORTED')
     ) {
       return
     }
@@ -492,7 +497,7 @@ const messages: {
       store.game.destroy()
     }
 
-    store.game = new Game(id, mode, ranked)
+    store.game = new Game(id, mode, status)
     store.queue = null
     store.matchFound = false
     store.spectating = false
@@ -512,60 +517,56 @@ const messages: {
     if (!store.game) return
     const status = convert(payload, 'string') as string | null
     if (
-      status !== 'starting' &&
-      status !== 'running' &&
-      status !== 'finished' &&
-      status !== 'aborted'
+      status === 'STARTING' ||
+      status === 'RUNNING' ||
+      status === 'FINISHED' ||
+      status === 'ABORTED'
     ) {
-      store.game.status = null
-    } else {
       store.game.status = status
     }
   },
   queue: (payload: string) => {
-    const { type, currentTime, averageTime, playerCount } = convertObject(
-      payload,
-      {
-        type: 'string',
-        currentTime: 'number',
-        averageTime: 'number',
-        playerCount: 'number',
-      }
-    ) as {
-      type: 'NORMAL' | 'RANKED' | null
+    const { currentTime, averageTime, playerCount } = convertObject(payload, {
+      currentTime: 'number',
+      averageTime: 'number',
+      playerCount: 'number',
+    }) as {
       currentTime: number | null
       averageTime: number | null
       playerCount: number | null
     }
 
-    if (
-      currentTime === null ||
-      averageTime === null ||
-      playerCount === null ||
-      !type
-    ) {
+    if (currentTime === null || averageTime === null || playerCount === null) {
       store.queue = null
       return
     }
 
     store.queue = {
-      type,
       currentTime,
       averageTime,
       playerCount,
     }
   },
   spectate: (payload: string) => {
-    const { id, mode, ranked } = convertObject(payload, {
+    const { id, mode } = convertObject(payload, {
       id: 'string',
       mode: 'string',
-      ranked: 'boolean',
+      status: 'string',
     }) as {
       id: string | null
       mode: string | null
-      ranked: boolean
+      status: string | null
     }
-    if (!id || !mode || (mode !== '1v1' && mode !== '2v2' && mode !== 'FFA')) {
+    if (
+      !id ||
+      !mode ||
+      (mode !== 'DUEL' && mode !== 'TEAMS_2v2' && mode !== 'FFA_6') ||
+      !status ||
+      (status !== 'STARTING' &&
+        status !== 'RUNNING' &&
+        status !== 'FINISHED' &&
+        status !== 'ABORTED')
+    ) {
       return
     }
 
@@ -573,7 +574,7 @@ const messages: {
       store.game.destroy()
     }
 
-    store.game = new Game(id, mode, ranked)
+    store.game = new Game(id, mode, status)
     store.game.scale = 0.2
     store.game.targetScale = 0.2
     store.game.setCameraToAxialPosition(

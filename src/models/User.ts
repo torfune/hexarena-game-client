@@ -8,7 +8,6 @@ interface User {
   name: string | null
   elo: number
   diamonds: number
-  neverPlayed: boolean
   moderator: boolean
   mute: {
     mutedAt: number
