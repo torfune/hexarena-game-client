@@ -8,6 +8,11 @@ interface GameServerConfig {
   GAME_LENGTH: number
   TWO_PLAYERS_TIME_DROP: number
   CHAT_MESSAGE_MAX_LENGTH: number
+  ARMY_CAPTURE_COST: {
+    DEFAULT: number
+    TREE: number
+    MOUNTAIN: number
+  }
 
   // MATCH MAKING
   COUNTDOWN_TIME: number
@@ -25,11 +30,6 @@ interface GameServerConfig {
   CASTLE_DURATION: number
 
   // ACTION COSTS
-  CAPTURE_COST: {
-    DEFAULT: number
-    TREE: number
-    MOUNTAIN: number
-  }
   CAMP_COST: number
   TOWER_COST: number
   CASTLE_COST: number
@@ -39,7 +39,7 @@ interface GameServerConfig {
   CAPITAL_ECONOMY: number
   MIN_HOUSES: number
   MAX_HOUSES: number
-  VILLAGE_CAPITAL_INCOME: number
+  VILLAGE_BASE_INCOME: number
   HOUSE_INCOME: number
   HOUSE_LOOT: number
   VILLAGE_GROW_RATE: number

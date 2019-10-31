@@ -61,9 +61,9 @@ const HoverPreview = () => {
 
   if (!actionType) {
     if (hoveredTile.village) {
-      const { VILLAGE_CAPITAL_INCOME, HOUSE_INCOME } = store.gsConfig
+      const { VILLAGE_BASE_INCOME, HOUSE_INCOME } = store.gsConfig
       const villageIncome =
-        VILLAGE_CAPITAL_INCOME +
+        VILLAGE_BASE_INCOME +
         (hoveredTile.village.houseCount - 3) * HOUSE_INCOME
       return (
         <Container cursor={cursor}>

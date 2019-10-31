@@ -1087,13 +1087,13 @@ class Tile {
     }
 
     // CAPTURE
-    if (
-      isNeighbor &&
-      !this.owner &&
-      (store.game.player.gold >= this.captureCost() || ignoreGold)
-    ) {
-      return 'CAPTURE'
-    }
+    // if (
+    //   isNeighbor &&
+    //   !this.owner &&
+    //   (store.game.player.gold >= this.captureCost() || ignoreGold)
+    // ) {
+    //   return 'CAPTURE'
+    // }
 
     if (this.ownerId !== store.game.playerId) return null
 
@@ -1122,19 +1122,19 @@ class Tile {
 
     return null
   }
-  captureCost() {
-    if (!store.gsConfig) return 1
+  // captureCost() {
+  //   if (!store.gsConfig) return 1
 
-    const { CAPTURE_COST } = store.gsConfig
+  //   const { CAPTURE_COST } = store.gsConfig
 
-    if (this.forest) {
-      return this.forest.treeCount * CAPTURE_COST.TREE
-    } else if (this.mountain) {
-      return CAPTURE_COST.MOUNTAIN
-    } else {
-      return CAPTURE_COST.DEFAULT
-    }
-  }
+  //   if (this.forest) {
+  //     return this.forest.treeCount * CAPTURE_COST.TREE
+  //   } else if (this.mountain) {
+  //     return CAPTURE_COST.MOUNTAIN
+  //   } else {
+  //     return CAPTURE_COST.DEFAULT
+  //   }
+  // }
   hasFullHp() {
     if (!this.building || !store.gsConfig) return false
 

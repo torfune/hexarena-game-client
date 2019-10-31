@@ -565,19 +565,19 @@ class Game {
   getTilesToCapture(tile: Tile, playerId: string) {
     if (!store.gsConfig) return []
 
-    const { CAPTURE_COST } = store.gsConfig
-    const tilesToCapture = []
+    const { ARMY_CAPTURE_COST } = store.gsConfig
+    const tilesToCapture: Tile[] = []
     const actionType = tile.getActionType()
 
     // Attack hover
-    if (
-      this.playerId === playerId &&
-      actionType === 'CAPTURE' &&
-      !this.selectedArmyTile &&
-      !tile.bedrock
-    ) {
-      tilesToCapture.push(tile)
-    }
+    // if (
+    //   this.playerId === playerId &&
+    //   actionType === 'CAPTURE' &&
+    //   !this.selectedArmyTile &&
+    //   !tile.bedrock
+    // ) {
+    //   tilesToCapture.push(tile)
+    // }
 
     // Upgrade hover
     if (actionType === 'CASTLE' && !this.selectedArmyTile && !tile.army) {
@@ -645,7 +645,7 @@ class Game {
           if (t.mountain) {
             // - neutral
             if (!t.owner) {
-              steps -= CAPTURE_COST.MOUNTAIN - 1
+              steps -= ARMY_CAPTURE_COST.MOUNTAIN - 1
             }
             // - enemy
             else if (
@@ -659,7 +659,7 @@ class Game {
 
           // Forest - enemy/neutral
           else if (t.ownerId !== playerId && t.forest) {
-            const cost = t.forest.treeCount * CAPTURE_COST.TREE
+            const cost = t.forest.treeCount * ARMY_CAPTURE_COST.TREE
             steps -= cost - 1
           }
 
@@ -1026,7 +1026,7 @@ class Game {
 
     if (
       !actionType ||
-      (actionType === 'CAPTURE' && this.player.gold >= tile.captureCost()) ||
+      // (actionType === 'CAPTURE' && this.player.gold >= tile.captureCost()) ||
       (actionType === 'TOWER' && this.player.gold >= TOWER_COST) ||
       (actionType === 'CAMP' && this.player.gold >= CAMP_COST) ||
       (actionType === 'CASTLE' && this.player.gold >= CASTLE_COST)
