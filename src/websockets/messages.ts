@@ -548,7 +548,7 @@ const messages: {
     }
   },
   spectate: (payload: string) => {
-    const { id, mode } = convertObject(payload, {
+    const { id, mode, status } = convertObject(payload, {
       id: 'string',
       mode: 'string',
       status: 'string',
@@ -557,6 +557,7 @@ const messages: {
       mode: string | null
       status: string | null
     }
+
     if (
       !id ||
       !mode ||
