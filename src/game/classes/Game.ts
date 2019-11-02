@@ -35,6 +35,7 @@ import SoundManager from '../../SoundManager'
 import LocalStorageManager from '../../LocalStorageManager'
 import Unit from './Army/Unit'
 import GameStatus from '../../types/GameStatus'
+import UnitPreviewManager from './UnitPreviewManager'
 
 class Game {
   readonly id: string
@@ -580,44 +581,44 @@ class Game {
     // }
 
     // Upgrade hover
-    if (actionType === 'CASTLE' && !this.selectedArmyTile && !tile.army) {
-      for (let i = 0; i < 6; i++) {
-        const n = tile.neighbors[i]
-        if (n && !tilesToCapture.includes(n) && !n.owner) {
-          tilesToCapture.push(n)
-        }
-      }
-    }
+    // if (actionType === 'CASTLE' && !this.selectedArmyTile && !tile.army) {
+    //   for (let i = 0; i < 6; i++) {
+    //     const n = tile.neighbors[i]
+    //     if (n && !tilesToCapture.includes(n) && !n.owner) {
+    //       tilesToCapture.push(n)
+    //     }
+    //   }
+    // }
 
     // Actions (CAPTURE, CASTLE)
-    for (let i = 0; i < this.actions.length; i++) {
-      const action = this.actions[i]
+    // for (let i = 0; i < this.actions.length; i++) {
+    //   const action = this.actions[i]
 
-      if (
-        action.type === 'CAPTURE' &&
-        action.owner.id === playerId &&
-        !tilesToCapture.includes(action.tile)
-      ) {
-        tilesToCapture.push(action.tile)
-        continue
-      }
+    //   if (
+    //     action.type === 'CAPTURE' &&
+    //     action.owner.id === playerId &&
+    //     !tilesToCapture.includes(action.tile)
+    //   ) {
+    //     tilesToCapture.push(action.tile)
+    //     continue
+    //   }
 
-      if (action.type === 'CASTLE' && action.owner.id === playerId) {
-        for (let j = 0; j < 6; j++) {
-          const n = action.tile.neighbors[j]
-          if (n && !tilesToCapture.includes(n) && !n.owner) {
-            tilesToCapture.push(n)
-          }
-        }
-      }
-    }
+    //   if (action.type === 'CASTLE' && action.owner.id === playerId) {
+    //     for (let j = 0; j < 6; j++) {
+    //       const n = action.tile.neighbors[j]
+    //       if (n && !tilesToCapture.includes(n) && !n.owner) {
+    //         tilesToCapture.push(n)
+    //       }
+    //     }
+    //   }
+    // }
 
     // Army sending
     if (
       this.player &&
       playerId === this.playerId &&
-      this.selectedArmyTile &&
-      (!tile.action || tile.action.type !== 'CAPTURE')
+      this.selectedArmyTile
+      // (!tile.action || tile.action.type !== 'CAPTURE')
     ) {
       let direction = null
 
@@ -748,7 +749,7 @@ class Game {
     for (let i = 0; i < this.actions.length; i++) {
       const action = this.actions[i]
 
-      if (action.type !== 'CAPTURE' && action.type !== 'CASTLE') continue
+      // if (action.type !== 'CAPTURE' && action.type !== 'CASTLE') continue
 
       const tilesToCapture = this.getTilesToCapture(
         action.tile,
@@ -867,32 +868,24 @@ class Game {
       this.updatePatternPreviews()
 
       if (this.selectedArmyTile) {
-        this.updateArmyTileHighlights()
+        const direction = this.armySendDirection(this.hoveredTile)
+        this.updateArmyTileHighlights(direction)
+        UnitPreviewManager.setDirection(direction)
       }
     }
   }
-  updateArmyTileHighlights() {
+  updateArmyTileHighlights(direction: number | null) {
     const { gsConfig } = store
     if (!gsConfig) return
 
-    let direction = null
-
     for (let i = 0; i < 6; i++) {
       const armyTiles = this.selectedArmyTargetTiles[i]
-
       for (let j = 0; j < armyTiles.length; j++) {
         armyTiles[j].removeHighlight()
       }
     }
 
     if (!this.hoveredTile) return
-
-    for (let i = 0; i < 6; i++) {
-      if (this.selectedArmyTargetTiles[i].includes(this.hoveredTile)) {
-        direction = i
-        break
-      }
-    }
 
     if (direction !== null) {
       const targetTiles = this.selectedArmyTargetTiles[direction]
@@ -903,6 +896,17 @@ class Game {
         if (t.building || t.camp) break
       }
     }
+  }
+  armySendDirection(tile: Tile | null) {
+    if (!tile) return null
+
+    for (let i = 0; i < 6; i++) {
+      if (this.selectedArmyTargetTiles[i].includes(tile)) {
+        return i
+      }
+    }
+
+    return null
   }
   surrender() {
     Socket.send('surrender')
@@ -944,6 +948,9 @@ class Game {
   selectArmy(tile: Tile) {
     this.selectedArmyTile = tile
     tile.selectArmy()
+    if (tile.army) {
+      UnitPreviewManager.setArmy(tile.army)
+    }
 
     this.armyDragArrow = new ArmyDragArrow(tile)
   }
@@ -1028,7 +1035,7 @@ class Game {
       !actionType ||
       // (actionType === 'CAPTURE' && this.player.gold >= tile.captureCost()) ||
       (actionType === 'TOWER' && this.player.gold >= TOWER_COST) ||
-      (actionType === 'CAMP' && this.player.gold >= CAMP_COST) ||
+      // (actionType === 'CAMP' && this.player.gold >= CAMP_COST) ||
       (actionType === 'CASTLE' && this.player.gold >= CASTLE_COST)
     ) {
       return

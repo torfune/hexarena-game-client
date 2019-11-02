@@ -13,7 +13,7 @@ import animate from '../functions/animate'
 const loader = Loader.shared
 const ACTION_RADIUS = 50
 
-export type ActionType = 'CAPTURE' | 'CAMP' | 'TOWER' | 'CASTLE'
+export type ActionType = 'TOWER' | 'CASTLE' //| 'CAPTURE' | 'CAMP'
 export type ActionStatus = 'PENDING' | 'RUNNING' | 'FINISHED'
 
 interface Props {
@@ -52,9 +52,9 @@ class Action {
     this.icon = new Sprite(this.getIconTexture())
     this.icon.anchor.set(0.5)
     this.icon.scale.set(0.55)
-    if (this.type === 'CAPTURE') {
-      this.icon.tint = hex(this.owner.pattern)
-    }
+    // if (this.type === 'CAPTURE') {
+    //   this.icon.tint = hex(this.owner.pattern)
+    // }
     this.fill.alpha = 0
 
     this.image.addChild(this.background)
@@ -164,10 +164,10 @@ class Action {
   }
   getIconTexture() {
     switch (this.type) {
-      case 'CAPTURE':
-        return loader.resources['action-icon-attack'].texture
-      case 'CAMP':
-        return loader.resources['action-icon-camp'].texture
+      // case 'CAPTURE':
+      //   return loader.resources['action-icon-attack'].texture
+      // case 'CAMP':
+      //   return loader.resources['action-icon-camp'].texture
       case 'TOWER':
         return loader.resources['action-icon-tower'].texture
       case 'CASTLE':

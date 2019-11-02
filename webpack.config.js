@@ -2,6 +2,9 @@ const path = require('path')
 const CopyPlugin = require('copy-webpack-plugin')
 const HtmlWebPackPlugin = require('html-webpack-plugin')
 const { version } = require('./package.json')
+const createStyledComponentsTransformer = require('typescript-plugin-styled-components')
+  .default
+const styledComponentsTransformer = createStyledComponentsTransformer()
 
 const config = {
   entry: './src/index.tsx',
@@ -21,6 +24,9 @@ const config = {
           loader: 'ts-loader',
           options: {
             transpileOnly: true,
+            getCustomTransformers: () => ({
+              before: [styledComponentsTransformer],
+            }),
           },
         },
         exclude: /node_modules/,

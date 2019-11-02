@@ -138,11 +138,11 @@ const getActionLabel = (actionType: ActionType | 'SEND_ARMY' | 'REPAIR') => {
   if (!store.game || !store.game.hoveredTile) return
 
   switch (actionType) {
-    case 'CAPTURE':
-      const structure = store.game.hoveredTile.getStructureName()
-      return `Capture ${structure || 'Tile'}`
-    case 'CAMP':
-      return 'Build Camp'
+    // case 'CAPTURE':
+    //   const structure = store.game.hoveredTile.getStructureName()
+    //   return `Capture ${structure || 'Tile'}`
+    // case 'CAMP':
+    //   return 'Build Camp'
     case 'TOWER':
       return 'Build Tower'
     case 'CASTLE':
@@ -156,13 +156,13 @@ const getActionIcon = (actionType: ActionType | 'SEND_ARMY' | 'REPAIR') => {
   if (!store.game || !store.game.hoveredTile) return
 
   switch (actionType) {
-    case 'CAPTURE':
-      const structure = store.game.hoveredTile.getStructureName()
-      return `/static/images/${
-        structure ? structure.toLowerCase() : 'tile'
-      }-icon.png`
-    case 'CAMP':
-      return '/static/images/camp-icon.png'
+    // case 'CAPTURE':
+    //   const structure = store.game.hoveredTile.getStructureName()
+    //   return `/static/images/${
+    //     structure ? structure.toLowerCase() : 'tile'
+    //   }-icon.png`
+    // case 'CAMP':
+    //   return '/static/images/camp-icon.png'
     case 'TOWER':
       return '/static/images/tower-icon.png'
     case 'CASTLE':
@@ -180,13 +180,13 @@ const getActionCost = (
   treeCount: number
 ) => {
   switch (actionType) {
-    case 'CAPTURE':
-      if (!store.game || !store.game.hoveredTile) return 1
-      return store.game.hoveredTile.captureCost()
-    case 'CAMP':
-      return gsConfig.CAMP_COST - treeCount
+    // case 'CAPTURE':
+    //   if (!store.game || !store.game.hoveredTile) return 1
+    //   return store.game.hoveredTile.captureCost()
+    // case 'CAMP':
+    //   return gsConfig.CAMP_COST - treeCount
     case 'TOWER':
-      return gsConfig.TOWER_COST
+      return gsConfig.TOWER_COST - treeCount
     case 'CASTLE':
       return gsConfig.CASTLE_COST
     case 'SEND_ARMY':

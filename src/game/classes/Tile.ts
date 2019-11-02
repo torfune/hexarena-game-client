@@ -1077,14 +1077,14 @@ class Tile {
     const { CAMP_COST, TOWER_COST, CASTLE_COST } = store.gsConfig
 
     // Neighbor check
-    let isNeighbor = false
-    for (let i = 0; i < 6; i++) {
-      const n = this.neighbors[i]
-      if (n && n.ownerId === store.game.playerId) {
-        isNeighbor = true
-        break
-      }
-    }
+    // let isNeighbor = false
+    // for (let i = 0; i < 6; i++) {
+    //   const n = this.neighbors[i]
+    //   if (n && n.ownerId === store.game.playerId) {
+    //     isNeighbor = true
+    //     break
+    //   }
+    // }
 
     // CAPTURE
     // if (
@@ -1098,16 +1098,20 @@ class Tile {
     if (this.ownerId !== store.game.playerId) return null
 
     // CAMP
+    // const forestGold = this.forest ? this.forest.treeCount : 0
+    // if (
+    //   (this.isEmpty() || this.forest) &&
+    //   (store.game.player.gold >= CAMP_COST - forestGold || ignoreGold)
+    // ) {
+    //   return 'CAMP'
+    // }
+
+    // TOWER
     const forestGold = this.forest ? this.forest.treeCount : 0
     if (
       (this.isEmpty() || this.forest) &&
-      (store.game.player.gold >= CAMP_COST - forestGold || ignoreGold)
+      (store.game.player.gold >= TOWER_COST - forestGold || ignoreGold)
     ) {
-      return 'CAMP'
-    }
-
-    // TOWER
-    if (this.camp && (store.game.player.gold >= TOWER_COST || ignoreGold)) {
       return 'TOWER'
     }
 
@@ -1122,19 +1126,19 @@ class Tile {
 
     return null
   }
-  // captureCost() {
-  //   if (!store.gsConfig) return 1
+  unitCost(ownerId: string) {
+    if (!store.gsConfig || this.ownerId === ownerId) return 0
 
-  //   const { CAPTURE_COST } = store.gsConfig
+    const { ARMY_CAPTURE_COST } = store.gsConfig
 
-  //   if (this.forest) {
-  //     return this.forest.treeCount * CAPTURE_COST.TREE
-  //   } else if (this.mountain) {
-  //     return CAPTURE_COST.MOUNTAIN
-  //   } else {
-  //     return CAPTURE_COST.DEFAULT
-  //   }
-  // }
+    if (this.forest) {
+      return this.forest.treeCount * ARMY_CAPTURE_COST.TREE
+    } else if (this.mountain) {
+      return ARMY_CAPTURE_COST.MOUNTAIN
+    } else {
+      return ARMY_CAPTURE_COST.DEFAULT
+    }
+  }
   hasFullHp() {
     if (!this.building || !store.gsConfig) return false
 
