@@ -65,8 +65,8 @@ const AllGames = styled.div<SelectorProps>`
 
 const Container = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
 `
 
 const Game = styled.div`
@@ -76,7 +76,7 @@ const Game = styled.div`
   border-radius: 8px;
   padding: 12px 24px;
   width: 260px;
-  margin-bottom: 24px;
+  margin: 24px;
 `
 
 const Row = styled.div`
