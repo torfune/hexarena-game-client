@@ -119,7 +119,7 @@ const getPreviewTiles = (army: Army, direction: number) => {
   }
 
   const firstTile = army.tile.neighbors[direction]
-  if (firstTile) {
+  if (firstTile && !firstTile.building) {
     addPreviewTile(firstTile)
   } else {
     return previewTiles
