@@ -4,9 +4,9 @@ import { Axial } from '../types/coordinates'
 export const TILE_RADIUS = 73.8
 export const TILE_IMAGES = [
   'gold',
-  'unitPreview',
   'fog',
   'action',
+  'unitPreview',
   'castle',
   'tower',
   'capital',

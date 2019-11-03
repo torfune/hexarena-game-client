@@ -99,11 +99,10 @@ const getPreviewTiles = (army: Army, direction: number) => {
   let previewTiles: PreviewTile[] = []
   let steps = army.unitCount
 
-  const addPreviewTile = (tile: Tile) => {
+  const addPreviewTile = (tile: Tile, unitCost: number) => {
     if (!store.game) return
 
     const { mountain, bedrock, ownerId } = tile
-    const unitCost = tile.unitCost(army.ownerId)
     const unitCount = steps
     const cantCapture =
       (mountain && ownerId && ownerId !== army.ownerId) || bedrock
@@ -120,7 +119,7 @@ const getPreviewTiles = (army: Army, direction: number) => {
 
   const firstTile = army.tile.neighbors[direction]
   if (firstTile && !firstTile.building) {
-    addPreviewTile(firstTile)
+    addPreviewTile(firstTile, firstTile.unitCost(army.ownerId))
   } else {
     return previewTiles
   }
@@ -129,7 +128,12 @@ const getPreviewTiles = (army: Army, direction: number) => {
     const lastPreviewTile = previewTiles[previewTiles.length - 1]
     const tile = lastPreviewTile.tile.neighbors[direction]
     if (!tile || tile.building) break
-    addPreviewTile(tile)
+
+    let unitCost = tile.unitCost(army.ownerId)
+    if (lastPreviewTile.tile.village) {
+      unitCost = 0
+    }
+    addPreviewTile(tile, unitCost)
   }
 
   return previewTiles

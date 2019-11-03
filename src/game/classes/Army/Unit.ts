@@ -113,7 +113,7 @@ class Unit {
     animate({
       image: this.image,
       delay: 400,
-      duration: 300,
+      duration: 200,
       context: this,
       ease: 'OUT',
       onUpdate: (image, fraction) => {
