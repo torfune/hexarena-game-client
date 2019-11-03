@@ -63,6 +63,14 @@ const loadImages = () => {
         'army-drag-arrow-body',
         `${images}/army-drag-arrow-body.png?${version}`
       )
+      .add('unit-preview-0', `${images}/unit-preview-0.png?${version}`)
+      .add('unit-preview-1', `${images}/unit-preview-1.png?${version}`)
+      .add('unit-preview-3', `${images}/unit-preview-3.png?${version}`)
+      .add('unit-preview-4', `${images}/unit-preview-4.png?${version}`)
+      .add(
+        'unit-preview-cant-capture',
+        `${images}/unit-preview-cant-capture.png?${version}`
+      )
       .load(resolve)
   })
 }

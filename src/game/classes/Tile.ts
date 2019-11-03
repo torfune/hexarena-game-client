@@ -826,37 +826,10 @@ class Tile {
     }
   }
   selectArmy() {
-    if (!this.image.pattern || !store.game || !this.army || !store.gsConfig) {
-      return
-    }
-
-    const armyTargetTiles: Tile[][] = []
-    for (let i = 0; i < 6; i++) {
-      armyTargetTiles[i] = []
-
-      const nextTile = this.neighbors[i]
-      if (nextTile) {
-        armyTargetTiles[i].push(nextTile)
-      }
-
-      let lastTile = armyTargetTiles[i][armyTargetTiles[i].length - 1]
-      let steps = this.army.unitCount
-      while (steps > 0) {
-        const nextTile = lastTile.neighbors[i]
-        if (!nextTile) break
-
-        lastTile = nextTile
-        armyTargetTiles[i].push(nextTile)
-
-        if (nextTile.ownerId !== store.game.playerId) {
-          steps--
-        }
-      }
-    }
+    if (!this.army) return
 
     this.hideArmyIcon()
     this.army.leaveBuilding()
-    store.game.selectedArmyTargetTiles = armyTargetTiles
   }
   unselectArmy() {
     if (!store.game || !store.game.selectedArmyTile) return
@@ -1074,37 +1047,9 @@ class Tile {
       return null
     }
 
-    const { CAMP_COST, TOWER_COST, CASTLE_COST } = store.gsConfig
-
-    // Neighbor check
-    // let isNeighbor = false
-    // for (let i = 0; i < 6; i++) {
-    //   const n = this.neighbors[i]
-    //   if (n && n.ownerId === store.game.playerId) {
-    //     isNeighbor = true
-    //     break
-    //   }
-    // }
-
-    // CAPTURE
-    // if (
-    //   isNeighbor &&
-    //   !this.owner &&
-    //   (store.game.player.gold >= this.captureCost() || ignoreGold)
-    // ) {
-    //   return 'CAPTURE'
-    // }
+    const { TOWER_COST, CASTLE_COST } = store.gsConfig
 
     if (this.ownerId !== store.game.playerId) return null
-
-    // CAMP
-    // const forestGold = this.forest ? this.forest.treeCount : 0
-    // if (
-    //   (this.isEmpty() || this.forest) &&
-    //   (store.game.player.gold >= CAMP_COST - forestGold || ignoreGold)
-    // ) {
-    //   return 'CAMP'
-    // }
 
     // TOWER
     const forestGold = this.forest ? this.forest.treeCount : 0

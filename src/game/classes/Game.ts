@@ -568,58 +568,9 @@ class Game {
 
     const { ARMY_CAPTURE_COST } = store.gsConfig
     const tilesToCapture: Tile[] = []
-    const actionType = tile.getActionType()
-
-    // Attack hover
-    // if (
-    //   this.playerId === playerId &&
-    //   actionType === 'CAPTURE' &&
-    //   !this.selectedArmyTile &&
-    //   !tile.bedrock
-    // ) {
-    //   tilesToCapture.push(tile)
-    // }
-
-    // Upgrade hover
-    // if (actionType === 'CASTLE' && !this.selectedArmyTile && !tile.army) {
-    //   for (let i = 0; i < 6; i++) {
-    //     const n = tile.neighbors[i]
-    //     if (n && !tilesToCapture.includes(n) && !n.owner) {
-    //       tilesToCapture.push(n)
-    //     }
-    //   }
-    // }
-
-    // Actions (CAPTURE, CASTLE)
-    // for (let i = 0; i < this.actions.length; i++) {
-    //   const action = this.actions[i]
-
-    //   if (
-    //     action.type === 'CAPTURE' &&
-    //     action.owner.id === playerId &&
-    //     !tilesToCapture.includes(action.tile)
-    //   ) {
-    //     tilesToCapture.push(action.tile)
-    //     continue
-    //   }
-
-    //   if (action.type === 'CASTLE' && action.owner.id === playerId) {
-    //     for (let j = 0; j < 6; j++) {
-    //       const n = action.tile.neighbors[j]
-    //       if (n && !tilesToCapture.includes(n) && !n.owner) {
-    //         tilesToCapture.push(n)
-    //       }
-    //     }
-    //   }
-    // }
 
     // Army sending
-    if (
-      this.player &&
-      playerId === this.playerId &&
-      this.selectedArmyTile
-      // (!tile.action || tile.action.type !== 'CAPTURE')
-    ) {
+    if (this.player && playerId === this.playerId && this.selectedArmyTile) {
       let direction = null
 
       for (let i = 0; i < 6; i++) {
@@ -635,7 +586,7 @@ class Game {
         let steps = army ? army.unitCount : 0
         for (let i = 0; i < targetTiles.length; i++) {
           const t = targetTiles[i]
-          if (!t) break
+          if (!t || t.bedrock) break
 
           // Ally tile
           if (t.ownerId && t.ownerId === this.player.allyId) {
@@ -742,36 +693,7 @@ class Game {
   updatePatternPreviews() {
     const oldTilesWithPatternPreview = this.tilesWithPatternPreview
     const pattern: { [key: string]: string } = {}
-
     this.tilesWithPatternPreview = []
-
-    // Actions
-    for (let i = 0; i < this.actions.length; i++) {
-      const action = this.actions[i]
-
-      // if (action.type !== 'CAPTURE' && action.type !== 'CASTLE') continue
-
-      const tilesToCapture = this.getTilesToCapture(
-        action.tile,
-        action.owner.id
-      )
-
-      for (let j = 0; j < tilesToCapture.length; j++) {
-        const t = tilesToCapture[j]
-
-        if (this.tilesWithPatternPreview.includes(t)) continue
-
-        this.tilesWithPatternPreview.push(t)
-
-        const players = Array.from(this.players.values())
-        for (let k = 0; k < players.length; k++) {
-          if (players[k].id === action.owner.id) {
-            pattern[`${t.axial.x}|${t.axial.z}`] = players[k].pattern
-            break
-          }
-        }
-      }
-    }
 
     // Hovered tile
     if (this.hoveredTile && this.player) {
@@ -782,14 +704,13 @@ class Game {
 
       for (let i = 0; i < tilesToCapture.length; i++) {
         const t = tilesToCapture[i]
-
         if (this.tilesWithPatternPreview.includes(t)) continue
-
         this.tilesWithPatternPreview.push(t)
         pattern[`${t.axial.x}|${t.axial.z}`] = this.player.pattern
       }
     }
 
+    // Remove
     for (let i = 0; i < oldTilesWithPatternPreview.length; i++) {
       const t = oldTilesWithPatternPreview[i]
       if (!this.tilesWithPatternPreview.includes(t)) {
@@ -797,6 +718,7 @@ class Game {
       }
     }
 
+    // Add
     for (let i = 0; i < this.tilesWithPatternPreview.length; i++) {
       const t = this.tilesWithPatternPreview[i]
       if (!oldTilesWithPatternPreview.includes(t)) {
@@ -932,6 +854,8 @@ class Game {
     } else {
       this.selectedArmyTile.unselectArmy()
     }
+
+    UnitPreviewManager.clear()
   }
   updateStageScale() {
     if (!this.pixi) return
@@ -952,6 +876,7 @@ class Game {
       UnitPreviewManager.setArmy(tile.army)
     }
 
+    this.updateArmyTargetTiles()
     this.armyDragArrow = new ArmyDragArrow(tile)
   }
   sendGoldToAlly() {
@@ -1042,6 +967,37 @@ class Game {
     }
 
     this.notification = `${Date.now()}|Not enough gold`
+  }
+  updateArmyTargetTiles() {
+    if (!store.game || !this.selectedArmyTile || !this.selectedArmyTile.army) {
+      return
+    }
+
+    const armyTargetTiles: Tile[][] = []
+    for (let i = 0; i < 6; i++) {
+      armyTargetTiles[i] = []
+
+      const nextTile = this.selectedArmyTile.neighbors[i]
+      if (nextTile) {
+        armyTargetTiles[i].push(nextTile)
+      }
+
+      let lastTile = armyTargetTiles[i][armyTargetTiles[i].length - 1]
+      let steps = this.selectedArmyTile.army.unitCount
+      while (steps > 0) {
+        const nextTile = lastTile.neighbors[i]
+        if (!nextTile) break
+
+        lastTile = nextTile
+        armyTargetTiles[i].push(nextTile)
+
+        if (nextTile.ownerId !== store.game.playerId) {
+          steps--
+        }
+      }
+    }
+
+    this.selectedArmyTargetTiles = armyTargetTiles
   }
 }
 

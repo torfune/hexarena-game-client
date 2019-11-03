@@ -8,6 +8,7 @@ import Prop from '../../../types/Prop'
 import Primitive from '../../../types/Primitive'
 import createProp from '../../../utils/createProp'
 import randomUnitPixels, { Area } from '../../functions/randomUnitPixels'
+import UnitPreviewManager from '../UnitPreviewManager'
 
 interface Props {
   [key: string]: Prop<Primitive>
@@ -177,6 +178,9 @@ class Army {
       for (let i = 0; i < units.length; i++) {
         units[i].moveOn(edgePixels[i])
       }
+      store.game.updateArmyTargetTiles()
+      store.game.updatePatternPreviews()
+      UnitPreviewManager.updatePreviewTiles()
     }
 
     this.units = this.units.concat(units)

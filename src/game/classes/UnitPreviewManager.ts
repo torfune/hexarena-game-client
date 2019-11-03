@@ -1,6 +1,12 @@
 import Tile from './Tile'
-import { Sprite } from 'pixi.js'
+import { Sprite, Loader } from 'pixi.js'
 import Army from './Army'
+import pixelFromAxial from '../functions/pixelFromAxial'
+import store from '../../store'
+import animate from '../functions/animate'
+
+const { resources } = Loader.shared
+const dummySprite = new Sprite()
 
 class UnitPreviewManager {
   static army: Army | null = null
@@ -12,66 +18,172 @@ class UnitPreviewManager {
   }
 
   static setDirection(direction: number | null) {
-    this.direction = direction
-    this.previewTiles = []
+    if (this.direction === direction) return
 
-    console.log(this.previewTiles)
+    this.clear()
+    this.direction = direction
 
     if (!this.army || direction === null) return
 
-    let steps = this.army.unitCount
-
-    const firstTile = this.army.tile.neighbors[direction]
-    if (firstTile) {
-      const { mountain, bedrock, ownerId } = firstTile
-      const unitCost = firstTile.unitCost(this.army.ownerId)
-      const cantCapture =
-        (mountain && ownerId && ownerId !== this.army.ownerId) || bedrock
-
-      this.previewTiles.push({
-        tile: firstTile,
-        sprite: new Sprite(),
-        unitCost,
-        unitCount: steps,
-        cantCapture,
-      })
-      steps -= unitCost
-    } else {
-      console.log(this.previewTiles)
-      return
+    const previewTiles = getPreviewTiles(this.army, direction)
+    for (let i = 0; i < previewTiles.length; i++) {
+      const previewTile = previewTiles[i]
+      previewTile.image = createImage(previewTile, i * 80)
     }
 
-    while (steps > 0) {
-      const lastPreviewTile = this.previewTiles[this.previewTiles.length - 1]
-      const tile = lastPreviewTile.tile.neighbors[direction]
+    this.previewTiles = previewTiles
+  }
 
-      if (!tile) break
-
-      const { mountain, bedrock, ownerId } = tile
-      const unitCost = tile.unitCost(this.army.ownerId)
-      const cantCapture =
-        (mountain && ownerId && ownerId !== this.army.ownerId) || bedrock
-
-      this.previewTiles.push({
-        tile,
-        sprite: new Sprite(),
-        unitCost,
-        unitCount: steps,
-        cantCapture,
-      })
-      steps -= unitCost
+  static clear() {
+    for (let i = 0; i < this.previewTiles.length; i++) {
+      const { image } = this.previewTiles[i]
+      if (image.alpha === 1) {
+        animate({
+          image,
+          duration: 150,
+          ease: 'IN',
+          onUpdate: (image, fraction) => {
+            image.alpha = 1 - fraction
+            image.scale.set(1 - fraction)
+          },
+          onFinish: image => {
+            if (!store.game) return
+            const stage = store.game.stage.get('unitPreview')
+            if (stage) {
+              stage.removeChild(image)
+            }
+          },
+        })
+      } else {
+        if (!store.game) return
+        const stage = store.game.stage.get('unitPreview')
+        if (stage) {
+          stage.removeChild(image)
+        }
+      }
     }
 
-    console.log(this.previewTiles)
+    this.direction = null
+    this.previewTiles = []
+  }
+
+  static updatePreviewTiles() {
+    if (!this.army || this.direction === null) return
+
+    const newPreviewTiles = getPreviewTiles(this.army, this.direction)
+    for (let i = 0; i < newPreviewTiles.length; i++) {
+      const newPreviewTile = newPreviewTiles[i]
+      const oldPreviewTile = this.previewTiles[i]
+
+      if (oldPreviewTile) {
+        const { unitCost, unitCount, cantCapture } = newPreviewTile
+        const texture = getTexture(unitCost, unitCount, cantCapture)
+        oldPreviewTile.image.texture = texture
+      } else {
+        newPreviewTile.image = createImage(newPreviewTile, 0)
+        this.previewTiles[i] = newPreviewTile
+      }
+    }
   }
 }
 
 interface PreviewTile {
   tile: Tile
-  sprite: Sprite
+  image: Sprite
   unitCost: number
   unitCount: number
   cantCapture: boolean
+}
+
+const getPreviewTiles = (army: Army, direction: number) => {
+  let previewTiles: PreviewTile[] = []
+  let steps = army.unitCount
+
+  const addPreviewTile = (tile: Tile) => {
+    if (!store.game) return
+
+    const { mountain, bedrock, ownerId } = tile
+    const unitCost = tile.unitCost(army.ownerId)
+    const unitCount = steps
+    const cantCapture =
+      (mountain && ownerId && ownerId !== army.ownerId) || bedrock
+
+    previewTiles.push({
+      tile,
+      image: dummySprite,
+      unitCost,
+      unitCount,
+      cantCapture,
+    })
+    steps -= unitCost
+  }
+
+  const firstTile = army.tile.neighbors[direction]
+  if (firstTile) {
+    addPreviewTile(firstTile)
+  } else {
+    return previewTiles
+  }
+
+  while (steps > 0) {
+    const lastPreviewTile = previewTiles[previewTiles.length - 1]
+    const tile = lastPreviewTile.tile.neighbors[direction]
+    if (!tile || tile.building) break
+    addPreviewTile(tile)
+  }
+
+  return previewTiles
+}
+
+const createImage = (previewTile: PreviewTile, delay: number) => {
+  if (!store.game) return new Sprite()
+
+  const { unitCost, unitCount, cantCapture, tile } = previewTile
+  const texture = getTexture(unitCost, unitCount, cantCapture)
+  const image = new Sprite(texture)
+  const pixel = pixelFromAxial(tile.axial)
+  image.x = pixel.x
+  image.y = pixel.y
+  image.anchor.set(0.5)
+  image.scale.set(0)
+  image.alpha = 0
+  animate({
+    image,
+    duration: 200,
+    delay,
+    ease: 'OUT',
+    onUpdate: (image, fraction) => {
+      image.scale.set(fraction)
+      image.alpha = fraction
+    },
+  })
+  const stage = store.game.stage.get('unitPreview')
+  if (stage) {
+    stage.addChild(image)
+  }
+
+  return image
+}
+
+const getTexture = (
+  unitCost: number,
+  unitCount: number,
+  cantCapture: boolean
+) => {
+  if (unitCount < unitCost || cantCapture) {
+    return resources['unit-preview-cant-capture'].texture
+  }
+
+  switch (unitCost) {
+    case 1:
+      return resources['unit-preview-1'].texture
+    case 3:
+      return resources['unit-preview-3'].texture
+    case 4:
+      return resources['unit-preview-4'].texture
+    default:
+      return resources['unit-preview-0'].texture
+  }
 }
 
 export default UnitPreviewManager
