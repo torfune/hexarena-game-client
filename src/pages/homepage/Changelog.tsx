@@ -2,6 +2,7 @@ import { PRIMARY, BREAKPOINT } from '../../constants/react'
 import styled from 'styled-components'
 import changelog from '../../constants/changelog'
 import React, { Fragment } from 'react'
+import Heading from '../../components/Heading'
 
 const MONOSPACE = 'Monaco, Consolas, Courier, Courier New, Lucida Console'
 
@@ -33,16 +34,10 @@ const Container = styled.div`
   }
 `
 
-const Heading = styled.h2`
-  font-size: 24px;
-  font-weight: 500;
-  color: #fff;
-`
-
 const ReleaseHead = styled.div`
   background: #222;
-  font-size: 18px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
   margin-top: 24px;
   padding: 8px 20px;
   border: 1px solid #111;
@@ -59,6 +54,7 @@ const ReleaseBody = styled.div`
   background: #282828;
   padding: 0 20px;
   border: 1px solid #111;
+  font-size: 14px;
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
 `
@@ -86,7 +82,7 @@ const Point = styled.p`
 
 const Changelog = () => (
   <Container>
-    {/* <Heading>Changelog</Heading>
+    <Heading>Changelog</Heading>
 
     {changelog.map(release => (
       <Fragment key={release.label}>
@@ -97,7 +93,7 @@ const Changelog = () => (
           ))}
         </ReleaseBody>
       </Fragment>
-    ))} */}
+    ))}
   </Container>
 )
 
