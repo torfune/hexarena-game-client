@@ -13,7 +13,7 @@ class UnitPreviewManager {
   static direction: number | null = null
   static previewTiles: PreviewTile[] = []
 
-  static setArmy(army: Army) {
+  static setArmy(army: Army | null) {
     this.army = army
   }
 
@@ -28,7 +28,7 @@ class UnitPreviewManager {
     const previewTiles = getPreviewTiles(this.army, direction)
     for (let i = 0; i < previewTiles.length; i++) {
       const previewTile = previewTiles[i]
-      previewTile.image = createImage(previewTile, i * 80)
+      previewTile.image = createImage(previewTile, i * 60)
     }
 
     this.previewTiles = previewTiles
@@ -102,10 +102,11 @@ const getPreviewTiles = (army: Army, direction: number) => {
   const addPreviewTile = (tile: Tile, unitCost: number) => {
     if (!store.game) return
 
-    const { mountain, bedrock, ownerId } = tile
+    const { mountain, forest, bedrock, ownerId } = tile
     const unitCount = steps
-    const cantCapture =
-      (mountain && ownerId && ownerId !== army.ownerId) || bedrock
+    const enemyMountain = mountain && ownerId && ownerId !== army.ownerId
+    const enemyForest = forest && ownerId && ownerId !== army.ownerId
+    const cantCapture = enemyMountain || enemyForest || bedrock
 
     previewTiles.push({
       tile,
@@ -114,7 +115,12 @@ const getPreviewTiles = (army: Army, direction: number) => {
       unitCount,
       cantCapture,
     })
-    steps -= unitCost
+
+    if (cantCapture) {
+      steps = 0
+    } else {
+      steps -= unitCost
+    }
   }
 
   const firstTile = army.tile.neighbors[direction]

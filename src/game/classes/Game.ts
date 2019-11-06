@@ -566,7 +566,6 @@ class Game {
   getTilesToCapture(tile: Tile, playerId: string) {
     if (!store.gsConfig) return []
 
-    const { ARMY_CAPTURE_COST } = store.gsConfig
     const tilesToCapture: Tile[] = []
 
     // Army sending
@@ -583,9 +582,11 @@ class Game {
       if (direction !== null) {
         const targetTiles = this.selectedArmyTargetTiles[direction]
         const { army } = this.selectedArmyTile
+
         let steps = army ? army.unitCount : 0
-        for (let i = 0; i < targetTiles.length; i++) {
-          const t = targetTiles[i]
+        let currentTile = this.selectedArmyTile.neighbors[direction]
+        while (steps > 0 && currentTile) {
+          const t = currentTile
           if (!t || t.bedrock) break
 
           // Ally tile
@@ -593,26 +594,13 @@ class Game {
             break
           }
 
-          // Mountain
-          if (t.mountain) {
-            // - neutral
-            if (!t.owner) {
-              steps -= ARMY_CAPTURE_COST.MOUNTAIN - 1
-            }
-            // - enemy
-            else if (
-              t.owner &&
-              t.ownerId !== playerId &&
-              t.ownerId !== this.player.allyId
-            ) {
-              break
-            }
-          }
-
-          // Forest - enemy/neutral
-          else if (t.ownerId !== playerId && t.forest) {
-            const cost = t.forest.treeCount * ARMY_CAPTURE_COST.TREE
-            steps -= cost - 1
+          // Forest/Mountain - enemy
+          else if (
+            (t.forest || t.mountain) &&
+            t.ownerId !== playerId &&
+            t.owner
+          ) {
+            break
           }
 
           // Structure - owned
@@ -628,17 +616,18 @@ class Game {
             }
           }
 
-          // Out of steps
-          if (steps <= 0) break
-
           // Add to array
           if (t.ownerId !== playerId) {
             steps--
             tilesToCapture.push(t)
+
+            // Village - enemy
+            if (t.village) {
+              steps++
+            }
           }
 
-          // Out of steps
-          if (steps <= 0) break
+          currentTile = t.neighbors[direction]
         }
       }
     }
@@ -791,31 +780,7 @@ class Game {
 
       if (this.selectedArmyTile) {
         const direction = this.armySendDirection(this.hoveredTile)
-        this.updateArmyTileHighlights(direction)
         UnitPreviewManager.setDirection(direction)
-      }
-    }
-  }
-  updateArmyTileHighlights(direction: number | null) {
-    const { gsConfig } = store
-    if (!gsConfig) return
-
-    for (let i = 0; i < 6; i++) {
-      const armyTiles = this.selectedArmyTargetTiles[i]
-      for (let j = 0; j < armyTiles.length; j++) {
-        armyTiles[j].removeHighlight()
-      }
-    }
-
-    if (!this.hoveredTile) return
-
-    if (direction !== null) {
-      const targetTiles = this.selectedArmyTargetTiles[direction]
-      for (let i = 0; i < targetTiles.length; i++) {
-        const t = targetTiles[i]
-        if (!t || !t.owner || t.owner.id !== this.playerId) continue
-        t.addHighlight()
-        if (t.building || t.camp) break
       }
     }
   }
@@ -856,6 +821,7 @@ class Game {
     }
 
     UnitPreviewManager.clear()
+    UnitPreviewManager.setArmy(null)
   }
   updateStageScale() {
     if (!this.pixi) return

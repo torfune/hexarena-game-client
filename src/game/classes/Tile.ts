@@ -1074,15 +1074,17 @@ class Tile {
   unitCost(ownerId: string) {
     if (!store.gsConfig || this.ownerId === ownerId) return 0
 
-    const { ARMY_CAPTURE_COST } = store.gsConfig
+    return 1
 
-    if (this.forest) {
-      return this.forest.treeCount * ARMY_CAPTURE_COST.TREE
-    } else if (this.mountain) {
-      return ARMY_CAPTURE_COST.MOUNTAIN
-    } else {
-      return ARMY_CAPTURE_COST.DEFAULT
-    }
+    // const { ARMY_CAPTURE_COST } = store.gsConfig
+
+    // if (this.forest) {
+    //   return this.forest.treeCount * ARMY_CAPTURE_COST.TREE
+    // } else if (this.mountain) {
+    //   return ARMY_CAPTURE_COST.MOUNTAIN
+    // } else {
+    //   return ARMY_CAPTURE_COST.DEFAULT
+    // }
   }
   hasFullHp() {
     if (!this.building || !store.gsConfig) return false
