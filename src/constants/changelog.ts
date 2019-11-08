@@ -1,5 +1,9 @@
 const changelog = [
   {
+    label: 'Update 8/11',
+    changes: ['Forest spawnrate: 85 => 80', 'Mountain spawnrate: 28 => 25'],
+  },
+  {
     label: 'Update 6/11',
     changes: [
       'Enemy Forests cannot be captured (same as mountains)',
