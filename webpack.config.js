@@ -7,7 +7,7 @@ const createStyledComponentsTransformer = require('typescript-plugin-styled-comp
 const styledComponentsTransformer = createStyledComponentsTransformer()
 
 const config = {
-  entry: './src/index.tsx',
+  entry: './src/App.tsx',
   output: {
     filename: `bundle.${version}.js`,
     path: path.join(__dirname, '/build'),

@@ -7,7 +7,6 @@ import Primitive from '../../types/Primitive'
 import Prop from '../../types/Prop'
 import createProp from '../../utils/createProp'
 import { Sprite, Graphics, Loader } from 'pixi.js'
-import SoundManager from '../../SoundManager'
 import animate from '../functions/animate'
 
 const loader = Loader.shared
@@ -65,8 +64,6 @@ class Action {
     this.image.alpha = 0
     this.image.x = pixel.x
     this.image.y = pixel.y
-
-    SoundManager.play('ACTION')
 
     animate({
       image: this.image,

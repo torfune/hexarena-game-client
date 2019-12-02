@@ -78,8 +78,8 @@ class Army {
     }
   }
   moveOn(tileId: string) {
-    const { gsConfig, game } = store
-    if (!gsConfig || !game) return
+    const { config, game } = store
+    if (!config || !game) return
 
     const tile = game.tiles.get(tileId)
     if (!tile) {
@@ -194,8 +194,8 @@ class Army {
     }
   }
   leaveBuilding() {
-    const { gsConfig, game } = store
-    if (!gsConfig || !game) return
+    const { config, game } = store
+    if (!config || !game) return
 
     const pixel = pixelFromAxial(this.tile.axial)
     const randomPixels = randomUnitPixels(
@@ -210,8 +210,8 @@ class Army {
     }
   }
   joinBuilding() {
-    const { gsConfig, game } = store
-    if (!gsConfig || !game) return
+    const { config, game } = store
+    if (!config || !game) return
 
     if (!this.tile.army) {
       this.tile.addArmy(this)

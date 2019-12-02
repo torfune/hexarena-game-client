@@ -1,30 +1,21 @@
 import styled from 'styled-components'
-import { History } from 'history'
 import React, { useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import Header from '../components/Header'
-import Chat from './homepage/Chat'
 import store from '../store'
-import { CHAT_WIDTH, PRIMARY, BREAKPOINT } from '../constants/react'
-import Leaderboard from './game/hud/Leaderboard'
-import HoverPreview from './game/hud/HoverPreview'
-import EndScreen from './game/screens/EndScreen'
-import GameTime from './game/hud/GameTime'
-import MatchFound from '../components/MatchFound'
-import Economy from './game/hud/Economy'
+import { PRIMARY, BREAKPOINT } from '../constants/react'
+import Leaderboard from '../hud/Leaderboard'
+import HoverPreview from '../hud/HoverPreview'
+import EndScreen from '../screens/EndScreen'
+import GameTime from '../hud/GameTime'
+import Economy from '../hud/Economy'
 import Socket from '../websockets/Socket'
-import { Link } from 'react-router-dom'
 import shadeColor from '../utils/shade'
-import Spectators from './game/hud/Spectators'
+import Spectators from '../hud/Spectators'
 
 const Container = styled.div`
-  width: calc(100vw - ${CHAT_WIDTH});
+  width: 100vw;
   height: 100vh;
   overflow: hidden;
-
-  @media (max-width: ${BREAKPOINT.HIDE_CHAT}) {
-    width: 100vw;
-  }
 `
 
 const InfoContainer = styled.div`
@@ -61,13 +52,8 @@ const InfoContainer = styled.div`
 
 let timeout: NodeJS.Timeout | null = null
 
-interface Props {
-  history: History
-}
-const Spectate: React.FC<Props> = ({ history }) => {
+const Spectate = () => {
   const [loading, setLoading] = useState(true)
-
-  store.routerHistory = history
 
   useEffect(() => {
     if (!store.spectating) {
@@ -97,37 +83,31 @@ const Spectate: React.FC<Props> = ({ history }) => {
   }, [store.game])
 
   return (
-    <>
-      <Header />
-      <Container>
-        <div id="game-canvas" />
+    <Container>
+      <div id="game-canvas" />
 
-        {store.spectating && store.game ? (
-          <>
-            <GameTime />
-            <HoverPreview />
-            <Spectators />
-            <Leaderboard />
-            <Economy />
-            {store.game.status === 'FINISHED' && <EndScreen />}
-          </>
-        ) : (
-          <InfoContainer>
-            {!loading && (
-              <>
-                <h2>Game not found</h2>
-                <Link to="/">
-                  <button>Continue</button>
-                </Link>
-              </>
-            )}
-          </InfoContainer>
-        )}
-      </Container>
-
-      <Chat />
-      <MatchFound />
-    </>
+      {store.spectating && store.game ? (
+        <>
+          <GameTime />
+          <HoverPreview />
+          <Spectators />
+          <Leaderboard />
+          <Economy />
+          {store.game.status === 'FINISHED' && <EndScreen />}
+        </>
+      ) : (
+        <InfoContainer>
+          {!loading && (
+            <>
+              <h2>Game not found</h2>
+              <a href="http://localhost:3000">
+                <button>Continue</button>
+              </a>
+            </>
+          )}
+        </InfoContainer>
+      )}
+    </Container>
   )
 }
 

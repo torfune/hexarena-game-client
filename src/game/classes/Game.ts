@@ -31,7 +31,6 @@ import Village from './Village'
 import GameMode from '../../types/GameMode'
 import HoveredTileInfo from '../../types/HoveredTileInfo'
 import ArmyDragArrow from './ArmyDragArrow'
-import SoundManager from '../../SoundManager'
 import LocalStorageManager from '../../LocalStorageManager'
 import Unit from './Army/Unit'
 import GameStatus from '../../types/GameStatus'
@@ -117,12 +116,11 @@ class Game {
     // Leaving warning
     window.onbeforeunload = () => {
       if (
-        !store.error &&
         this.player &&
         this.player.alive &&
         this.status === 'RUNNING' &&
-        store.gsConfig &&
-        !store.gsConfig.DEBUG_MODE
+        store.config &&
+        !store.config.DEBUG_MODE
       ) {
         return true
       }
@@ -346,7 +344,7 @@ class Game {
     Socket.send('pattern', pattern)
   }
   handleKeyDown({ key }: KeyboardEvent) {
-    if (this.status !== 'RUNNING' || (store.spectating && store.chatFocus)) {
+    if (this.status !== 'RUNNING') {
       return
     }
 
@@ -384,13 +382,7 @@ class Game {
     Socket.send('debug', `${command}|${tile.axial.x}|${tile.axial.z}`)
   }
   handleKeyUp({ key }: KeyboardEvent) {
-    if (
-      this.status !== 'RUNNING' ||
-      !store.gsConfig ||
-      (store.spectating && store.chatFocus)
-    ) {
-      return
-    }
+    if (this.status !== 'RUNNING' || !store.config) return
 
     this.keyDown[key] = false
 
@@ -536,9 +528,6 @@ class Game {
   handleWheelMove({ deltaY, detail }: WheelEvent) {
     if (!this.camera) return
 
-    const chat = document.getElementById('chat')
-    if (chat && chat.matches(':hover')) return
-
     const delta = deltaY || detail
     const zoomDirection = (delta < 0 ? -1 : 1) * -1
 
@@ -564,7 +553,7 @@ class Game {
     return getTileByAxial(axial)
   }
   getTilesToCapture(tile: Tile, playerId: string) {
-    if (!store.gsConfig) return []
+    if (!store.config) return []
 
     const tilesToCapture: Tile[] = []
 
@@ -812,7 +801,6 @@ class Game {
     if (index !== null) {
       const { x, z } = this.selectedArmyTile.axial
       Socket.send('sendArmy', `${x}|${z}|${index}`)
-      SoundManager.play('ARMY_SEND')
       if (this.armyDragArrow) {
         this.armyDragArrow.destroy()
       }
@@ -916,9 +904,9 @@ class Game {
     ctx.fillRect(0, 0, BAR_WIDTH * fraction, BAR_HEIGHT)
   }
   showNotEnoughGold(tile: Tile) {
-    if (!this.player || !store.gsConfig) return
+    if (!this.player || !store.config) return
 
-    const { CAMP_COST, TOWER_COST, CASTLE_COST } = store.gsConfig
+    const { CAMP_COST, TOWER_COST, CASTLE_COST } = store.config
 
     const actionType = tile.getActionType(true)
 

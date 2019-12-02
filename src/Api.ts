@@ -3,24 +3,30 @@ import store from './store'
 
 const { protocol } = window.location
 
-const Api = {
-  gs: {
-    get: async (path: string, config?: AxiosRequestConfig) => {
-      const host = await gsHost()
-      return Axios.get(`${protocol}//${host + path}`, config)
-    },
-  },
-  ws: {
-    get: (path: string, config?: AxiosRequestConfig) => {
-      return Axios.get(`${protocol}//${wsHost() + path}`, config)
-    },
-    post: (path: string, data: any, config?: AxiosRequestConfig) => {
-      return Axios.post(`${protocol}//${wsHost() + path}`, data, config)
-    },
-    patch: (path: string, data: any, config?: AxiosRequestConfig) => {
-      return Axios.patch(`${protocol}//${wsHost() + path}`, data, config)
-    },
-  },
+class Api {
+  static async getConfig() {
+    const host = await gsHost()
+    const response = await Axios.get(`${protocol}//${host}/config`)
+    return response.data
+  }
+
+  // gs: {
+  //   get: async (path: string, config?: AxiosRequestConfig) => {
+  //     const host = await gsHost()
+  //     return Axios.get(`${protocol}//${host + path}`, config)
+  //   },
+  // },
+  // ws: {
+  //   get: (path: string, config?: AxiosRequestConfig) => {
+  //     return Axios.get(`${protocol}//${wsHost() + path}`, config)
+  //   },
+  //   post: (path: string, data: any, config?: AxiosRequestConfig) => {
+  //     return Axios.post(`${protocol}//${wsHost() + path}`, data, config)
+  //   },
+  //   patch: (path: string, data: any, config?: AxiosRequestConfig) => {
+  //     return Axios.patch(`${protocol}//${wsHost() + path}`, data, config)
+  //   },
+  // },
 }
 
 const wsHost = () => {

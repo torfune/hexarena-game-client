@@ -18,9 +18,6 @@ export const SHADOW = {
   BUTTON_HOVER: '0px 2px 12px #00000066',
 }
 
-// MISC
-export const CHAT_WIDTH = '500px'
-
 // Z INDEX
 export const Z_INDEX = {
   HEADER: 100,

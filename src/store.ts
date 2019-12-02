@@ -1,77 +1,16 @@
 import { observable } from 'mobx'
 import GameServerConfig from './types/GameServerConfig'
-import ChatMessage from './types/ChatMessage'
-import TopPlayer from './types/TopPlayer'
-import RunningGame from './types/RunningGame'
 import Game from './game/classes/Game'
-import { History } from 'history'
 import User from './models/User'
-import Api from './Api'
 
 class Store {
-  @observable chatFocus: boolean = false
-  @observable matchFound: boolean = false
-  @observable chatMessage: string = ''
-  @observable topPlayers: TopPlayer[] = []
-  @observable chatMessages: ChatMessage[] = []
-  @observable spectating: boolean = false
-  @observable gsConfig?: GameServerConfig
-  @observable runningGames: RunningGame[] = []
-  @observable loading: boolean = true
-  @observable openingTime: number | null = null
   @observable game: Game | null = null
-  @observable user: User | null = null
+  @observable config: GameServerConfig | null = null
+  @observable notification: Notification | null = null
   @observable showGuide: boolean = false
-  @observable notification?: Notification
-  @observable settings: {
-    sound: boolean
-  } = {
-    sound: false,
-  }
-  @observable queue: {
-    currentTime: number
-    averageTime: number
-    playerCount: number
-  } | null = null
-  @observable error?: {
-    message: string
-    goHome?: boolean
-  }
-  routerHistory: History | null = null
+  @observable spectating: boolean = false
+  @observable user: User | null = null
   gsHost: string | null = null
-
-  async fetchRunningGames() {
-    const { data } = await Api.gs.get('/running-games')
-    if (!data) return
-
-    // Sort by elo
-    const games = [...data].sort((a, b) => {
-      let eloSumA = 0
-      for (const players of a.players) {
-        for (const player of players) {
-          if (player.elo) {
-            eloSumA += player.elo
-          }
-        }
-      }
-
-      let eloSumB = 0
-      for (const players of b.players) {
-        for (const player of players) {
-          if (player.elo) {
-            eloSumB += player.elo
-          }
-        }
-      }
-
-      return eloSumB - eloSumA
-    })
-
-    // Sort by ranked
-    store.runningGames = games.sort((a, b) => {
-      return b.ranked - a.ranked
-    })
-  }
 }
 
 const store = new Store()

@@ -32,7 +32,6 @@ import getTileByAxial from '../functions/getTileByAxial'
 import BuildingType from '../../types/BuildingType'
 import Forest from './Forest'
 import Village from './Village'
-import SoundManager from '../../SoundManager'
 import animate from '../functions/animate'
 
 const loader = Loader.shared
@@ -163,14 +162,6 @@ class Tile {
           break
       }
     }
-
-    // Sounds
-    // if (
-    //   this.ownerId === store.game.playerId &&
-    //   ((key === 'camp' && value) || (key === 'buildingType' && value))
-    // ) {
-    //   SoundManager.play('BUILDING')
-    // }
   }
   updateImage(key: keyof TileImage) {
     if (this.props[key].current && !this.image[key]) {
@@ -198,11 +189,11 @@ class Tile {
     }
   }
   endHover() {
-    const { gsConfig, game } = store
-    if (!gsConfig || !game) return
+    const { config, game } = store
+    if (!config || !game) return
 
     const { building } = this
-    if (building && building.hp === gsConfig.HP[building.type]) {
+    if (building && building.hp === config.HP[building.type]) {
       this.hideHitpoints()
     }
 
@@ -216,13 +207,13 @@ class Tile {
     this.image.pattern.tint = hex(shade(this.owner.pattern, 10))
   }
   addArmy(army: Army) {
-    const { gsConfig } = store
-    if (!gsConfig) return
+    const { config } = store
+    if (!config) return
 
     if (
       this.hpVisible &&
       this.building &&
-      this.building.hp === gsConfig.HP[this.building.type]
+      this.building.hp === config.HP[this.building.type]
     ) {
       this.hideHitpoints()
     }
@@ -456,8 +447,8 @@ class Tile {
     this.image.armyIcon.texture = resource.texture
   }
   updateHitpoints() {
-    const { gsConfig } = store
-    if (!gsConfig) return
+    const { config } = store
+    if (!config) return
 
     // Hide
     if (!this.building) {
@@ -504,7 +495,7 @@ class Tile {
       image.addChild(this.image.hpFill3)
 
       if (
-        this.building.hp !== gsConfig.HP[this.building.type] ||
+        this.building.hp !== config.HP[this.building.type] ||
         (this.isHovered() && !this.army)
       ) {
         this.showHitpoints()
@@ -517,7 +508,7 @@ class Tile {
       this.image.hpBackground.texture = texture
 
       if (
-        this.building.hp !== gsConfig.HP[this.building.type] ||
+        this.building.hp !== config.HP[this.building.type] ||
         (this.isHovered() && !this.army)
       ) {
         this.showHitpoints()
@@ -536,7 +527,7 @@ class Tile {
       return
     }
 
-    if (this.building.hp < gsConfig.HP[this.building.type]) {
+    if (this.building.hp < config.HP[this.building.type]) {
       this.showHitpoints()
       this.showProgressBar()
     } else {
@@ -567,7 +558,7 @@ class Tile {
     }
 
     if (
-      this.building.hp === gsConfig.HP[this.building.type] &&
+      this.building.hp === config.HP[this.building.type] &&
       !this.isHovered()
     ) {
       this.hideHitpoints()
@@ -645,10 +636,10 @@ class Tile {
   showProgressBar() {
     if (
       !store.game ||
-      !store.gsConfig ||
+      !store.config ||
       !this.building ||
       this.image.progressBar ||
-      this.building.hp === store.gsConfig.HP[this.building.type] ||
+      this.building.hp === store.config.HP[this.building.type] ||
       this.building.hp === 0
     ) {
       return
@@ -714,13 +705,13 @@ class Tile {
     this.image.progressBar = undefined
   }
   updateProduction() {
-    if (!store.game || !store.gsConfig) return
+    if (!store.game || !store.config) return
 
     let fraction = 1
 
     if (this.productionAt) {
       const timeDelta = this.productionAt + store.game.timeDiff - Date.now()
-      fraction = 1 - timeDelta / store.gsConfig.PRODUCTION_RATE
+      fraction = 1 - timeDelta / store.config.PRODUCTION_RATE
     }
 
     if (fraction > 1) {
@@ -1043,11 +1034,11 @@ class Tile {
     return null
   }
   getActionType(ignoreGold: boolean = false) {
-    if (!store.game || !store.gsConfig || this.action || !store.game.player) {
+    if (!store.game || !store.config || this.action || !store.game.player) {
       return null
     }
 
-    const { TOWER_COST, CASTLE_COST } = store.gsConfig
+    const { TOWER_COST, CASTLE_COST } = store.config
 
     if (this.ownerId !== store.game.playerId) return null
 
@@ -1072,11 +1063,11 @@ class Tile {
     return null
   }
   unitCost(ownerId: string) {
-    if (!store.gsConfig || this.ownerId === ownerId) return 0
+    if (!store.config || this.ownerId === ownerId) return 0
 
     return 1
 
-    // const { ARMY_CAPTURE_COST } = store.gsConfig
+    // const { ARMY_CAPTURE_COST } = store.config
 
     // if (this.forest) {
     //   return this.forest.treeCount * ARMY_CAPTURE_COST.TREE
@@ -1087,9 +1078,9 @@ class Tile {
     // }
   }
   hasFullHp() {
-    if (!this.building || !store.gsConfig) return false
+    if (!this.building || !store.config) return false
 
-    const { HP } = store.gsConfig
+    const { HP } = store.config
     return this.building.hp === HP[this.building.type]
   }
   clearArmyIconUnitCount() {

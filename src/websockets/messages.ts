@@ -13,8 +13,6 @@ import Village from '../game/classes/Village'
 import Forest from '../game/classes/Forest'
 import updateProps from '../game/functions/updateProps'
 import GoldAnimation from '../game/classes/GoldAnimation'
-import { CHAT_WIDTH } from '../constants/react'
-import SoundManager from '../SoundManager'
 import Unit from '../game/classes/Army/Unit'
 
 // Messages: Gameserver -> Frontend
@@ -22,14 +20,12 @@ export type MessageGS =
   | 'actions'
   | 'allianceRequests'
   | 'armies'
-  | 'chatMessages'
   | 'flash'
   | 'forests'
   | 'gameTime'
   | 'goldAnimation'
   | 'incomeAt'
   | 'lastIncomeAt'
-  | 'matchFound'
   | 'notification'
   | 'playerId'
   | 'players'
@@ -41,7 +37,6 @@ export type MessageGS =
   | 'status'
   | 'tiles'
   | 'villages'
-  | 'queue'
   | 'message'
   | 'spectators'
   | 'ping'
@@ -53,22 +48,6 @@ const messages: {
   [key: string]: (payload: string) => void
 } = {
   // Arrays
-  chatMessages: (payload: string) => {
-    const chatMessages = convertArray(payload, {
-      time: 'number',
-      playerName: 'string',
-      content: 'string',
-    }) as {
-      time: number
-      playerName: string
-      content: string
-    }[]
-    if (!store.chatMessages.length) {
-      store.chatMessages = chatMessages
-    } else {
-      store.chatMessages = store.chatMessages.concat(chatMessages)
-    }
-  },
   actions: (payload: string) => {
     if (!store.game) return
 
@@ -94,12 +73,7 @@ const messages: {
       const { id, type, tileId, ownerId, status } = parsed[i]
 
       if (!id || !type || !tileId || !ownerId) continue
-      if (
-        type !== 'CAPTURE' &&
-        type !== 'CAMP' &&
-        type !== 'TOWER' &&
-        type !== 'CASTLE'
-      ) {
+      if (type !== 'TOWER' && type !== 'CASTLE') {
         continue
       }
 
@@ -269,9 +243,6 @@ const messages: {
     }
 
     // Side effects
-    if (playCaptureSound) {
-      SoundManager.play('CAPTURE')
-    }
     if (!store.game.camera && store.game.spawnTile) {
       store.game.setCameraToAxialPosition(store.game.spawnTile.axial)
     }
@@ -498,20 +469,15 @@ const messages: {
     }
 
     store.game = new Game(id, mode, status)
-    store.queue = null
     store.matchFound = false
     store.spectating = false
     if (store.notification) {
       store.notification.close()
     }
 
-    if (window.location.pathname === '/game') {
-      const canvas = document.getElementById('game-canvas')
-      if (!canvas) throw new Error('Cannot find game canvas.')
-      store.game.render(canvas)
-    } else if (store.routerHistory && store.routerHistory.push) {
-      store.routerHistory.push('/game')
-    }
+    const canvas = document.getElementById('game-canvas')
+    if (!canvas) throw new Error('Cannot find game canvas.')
+    store.game.render(canvas)
   },
   status: (payload: string) => {
     if (!store.game) return
@@ -523,28 +489,6 @@ const messages: {
       status === 'ABORTED'
     ) {
       store.game.status = status
-    }
-  },
-  queue: (payload: string) => {
-    const { currentTime, averageTime, playerCount } = convertObject(payload, {
-      currentTime: 'number',
-      averageTime: 'number',
-      playerCount: 'number',
-    }) as {
-      currentTime: number | null
-      averageTime: number | null
-      playerCount: number | null
-    }
-
-    if (currentTime === null || averageTime === null || playerCount === null) {
-      store.queue = null
-      return
-    }
-
-    store.queue = {
-      currentTime,
-      averageTime,
-      playerCount,
     }
   },
   spectate: (payload: string) => {
@@ -578,15 +522,8 @@ const messages: {
     store.game = new Game(id, mode, status)
     store.game.scale = 0.2
     store.game.targetScale = 0.2
-    store.game.setCameraToAxialPosition(
-      { x: 0, z: 0 },
-      Number(CHAT_WIDTH.replace('px', ''))
-    )
+    store.game.setCameraToAxialPosition({ x: 0, z: 0 })
     store.spectating = true
-
-    if (store.routerHistory && store.routerHistory.push) {
-      store.routerHistory.push(`/spectate?game=${id}`)
-    }
   },
   spectators: (payload: string) => {
     const spectators = Number(payload)
@@ -682,11 +619,6 @@ const messages: {
       defender.destroy()
     }
   },
-
-  // Update requests
-  updateRunningGames: () => {
-    store.fetchRunningGames()
-  },
 }
 
 // Messages: Frontend -> Gameserver
@@ -697,17 +629,11 @@ export type MessageFE =
   | 'surrender'
   | 'debug'
   | 'close'
-  | 'chatMessage'
   | 'pattern'
   | 'request'
-  | 'playAsGuest'
-  | 'playAsUser'
   | 'sendGold'
-  | 'cancelQueue'
   | 'spectate'
   | 'stopSpectate'
-  | 'acceptMatch'
-  | 'declineMatch'
   | 'spectators'
 
 export default messages
