@@ -369,7 +369,7 @@ class Tile {
 
     animate({
       image: this.image.armyIcon,
-      duration: 400,
+      duration: 250,
       ease: 'OUT',
       onUpdate: (image, fraction) => {
         image.alpha = fraction
@@ -402,7 +402,7 @@ class Tile {
     const position = getPixelPosition(this.axial)
     animate({
       image: this.image.armyIcon,
-      duration: 400,
+      duration: 250,
       ease: 'IN',
       onUpdate: (image, fraction) => {
         image.alpha = 1 - fraction
@@ -583,7 +583,7 @@ class Tile {
 
     animate({
       image: this.image.hpBackground,
-      duration: 400,
+      duration: 250,
       initialFraction,
       ease: 'OUT',
       onUpdate: (image, fraction) => {
@@ -617,7 +617,7 @@ class Tile {
 
     animate({
       image: this.image.hpBackground,
-      duration: 400,
+      duration: 250,
       initialFraction,
       ease: 'IN',
       context: this,

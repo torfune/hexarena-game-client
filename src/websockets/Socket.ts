@@ -31,17 +31,12 @@ class Socket {
     }
   }
   static handleError(event: Event) {
-    console.error(`Socket error!`)
     console.error(event)
+    store.error = 'Disconnected'
   }
   static handleClose() {
     this.connected = false
-    console.log('Socket closed.')
-
-    store.error = {
-      message: 'Disconnected.',
-      goHome: false,
-    }
+    store.error = 'Disconnected'
   }
   static send(message: string, payload: string = '') {
     if (this.ws) {

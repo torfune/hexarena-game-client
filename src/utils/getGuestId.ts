@@ -1,11 +1,11 @@
 import { v4 as uuid } from 'uuid'
-import LocalStorageManager from '../LocalStorageManager'
+import Storage from '../Storage'
 
 const getGuestId = () => {
-  let guestId = LocalStorageManager.get('guestId')
+  let guestId = Storage.get('guestId')
   if (!guestId) {
     guestId = uuid()
-    LocalStorageManager.set('guestId', guestId)
+    Storage.set('guestId', guestId)
   }
 
   return guestId

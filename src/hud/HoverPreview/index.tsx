@@ -19,6 +19,7 @@ interface ContainerProps {
   cursor: Pixel
 }
 const Container = styled.div.attrs<ContainerProps>(({ cursor }) => ({
+  id: 'hover-preview',
   style: {
     left: `${cursor.x + 8}px`,
     top: `${cursor.y + 8}px`,

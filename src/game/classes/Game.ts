@@ -23,7 +23,6 @@ import { Ticker, Application, Container } from 'pixi.js'
 import Action from './Action'
 import uuid = require('uuid/v4')
 import { observable, computed } from 'mobx'
-import AllianceRequest from './AllianceRequest'
 import Army from './Army'
 import Player from './Player'
 import Forest from './Forest'
@@ -31,7 +30,7 @@ import Village from './Village'
 import GameMode from '../../types/GameMode'
 import HoveredTileInfo from '../../types/HoveredTileInfo'
 import ArmyDragArrow from './ArmyDragArrow'
-import LocalStorageManager from '../../LocalStorageManager'
+import Storage from '../../Storage'
 import Unit from './Army/Unit'
 import GameStatus from '../../types/GameStatus'
 import UnitPreviewManager from './UnitPreviewManager'
@@ -40,7 +39,6 @@ class Game {
   readonly id: string
   readonly mode: GameMode
   readonly stage: Map<string, Container> = new Map()
-  @observable allianceRequests: Map<string, AllianceRequest> = new Map()
   @observable players: Map<string, Player> = new Map()
   @observable forests: Map<string, Forest> = new Map()
   @observable villages: Map<string, Village> = new Map()
@@ -61,9 +59,9 @@ class Game {
   @observable time: number | null = null
   @observable playerId: string | null = null
   @observable spawnTile: Tile | null = null
-  @observable cursor: Pixel | null = null
   @observable hoveredTileInfo: HoveredTileInfo | null = null
   @observable spectators: number | null = 0
+  cursor: Pixel | null = null
   armies: Map<string, Army> = new Map()
   units: Unit[] = []
   productionTiles: Tile[] = []
@@ -134,8 +132,7 @@ class Game {
   }
   render(canvas: HTMLElement) {
     const tutorialFinished =
-      !LocalStorageManager.supported ||
-      LocalStorageManager.get('tutorialFinished') === 'true'
+      !Storage.supported || Storage.get('tutorialFinished') === 'true'
 
     if (!this.loop) {
       this.loop = createGameLoop(this.update, this)
@@ -299,6 +296,13 @@ class Game {
     if (this.status === 'RUNNING') {
       this.updateHoveredTile()
     }
+
+    // Update hover preview position
+    // const element = document.getElementById('hover-preview')
+    // if (element) {
+    //   element.style.top = `${this.cursor.y + 8}px`
+    //   element.style.left = `${this.cursor.x + 8}px`
+    // }
 
     // Income bar
     this.updateIncomeBar()

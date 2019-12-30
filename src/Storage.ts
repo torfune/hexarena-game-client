@@ -9,7 +9,7 @@ const isSupported = () => {
   }
 }
 
-class LocalStorageManager {
+class Storage {
   static supported = isSupported()
 
   static get(key: string) {
@@ -19,11 +19,13 @@ class LocalStorageManager {
       return null
     }
   }
+
   static set(key: string, value: string) {
     if (this.supported) {
       localStorage.setItem(key, value)
     }
   }
+
   static delete(key: string) {
     if (this.supported) {
       localStorage.removeItem(key)
@@ -31,4 +33,4 @@ class LocalStorageManager {
   }
 }
 
-export default LocalStorageManager
+export default Storage

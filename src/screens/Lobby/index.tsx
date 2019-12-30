@@ -16,12 +16,10 @@ const Container = styled.div`
   padding-left: 64px;
   padding-right: 64px;
   z-index: 1;
-  padding-top: 60px;
   display: grid;
   grid-template-columns: 2fr 1.5fr 2fr;
   grid-gap: 16px;
 `
-
 const CentralSection = styled.div<{ ffa: boolean }>`
   width: 100%;
   display: flex;
@@ -30,9 +28,10 @@ const CentralSection = styled.div<{ ffa: boolean }>`
   background: #222;
   border-left: 1px solid #111;
   border-right: 1px solid #111;
-  padding-top: 64px;
+  padding-top: 128px;
   padding-left: 32px;
   padding-right: 32px;
+  grid-column: 2;
 
   ${props =>
     props.ffa &&
@@ -43,7 +42,6 @@ const CentralSection = styled.div<{ ffa: boolean }>`
       height: 400px;
     `}
 `
-
 const GameMode = styled.div`
   color: #fff;
   text-align: center;
@@ -60,7 +58,6 @@ const GameMode = styled.div`
     font-weight: 600;
   }
 `
-
 const Countdown = styled.div`
   font-size: 80px;
   color: #ccc;
@@ -70,7 +67,6 @@ const Countdown = styled.div`
   display: flex;
   align-items: center;
 `
-
 const VS = styled.p`
   font-size: 80px;
   margin-top: 24px;

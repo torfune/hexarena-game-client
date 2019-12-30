@@ -6,15 +6,13 @@ import DefeatModal from '../screens/DefeatModal'
 import Diplomacy from '../hud/Diplomacy'
 import Economy from '../hud/Economy'
 import EndScreen from '../screens/EndScreen'
-import ErrorModal from '../screens/ErrorModal'
 import Flasher from '../hud/Flasher'
 import GameTime from '../hud/GameTime'
-import getGuestId from '../utils/getGuestId'
 import HoverPreview from '../hud/HoverPreview'
 import HowToPlay from '../components/HowToPlay'
 import Leaderboard from '../hud/Leaderboard'
 import Lobby from '../screens/Lobby'
-import LocalStorageManager from '../LocalStorageManager'
+import Storage from '../Storage'
 import NotificationManager from '../hud/NotificationManager'
 import Performance from '../hud/Performance'
 import Player from '../game/classes/Player'
@@ -24,33 +22,22 @@ import store from '../store'
 import styled from 'styled-components'
 import Surrender from '../hud/Surrender'
 import Tutorial from '../hud/Tutorial'
+import parseQuery from '../utils/parseQuery'
 
 const Game = observer(() => {
   const [_, refresh] = useState(Date.now())
 
   useEffect(() => {
-    const { game, config } = store
-    if (!game) {
-      if (config && config.DEBUG_MODE) {
-        const guestName = LocalStorageManager.get('guestName') || ''
-        Socket.send('play', `${null}|${getGuestId()}|${null}|${guestName}`)
-        return
-      }
+    const query = parseQuery()
+    if (!query.gameId) throw new Error('Missing game id.')
 
-      // window.location.href = 'http://localhost:3000'
-      console.log('game not found')
-      return
-    }
+    const accessToken = Storage.get('accessToken') || query.accessToken
+    if (!accessToken) throw new Error('Missing access token.')
 
-    const canvas = document.getElementById('game-canvas')
-    if (!canvas) throw new Error('Cannot find game canvas.')
+    Socket.send('play', `${query.gameId}|${accessToken}`)
 
-    game.render(canvas)
     window.addEventListener('resize', handleResize)
-
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
+    return () => window.removeEventListener('resize', handleResize)
   }, [])
 
   useEffect(() => {
@@ -58,7 +45,7 @@ const Game = observer(() => {
 
     const { mode, status } = store.game
     if (mode === 'TUTORIAL' && status === 'FINISHED') {
-      LocalStorageManager.set('tutorialFinished', String('true'))
+      Storage.set('tutorialFinished', String('true'))
     }
   })
 

@@ -10,6 +10,7 @@ class Store {
   @observable showGuide: boolean = false
   @observable spectating: boolean = false
   @observable user: User | null = null
+  @observable error: string | null = null
   gsHost: string | null = null
 }
 

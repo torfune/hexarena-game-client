@@ -18,7 +18,6 @@ import Unit from '../game/classes/Army/Unit'
 // Messages: Gameserver -> Frontend
 export type MessageGS =
   | 'actions'
-  | 'allianceRequests'
   | 'armies'
   | 'flash'
   | 'forests'
@@ -29,7 +28,6 @@ export type MessageGS =
   | 'notification'
   | 'playerId'
   | 'players'
-  | 'updateRunningGames'
   | 'serverTime'
   | 'startCountdown'
   | 'game'
@@ -37,11 +35,11 @@ export type MessageGS =
   | 'status'
   | 'tiles'
   | 'villages'
-  | 'message'
   | 'spectators'
   | 'ping'
   | 'armyJoinStructure'
   | 'battle'
+  | 'error'
 
 // Handlers: Gameserver -> Frontend
 const messages: {
@@ -408,9 +406,6 @@ const messages: {
     store.game.lastIncomeAt = convert(payload, 'number') as number | null
     store.game.incomeStartedAt = Date.now() // - store.ping
   },
-  matchFound: (payload: string) => {
-    store.matchFound = convert(payload, 'boolean') as boolean
-  },
   notification: (payload: string) => {
     if (!store.game) return
     store.game.notification = convert(payload, 'string') as string | null
@@ -469,7 +464,6 @@ const messages: {
     }
 
     store.game = new Game(id, mode, status)
-    store.matchFound = false
     store.spectating = false
     if (store.notification) {
       store.notification.close()
@@ -618,6 +612,9 @@ const messages: {
     if (defenderUnitCount === 0) {
       defender.destroy()
     }
+  },
+  error: (payload: string) => {
+    store.error = payload
   },
 }
 

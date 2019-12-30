@@ -7,11 +7,12 @@ import Socket from './websockets/Socket'
 import loadImages from './game/functions/loadImages'
 import Spinner from './components/Spinner'
 import styled from 'styled-components'
+import { observer } from 'mobx-react-lite'
+import { PRIMARY } from './constants/react'
 ;(window as any).store = store
 
-const App = () => {
+const App = observer(() => {
   const [loading, setLoading] = useState<string | null>('')
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     initialize()
@@ -24,7 +25,7 @@ const App = () => {
       store.config = await Api.getConfig()
     } catch (error) {
       console.error(error)
-      setError(`GameServer connection failed`)
+      store.error = `GameServer connection failed`
       return
     }
 
@@ -35,7 +36,7 @@ const App = () => {
       await Socket.connect(host)
     } catch (error) {
       console.error(error)
-      setError('WebSocket connection failed')
+      store.error = 'WebSocket connection failed'
       return
     }
 
@@ -45,15 +46,35 @@ const App = () => {
       await loadImages()
     } catch (error) {
       console.error(error)
-      setError(`Asset loading failed`)
+      store.error = `Asset loading failed`
       return
     }
 
     setLoading(null)
   }
 
-  if (error) {
-    return <p style={{ color: '#fff' }}>{error}</p>
+  const reload = () => {
+    console.log(window)
+    console.log(window.location)
+    window.location.reload()
+  }
+
+  const goBack = () => {
+    if (window.location.href.includes('localhost')) {
+      window.location.href = 'http://localhost:3000'
+    } else {
+      window.location.href = '/'
+    }
+  }
+
+  if (store.error) {
+    return (
+      <div>
+        <ErrorMessage>{store.error}</ErrorMessage>
+        <ReloadButton onClick={reload}>Try again</ReloadButton>
+        <BackButton onClick={goBack}>Back</BackButton>
+      </div>
+    )
   }
 
   if (loading !== null) {
@@ -66,7 +87,7 @@ const App = () => {
   }
 
   return <Game />
-}
+})
 
 const Loader = styled.div`
   margin-top: 128px;
@@ -79,6 +100,40 @@ const Loader = styled.div`
     font-weight: 500;
     font-size: 18px;
   }
+`
+const ErrorMessage = styled.p`
+  color: #fff;
+  font-size: 24px;
+  text-align: center;
+  margin-top: 160px;
+  margin-bottom: 32px;
+  font-weight: 500;
+`
+const StyledButton = styled.div`
+  width: 240px;
+  height: 40px;
+  margin-bottom: 16px;
+  border-radius: 4px;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  transition: 250ms;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 8px;
+  justify-content: center;
+  margin: 16px auto 0 auto;
+
+  :hover {
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 24px;
+    transform: scale(1.05);
+  }
+`
+const ReloadButton = styled(StyledButton)`
+  background: ${PRIMARY};
+`
+const BackButton = styled(StyledButton)`
+  background: #666;
 `
 
 ReactDOM.render(<App />, document.getElementById('root'))
