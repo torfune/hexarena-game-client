@@ -41,8 +41,7 @@ export const CAMERA_SPEED = 24
 
 // IMAGE OFFSETS
 export const ARMY_ICON_OFFSET_Y = {
-  CAMP: 155,
-  TOWER: 155,
+  TOWER: 170,
   CASTLE: 170,
   CAPITAL: 184,
 }
@@ -50,7 +49,7 @@ export const HP_FILL_OFFSET_Y = 7
 export const HP_FILL_OFFSET_X = 17
 export const HP_HEIGHT = 40
 export const HP_BACKGROUND_OFFSET = {
-  TOWER: 95,
+  TOWER: 110,
   CASTLE: 110,
   CAPITAL: 124,
 }
@@ -62,7 +61,7 @@ export const MIN_SCALE = 0.1
 export const DEFAULT_SCALE = 0.5
 
 // ARMIES
-export const ARMY_ICON_UPDATE_RATE = 100
+export const ARMY_ICON_UPDATE_RATE = 80
 export const UNIT_SPEED = 0.015
 export const UNIT_SIZE = 20
 export const UNIT_DELAY = 0.09
@@ -78,8 +77,7 @@ export const UNIT_OFFSET = {
   },
   FILL: 12,
   EDGE: {
-    CAMP: 90,
-    TOWER: 100,
+    TOWER: 115,
     CASTLE: 115,
     CAPITAL: 115,
     MOUNTAIN: 110,

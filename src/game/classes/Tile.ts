@@ -119,7 +119,9 @@ class Tile {
             }
           } else if (type === 'CASTLE') {
             if (!this.image.castle) {
-              this.addImage('castle')
+              const castle = this.addImage('castle')
+              castle.anchor.set(0.5, 1)
+              castle.y += 60
               this.removeImage('tower')
             }
           } else if (type === 'TOWER') {
@@ -352,7 +354,7 @@ class Tile {
       this.updateProduction()
     }
 
-    let yOffset: number = ARMY_ICON_OFFSET_Y.CAMP
+    let yOffset: number
     if (this.building) {
       switch (this.building.type) {
         case 'TOWER':
@@ -384,7 +386,7 @@ class Tile {
   hideArmyIcon() {
     if (!this.image.armyIcon) return
 
-    let yOffset: number = ARMY_ICON_OFFSET_Y.CAMP
+    let yOffset: number
     if (this.building) {
       switch (this.building.type) {
         case 'TOWER':
