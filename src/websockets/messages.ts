@@ -97,53 +97,6 @@ const messages: {
     // Side effects
     store.game.updatePatternPreviews()
   },
-  allianceRequests: (payload: string) => {
-    if (!store.game) return
-
-    const parsed = convertArray(payload, {
-      id: 'string',
-      senderId: 'string',
-      receiverId: 'string',
-      timeout: 'number',
-    }) as {
-      id: string | null
-      senderId: string | null
-      receiverId: string | null
-      timeout: number | null
-    }[]
-
-    const ids: string[] = []
-    for (let i = 0; i < parsed.length; i++) {
-      const fields = parsed[i]
-      const { id, senderId, receiverId, timeout } = fields
-
-      if (!id || !senderId || !receiverId || !timeout) continue
-
-      let request = store.game.allianceRequests.get(id) || null
-      ids.push(id)
-
-      // Create
-      if (!request) {
-        const sender = store.game.players.get(senderId) || null
-        const receiver = store.game.players.get(receiverId) || null
-        if (!sender || !receiver) continue
-        request = new AllianceRequest(id, sender, receiver)
-        store.game.allianceRequests.set(id, request)
-      }
-
-      // Update
-      updateProps(request, parsed[i])
-    }
-
-    // Auto destroy
-    const entries = Object.entries(store.game.allianceRequests)
-    for (let i = entries.length - 1; i >= 0; i--) {
-      const { id } = entries[i][1]
-      if (!ids.includes(id)) {
-        store.game.allianceRequests.delete(id)
-      }
-    }
-  },
   armies: (payload: string) => {
     if (!store.game) return
 

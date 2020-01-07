@@ -1,7 +1,7 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/hexarena-fe
+    working_directory: ~/hex-game-client
     docker:
       - image: circleci/node:latest
     steps:
@@ -26,7 +26,7 @@ jobs:
           command: yarn build
 
   deploy-live:
-    working_directory: ~/hexarena-fe
+    working_directory: ~/hex-game-client
     docker:
       - image: circleci/node:latest
     steps:
@@ -49,10 +49,10 @@ jobs:
       - run:
           name: Upload files
           command: |
-            scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./build/* root@hexarena.io:~/hexarena/live/hexarena-fe/
+            scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./out/* root@hexarena.io:~/hexarena/live/hex-game-client/
 
   deploy-dev:
-    working_directory: ~/hexarena-fe
+    working_directory: ~/hex-game-client
     docker:
       - image: circleci/node:latest
     steps:
@@ -75,7 +75,7 @@ jobs:
       - run:
           name: Upload files
           command: |
-            scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./build/* root@hexarena.io:~/hexarena/dev/hexarena-fe/
+            scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./out/* root@hexarena.io:~/hexarena/dev/hex-game-client/
 
 workflows:
   version: 2

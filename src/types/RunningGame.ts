@@ -1,6 +1,6 @@
 import GameMode from './GameMode'
 
-interface RunningGamePlayer {
+export interface RunningGamePlayer {
   name: string
   elo: number | null
   pattern: string
@@ -15,5 +15,4 @@ interface RunningGame {
   players: RunningGamePlayer[][]
 }
 
-export { RunningGamePlayer }
 export default RunningGame

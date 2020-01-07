@@ -64,20 +64,17 @@ class SoundManager {
     }
   }
   static play(soundKey: keyof typeof SOUNDS) {
-    if (!store.settings.sound || !this.context) return
-
-    const sound = SOUNDS[soundKey]
-    const buffer = this.buffers[soundKey]
-
-    if (!sound || !buffer) return
-
-    const source = this.context.createBufferSource()
-    source.buffer = buffer
-    const node = this.context.createGain()
-    node.gain.value = sound.volume
-    node.connect(this.context.destination)
-    source.connect(node)
-    source.start(0, sound.offset)
+    //   if (!store.settings.sound || !this.context) return
+    //   const sound = SOUNDS[soundKey]
+    //   const buffer = this.buffers[soundKey]
+    //   if (!sound || !buffer) return
+    //   const source = this.context.createBufferSource()
+    //   source.buffer = buffer
+    //   const node = this.context.createGain()
+    //   node.gain.value = sound.volume
+    //   node.connect(this.context.destination)
+    //   source.connect(node)
+    //   source.start(0, sound.offset)
   }
 }
 

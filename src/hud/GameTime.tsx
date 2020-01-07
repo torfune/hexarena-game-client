@@ -3,7 +3,6 @@ import { observer } from 'mobx-react-lite'
 import store from '../store'
 import React from 'react'
 import { COLOR, SECONDARY } from '../constants/react'
-import getHudScale from '../utils/getHudScale'
 
 const Container = styled.div<{ spectating: boolean }>`
   position: absolute;
@@ -34,7 +33,7 @@ const Content = styled.div<{ lessThenMinute: boolean }>`
 
   /* Resolution scaling */
   transform-origin: center top;
-  transform: scale(${getHudScale()});
+  transform: scale(${store.hudScale});
 `
 
 const GameTime = observer(() => {

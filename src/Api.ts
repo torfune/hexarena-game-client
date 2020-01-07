@@ -1,13 +1,18 @@
-import Axios, { AxiosRequestConfig } from 'axios'
+import Axios from 'axios'
 import store from './store'
-
-const { protocol } = window.location
 
 class Api {
   static async getConfig() {
+    const { protocol } = window.location
     const host = await gsHost()
     const response = await Axios.get(`${protocol}//${host}/config`)
     return response.data
+  }
+  static async getGsHost() {
+    const { protocol } = window.location
+    const host = wsHost()
+    const response = await Axios.get(`${protocol}//${host}/config/gs-host`)
+    return response.data.hostname
   }
 
   // gs: {
@@ -57,9 +62,8 @@ export const gsHost = async () => {
       return hostname
     }
     case 'hexarena.io': {
-      const { data: hostname } = await Api.ws.get('/config/gs-host')
-      store.gsHost = hostname
-      return hostname
+      store.gsHost = await Api.getGsHost()
+      return store.gsHost
     }
     default:
       const hostname = `${window.location.hostname}:8000`

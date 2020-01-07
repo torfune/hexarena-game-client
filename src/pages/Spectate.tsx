@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import React, { useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import store from '../store'
-import { PRIMARY, BREAKPOINT } from '../constants/react'
+import { PRIMARY } from '../constants/react'
 import Leaderboard from '../hud/Leaderboard'
 import HoverPreview from '../hud/HoverPreview'
 import EndScreen from '../screens/EndScreen'
@@ -17,7 +17,6 @@ const Container = styled.div`
   height: 100vh;
   overflow: hidden;
 `
-
 const InfoContainer = styled.div`
   margin-top: 160px;
   color: #fff;

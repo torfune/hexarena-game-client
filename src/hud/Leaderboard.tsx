@@ -4,7 +4,6 @@ import store from '../store'
 import getPlayerGroups from '../utils/getPlayerGroups'
 import React from 'react'
 import { COLOR, BREAKPOINT } from '../constants/react'
-import getHudScale from '../utils/getHudScale'
 
 const GridCSS = css`
   display: grid;
@@ -26,7 +25,7 @@ const Container = styled.div<{ spectating: boolean }>`
 
   /* Resolution scaling */
   transform-origin: right bottom;
-  transform: scale(${getHudScale()});
+  transform: scale(${store.hudScale});
 `
 
 const Icon = styled.img`

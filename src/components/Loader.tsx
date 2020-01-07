@@ -1,20 +1,18 @@
-import React, { useState, useEffect } from 'react'
-import ReactDOM from 'react-dom'
-import store from './store'
-import Game from './pages/Game'
-import Api, { gsHost } from './Api'
-import Socket from './websockets/Socket'
-import loadImages from './game/functions/loadImages'
-import Spinner from './components/Spinner'
+import React, { useState, useEffect, FC } from 'react'
+import store from '../store'
+import Api, { gsHost } from '../Api'
+import Socket from '../websockets/Socket'
+import loadImages from '../game/functions/loadImages'
+import Spinner from '../components/Spinner'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { PRIMARY } from './constants/react'
-;(window as any).store = store
+import { PRIMARY } from '../constants/react'
 
-const App = observer(() => {
+const Loader: FC<any> = observer(({ children }) => {
   const [loading, setLoading] = useState<string | null>('')
 
   useEffect(() => {
+    ;(window as any).store = store
     initialize()
   }, [])
 
@@ -33,6 +31,7 @@ const App = observer(() => {
     setLoading('Connecting to server')
     try {
       const host = await gsHost()
+      if (!host) throw Error('GameServer host not found')
       await Socket.connect(host)
     } catch (error) {
       console.error(error)
@@ -79,17 +78,17 @@ const App = observer(() => {
 
   if (loading !== null) {
     return (
-      <Loader>
+      <SpinnerWrapper>
         <Spinner size="64px" thickness="4px" color="#fff" />
         <p>{loading}</p>
-      </Loader>
+      </SpinnerWrapper>
     )
   }
 
-  return <Game />
+  return children
 })
 
-const Loader = styled.div`
+const SpinnerWrapper = styled.div`
   margin-top: 128px;
   display: flex;
   flex-direction: column;
@@ -136,4 +135,4 @@ const BackButton = styled(StyledButton)`
   background: #666;
 `
 
-ReactDOM.render(<App />, document.getElementById('root'))
+export default Loader

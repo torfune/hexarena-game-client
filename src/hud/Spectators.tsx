@@ -3,7 +3,6 @@ import React from 'react'
 import { COLOR } from '../constants/react'
 import { observer } from 'mobx-react-lite'
 import store from '../store'
-import getHudScale from '../utils/getHudScale'
 
 const Container = styled.div<{ spectating: boolean }>`
   background: ${COLOR.HUD_BACKGROUND};
@@ -21,7 +20,7 @@ const Container = styled.div<{ spectating: boolean }>`
 
   /* Resolution scaling */
   transform-origin: right top;
-  transform: scale(${getHudScale()});
+  transform: scale(${store.hudScale});
 `
 
 const Icon = styled.img`

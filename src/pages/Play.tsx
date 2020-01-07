@@ -1,9 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import React from 'react'
-import Ally from '../hud/Ally'
 import DefeatModal from '../screens/DefeatModal'
-import Diplomacy from '../hud/Diplomacy'
 import Economy from '../hud/Economy'
 import EndScreen from '../screens/EndScreen'
 import Flasher from '../hud/Flasher'
@@ -15,7 +13,6 @@ import Lobby from '../screens/Lobby'
 import Storage from '../Storage'
 import NotificationManager from '../hud/NotificationManager'
 import Performance from '../hud/Performance'
-import Player from '../game/classes/Player'
 import Socket from '../websockets/Socket'
 import Spectators from '../hud/Spectators'
 import store from '../store'
@@ -23,16 +20,17 @@ import styled from 'styled-components'
 import Surrender from '../hud/Surrender'
 import Tutorial from '../hud/Tutorial'
 import parseQuery from '../utils/parseQuery'
+import Ally from '../hud/Ally'
 
 const Game = observer(() => {
   const [_, refresh] = useState(Date.now())
 
   useEffect(() => {
     const query = parseQuery()
-    if (!query.gameId) throw new Error('Missing game id.')
+    if (!query.gameId) throw Error('Missing game id.')
 
     const accessToken = Storage.get('accessToken') || query.accessToken
-    if (!accessToken) throw new Error('Missing access token.')
+    if (!accessToken) throw Error('Missing access token.')
 
     Socket.send('play', `${query.gameId}|${accessToken}`)
 
@@ -79,8 +77,7 @@ const Game = observer(() => {
 
               {store.game.player.alive && (
                 <>
-                  {store.game.mode === 'TEAMS_2v2' &&
-                    renderDiplomacy(store.game.player)}
+                  {store.game.mode === 'TEAMS_2v2' && <Ally />}
 
                   <HoverPreview />
                   <Leaderboard />
@@ -115,13 +112,6 @@ const Game = observer(() => {
     </Container>
   )
 })
-
-const renderDiplomacy = (player: Player) => {
-  if (player.ally) {
-    return <Ally ally={player.ally} playerGold={player.gold} />
-  }
-  return <Diplomacy />
-}
 
 const Container = styled.div`
   width: 100vw;

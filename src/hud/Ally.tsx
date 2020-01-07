@@ -5,14 +5,13 @@ import Player from '../game/classes/Player'
 import Pattern from '../components/Pattern'
 import { COLOR } from '../constants/react'
 import shadeColor from '../utils/shade'
-import getHudScale from '../utils/getHudScale'
 import store from '../store'
 
 const Container = styled.div`
   z-index: 2;
   background: ${COLOR.HUD_BACKGROUND};
   bottom: 0;
-  right: calc(319px * ${getHudScale()});
+  right: calc(319px * ${store.hudScale});
   position: absolute;
   user-select: none;
   border-top-left-radius: 8px;
@@ -24,7 +23,7 @@ const Container = styled.div`
 
   /* Resolution scaling */
   transform-origin: right bottom;
-  transform: scale(${getHudScale()});
+  transform: scale(${store.hudScale});
 `
 
 const GridCSS = css`
@@ -117,59 +116,64 @@ const GoldButton = styled.div<{ color: string; disabled: boolean }>`
   }
 `
 
-interface Props {
-  ally: Player
-  playerGold: number
-}
-const Ally: React.FC<Props> = ({ ally, playerGold }) => (
-  <Container>
-    <Heading>
-      <p>Your ally</p>
-      <Icon src="/static/icons/hexagon.svg" />
-      <Icon src="/static/icons/village.svg" />
-      <Icon src="/static/icons/gold.svg" />
-    </Heading>
-    <AllyWrapper>
-      <Row>
+const Ally = () => {
+  if (!store.game) return null
+
+  const player = store.game.player
+  const ally = store.game.player?.ally
+
+  if (!ally || !player) return null
+
+  return (
+    <Container>
+      <Heading>
+        <p>Your ally</p>
+        <Icon src="/static/icons/hexagon.svg" />
+        <Icon src="/static/icons/village.svg" />
+        <Icon src="/static/icons/gold.svg" />
+      </Heading>
+      <AllyWrapper>
+        <Row>
+          {ally.alive ? (
+            <Pattern color={ally.pattern} scale={2} />
+          ) : (
+            <Skull src="/static/icons/skull.svg" />
+          )}
+          <Name>{ally.name}</Name>
+        </Row>
+
         {ally.alive ? (
-          <Pattern color={ally.pattern} scale={2} />
+          <>
+            <Value>{ally.tilesCount}</Value>
+            <Value>{ally.economy}</Value>
+            <Value>{ally.gold}</Value>
+          </>
         ) : (
-          <Skull src="/static/icons/skull.svg" />
+          <>
+            <Value>-</Value>
+            <Value>-</Value>
+            <Value>-</Value>
+          </>
         )}
-        <Name>{ally.name}</Name>
-      </Row>
+      </AllyWrapper>
 
       {ally.alive ? (
-        <>
-          <Value>{ally.tilesCount}</Value>
-          <Value>{ally.economy}</Value>
-          <Value>{ally.gold}</Value>
-        </>
+        <GoldButton
+          color={ally.pattern}
+          disabled={player.gold < 10}
+          onClick={() => {
+            if (store.game) {
+              store.game.sendGoldToAlly()
+            }
+          }}
+        >
+          Send 10 gold
+        </GoldButton>
       ) : (
-        <>
-          <Value>-</Value>
-          <Value>-</Value>
-          <Value>-</Value>
-        </>
+        <DiedText>Your ally is dead.</DiedText>
       )}
-    </AllyWrapper>
-
-    {ally.alive ? (
-      <GoldButton
-        color={ally.pattern}
-        disabled={playerGold < 10}
-        onClick={() => {
-          if (store.game) {
-            store.game.sendGoldToAlly()
-          }
-        }}
-      >
-        Send 10 gold
-      </GoldButton>
-    ) : (
-      <DiedText>Your ally is dead.</DiedText>
-    )}
-  </Container>
-)
+    </Container>
+  )
+}
 
 export default observer(Ally)

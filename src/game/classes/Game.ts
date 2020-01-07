@@ -21,7 +21,7 @@ import getTileByAxial from '../functions/getTileByAxial'
 import Tile from './Tile'
 import { Ticker, Application, Container } from 'pixi.js'
 import Action from './Action'
-import uuid = require('uuid/v4')
+import uuid from 'uuid/v4'
 import { observable, computed } from 'mobx'
 import Army from './Army'
 import Player from './Player'

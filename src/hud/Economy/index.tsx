@@ -6,7 +6,6 @@ import Income from './Income'
 import Gold from './Gold'
 import Chart from './Chart'
 import store from '../../store'
-import getHudScale from '../../utils/getHudScale'
 
 const Container = styled.div`
   background: ${COLOR.HUD_BACKGROUND};
@@ -22,7 +21,7 @@ const Container = styled.div`
 
   /* Resolution scaling */
   transform-origin: left bottom;
-  transform: scale(${getHudScale()});
+  transform: scale(${store.hudScale});
 `
 
 const GoldSection = styled.div`

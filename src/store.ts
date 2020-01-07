@@ -11,6 +11,7 @@ class Store {
   @observable spectating: boolean = false
   @observable user: User | null = null
   @observable error: string | null = null
+  hudScale: number = 1
   gsHost: string | null = null
 }
 

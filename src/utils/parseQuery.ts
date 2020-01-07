@@ -1,6 +1,7 @@
 const parseQuery = () => {
   const url = window.location.href
   const queryString = url.split('?')[1]
+  if (!queryString) return {}
   const queryParts = queryString.split('&')
 
   const query: { [key: string]: string } = {}

@@ -41,9 +41,6 @@ const randomUnitPixels = (count: number, basePixel: Pixel, area: Area) => {
       } else {
         let edgeOffset: number
         switch (area.split('EDGE_')[1]) {
-          case 'CAMP':
-            edgeOffset = UNIT_OFFSET.EDGE.CAMP
-            break
           case 'TOWER':
             edgeOffset = UNIT_OFFSET.EDGE.TOWER
             break

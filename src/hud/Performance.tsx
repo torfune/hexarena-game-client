@@ -3,7 +3,6 @@ import { observer } from 'mobx-react-lite'
 import store from '../store'
 import React from 'react'
 import { COLOR } from '../constants/react'
-import getHudScale from '../utils/getHudScale'
 
 const Container = styled.div`
   position: absolute;
@@ -19,7 +18,7 @@ const Container = styled.div`
 
   /* Resolution scaling */
   transform-origin: right top;
-  transform: scale(${getHudScale()});
+  transform: scale(${store.hudScale});
 `
 
 const Label = styled.p`

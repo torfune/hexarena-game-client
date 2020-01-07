@@ -3,18 +3,37 @@
     "incremental": true,
     "outDir": "./build/",
     "noImplicitAny": true,
-    "module": "commonjs",
+    "module": "esnext",
     "target": "es5",
-    "jsx": "react",
+    "jsx": "preserve",
     "experimentalDecorators": true,
     "esModuleInterop": true,
-    "types": ["react"],
+    "types": [
+      "react"
+    ],
     "skipLibCheck": true,
     "strict": true,
     "strictNullChecks": true,
     "resolveJsonModule": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "moduleResolution": "node",
+    "isolatedModules": true
   },
-  "include": ["src"],
-  "types": ["FacebookLogin"]
+  "include": [
+    "src"
+  ],
+  "types": [
+    "FacebookLogin"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

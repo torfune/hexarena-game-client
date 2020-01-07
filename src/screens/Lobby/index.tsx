@@ -5,7 +5,6 @@ import Players from './Players'
 import React from 'react'
 import Spinner from '../../components/Spinner'
 import getPlayerGroups from '../../utils/getPlayerGroups'
-import GameMode from '../../types/GameMode'
 import Player from '../../game/classes/Player'
 
 const Container = styled.div`
@@ -42,7 +41,7 @@ const CentralSection = styled.div<{ ffa: boolean }>`
       height: 400px;
     `}
 `
-const GameMode = styled.div`
+const GameModeSection = styled.div`
   color: #fff;
   text-align: center;
   border-bottom: 1px solid #ccc;
@@ -110,9 +109,9 @@ const Lobby = () => {
       <Players players={playersLeft} />
 
       <CentralSection ffa={store.game.mode === 'FFA_6'}>
-        <GameMode>
+        <GameModeSection>
           <h2>{store.game.mode}</h2>
-        </GameMode>
+        </GameModeSection>
 
         <Countdown>
           {store.game.startCountdown || (
