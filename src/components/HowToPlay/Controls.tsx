@@ -30,7 +30,7 @@ const Controls = () => {
   return (
     <Container>
       <TabHeading>
-        <img src="/static/icons/controls.svg" />
+        <img src="/game/static/icons/controls.svg" />
         Controls
       </TabHeading>
 
@@ -47,7 +47,7 @@ const Controls = () => {
         </Text>
         <Video width="220px" height="220px">
           <video width="220" autoPlay muted loop>
-            <source src="/static/videos/controls.mp4" type="video/mp4" />
+            <source src="/game/static/videos/controls.mp4" type="video/mp4" />
           </video>
         </Video>
       </Row>

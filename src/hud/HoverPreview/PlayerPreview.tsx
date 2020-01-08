@@ -69,7 +69,7 @@ const PlayerPreview: React.FC<Props> = ({ player }) => {
   return (
     <Container>
       {player.pattern === '#ccc' ? (
-        <Icon src="/static/icons/skull.svg" />
+        <Icon src="/game/static/icons/skull.svg" />
       ) : (
         <Pattern color={player.pattern} />
       )}
@@ -80,13 +80,13 @@ const PlayerPreview: React.FC<Props> = ({ player }) => {
         </AllyOrEnemy>
       )}
 
-      {/* <Icon src="/static/icons/hexagon.svg" />
+      {/* <Icon src="/game/static/icons/hexagon.svg" />
     <Value>{player.tilesCount}</Value>
 
-    <Icon src="/static/icons/village.svg" />
+    <Icon src="/game/static/icons/village.svg" />
     <Value>{player.economy}</Value>
 
-    <Icon src="/static/icons/gold.svg" />
+    <Icon src="/game/static/icons/gold.svg" />
     <Value>{player.gold}</Value> */}
     </Container>
   )

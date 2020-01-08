@@ -68,7 +68,7 @@ const Surrender = () => {
     <Container>
       <Row>
         <Heading>lost game ?</Heading>
-        <Icon src="/static/icons/flag.svg" />
+        <Icon src="/game/static/icons/flag.svg" />
       </Row>
       <Button onClick={store.game.surrender.bind(store.game)}>Surrender</Button>
     </Container>

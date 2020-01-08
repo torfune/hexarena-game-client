@@ -158,19 +158,19 @@ const getActionIcon = (actionType: ActionType | 'SEND_ARMY' | 'REPAIR') => {
   switch (actionType) {
     // case 'CAPTURE':
     //   const structure = store.game.hoveredTile.getStructureName()
-    //   return `/static/images/${
+    //   return `/game/static/images/${
     //     structure ? structure.toLowerCase() : 'tile'
     //   }-icon.png`
     // case 'CAMP':
-    //   return '/static/images/camp-icon.png'
+    //   return '/game/static/images/camp-icon.png'
     case 'TOWER':
-      return '/static/images/tower-icon.png'
+      return '/game/static/images/tower-icon.png'
     case 'CASTLE':
-      return '/static/images/castle-icon.png'
+      return '/game/static/images/castle-icon.png'
     case 'REPAIR':
-      return '/static/images/hpFill.png'
+      return '/game/static/images/hpFill.png'
     case 'SEND_ARMY':
-      return '/static/icons/army.svg'
+      return '/game/static/icons/army.svg'
   }
 }
 

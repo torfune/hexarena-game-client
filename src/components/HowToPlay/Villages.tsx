@@ -26,7 +26,7 @@ const Villages = () => {
   return (
     <Container>
       <TabHeading>
-        <img src="/static/icons/village.svg" />
+        <img src="/game/static/icons/village.svg" />
         Villages
       </TabHeading>
       <TabDescription>
@@ -42,7 +42,7 @@ const Villages = () => {
           <h2>Capture neutral Village</h2>
           <Video width="264px" height="120px" >
             <video width="264" autoPlay muted loop>
-              <source src="/static/videos/village-capture.mp4" type="video/mp4" />
+              <source src="/game/static/videos/village-capture.mp4" type="video/mp4" />
             </video>
           </Video>
         </Column>
@@ -50,7 +50,7 @@ const Villages = () => {
           <h2>Raid enemy Village</h2>
           <Video width="264px" height="120px">
             <video width="264" autoPlay muted loop>
-              <source src="/static/videos/village-raid.mp4" type="video/mp4" />
+              <source src="/game/static/videos/village-raid.mp4" type="video/mp4" />
             </video>
           </Video>
         </Column>

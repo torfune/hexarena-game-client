@@ -25,7 +25,7 @@ const Goal = () => {
   return (
     <Container>
       <TabHeading>
-        <img src="/static/icons/goal.svg" />
+        <img src="/game/static/icons/goal.svg" />
         Goal
       </TabHeading>
 
@@ -39,7 +39,7 @@ const Goal = () => {
         </Text>
         <Video width="220px" height="260px">
           <video width="220" autoPlay muted loop>
-            <source src="/static/videos/victory.mp4" type="video/mp4" />
+            <source src="/game/static/videos/victory.mp4" type="video/mp4" />
           </video>
         </Video>
       </Row>

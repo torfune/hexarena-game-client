@@ -27,7 +27,7 @@ const Image = styled.img`
 `
 
 const Arrow = styled.img.attrs({
-  src: '/static/icons/arrow.svg',
+  src: '/game/static/icons/arrow.svg',
 })`
   height: 32px;
   filter: invert(1);
@@ -55,7 +55,7 @@ const Health = styled.div`
 `
 
 const RecruitIcon = styled.img.attrs({
-  src: '/static/icons/recruit.svg',
+  src: '/game/static/icons/recruit.svg',
 })`
   filter: invert(1);
   height: 20px;
@@ -83,7 +83,7 @@ const Buildings = () => {
   return (
     <Container>
       <TabHeading>
-        <img src="/static/images/castle-icon.png" />
+        <img src="/game/static/images/castle-icon.png" />
         Buildings
       </TabHeading>
 
@@ -97,10 +97,10 @@ const Buildings = () => {
       <Row>
         <Building>
           <BuildingName>Capital</BuildingName>
-          <Image src="/static/images/base-ingame.png" />
+          <Image src="/game/static/images/base-ingame.png" />
           <BuildingStats>
             <Health>
-              <img src="/static/icons/heart.svg" />
+              <img src="/game/static/icons/heart.svg" />
               <p>2</p>
             </Health>
             <RecruitIcon />
@@ -110,10 +110,10 @@ const Buildings = () => {
         <Row>
           <Building>
             <BuildingName>Camp</BuildingName>
-            <Image src="/static/images/camp-ingame.png" />
+            <Image src="/game/static/images/camp-ingame.png" />
             <BuildingStats>
               <Health>
-                <img src="/static/icons/heart.svg" />
+                <img src="/game/static/icons/heart.svg" />
                 <p>0</p>
               </Health>
             </BuildingStats>
@@ -123,10 +123,10 @@ const Buildings = () => {
 
           <Building>
             <BuildingName>Tower</BuildingName>
-            <Image src="/static/images/tower-ingame.png" />
+            <Image src="/game/static/images/tower-ingame.png" />
             <BuildingStats>
               <Health>
-                <img src="/static/icons/heart.svg" />
+                <img src="/game/static/icons/heart.svg" />
                 <p>2</p>
               </Health>
             </BuildingStats>
@@ -136,10 +136,10 @@ const Buildings = () => {
 
           <Building>
             <BuildingName>Castle</BuildingName>
-            <Image src="/static/images/castle-ingame.png" />
+            <Image src="/game/static/images/castle-ingame.png" />
             <BuildingStats>
               <Health>
-                <img src="/static/icons/heart.svg" />
+                <img src="/game/static/icons/heart.svg" />
                 <p>3</p>
               </Health>
               <RecruitIcon />

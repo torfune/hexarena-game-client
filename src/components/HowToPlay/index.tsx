@@ -170,11 +170,11 @@ const HowToPlay: React.FC<Props> = ({ show, close }) => {
             <Container key={key} style={props}>
               <Header>
                 <Heading>
-                  <img src="/static/icons/book.svg" />
+                  <img src="/game/static/icons/book.svg" />
                   How to play
                 </Heading>
                 <CloseButton onClick={close}>
-                  <img src="/static/icons/cross.svg" />
+                  <img src="/game/static/icons/cross.svg" />
                 </CloseButton>
               </Header>
 

@@ -18,7 +18,7 @@ const Armies = () => {
   return (
     <Container>
       <TabHeading>
-        <img src="/static/icons/army.svg" />
+        <img src="/game/static/icons/army.svg" />
         Armies
       </TabHeading>
 
@@ -32,12 +32,12 @@ const Armies = () => {
       <Row>
         <Video width="264px" height="120px">
           <video width="264" autoPlay muted loop>
-            <source src="/static/videos/army-1.mp4" type="video/mp4" />
+            <source src="/game/static/videos/army-1.mp4" type="video/mp4" />
           </video>
         </Video>
         <Video width="264px" height="120px">
           <video width="264" autoPlay muted loop>
-            <source src="/static/videos/army-2.mp4" type="video/mp4" />
+            <source src="/game/static/videos/army-2.mp4" type="video/mp4" />
           </video>
         </Video>
       </Row>

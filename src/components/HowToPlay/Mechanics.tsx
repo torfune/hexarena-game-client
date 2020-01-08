@@ -25,7 +25,7 @@ const Mechanics = () => {
   return (
     <Container>
       <TabHeading>
-        <img src="/static/icons/hexagon.svg" />
+        <img src="/game/static/icons/hexagon.svg" />
         Hex Mechanics
       </TabHeading>
 
@@ -34,7 +34,7 @@ const Mechanics = () => {
           <h2>Surround to capture</h2>
           <Video width="280px" height="220px">
             <video width="280" autoPlay muted loop>
-              <source src="/static/videos/surround.mp4" type="video/mp4" />
+              <source src="/game/static/videos/surround.mp4" type="video/mp4" />
             </video>
           </Video>
         </Column>
@@ -42,7 +42,7 @@ const Mechanics = () => {
           <h2>Cut off enemy tiles</h2>
           <Video width="250px" height="220px">
             <video width="250" autoPlay muted loop>
-              <source src="/static/videos/cut-off.mp4" type="video/mp4" />
+              <source src="/game/static/videos/cut-off.mp4" type="video/mp4" />
             </video>
           </Video>
         </Column>

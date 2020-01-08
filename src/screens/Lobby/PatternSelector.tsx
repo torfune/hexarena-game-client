@@ -84,7 +84,7 @@ const PatternSelector: React.FC<Props> = ({
             onClick={() => onPatternSelect(pattern)}
           >
             <Hexagon color={pattern} size="50px" />
-            <LockIcon src="/static/icons/lock.svg" locked={locked} />
+            <LockIcon src="/game/static/icons/lock.svg" locked={locked} />
           </PatternWrapper>
         )
       })}

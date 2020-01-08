@@ -39,7 +39,7 @@ const Spectators = () => {
 
   return (
     <Container spectating={store.spectating}>
-      <Icon src="/static/icons/spectate.svg" />
+      <Icon src="/game/static/icons/spectate.svg" />
       <Number>{store.game.spectators}</Number>
     </Container>
   )

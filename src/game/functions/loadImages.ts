@@ -2,7 +2,7 @@ import { Loader } from 'pixi.js'
 import { version } from '../../../package.json'
 
 const loader = Loader.shared
-const images = '/static/images'
+const images = '/game/static/images'
 
 const loadImages = () => {
   return new Promise(resolve => {

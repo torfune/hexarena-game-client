@@ -46,7 +46,7 @@ class CustomDocument extends Document {
           <meta
             key="og:image"
             property="og:image"
-            content="https://hexarena.io/static/images/og-image.png"
+            content="https://hexarena.io/game/static/images/og-image.png"
           />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
@@ -55,11 +55,11 @@ class CustomDocument extends Document {
             content="width=device-width, initial-scale=1.0"
           />
           <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-          <link rel="stylesheet" href="/static/global.css" />
+          <link rel="stylesheet" href="/game/static/global.css" />
           <link
             rel="icon"
             type="image/x-icon"
-            href="/static/favicon/96x96.png"
+            href="/game/static/favicon/96x96.png"
           />
           <link
             href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600'"

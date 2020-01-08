@@ -33,7 +33,7 @@ interface Props {
 }
 const VillagePreview: React.FC<Props> = ({ villageIncome }) => (
   <Container>
-    <Icon src="/static/images/village-icon.png" />
+    <Icon src="/game/static/images/village-icon.png" />
     <div>
       <Label>Village</Label>
       <IncomeDescription>

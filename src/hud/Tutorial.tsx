@@ -61,7 +61,7 @@ const Tutorial = () => {
     <Container>
       <Row>
         <Heading>Goal</Heading>
-        <Icon src="/static/icons/goal.svg" />
+        <Icon src="/game/static/icons/goal.svg" />
       </Row>
       <GoalMessage>
         Capture <span>red player's</span> Capital to finish tutorial.

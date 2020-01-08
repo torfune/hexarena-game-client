@@ -116,9 +116,9 @@ const Leaderboard = observer(() => {
     <Container spectating={store.spectating}>
       <Heading>
         <span>Leaderboard</span>
-        <Icon src="/static/icons/hexagon.svg" />
-        <Icon src="/static/icons/village.svg" />
-        <Icon src="/static/icons/gold.svg" />
+        <Icon src="/game/static/icons/hexagon.svg" />
+        <Icon src="/game/static/icons/village.svg" />
+        <Icon src="/game/static/icons/gold.svg" />
       </Heading>
 
       {groups.map((group, index) => (
@@ -129,7 +129,7 @@ const Leaderboard = observer(() => {
                 {player.alive ? (
                   <Pattern color={player.pattern} />
                 ) : (
-                  <Skull src="/static/icons/skull.svg" />
+                  <Skull src="/game/static/icons/skull.svg" />
                 )}
 
                 <p>{player.name}</p>
