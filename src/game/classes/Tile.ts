@@ -38,7 +38,6 @@ const loader = Loader.shared
 
 interface Props {
   [key: string]: Prop<Primitive>
-  camp: Prop<boolean>
   buildingHp: Prop<number | null>
   buildingType: Prop<BuildingType | null>
   ownerId: Prop<string | null>
@@ -47,7 +46,6 @@ interface Props {
 
 class Tile {
   props: Props = {
-    camp: createProp(false),
     buildingHp: createProp(null),
     buildingType: createProp(null),
     ownerId: createProp(null),
@@ -86,7 +84,9 @@ class Tile {
     this.createdAt = Date.now()
 
     if (mountain) {
-      const image = this.addImage('mountain')
+      const image = this.addImage('mountain', {
+        textureName: `mountain0${Math.floor(Math.random() * 5 + 1)}`,
+      })
       image.y -= 16
     }
 
@@ -100,15 +100,6 @@ class Tile {
       switch (props[i]) {
         case 'ownerId':
           this.updateOwner()
-          break
-        case 'camp':
-          if (this.camp && !this.image.camp) {
-            const camp = this.addImage('camp')
-            camp.anchor.set(0.5, 1)
-            camp.y += 60
-          } else if (!this.camp && this.image.camp) {
-            this.removeImage('camp')
-          }
           break
         case 'buildingType':
           const type = this.building ? this.building.type : null
@@ -179,6 +170,22 @@ class Tile {
     //   this.image.blackOverlay.visible = false
     // }
   }
+  updateBuildPreview() {
+    if (!store.game) return
+
+    const actionType = this.getActionType()
+
+    if (actionType !== null && !this.army && !store.game.armyDragArrow) {
+      switch (actionType) {
+        case 'TOWER':
+          this.addBuildPreview('tower-icon')
+          break
+        case 'CASTLE':
+          this.addBuildPreview('castle-icon')
+          break
+      }
+    }
+  }
   startHover() {
     if (!store.game) return
 
@@ -186,9 +193,13 @@ class Tile {
       this.showHitpoints()
     }
 
-    if (this.getActionType() && !store.game.selectedArmyTile) {
+    const actionType = this.getActionType()
+
+    if (actionType !== null && !store.game.selectedArmyTile) {
       this.addHighlight()
     }
+
+    this.updateBuildPreview()
   }
   endHover() {
     const { config, game } = store
@@ -202,11 +213,15 @@ class Tile {
     if (this.owner && game.selectedArmyTile !== this) {
       this.removeHighlight()
     }
+    this.removeBuildPreview()
   }
   addHighlight() {
     if (!this.owner || !this.image.pattern) return
 
     this.image.pattern.tint = hex(shade(this.owner.pattern, 10))
+  }
+  addBuildPreview(textureName: 'tower-icon' | 'castle-icon') {
+    this.addImage('buildPreview', { animate: false, textureName })
   }
   addArmy(army: Army) {
     const { config } = store
@@ -242,29 +257,38 @@ class Tile {
 
     this.image.pattern.tint = hex(this.owner.pattern)
   }
+  removeBuildPreview() {
+    this.removeImage('buildPreview', false)
+  }
   removeContested() {
     // this.image.contested.visible = false
   }
-  addImage(key: keyof TileImage, doAnimate = true) {
-    if (Date.now() - this.createdAt < 500) {
-      doAnimate = false
-    }
+  addImage(
+    key: keyof TileImage,
+    options?: { animate?: boolean; textureName?: string }
+  ) {
+    options = options
+      ? {
+          animate: options.animate === undefined ? true : options.animate,
+          textureName: options.textureName,
+        }
+      : {
+          animate: true,
+          textureName: undefined,
+        }
 
-    let texture: string = key
-    if (key === 'background') {
-      texture = 'pattern'
-    } else if (key === 'mountain') {
-      texture = `mountain0${Math.floor(Math.random() * 5 + 1)}`
+    if (Date.now() - this.createdAt < 500) {
+      options.animate = false
     }
 
     const pixel = getPixelPosition(this.axial)
-    const image = createImage(key, texture)
+    const image = createImage([key, options.textureName || key])
 
     image.x = pixel.x
     image.y = pixel.y
     this.image[key] = image
 
-    if (doAnimate) {
+    if (options.animate) {
       image.alpha = 0
       image.scale.set(0)
       animate({
@@ -335,7 +359,7 @@ class Tile {
 
     if (!this.image.armyIcon) {
       // Background
-      this.image.armyIcon = createImage('armyIcon', `armyIcon0`)
+      this.image.armyIcon = createImage(['armyIcon', `armyIcon0`])
       this.image.armyIcon.x = pixel.x
       this.image.armyIcon.y = pixel.y
       this.image.armyIcon.alpha = 0
@@ -465,10 +489,10 @@ class Tile {
     // Create
     if (!this.image.hpBackground) {
       const pixel = getPixelPosition(this.axial)
-      const image = createImage(
+      const image = createImage([
         'hpBackground',
-        `hpBackground${this.building.type === 'CASTLE' ? '3' : '2'}`
-      )
+        `hpBackground${this.building.type === 'CASTLE' ? '3' : '2'}`,
+      ])
       image.x = pixel.x
       image.y = pixel.y
       image.alpha = 0
@@ -758,7 +782,7 @@ class Tile {
         this.removeImage('background')
       }
 
-      const image = this.addImage('pattern', false)
+      const image = this.addImage('pattern', { animate: false })
       image.tint = hex(newOwner.pattern)
 
       if (Date.now() - this.createdAt > 500) {
@@ -797,7 +821,7 @@ class Tile {
 
       // Create Background
       if (!this.image.background) {
-        const image = this.addImage('background')
+        const image = this.addImage('background', { textureName: 'pattern' })
 
         if (this.bedrock) {
           image.tint = hex(BEDROCK_BACKGROUND)
@@ -979,13 +1003,7 @@ class Tile {
     return store.game.hoveredTile && store.game.hoveredTile.id === this.id
   }
   isEmpty() {
-    return (
-      !this.building &&
-      !this.forest &&
-      !this.village &&
-      !this.mountain &&
-      !this.camp
-    )
+    return !this.building && !this.forest && !this.village && !this.mountain
   }
   addPatternPreview(pattern: string) {
     if (this.image.pattern) {
@@ -994,7 +1012,7 @@ class Tile {
 
     const pixel = getPixelPosition(this.axial)
 
-    this.image.patternPreview = createImage('patternPreview', 'pattern')
+    this.image.patternPreview = createImage(['patternPreview', 'pattern'])
     this.image.patternPreview.x = pixel.x
     this.image.patternPreview.y = pixel.y
     this.image.patternPreview.tint = hex(pattern)
@@ -1019,8 +1037,6 @@ class Tile {
       return 'Mountain'
     } else if (this.forest) {
       return 'Forest'
-    } else if (this.camp) {
-      return 'Camp'
     } else if (this.building) {
       if (this.building.type === 'TOWER') {
         return 'Tower'
@@ -1103,9 +1119,6 @@ class Tile {
       return null
     }
     return { type, hp }
-  }
-  get camp() {
-    return this.props.camp.current
   }
   get productionAt() {
     return this.props.productionAt.current

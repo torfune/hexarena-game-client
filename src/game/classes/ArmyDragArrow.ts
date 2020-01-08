@@ -13,8 +13,8 @@ const SCALE = {
 
 class ArmyDragArrow {
   tile: Tile
-  body: Sprite = createImage('armyDragArrow', 'army-drag-arrow-body')
-  head: Sprite = createImage('armyDragArrow', 'army-drag-arrow-head')
+  body: Sprite = createImage(['armyDragArrow', 'army-drag-arrow-body'])
+  head: Sprite = createImage(['armyDragArrow', 'army-drag-arrow-head'])
 
   constructor(tile: Tile) {
     this.tile = tile

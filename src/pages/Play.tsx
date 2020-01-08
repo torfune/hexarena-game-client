@@ -79,7 +79,6 @@ const Game = observer(() => {
                 <>
                   {store.game.mode === 'TEAMS_2v2' && <Ally />}
 
-                  <HoverPreview />
                   <Leaderboard />
                   <Economy />
                   <Performance />

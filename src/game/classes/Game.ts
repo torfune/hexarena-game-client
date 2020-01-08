@@ -408,7 +408,7 @@ class Game {
       hoveredTile.ownerId === this.playerId &&
       hoveredTile.army &&
       hoveredTile.army.ownerId === this.playerId &&
-      (hoveredTile.building || hoveredTile.camp) &&
+      hoveredTile.building &&
       button !== 2
     ) {
       this.selectArmy(hoveredTile)
@@ -597,13 +597,13 @@ class Game {
           }
 
           // Structure - owned
-          else if (t.ownerId === playerId && (t.building || t.camp)) {
+          else if (t.ownerId === playerId && t.building) {
             break
           }
 
           // Structure - enemy/neutral
           else if (t.ownerId !== playerId && !t.bedrock) {
-            if (t.building || (t.camp && t.army) || (!t.owner && t.camp)) {
+            if (t.building) {
               tilesToCapture.push(t)
               break
             }
@@ -643,10 +643,6 @@ class Game {
         }
 
         if (n.owner && n.building) {
-          continue
-        }
-
-        if (n.camp && n.army && n.owner) {
           continue
         }
 
@@ -814,6 +810,9 @@ class Game {
 
     UnitPreviewManager.clear()
     UnitPreviewManager.setArmy(null)
+    if (this.hoveredTile && !this.hoveredTile.building) {
+      this.hoveredTile.updateBuildPreview()
+    }
   }
   updateStageScale() {
     if (!this.pixi) return
