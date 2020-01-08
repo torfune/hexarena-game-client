@@ -54,6 +54,14 @@ let timeout: NodeJS.Timeout | null = null
 const Spectate = () => {
   const [loading, setLoading] = useState(true)
 
+  const goHome = () => {
+    if (window.location.href.includes('localhost')) {
+      window.location.href = 'http://localhost:3000'
+    } else {
+      window.location.href = '/'
+    }
+  }
+
   useEffect(() => {
     if (!store.spectating) {
       const gameId = window.location.href.split('?game=')[1]
@@ -99,9 +107,7 @@ const Spectate = () => {
           {!loading && (
             <>
               <h2>Game not found</h2>
-              <a href="http://localhost:3000">
-                <button>Continue</button>
-              </a>
+              <button onClick={goHome}>Continue</button>
             </>
           )}
         </InfoContainer>

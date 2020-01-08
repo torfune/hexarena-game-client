@@ -16,6 +16,14 @@ const EndScreen = () => {
   const groups = getPlayerGroups(Array.from(store.game.players.values()))
   const message = store.game.time <= 0 ? `Time's up!` : 'The game has finished!'
 
+  const goHome = () => {
+    if (window.location.href.includes('localhost')) {
+      window.location.href = 'http://localhost:3000'
+    } else {
+      window.location.href = '/'
+    }
+  }
+
   return (
     <Container style={spring} spectating={store.spectating}>
       <Box>
@@ -24,9 +32,7 @@ const EndScreen = () => {
 
         <Table groups={groups} />
 
-        <a href="http://localhost:3000">
-          <ContinueButton>Continue</ContinueButton>
-        </a>
+        <ContinueButton onClick={goHome}>Continue</ContinueButton>
 
         <RedSheet left="80px" />
         <RedSheet right="80px" />
