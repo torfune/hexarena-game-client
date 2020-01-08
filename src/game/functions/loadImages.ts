@@ -1,76 +1,65 @@
 import { Loader } from 'pixi.js'
-import { version } from '../../../package.json'
+import { STATIC } from '../../constants/react'
+// import { version } from '../../../package.json'
 
 const loader = Loader.shared
-const images = '/game/static/images'
+const PATH = `${STATIC}/images`
 
 const loadImages = () => {
   return new Promise(resolve => {
     loader
-      .add('action-bg', `${images}/action-bg.png?${version}`)
-      .add('action-icon-attack', `${images}/action-icon-attack.png?${version}`)
-      .add('action-icon-heal', `${images}/action-icon-heal.png?${version}`)
-      .add(
-        'action-icon-recruit',
-        `${images}/action-icon-recruit.png?${version}`
-      )
-      .add('action-icon-camp', `${images}/action-icon-camp.png?${version}`)
-      .add('action-icon-tower', `${images}/action-icon-tower.png?${version}`)
-      .add('action-icon-castle', `${images}/action-icon-castle.png?${version}`)
-      .add('action-icon-house', `${images}/action-icon-house.png?${version}`)
-      .add('army', `${images}/army.png?${version}`)
-      .add('unit', `${images}/unit.png?${version}`)
-      .add('armyIcon0', `${images}/army-icon-0.png?${version}`)
-      .add('armyIcon1', `${images}/army-icon-1.png?${version}`)
-      .add('armyIcon2', `${images}/army-icon-2.png?${version}`)
-      .add('armyIcon3', `${images}/army-icon-3.png?${version}`)
-      .add('armyIcon4', `${images}/army-icon-4.png?${version}`)
-      .add('armyIcon5', `${images}/army-icon-5.png?${version}`)
-      .add('armyIcon6', `${images}/army-icon-6.png?${version}`)
-      .add('armyIconFill', `${images}/army-icon-fill.png?${version}`)
-      .add('progressBar', `${images}/progress-bar-bg.png?${version}`)
-      .add('progressBarFill', `${images}/progress-bar-fill.png?${version}`)
-      .add('capital', `${images}/capital.png?${version}`)
-      .add('blackOverlay', `${images}/black-overlay.png?${version}`)
-      .add('border', `${images}/border.png?${version}`)
-      .add('castle', `${images}/castle.png?${version}`)
-      .add('castle-icon', `${images}/castle-icon.png?${version}`)
-      .add('forest-icon', `${images}/forest-icon.png?${version}`)
-      .add('mountain-icon', `${images}/mountain-icon.png?${version}`)
-      .add('village-icon', `${images}/village-icon.png?${version}`)
-      .add('tile-icon', `${images}/tile-icon.png?${version}`)
-      .add('fog', `${images}/fog.png?${version}`)
-      .add('tree', `${images}/tree.png?${version}`)
-      .add('gold', `${images}/gold.png?${version}`)
-      .add('mountain01', `${images}/mountain01.png?${version}`)
-      .add('mountain02', `${images}/mountain02.png?${version}`)
-      .add('mountain03', `${images}/mountain03.png?${version}`)
-      .add('mountain04', `${images}/mountain04.png?${version}`)
-      .add('mountain05', `${images}/mountain05.png?${version}`)
-      .add('camp', `${images}/camp.png?${version}`)
-      .add('pattern', `${images}/pattern.png?${version}`)
-      .add('tower', `${images}/tower.png?${version}`)
-      .add('tower-icon', `${images}/tower-icon.png?${version}`)
-      .add('house', `${images}/house.png?${version}`)
-      .add('hpBackground2', `${images}/hpBackground2.png?${version}`)
-      .add('hpBackground3', `${images}/hpBackground3.png?${version}`)
-      .add('hpFill', `${images}/hpFill.png?${version}`)
-      .add(
-        'army-drag-arrow-head',
-        `${images}/army-drag-arrow-head.png?${version}`
-      )
-      .add(
-        'army-drag-arrow-body',
-        `${images}/army-drag-arrow-body.png?${version}`
-      )
-      .add('unit-preview-0', `${images}/unit-preview-0.png?${version}`)
-      .add('unit-preview-1', `${images}/unit-preview-1.png?${version}`)
-      .add('unit-preview-3', `${images}/unit-preview-3.png?${version}`)
-      .add('unit-preview-4', `${images}/unit-preview-4.png?${version}`)
-      .add(
-        'unit-preview-cant-capture',
-        `${images}/unit-preview-cant-capture.png?${version}`
-      )
+      .add('action-bg', `${PATH}/action-bg.png`)
+      .add('action-icon-attack', `${PATH}/action-icon-attack.png`)
+      .add('action-icon-heal', `${PATH}/action-icon-heal.png`)
+      .add('action-icon-recruit', `${PATH}/action-icon-recruit.png`)
+      .add('action-icon-camp', `${PATH}/action-icon-camp.png`)
+      .add('action-icon-tower', `${PATH}/action-icon-tower.png`)
+      .add('action-icon-castle', `${PATH}/action-icon-castle.png`)
+      .add('action-icon-house', `${PATH}/action-icon-house.png`)
+      .add('army', `${PATH}/army.png`)
+      .add('unit', `${PATH}/unit.png`)
+      .add('armyIcon0', `${PATH}/army-icon-0.png`)
+      .add('armyIcon1', `${PATH}/army-icon-1.png`)
+      .add('armyIcon2', `${PATH}/army-icon-2.png`)
+      .add('armyIcon3', `${PATH}/army-icon-3.png`)
+      .add('armyIcon4', `${PATH}/army-icon-4.png`)
+      .add('armyIcon5', `${PATH}/army-icon-5.png`)
+      .add('armyIcon6', `${PATH}/army-icon-6.png`)
+      .add('armyIconFill', `${PATH}/army-icon-fill.png`)
+      .add('progressBar', `${PATH}/progress-bar-bg.png`)
+      .add('progressBarFill', `${PATH}/progress-bar-fill.png`)
+      .add('capital', `${PATH}/capital.png`)
+      .add('blackOverlay', `${PATH}/black-overlay.png`)
+      .add('border', `${PATH}/border.png`)
+      .add('castle', `${PATH}/castle.png`)
+      .add('castle-icon', `${PATH}/castle-icon.png`)
+      .add('forest-icon', `${PATH}/forest-icon.png`)
+      .add('mountain-icon', `${PATH}/mountain-icon.png`)
+      .add('village-icon', `${PATH}/village-icon.png`)
+      .add('tile-icon', `${PATH}/tile-icon.png`)
+      .add('fog', `${PATH}/fog.png`)
+      .add('tree', `${PATH}/tree.png`)
+      .add('gold', `${PATH}/gold.png`)
+      .add('mountain01', `${PATH}/mountain01.png`)
+      .add('mountain02', `${PATH}/mountain02.png`)
+      .add('mountain03', `${PATH}/mountain03.png`)
+      .add('mountain04', `${PATH}/mountain04.png`)
+      .add('mountain05', `${PATH}/mountain05.png`)
+      .add('camp', `${PATH}/camp.png`)
+      .add('pattern', `${PATH}/pattern.png`)
+      .add('tower', `${PATH}/tower.png`)
+      .add('tower-icon', `${PATH}/tower-icon.png`)
+      .add('house', `${PATH}/house.png`)
+      .add('hpBackground2', `${PATH}/hpBackground2.png`)
+      .add('hpBackground3', `${PATH}/hpBackground3.png`)
+      .add('hpFill', `${PATH}/hpFill.png`)
+      .add('army-drag-arrow-head', `${PATH}/army-drag-arrow-head.png`)
+      .add('army-drag-arrow-body', `${PATH}/army-drag-arrow-body.png`)
+      .add('unit-preview-0', `${PATH}/unit-preview-0.png`)
+      .add('unit-preview-1', `${PATH}/unit-preview-1.png`)
+      .add('unit-preview-3', `${PATH}/unit-preview-3.png`)
+      .add('unit-preview-4', `${PATH}/unit-preview-4.png`)
+      .add('unit-preview-cant-capture', `${PATH}/unit-preview-cant-capture.png`)
       .load(resolve)
   })
 }

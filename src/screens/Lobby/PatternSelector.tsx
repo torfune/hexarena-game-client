@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { animated } from 'react-spring'
-import { BOX_SHADOW } from '../../constants/react'
+import { BOX_SHADOW, STATIC } from '../../constants/react'
 import Hexagon from '../../components/Hexagon'
 import React from 'react'
 
@@ -84,7 +84,7 @@ const PatternSelector: React.FC<Props> = ({
             onClick={() => onPatternSelect(pattern)}
           >
             <Hexagon color={pattern} size="50px" />
-            <LockIcon src="/game/static/icons/lock.svg" locked={locked} />
+            <LockIcon src={`${STATIC}/icons/lock.svg`} locked={locked} />
           </PatternWrapper>
         )
       })}

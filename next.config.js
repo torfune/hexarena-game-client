@@ -1,3 +1,8 @@
+const production = process.env.NODE_ENV === 'production'
+
 module.exports = {
-  assetPrefix: '/game/',
+  assetPrefix: production ? '/game/' : '',
+  env: {
+    STATIC: production ? '/game/' : '',
+  },
 }

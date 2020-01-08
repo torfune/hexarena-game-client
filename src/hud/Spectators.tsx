@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import React from 'react'
-import { COLOR } from '../constants/react'
+import { COLOR, STATIC } from '../constants/react'
 import { observer } from 'mobx-react-lite'
 import store from '../store'
 
@@ -39,7 +39,7 @@ const Spectators = () => {
 
   return (
     <Container spectating={store.spectating}>
-      <Icon src="/game/static/icons/spectate.svg" />
+      <Icon src={`${STATIC}/icons/spectate.svg`} />
       <Number>{store.game.spectators}</Number>
     </Container>
   )

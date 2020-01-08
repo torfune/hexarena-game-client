@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import React from 'react'
-import { PRIMARY, COLOR } from '../constants/react'
+import { PRIMARY, COLOR, STATIC } from '../constants/react'
 import store from '../store'
 
 const Container = styled.div`
@@ -68,7 +68,7 @@ const Surrender = () => {
     <Container>
       <Row>
         <Heading>lost game ?</Heading>
-        <Icon src="/game/static/icons/flag.svg" />
+        <Icon src={`${STATIC}/icons/flag.svg`} />
       </Row>
       <Button onClick={store.game.surrender.bind(store.game)}>Surrender</Button>
     </Container>

@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import React from 'react'
-import { COLOR } from '../../constants/react'
+import { COLOR, STATIC } from '../../constants/react'
 
 const Container = styled.div`
   padding: 6px 12px;
@@ -33,7 +33,7 @@ interface Props {
 }
 const VillagePreview: React.FC<Props> = ({ villageIncome }) => (
   <Container>
-    <Icon src="/game/static/images/village-icon.png" />
+    <Icon src={`${STATIC}/images/village-icon.png`} />
     <div>
       <Label>Village</Label>
       <IncomeDescription>

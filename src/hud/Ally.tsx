@@ -1,9 +1,8 @@
 import styled, { css } from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import React from 'react'
-import Player from '../game/classes/Player'
 import Pattern from '../components/Pattern'
-import { COLOR } from '../constants/react'
+import { COLOR, STATIC } from '../constants/react'
 import shadeColor from '../utils/shade'
 import store from '../store'
 
@@ -128,16 +127,16 @@ const Ally = () => {
     <Container>
       <Heading>
         <p>Your ally</p>
-        <Icon src="/game/static/icons/hexagon.svg" />
-        <Icon src="/game/static/icons/village.svg" />
-        <Icon src="/game/static/icons/gold.svg" />
+        <Icon src={`${STATIC}/icons/hexagon.svg`} />
+        <Icon src={`${STATIC}/icons/village.svg`} />
+        <Icon src={`${STATIC}/icons/gold.svg`} />
       </Heading>
       <AllyWrapper>
         <Row>
           {ally.alive ? (
             <Pattern color={ally.pattern} scale={2} />
           ) : (
-            <Skull src="/game/static/icons/skull.svg" />
+            <Skull src={`${STATIC}/icons/skull.svg`} />
           )}
           <Name>{ally.name}</Name>
         </Row>

@@ -1,4 +1,4 @@
-import store from './store'
+import { STATIC } from './constants/react'
 
 const w = window as any
 const AudioContext = w.AudioContext || w.webkitAudioContext
@@ -14,27 +14,27 @@ const isSupported = () => {
 
 const SOUNDS = {
   CAPTURE: {
-    url: '/game/static/sounds/click01.mp3',
+    url: `${STATIC}/sounds/click01.mp3`,
     volume: 0.4,
     offset: 0,
   },
   ACTION: {
-    url: '/game/static/sounds/click02.mp3',
+    url: `${STATIC}/sounds/click02.mp3`,
     volume: 0.5,
     offset: 0,
   },
   ARMY_SEND: {
-    url: '/game/static/sounds/click03.mp3',
+    url: `${STATIC}/sounds/click03.mp3`,
     volume: 1,
     offset: 0,
   },
   VILLAGE_RAID: {
-    url: '/game/static/sounds/coin01.mp3',
+    url: `${STATIC}/sounds/coin01.mp3`,
     volume: 0.2,
     offset: 0,
   },
   BUILDING: {
-    url: '/game/static/sounds/wave01.mp3',
+    url: `${STATIC}/sounds/wave01.mp3`,
     volume: 0.4,
     offset: 0.5,
   },

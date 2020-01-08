@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import PlayerGroup from '../../types/PlayerGroup'
 import React from 'react'
-import { PRIMARY } from '../../constants/react'
+import { PRIMARY, STATIC } from '../../constants/react'
 
 const Container = styled.div`
   margin: 0 auto;
@@ -102,7 +102,7 @@ const Table: React.FC<Props> = ({ groups }) => (
               {player.alive ? (
                 <Pattern color={player.pattern} />
               ) : (
-                <Skull src="/game/static/icons/skull.svg" />
+                <Skull src={`${STATIC}/icons/skull.svg`} />
               )}
               <p>{player.name}</p>
               <p>{player.alive ? player.tilesCount : '-'}</p>

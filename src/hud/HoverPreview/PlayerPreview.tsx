@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import React from 'react'
 import Player from '../../game/classes/Player'
-import { COLOR, PRIMARY, BLUE } from '../../constants/react'
+import { COLOR, PRIMARY, BLUE, STATIC } from '../../constants/react'
 import store from '../../store'
 
 const Container = styled.div`
@@ -69,7 +69,7 @@ const PlayerPreview: React.FC<Props> = ({ player }) => {
   return (
     <Container>
       {player.pattern === '#ccc' ? (
-        <Icon src="/game/static/icons/skull.svg" />
+        <Icon src={`${STATIC}/icons/skull.svg`} />
       ) : (
         <Pattern color={player.pattern} />
       )}

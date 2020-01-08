@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 import store from '../store'
 import getPlayerGroups from '../utils/getPlayerGroups'
 import React from 'react'
-import { COLOR, BREAKPOINT } from '../constants/react'
+import { COLOR, BREAKPOINT, STATIC } from '../constants/react'
 
 const GridCSS = css`
   display: grid;
@@ -116,9 +116,9 @@ const Leaderboard = observer(() => {
     <Container spectating={store.spectating}>
       <Heading>
         <span>Leaderboard</span>
-        <Icon src="/game/static/icons/hexagon.svg" />
-        <Icon src="/game/static/icons/village.svg" />
-        <Icon src="/game/static/icons/gold.svg" />
+        <Icon src={`${STATIC}/icons/hexagon.svg`} />
+        <Icon src={`${STATIC}/icons/village.svg`} />
+        <Icon src={`${STATIC}/icons/gold.svg`} />
       </Heading>
 
       {groups.map((group, index) => (
@@ -129,7 +129,7 @@ const Leaderboard = observer(() => {
                 {player.alive ? (
                   <Pattern color={player.pattern} />
                 ) : (
-                  <Skull src="/game/static/icons/skull.svg" />
+                  <Skull src={`${STATIC}/icons/skull.svg`} />
                 )}
 
                 <p>{player.name}</p>

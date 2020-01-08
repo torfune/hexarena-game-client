@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { COLOR, PRIMARY } from '../constants/react'
+import { COLOR, PRIMARY, STATIC } from '../constants/react'
 import store from '../store'
 
 const Container = styled.div`
@@ -61,7 +61,7 @@ const Tutorial = () => {
     <Container>
       <Row>
         <Heading>Goal</Heading>
-        <Icon src="/game/static/icons/goal.svg" />
+        <Icon src={`${STATIC}/icons/goal.svg`} />
       </Row>
       <GoalMessage>
         Capture <span>red player's</span> Capital to finish tutorial.

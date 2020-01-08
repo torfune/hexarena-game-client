@@ -1,3 +1,6 @@
+// STATIC PATH
+export const STATIC = process.env.STATIC
+
 // COLORS
 export const PRIMARY = '#e84118'
 export const SECONDARY = '#c23616'
