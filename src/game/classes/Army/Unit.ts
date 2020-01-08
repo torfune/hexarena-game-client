@@ -6,7 +6,7 @@ import store from '../../../store'
 import animate, { easeFunction } from '../../functions/animate'
 
 class Unit {
-  image: Sprite = createImage('army', 'unit')
+  image: Sprite = createImage(['army', 'unit'])
   targetPixel: Pixel | null = null
   originPixel: Pixel | null = null
   targetScale = UNIT_SCALE.NORMAL

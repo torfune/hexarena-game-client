@@ -40,7 +40,7 @@ class Army {
 
     this.addUnits(unitCount)
 
-    if (tile.building || tile.camp) {
+    if (tile.building) {
       tile.addArmy(this)
     }
   }
@@ -142,7 +142,7 @@ class Army {
     }
 
     if (
-      (tile.building || tile.camp) &&
+      tile.building &&
       (sameOwner || allyOwner) &&
       this.unitCount > 0 &&
       !tile.army
@@ -187,7 +187,7 @@ class Army {
     store.game.units = store.game.units.concat(units)
   }
   removeUnits(count: number) {
-    const animate = !this.tile.building && !this.tile.camp
+    const animate = !this.tile.building
     for (let i = count - 1; i >= 0; i--) {
       this.units[i].destroy(animate)
       this.units.splice(i, 1)
@@ -239,7 +239,7 @@ class Army {
   }
   positionArea(tile: Tile): Area {
     const sameOwner = tile.owner && tile.owner.id === this.ownerId
-    const structure = tile.building || tile.camp
+    const structure = tile.building
 
     if (
       sameOwner &&
@@ -257,7 +257,6 @@ class Army {
     return 'FILL'
   }
   edgeArea(tile: Tile) {
-    if (tile.camp) return 'EDGE_CAMP'
     if (tile.building) {
       if (tile.building.type === 'TOWER') return 'EDGE_TOWER'
       if (tile.building.type === 'CASTLE') return 'EDGE_CASTLE'

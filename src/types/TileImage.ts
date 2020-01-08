@@ -21,6 +21,12 @@ interface TileImage {
   tower?: Sprite
   camp?: Sprite
   village?: Sprite
+  buildPreview?: Sprite
+  armyDragArrow?: Sprite
+  army?: Sprite
+  tree?: Sprite
+  gold?: Sprite
+  house?: Sprite
 }
 
 export default TileImage

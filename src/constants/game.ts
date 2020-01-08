@@ -20,6 +20,7 @@ export const TILE_IMAGES = [
   'house',
   'tree',
   'army',
+  'buildPreview',
   'border',
   'patternPreview',
   'blackOverlay',
