@@ -163,13 +163,6 @@ class Action {
   }
   getIconTexture() {
     return loader.resources['action-icon-build'].texture
-
-    // switch (this.type) {
-    //   case 'TOWER':
-    //     return loader.resources['action-icon-tower'].texture
-    //   case 'CASTLE':
-    //     return loader.resources['action-icon-castle'].texture
-    // }
   }
 
   // Prop getters

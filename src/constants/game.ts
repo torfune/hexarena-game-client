@@ -42,16 +42,16 @@ export const CAMERA_SPEED = 24
 
 // IMAGE OFFSETS
 export const ARMY_ICON_OFFSET_Y = {
-  TOWER: 170,
-  CASTLE: 170,
+  TOWER: 160,
+  CASTLE: 160,
   CAPITAL: 184,
 }
 export const HP_FILL_OFFSET_Y = 7
 export const HP_FILL_OFFSET_X = 17
 export const HP_HEIGHT = 40
 export const HP_BACKGROUND_OFFSET = {
-  TOWER: 110,
-  CASTLE: 110,
+  TOWER: 100,
+  CASTLE: 100,
   CAPITAL: 124,
 }
 
