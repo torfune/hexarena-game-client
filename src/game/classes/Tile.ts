@@ -112,14 +112,14 @@ class Tile {
             if (!this.image.castle) {
               const castle = this.addImage('castle')
               castle.anchor.set(0.5, 1)
-              castle.y += 60
+              castle.y += 67
               this.removeImage('tower')
             }
           } else if (type === 'TOWER') {
             if (!this.image.tower) {
               const tower = this.addImage('tower')
               tower.anchor.set(0.5, 1)
-              tower.y += 60
+              tower.y += 67
             }
           } else if (type === null) {
             this.removeImage('capital')
@@ -213,7 +213,10 @@ class Tile {
     if (this.owner && game.selectedArmyTile !== this) {
       this.removeHighlight()
     }
-    this.removeBuildPreview()
+
+    if (!this.action) {
+      this.removeBuildPreview()
+    }
   }
   addHighlight() {
     if (!this.owner || !this.image.pattern) return
@@ -221,6 +224,10 @@ class Tile {
     this.image.pattern.tint = hex(shade(this.owner.pattern, 10))
   }
   addBuildPreview(textureName: 'tower-icon' | 'castle-icon') {
+    if (this.image.buildPreview) {
+      this.removeBuildPreview()
+    }
+
     this.addImage('buildPreview', { animate: false, textureName })
   }
   addArmy(army: Army) {
@@ -258,7 +265,7 @@ class Tile {
     this.image.pattern.tint = hex(this.owner.pattern)
   }
   removeBuildPreview() {
-    this.removeImage('buildPreview', false)
+    this.removeImage('buildPreview', { animate: false })
   }
   removeContested() {
     // this.image.contested.visible = false
@@ -303,14 +310,15 @@ class Tile {
 
     return image
   }
-  removeImage(key: keyof TileImage, doAnimate = true) {
+  removeImage(key: keyof TileImage, options?: { animate?: boolean }) {
+    options = options
+      ? { animate: options.animate === undefined ? true : options.animate }
+      : { animate: true }
     const image = this.image[key]
-
     if (!image || !store.game) return
-
     delete this.image[key]
 
-    if (doAnimate) {
+    if (options.animate) {
       const delay =
         key === 'tower' || key === 'castle' || key === 'capital' ? 500 : 0
       animate({
@@ -654,7 +662,7 @@ class Tile {
       },
       onFinish: (_, tile: Tile) => {
         if (!tile.building) {
-          tile.removeImage('hpBackground', false)
+          tile.removeImage('hpBackground', { animate: false })
         }
       },
     })

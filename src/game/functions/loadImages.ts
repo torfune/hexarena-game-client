@@ -1,6 +1,5 @@
 import { Loader } from 'pixi.js'
 import { STATIC } from '../../constants/react'
-// import { version } from '../../../package.json'
 
 const loader = Loader.shared
 const PATH = `${STATIC}/images`
@@ -16,6 +15,7 @@ const loadImages = () => {
       .add('action-icon-tower', `${PATH}/action-icon-tower.png`)
       .add('action-icon-castle', `${PATH}/action-icon-castle.png`)
       .add('action-icon-house', `${PATH}/action-icon-house.png`)
+      .add('action-icon-build', `${PATH}/action-icon-build.png`)
       .add('army', `${PATH}/army.png`)
       .add('unit', `${PATH}/unit.png`)
       .add('armyIcon0', `${PATH}/army-icon-0.png`)

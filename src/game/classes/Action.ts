@@ -12,7 +12,7 @@ import animate from '../functions/animate'
 const loader = Loader.shared
 const ACTION_RADIUS = 50
 
-export type ActionType = 'TOWER' | 'CASTLE' //| 'CAPTURE' | 'CAMP'
+export type ActionType = 'TOWER' | 'CASTLE'
 export type ActionStatus = 'PENDING' | 'RUNNING' | 'FINISHED'
 
 interface Props {
@@ -51,9 +51,6 @@ class Action {
     this.icon = new Sprite(this.getIconTexture())
     this.icon.anchor.set(0.5)
     this.icon.scale.set(0.55)
-    // if (this.type === 'CAPTURE') {
-    //   this.icon.tint = hex(this.owner.pattern)
-    // }
     this.fill.alpha = 0
 
     this.image.addChild(this.background)
@@ -91,6 +88,9 @@ class Action {
         stage.addChild(this.image)
       }
     }
+
+    const textureName = this.type === 'TOWER' ? 'tower-icon' : 'castle-icon'
+    this.tile.addBuildPreview(textureName)
   }
   updateProps(props: string[]) {
     if (!store.game) return
@@ -158,18 +158,18 @@ class Action {
         }
       },
     })
+
+    this.tile.removeBuildPreview()
   }
   getIconTexture() {
-    switch (this.type) {
-      // case 'CAPTURE':
-      //   return loader.resources['action-icon-attack'].texture
-      // case 'CAMP':
-      //   return loader.resources['action-icon-camp'].texture
-      case 'TOWER':
-        return loader.resources['action-icon-tower'].texture
-      case 'CASTLE':
-        return loader.resources['action-icon-castle'].texture
-    }
+    return loader.resources['action-icon-build'].texture
+
+    // switch (this.type) {
+    //   case 'TOWER':
+    //     return loader.resources['action-icon-tower'].texture
+    //   case 'CASTLE':
+    //     return loader.resources['action-icon-castle'].texture
+    // }
   }
 
   // Prop getters
