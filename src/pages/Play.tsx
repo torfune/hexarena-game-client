@@ -6,7 +6,6 @@ import Economy from '../hud/Economy'
 import EndScreen from '../screens/EndScreen'
 import Flasher from '../hud/Flasher'
 import GameTime from '../hud/GameTime'
-import HoverPreview from '../hud/HoverPreview'
 import HowToPlay from '../components/HowToPlay'
 import Leaderboard from '../hud/Leaderboard'
 import Lobby from '../screens/Lobby'
@@ -22,7 +21,7 @@ import Tutorial from '../hud/Tutorial'
 import parseQuery from '../utils/parseQuery'
 import Ally from '../hud/Ally'
 
-const Game = observer(() => {
+const Play = observer(() => {
   const [_, refresh] = useState(Date.now())
 
   useEffect(() => {
@@ -130,4 +129,4 @@ const GameCanvas = styled.div<{ visible: boolean }>`
   visibility: ${props => (props.visible ? 'visible' : 'hidden')};
 `
 
-export default Game
+export default Play

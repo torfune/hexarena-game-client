@@ -2,15 +2,16 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import store from '../../store'
 import { useTransition } from 'react-spring'
-import React, { useState } from 'react'
+import React, { useState, FC } from 'react'
 import Player from '../../game/classes/Player'
 import PatternSelector from './PatternSelector'
 import { TRANSITION } from '../../constants/react'
 
 interface Props {
   players: Player[]
+  hideNames?: boolean
 }
-const Players: React.FC<Props> = ({ players }) => {
+const Players: FC<Props> = ({ players, hideNames }) => {
   const [showSelector, setShowSelector] = useState(false)
   const transitions = useTransition(showSelector, null, TRANSITION.SCALE)
 
@@ -50,7 +51,7 @@ const Players: React.FC<Props> = ({ players }) => {
           ) : (
             <Pattern color={player.pattern} />
           )}
-          <Name>{player.name}</Name>
+          <Name>{hideNames ? '???' : player.name}</Name>
 
           {player.id === playerId &&
             transitions.map(
@@ -85,9 +86,8 @@ const PlayerContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: 1px solid #000;
-  background: #222;
-  border-radius: 12px;
+  background: #242424;
+  border-radius: 20px;
   height: 180px;
   width: 180px;
   padding-top: 8px;
@@ -97,13 +97,14 @@ const PlayerContainer = styled.div`
 const Pattern = styled.div<{ color: string; hoverEffect?: boolean }>`
   width: 96px;
   height: 96px;
-  border-radius: 16px;
-  border: 1px solid #000;
+  border-radius: 20px;
   background: ${props => props.color};
   transition: 200ms;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 8px;
 
   :hover {
     transform: ${props => (props.hoverEffect ? 'scale(1.1)' : null)};
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 16px;
   }
 `
 const Name = styled.div`
