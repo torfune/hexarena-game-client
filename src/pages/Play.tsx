@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import React from 'react'
-import DefeatModal from '../screens/DefeatModal'
 import Economy from '../hud/Economy'
 import EndScreen from '../screens/EndScreen'
 import GameTime from '../hud/GameTime'
@@ -85,7 +84,6 @@ const Play = observer(() => {
               {/* <Spectators /> */}
 
               {store.game.mode === 'TUTORIAL' && <Tutorial />}
-              {!store.game.player.alive && <DefeatModal />}
             </HudContainer>
           )}
 
