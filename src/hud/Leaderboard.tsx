@@ -43,9 +43,10 @@ const Heading = styled.p`
   margin-bottom: 12px;
   margin-right: 16px;
   font-weight: 600;
-  color: #ccc;
   font-size: 16px;
-
+  > span {
+    color: #ccc;
+  }
   ${GridCSS};
 `
 

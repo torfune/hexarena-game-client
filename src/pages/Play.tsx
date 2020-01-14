@@ -4,22 +4,19 @@ import React from 'react'
 import DefeatModal from '../screens/DefeatModal'
 import Economy from '../hud/Economy'
 import EndScreen from '../screens/EndScreen'
-import Flasher from '../hud/Flasher'
 import GameTime from '../hud/GameTime'
 import HowToPlay from '../components/HowToPlay'
 import Leaderboard from '../hud/Leaderboard'
 import Lobby from '../screens/Lobby'
 import Storage from '../Storage'
-import NotificationManager from '../hud/NotificationManager'
-import Performance from '../hud/Performance'
 import Socket from '../websockets/Socket'
-import Spectators from '../hud/Spectators'
 import store from '../store'
 import styled from 'styled-components'
 import Surrender from '../hud/Surrender'
 import Tutorial from '../hud/Tutorial'
 import parseQuery from '../utils/parseQuery'
 import Ally from '../hud/Ally'
+import GoldCost from '../hud/GoldCost'
 
 const Play = observer(() => {
   const [_, refresh] = useState(Date.now())
@@ -80,23 +77,16 @@ const Play = observer(() => {
 
                   <Leaderboard />
                   <Economy />
-                  <Performance />
                 </>
               )}
 
               <Surrender />
-              <Spectators />
+              <GoldCost />
+              {/* <Spectators /> */}
 
               {store.game.mode === 'TUTORIAL' && <Tutorial />}
               {!store.game.player.alive && <DefeatModal />}
             </HudContainer>
-          )}
-
-          {store.game.status === 'RUNNING' && (
-            <>
-              <Flasher />
-              <NotificationManager />
-            </>
           )}
 
           {store.game.status === 'FINISHED' && <EndScreen />}
