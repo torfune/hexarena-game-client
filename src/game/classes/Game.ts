@@ -159,36 +159,6 @@ class Game {
       store.showGuide = true
     }
   }
-  destroy() {
-    for (let i = 0; i < TILE_IMAGES.length; i++) {
-      const stage = this.stage.get(TILE_IMAGES[i])
-      if (stage) {
-        stage.removeChildren()
-      }
-    }
-
-    if (this.pixi) {
-      this.pixi.destroy()
-      this.pixi = null
-    }
-
-    if (this.loop) {
-      this.loop.destroy()
-      this.loop = null
-    }
-
-    this.clearEventListeners()
-
-    // Remove canvas element
-    const canvas = document.getElementById(this.id)
-    if (canvas) {
-      canvas.remove()
-    }
-
-    if (store.game === this) {
-      store.game = null
-    }
-  }
   update() {
     if (!this.camera || !this.pixi || !this.cursor) return
 

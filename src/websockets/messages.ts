@@ -412,10 +412,6 @@ const messages: {
       return
     }
 
-    if (store.game) {
-      store.game.destroy()
-    }
-
     store.game = new Game(id, mode, status)
     store.spectating = false
     if (store.notification) {
@@ -439,6 +435,8 @@ const messages: {
     }
   },
   spectate: (payload: string) => {
+    console.log(`spectate: ${payload}`)
+
     const { id, mode, status } = convertObject(payload, {
       id: 'string',
       mode: 'string',
@@ -448,11 +446,13 @@ const messages: {
       mode: string | null
       status: string | null
     }
-
     if (
       !id ||
       !mode ||
-      (mode !== 'DUEL' && mode !== 'TEAMS_2v2' && mode !== 'FFA_6') ||
+      (mode !== 'DUEL' &&
+        mode !== 'TEAMS_2v2' &&
+        mode !== 'FFA_6' &&
+        mode !== 'TUTORIAL') ||
       !status ||
       (status !== 'STARTING' &&
         status !== 'RUNNING' &&
@@ -462,15 +462,15 @@ const messages: {
       return
     }
 
-    if (store.game) {
-      store.game.destroy()
-    }
-
     store.game = new Game(id, mode, status)
     store.game.scale = 0.2
     store.game.targetScale = 0.2
     store.game.setCameraToAxialPosition({ x: 0, z: 0 })
     store.spectating = true
+
+    const canvas = document.getElementById('game-canvas')
+    if (!canvas) throw new Error('Cannot find game canvas.')
+    store.game.render(canvas)
   },
   spectators: (payload: string) => {
     const spectators = Number(payload)

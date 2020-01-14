@@ -34,14 +34,14 @@ const Play = observer(() => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  useEffect(() => {
-    if (!store.game) return
+  // useEffect(() => {
+  //   if (!store.game) return
 
-    const { mode, status } = store.game
-    if (mode === 'TUTORIAL' && status === 'FINISHED') {
-      Storage.set('tutorialFinished', String('true'))
-    }
-  })
+  //   const { mode, status } = store.game
+  //   if (mode === 'TUTORIAL' && status === 'FINISHED') {
+  //     Storage.set('tutorialFinished', String('true'))
+  //   }
+  // })
 
   const handleResize = () => {
     refresh(Date.now())
