@@ -122,9 +122,9 @@ const PlaySection = () => {
   return (
     <Container>
       <Heading>Play</Heading>
-      {/* <a href="https://new.hexarena.io">
+      <a href="https://new.hexarena.io">
         <PlayButton background="#8c7ae6">Play new HexArena!</PlayButton>
-      </a> */}
+      </a>
 
       {store.queue ? (
         <BreakRow>
