@@ -1,99 +1,27 @@
 version: 2
 jobs:
-  build:
-    working_directory: ~/hexarena-fe
-    docker:
-      - image: circleci/node:latest
-    steps:
-      - checkout
-      - restore_cache:
-          name: Restore Yarn Package Cache
-          keys:
-            - yarn-packages-{{ checksum "yarn.lock" }}
-      - run:
-          name: Install Dependencies
-          command: yarn install --frozen-lockfile
-      - save_cache:
-          name: Save Yarn Package Cache
-          key: yarn-packages-{{ checksum "yarn.lock" }}
-          paths:
-            - ~/.cache/yarn
-      - run:
-          name: Compile
-          command: yarn tsc
-      - run:
-          name: Build
-          command: yarn build
-
   deploy-live:
     working_directory: ~/hexarena-fe
     docker:
       - image: circleci/node:latest
     steps:
       - checkout
-      - restore_cache:
-          name: Restore Yarn Package Cache
-          keys:
-            - yarn-packages-{{ checksum "yarn.lock" }}
       - run:
           name: Install Dependencies
-          command: yarn install --frozen-lockfile
-      - save_cache:
-          name: Save Yarn Package Cache
-          key: yarn-packages-{{ checksum "yarn.lock" }}
-          paths:
-            - ~/.cache/yarn
+          command: npm i
       - run:
           name: Build
-          command: yarn build
+          command: npm run build
       - run:
           name: Upload files
           command: |
-            scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./build/* root@hexarena.io:~/hexarena/live/hexarena-fe/
-
-  deploy-dev:
-    working_directory: ~/hexarena-fe
-    docker:
-      - image: circleci/node:latest
-    steps:
-      - checkout
-      - restore_cache:
-          name: Restore Yarn Package Cache
-          keys:
-            - yarn-packages-{{ checksum "yarn.lock" }}
-      - run:
-          name: Install Dependencies
-          command: yarn install --frozen-lockfile
-      - save_cache:
-          name: Save Yarn Package Cache
-          key: yarn-packages-{{ checksum "yarn.lock" }}
-          paths:
-            - ~/.cache/yarn
-      - run:
-          name: Build
-          command: yarn build
-      - run:
-          name: Upload files
-          command: |
-            scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./build/* root@hexarena.io:~/hexarena/dev/hexarena-fe/
+            scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./dist/* root@hexarena.io:~/hexarena/live/hexarena-fe/
 
 workflows:
   version: 2
   build-and-deploy:
     jobs:
-      - build:
-          filters:
-            branches:
-              ignore:
-                - master
-                - develop
-
       - deploy-live:
           filters:
             branches:
               only: master
-
-      - deploy-dev:
-          filters:
-            branches:
-              only: develop

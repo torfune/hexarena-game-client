@@ -1,8 +1,3 @@
-declare module 'simplebar-react' {
-  import React from 'react'
-  export default class SimpleBar extends React.Component<any, any> {}
-}
-
 declare module 'semantic-ui-react' {
   import React from 'react'
   export class Checkbox extends React.Component<any, any> {}

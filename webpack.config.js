@@ -7,7 +7,7 @@ const config = {
   entry: './src/index.tsx',
   output: {
     filename: `bundle.${version}.js`,
-    path: path.join(__dirname, '/build'),
+    path: path.join(__dirname, '/dist'),
   },
   module: {
     rules: [

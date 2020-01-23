@@ -1,6 +1,7 @@
 {
   "name": "hexagor-fe",
-  "version": "1.58.11f",
+  "version": "1.58.11",
+  "license": "UNLICENSED",
   "description": "HexArena - Browser client",
   "scripts": {
     "dev": "webpack-dev-server --port 3000 --mode development",
