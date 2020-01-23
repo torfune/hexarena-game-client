@@ -30,6 +30,7 @@ const wsHost = () => {
     case 'dev.hexarena.io':
       return 'us-ws-0.hexarena.io'
     case 'hexarena.io':
+    case 'hex-gc-live.now.sh':
       return 'us-ws-1.hexarena.io'
     default:
       return `${window.location.hostname}:5000`
@@ -50,7 +51,8 @@ export const gsHost = async () => {
       store.gsHost = hostname
       return hostname
     }
-    case 'hexarena.io': {
+    case 'hexarena.io':
+    case 'hex-gc-live.now.sh': {
       const { data: hostname } = await Api.ws.get('/config/gs-host')
       store.gsHost = hostname
       return hostname
