@@ -29,4 +29,4 @@ jobs:
           name: dist
           path: dist
 
-      - run: npx now -t ${{ secrets.ZEIT_TOKEN }} dist --prod
+      - run: npx now -t ${{ secrets.ZEIT_TOKEN }} dist --prod --confirm

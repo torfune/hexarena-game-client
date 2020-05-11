@@ -2,9 +2,7 @@
   "name": "game-client-live",
   "routes": [
     { "src": "/privacy", "dest": "/index.html" },
-    {
-      "src": "/spectate",
-      "dest": "https://hexarena.io"
-    }
+    { "src": "/spectate", "dest": "/index.html" },
+    { "src": "/game", "dest": "/index.html" }
   ]
 }
