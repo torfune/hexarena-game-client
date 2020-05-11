@@ -1,0 +1,10 @@
+{
+  "name": "game-client-live",
+  "routes": [
+    { "src": "/privacy", "dest": "/index.html" },
+    {
+      "src": "/spectate",
+      "dest": "https://hexarena.io"
+    }
+  ]
+}
