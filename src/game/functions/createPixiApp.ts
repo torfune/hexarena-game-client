@@ -17,7 +17,7 @@ const createPixiApp = () => {
     alert(
       'WebGL is not supported in this browser. The game cannot run without WebGL. I am sorry. You may try different browser.'
     )
-    window.location.href = '/'
+    throw error
   }
 }
 

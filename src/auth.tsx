@@ -105,6 +105,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
       logout()
     } else {
       store.user = response.data
+      ;(window as any).Sentry.setUser({ username: response.data.name })
     }
   }
 
