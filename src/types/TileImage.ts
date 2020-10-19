@@ -1,4 +1,4 @@
-import { Sprite } from 'pixi.js'
+import { Sprite } from 'pixi.js-legacy'
 
 interface TileImage {
   armyIcon?: Sprite

@@ -22,7 +22,7 @@ import Primitive from '../../types/Primitive'
 import Prop from '../../types/Prop'
 import createProp from '../../utils/createProp'
 import TileImageArray from '../../types/TileImageArray'
-import { Sprite, Loader } from 'pixi.js'
+import { Sprite, Loader } from 'pixi.js-legacy'
 import getRotationBySide, {
   getArrowRotationBySide,
 } from '../functions/getRotationBySide'

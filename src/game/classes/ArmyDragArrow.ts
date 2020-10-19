@@ -1,4 +1,4 @@
-import { Sprite } from 'pixi.js'
+import { Sprite } from 'pixi.js-legacy'
 import createImage from '../functions/createImage'
 import Tile from './Tile'
 import getPixelPosition from '../functions/getPixelPosition'

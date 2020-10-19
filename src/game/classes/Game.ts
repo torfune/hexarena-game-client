@@ -19,7 +19,7 @@ import roundToDecimals from '../functions/roundToDecimals'
 import getDebugCommand from '../functions/getDebugCommand'
 import getTileByAxial from '../functions/getTileByAxial'
 import Tile from './Tile'
-import { Ticker, Application, Container } from 'pixi.js'
+import { Ticker, Application, Container } from 'pixi.js-legacy'
 import Action from './Action'
 import uuid = require('uuid/v4')
 import { observable, computed } from 'mobx'

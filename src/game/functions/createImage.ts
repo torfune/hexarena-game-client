@@ -1,4 +1,4 @@
-import { Sprite, Loader } from 'pixi.js'
+import { Sprite, Loader } from 'pixi.js-legacy'
 import hex from './hex'
 import store from '../../store'
 

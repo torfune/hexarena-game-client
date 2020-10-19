@@ -1,4 +1,4 @@
-import { Sprite } from 'pixi.js'
+import { Sprite } from 'pixi.js-legacy'
 
 interface TileImageArray {
   arrow: Array<Sprite | null>

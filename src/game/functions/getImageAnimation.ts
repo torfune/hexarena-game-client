@@ -1,5 +1,5 @@
 import Animation from '../classes/Animation'
-import { Sprite } from 'pixi.js'
+import { Sprite } from 'pixi.js-legacy'
 import store from '../../store'
 
 const getImageAnimation = (image: Sprite) => {

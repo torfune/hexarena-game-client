@@ -1,5 +1,5 @@
 import Game from '../classes/Game'
-import { Ticker } from 'pixi.js'
+import { Ticker } from 'pixi.js-legacy'
 
 const ticker = Ticker.shared
 

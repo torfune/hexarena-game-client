@@ -1,4 +1,4 @@
-import { Text, TextStyle } from 'pixi.js'
+import { Text, TextStyle } from 'pixi.js-legacy'
 import store from '../../store'
 
 const createText = (content: string, stageName: string) => {

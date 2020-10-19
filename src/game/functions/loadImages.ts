@@ -1,4 +1,4 @@
-import { Loader } from 'pixi.js'
+import { Loader } from 'pixi.js-legacy'
 import { version } from '../../../package.json'
 
 const loader = Loader.shared

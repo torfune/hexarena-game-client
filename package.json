@@ -1,6 +1,6 @@
 {
   "name": "hexagor-fe",
-  "version": "1.58.11",
+  "version": "1.58.12",
   "license": "UNLICENSED",
   "description": "HexArena - Browser client",
   "scripts": {
@@ -14,7 +14,7 @@
     "chart.js": "^2.8.0",
     "mobx": "^5.9.4",
     "mobx-react-lite": "^1.2.0",
-    "pixi.js": "^5.0.3",
+    "pixi.js-legacy": "^5.3.3",
     "react": "^16.8.1",
     "react-chartjs-2": "^2.7.6",
     "react-dom": "^16.8.1",
