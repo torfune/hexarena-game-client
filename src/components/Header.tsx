@@ -55,10 +55,13 @@ const Logo = styled.h1`
 
 const DiscordLink = styled.a`
   color: #fff;
+  margin-left: 16px;
+  border-left: 1px solid #fff;
+  padding-left: 16px;
 `
 
 const Description = styled.p`
-  font-size: 22px;
+  font-size: 16px;
   font-weight: 200;
 
   @media (max-width: 1400px) {
