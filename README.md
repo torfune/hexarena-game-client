@@ -1,7 +1,7 @@
 <h1 align="center">HexArena.io - Multiplayer game.</h1>
 
 <p align="center">
-    <img src="https://hexarena.io/static/logo.png" alt="hexarena-logo" />
+    <img src="https://hexarena.io/static/images/logo.png" alt="hexarena-logo" />
     <br>
     <i>TypeScript browser client application for HexArena.io.</i>
     <br>
