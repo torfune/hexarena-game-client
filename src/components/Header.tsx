@@ -19,12 +19,15 @@ const Container = styled.div`
   height: 60px;
   justify-content: flex-end;
   align-items: center;
-  border-bottom: 1px solid #000;
   color: #fff;
+  border-top: 4px solid #b72b0a;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
 `
 
 const Logo = styled.h1`
-  font-size: 32px;
+  font-size: 1.5rem;
+  font-weight: 600;
   color: #fff;
   display: flex;
   align-items: center;
@@ -34,7 +37,7 @@ const Logo = styled.h1`
   }
 
   > img {
-    height: 22px;
+    width: 22px;
     margin-right: 12px;
     filter: invert(1);
   }
@@ -50,16 +53,8 @@ const Logo = styled.h1`
   }
 `
 
-const Version = styled.p`
-  font-size: 22px;
-  margin-left: 24px;
-  padding-left: 24px;
-  border-left: 1px solid #fff;
-  font-weight: 200;
-
-  @media (max-width: 1100px) {
-    display: none;
-  }
+const DiscordLink = styled.a`
+  color: #fff;
 `
 
 const Description = styled.p`
@@ -230,7 +225,9 @@ const Header = () => {
         <Description>Realtime Strategy Game</Description>
       )}
 
-      <Version>Alpha {version.slice(0, 4)}</Version>
+      <DiscordLink target="_blank" href="https://discord.gg/vwXKyRX">
+        Discord
+      </DiscordLink>
     </Container>
   )
 }
