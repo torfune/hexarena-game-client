@@ -9,5 +9,3 @@
 </p>
 
 <hr>
-
-# Documentation
