@@ -1,11 +1,11 @@
-import Player from '../../../../game/classes/Player'
+import Player from '../../../../core/classes/Player'
 import React from 'react'
 import store from '../../../../store'
 
 const renderWinStatement = (players: Player[]) => {
   if (store.game && store.game.mode === 'FFA') {
     const players = Array.from(store.game.players.values())
-    const winners = players.filter(p => p.alive)
+    const winners = players.filter((p) => p.alive)
 
     return (
       <>

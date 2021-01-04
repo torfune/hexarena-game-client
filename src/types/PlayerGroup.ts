@@ -1,4 +1,4 @@
-import Player from '../game/classes/Player'
+import Player from '../core/classes/Player'
 
 interface PlayerGroup {
   players: Player[]

@@ -1,11 +1,11 @@
 {
-  "name": "hexagor-fe",
-  "version": "1.58.13",
+  "name": "hexarena-game-client",
+  "version": "1.0.0",
   "license": "UNLICENSED",
-  "description": "HexArena - Browser client",
+  "description": "HexArena.io - Game Client",
   "scripts": {
-    "dev": "webpack-dev-server --port 3000 --mode development",
-    "start": "webpack-dev-server --port 3000 --mode production",
+    "dev": "webpack-dev-server --port 4000 --mode development",
+    "start": "webpack-dev-server --port 4000 --mode production",
     "build": "webpack --mode production",
     "tsc": "tsc"
   },
@@ -15,6 +15,7 @@
     "mobx": "^5.9.4",
     "mobx-react-lite": "^1.2.0",
     "pixi.js-legacy": "^5.3.3",
+    "query-string": "^6.13.7",
     "react": "^16.8.1",
     "react-chartjs-2": "^2.7.6",
     "react-dom": "^16.8.1",
@@ -41,6 +42,7 @@
     "css-loader": "^2.1.1",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
+    "prettier": "^2.2.1",
     "source-map-loader": "^0.2.4",
     "style-loader": "^0.23.1",
     "ts-loader": "^6.0.2",

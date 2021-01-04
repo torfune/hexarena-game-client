@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import store from '../../../../store'
 import { useTransition } from 'react-spring'
 import React, { useState } from 'react'
-import Player from '../../../../game/classes/Player'
+import Player from '../../../../core/classes/Player'
 import PatternSelector from './PatternSelector'
 import { TRANSITION } from '../../../../constants/react'
 
@@ -35,11 +35,11 @@ const Pattern = styled.div<{ color: string; hoverEffect?: boolean }>`
   height: 96px;
   border-radius: 16px;
   border: 1px solid #000;
-  background: ${props => props.color};
+  background: ${(props) => props.color};
   transition: 200ms;
 
   :hover {
-    transform: ${props => (props.hoverEffect ? 'scale(1.1)' : null)};
+    transform: ${(props) => (props.hoverEffect ? 'scale(1.1)' : null)};
   }
 `
 
@@ -75,7 +75,7 @@ const Players: React.FC<Props> = ({ players }) => {
   const { pattern, id: playerId } = store.game.player
   const { PATTERNS } = store.gsConfig
   const lockedPatterns = Array.from(store.game.players.values())
-    .filter(player => player.pattern !== pattern)
+    .filter((player) => player.pattern !== pattern)
     .map(({ pattern }) => pattern)
 
   const handlePatternClick = () => {
@@ -95,7 +95,7 @@ const Players: React.FC<Props> = ({ players }) => {
 
   return (
     <Container>
-      {players.map(player => (
+      {players.map((player) => (
         <PlayerContainer key={player.id}>
           {player.id === playerId ? (
             <Pattern

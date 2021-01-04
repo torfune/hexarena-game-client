@@ -3,13 +3,12 @@ import store from '../../../../store'
 import { observer } from 'mobx-react-lite'
 import Players from './Players'
 import React from 'react'
-import Chat from '../../../homepage/Chat'
 import Header from '../../../../components/Header'
 import Spinner from '../../../../components/Spinner'
 import getPlayerGroups from '../../../../utils/getPlayerGroups'
 import GameMode from '../../../../types/GameMode'
 import { CHAT_WIDTH, BREAKPOINT } from '../../../../constants/react'
-import Player from '../../../../game/classes/Player'
+import Player from '../../../../core/classes/Player'
 
 const Container = styled.div`
   position: absolute;
@@ -41,7 +40,7 @@ const CentralSection = styled.div<{ ffa: boolean }>`
   padding-left: 32px;
   padding-right: 32px;
 
-  ${props =>
+  ${(props) =>
     props.ffa &&
     css`
       border-bottom: 1px solid #111;
@@ -97,10 +96,10 @@ const Lobby = () => {
     const { playerId } = store.game
     const groups = getPlayerGroups(Array.from(store.game.players.values()))
     const groupLeft = groups.find(
-      group => !!group.players.find(p => p.id === playerId)
+      (group) => !!group.players.find((p) => p.id === playerId)
     )
     const groupRight = groups.find(
-      group => !group.players.find(p => p.id === playerId)
+      (group) => !group.players.find((p) => p.id === playerId)
     )
 
     if (groupLeft) {
@@ -139,7 +138,6 @@ const Lobby = () => {
 
         <Players players={playersRight} />
       </Container>
-      <Chat />
     </>
   )
 }

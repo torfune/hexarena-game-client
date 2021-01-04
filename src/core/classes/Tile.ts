@@ -23,9 +23,7 @@ import Prop from '../../types/Prop'
 import createProp from '../../utils/createProp'
 import TileImageArray from '../../types/TileImageArray'
 import { Sprite, Loader } from 'pixi.js-legacy'
-import getRotationBySide, {
-  getArrowRotationBySide,
-} from '../functions/getRotationBySide'
+import getRotationBySide from '../functions/getRotationBySide'
 import destroyImage from '../functions/destroyImage'
 import axialInDirection from '../../utils/axialInDirection'
 import getTileByAxial from '../functions/getTileByAxial'
@@ -329,7 +327,7 @@ class Tile {
       },
       {
         speed: 0.05,
-        onFinish: image => {
+        onFinish: (image) => {
           if (store.game) {
             const stage = store.game.stage.get('armyIcon')
             if (stage) {
@@ -571,7 +569,7 @@ class Tile {
               },
               {
                 speed: 0.04,
-                onFinish: image => {
+                onFinish: (image) => {
                   destroyImage('pattern', image)
                 },
               }
@@ -696,7 +694,7 @@ class Tile {
 
       let showBorder = false
       let patternPreview = false
-      let borderTint = null
+      let borderTint = '#333'
 
       // Bedrock -> !Bedrock
       if (this.bedrock && !n.bedrock) {
@@ -758,7 +756,7 @@ class Tile {
         newImage.x = pixel.x
         newImage.y = pixel.y
         newImage.rotation = getRotationBySide(i)
-        newImage.tint = borderTint ? hex(borderTint) : hex('#fff')
+        newImage.tint = hex(borderTint)
 
         if (!patternPreview && now - this.createdAt > 500) {
           newImage.alpha = 0
@@ -842,13 +840,14 @@ class Tile {
 
     return 'Plains'
   }
-  getActionType(ignoreGold: boolean = false) {
+  getActionType(options?: { ignoreGold: boolean }) {
+    const ignoreGold = options ? options.ignoreGold : false
+
     if (!store.game || !store.gsConfig || this.action || !store.game.player) {
       return null
     }
 
     const {
-      CAPTURE_COST,
       RECRUIT_COST,
       CAMP_COST,
       TOWER_COST,

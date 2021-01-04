@@ -26,14 +26,13 @@ const Api = {
 const wsHost = () => {
   switch (window.location.hostname) {
     case 'localhost':
-      return 'localhost:5000'
+      return 'localhost:7000'
     case 'dev.hexarena.io':
       return 'us-ws-0.hexarena.io'
     case 'hexarena.io':
-    case 'hex-gc-live.now.sh':
       return 'us-ws-1.hexarena.io'
     default:
-      return `${window.location.hostname}:5000`
+      return `${window.location.hostname}:7000`
   }
 }
 

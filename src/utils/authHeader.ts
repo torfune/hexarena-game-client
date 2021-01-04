@@ -1,7 +1,9 @@
-const authHeader = (accessToken: string) => ({
-  headers: {
-    Authorization: `Bearer ${accessToken}`,
-  },
-})
+function authHeader(accessToken: string) {
+  return {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  }
+}
 
 export default authHeader

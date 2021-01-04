@@ -9,7 +9,7 @@ import shuffle from '../../utils/shuffle'
 import destroyImage from '../functions/destroyImage'
 import store from '../../store'
 import Animation from '../classes/Animation'
-import chance from '../functions/chance'
+import chance from '../../utils/chance'
 
 const TREE_MARGIN_X = 70
 const TREE_MARGIN_Y = 60

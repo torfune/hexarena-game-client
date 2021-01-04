@@ -7,7 +7,7 @@ import store from '../../../../store'
 import { Pixel } from '../../../../types/coordinates'
 import React from 'react'
 import StructurePreview from './StructurePreview'
-import { ActionType } from '../../../../game/classes/Action'
+import { ActionType } from '../../../../core/classes/Action'
 
 const ContainerCSS = css`
   position: absolute;
@@ -50,7 +50,7 @@ const HoverPreview = () => {
     | ActionType
     | 'SEND_ARMY'
     | 'REPAIR'
-    | null = hoveredTile.getActionType(true)
+    | null = hoveredTile.getActionType({ ignoreGold: true })
   const structure = hoveredTile.getStructureName()
 
   if (hoveredTile.army && hoveredTile.ownerId === store.game.playerId) {

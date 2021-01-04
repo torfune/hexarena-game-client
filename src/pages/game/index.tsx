@@ -13,16 +13,24 @@ import store from '../../store'
 import Flasher from './hud/Flasher'
 import * as React from 'react'
 import NotificationManager from './hud/NotificationManager'
-import { RouteComponentProps } from '@reach/router'
 import Ally from './hud/Ally'
+import qs from 'query-string'
 import Lobby from './screens/Lobby'
-import Player from '../../game/classes/Player'
+import Player from '../../core/classes/Player'
 import Surrender from './hud/Surrender'
 import Economy from './hud/Economy'
 import Spectators from './hud/Spectators'
 import Tutorial from './hud/Tutorial'
 import HowToPlay from '../../components/HowToPlay'
 import LocalStorageManager from '../../LocalStorageManager'
+import Game from '../../core/classes/Game'
+import Socket from '../../websockets/Socket'
+import GameMode from '../../types/GameMode'
+import Api, { gsHost } from '../../Api'
+import { version } from '../../../package.json'
+import loadImages from '../../core/functions/loadImages'
+import SoundManager from '../../SoundManager'
+import GameStatus from '../../types/GameStatus'
 
 const Container = styled.div`
   width: 100vw;
@@ -44,26 +52,96 @@ interface GameCanvasProps {
   visible: boolean
 }
 const GameCanvas = styled.div<GameCanvasProps>`
-  visibility: ${props => (props.visible ? 'visible' : 'hidden')};
+  visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
 `
 
-const GamePage: React.FC<RouteComponentProps> = observer(() => {
+const GamePage = observer(() => {
   const [_, refresh] = useState(Date.now())
 
-  useEffect(() => {
-    if (!store.game) {
-      window.location.href = '/'
-      console.warn('Game instance not found after 1 second.')
-      return
-    }
-
+  const connect = async () => {
     const canvas = document.getElementById('game-canvas')
     if (!canvas) throw new Error('Cannot find canvas.')
 
+    const { gameId, accessKey } = qs.parse(window.location.search)
+    if (!gameId || typeof gameId !== 'string') {
+      store.error = { message: 'Connection failed' }
+      throw new Error('Missing Game ID in URL.')
+    } else if (!accessKey || typeof accessKey !== 'string') {
+      store.error = { message: 'Connection failed' }
+      throw new Error('Missing Access Key in URL.')
+    }
+
+    // Fetch Config & Check Server Status
+    let responses
+    try {
+      responses = await Promise.all([
+        Api.gs.get(`/config`),
+        Api.gs.get('/status'),
+        Api.ws.get('/status'),
+      ])
+    } catch (error) {
+      console.error(error)
+      store.loading = false
+      store.error = { message: 'Connection failed.' }
+      return
+    }
+    const [configResponse, statusResponse] = responses
+
+    // Check Versions
+    const serverVersion = statusResponse.data.version.slice(0, 4)
+    const clientVersion = version.slice(0, 4)
+    if (serverVersion !== clientVersion) {
+      const lastVersionReloaded = LocalStorageManager.get('lastVersionReloaded')
+      if (lastVersionReloaded !== clientVersion) {
+        LocalStorageManager.set('lastVersionReloaded', clientVersion)
+        window.location.reload()
+      } else {
+        store.error = {
+          message: `Version mismatch. Client: ${version}. Server: ${statusResponse.data.version}`,
+          goHome: true,
+        }
+      }
+      return
+    }
+
+    // Setup Global Game Config
+    store.gsConfig = configResponse.data
+
+    // Load Images
+    await loadImages()
+
+    // Load sounds
+    SoundManager.init()
+
+    // Connect Socket
+    store.socket = new Socket()
+    let gameMode: GameMode
+    let gameStatus: GameStatus
+    try {
+      const serverHost = await gsHost()
+      const result = await store.socket.connect(serverHost, gameId, accessKey)
+      gameMode = result.gameMode
+      gameStatus = result.gameStatus
+    } catch (error) {
+      console.error(error)
+      store.error = { message: 'Connection failed.' }
+      return
+    }
+
+    // Create Game instance
+    store.game = new Game(gameId, gameMode, gameStatus)
     store.game.render(canvas)
 
-    window.addEventListener('resize', handleResize)
+    // Load Settings from Local Storage
+    store.settings.sound = LocalStorageManager.get('soundEnabled') === 'true'
 
+    // Done
+    store.loading = false
+  }
+
+  useEffect(() => {
+    connect()
+    window.addEventListener('resize', handleResize)
     return () => {
       window.removeEventListener('resize', handleResize)
     }
@@ -81,12 +159,6 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
 
   const handleResize = () => {
     refresh(Date.now())
-  }
-
-  if (store.game && store.game.status === 'aborted') {
-    console.warn(`Game aborted.`)
-    window.location.href = '/'
-    return null
   }
 
   return (
@@ -135,13 +207,6 @@ const GamePage: React.FC<RouteComponentProps> = observer(() => {
           )}
 
           {store.game.status === 'finished' && <EndScreen />}
-
-          {store.error && store.game.status !== 'finished' && (
-            <ErrorModal
-              message={store.error.message}
-              goHome={store.error.goHome || true}
-            />
-          )}
         </>
       )}
 

@@ -1,11 +1,11 @@
 import styled from 'styled-components'
 import React from 'react'
-import { ActionType } from '../../../../game/classes/Action'
+import { ActionType } from '../../../../core/classes/Action'
 import { COLOR, PRIMARY } from '../../../../constants/react'
 import { observer } from 'mobx-react-lite'
 import store from '../../../../store'
 import GameServerConfig from '../../../../types/GameServerConfig'
-import Tile from '../../../../game/classes/Tile'
+import Tile from '../../../../core/classes/Tile'
 
 const Container = styled.div`
   display: flex;
@@ -62,7 +62,7 @@ const CostValue = styled.p<{ red: boolean }>`
   font-size: 26px;
   font-weight: 600;
   margin-top: 1px;
-  color: ${props => (props.red ? '#e84118' : '#fff')};
+  color: ${(props) => (props.red ? '#e84118' : '#fff')};
 `
 
 const ClickToStart = styled.p`
@@ -83,8 +83,8 @@ const NotEnoughGold = styled.div`
 
 const Icon = styled.img<{ opaque: boolean; dontInvert?: boolean }>`
   height: 34px;
-  filter: ${props => (props.dontInvert ? null : 'invert(1)')};
-  opacity: ${props => (props.opaque ? '0.6' : 1)};
+  filter: ${(props) => (props.dontInvert ? null : 'invert(1)')};
+  opacity: ${(props) => (props.opaque ? '0.6' : 1)};
 `
 
 const Label = styled.p`

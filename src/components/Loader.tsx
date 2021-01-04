@@ -5,7 +5,7 @@ import shadeColor from '../utils/shade'
 import { observer } from 'mobx-react-lite'
 import React, { useEffect } from 'react'
 import store from '../store'
-import loadImages from '../game/functions/loadImages'
+import loadImages from '../core/functions/loadImages'
 import Header from './Header'
 import Socket from '../websockets/Socket'
 import { version } from '../../package.json'
@@ -53,58 +53,7 @@ const Loader: React.FC = () => {
     initialize()
   }, [])
 
-  const initialize = async () => {
-    try {
-      const [statusRes, configRes] = await Promise.all([
-        Api.gs.get('/status'),
-        Api.gs.get(`/config`),
-        Api.ws.get('/status'),
-      ])
-
-      // Version check
-      const gsVersion = statusRes.data.version.slice(0, 4)
-      const feVersion = version.slice(0, 4)
-      if (gsVersion !== feVersion) {
-        const lastVersionReloaded = LocalStorageManager.get(
-          'lastVersionReloaded'
-        )
-        if (lastVersionReloaded !== feVersion) {
-          LocalStorageManager.set('lastVersionReloaded', feVersion)
-          window.location.reload()
-          return
-        }
-        store.error = {
-          message: `Client and server version doesn't match. Client: ${version} | Server: ${statusRes.data.version}`,
-          goHome: true,
-        }
-      }
-
-      // GameServer config
-      store.gsConfig = configRes.data
-
-      // Socket connection
-      const host = await gsHost()
-      await Socket.connect(host)
-
-      // Load images
-      await loadImages()
-
-      // Load sounds
-      SoundManager.init()
-
-      // Local storage
-      store.settings.sound = LocalStorageManager.get('soundEnabled') === 'true'
-
-      store.loading = false
-    } catch (err) {
-      console.error(err)
-
-      store.loading = false
-      store.error = {
-        message: 'Connection failed.',
-      }
-    }
-  }
+  const initialize = async () => {}
 
   if (store.loading) {
     return (

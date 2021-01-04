@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import React from 'react'
-import Player from '../../../game/classes/Player'
+import Player from '../../../core/classes/Player'
 import Pattern from '../../../components/Pattern'
 import { COLOR } from '../../../constants/react'
 import shadeColor from '../../../utils/shade'
@@ -94,26 +94,26 @@ const DiedText = styled.p`
 `
 
 const GoldButton = styled.div<{ color: string; disabled: boolean }>`
-  background: ${props => (props.disabled ? '#ddd' : props.color)};
+  background: ${(props) => (props.disabled ? '#ddd' : props.color)};
   padding: 8px;
   text-align: center;
   width: 100%;
-  color: ${props => (props.disabled ? '#666' : '#222')};
+  color: ${(props) => (props.disabled ? '#666' : '#222')};
   margin-top: 20px;
   text-transform: uppercase;
   font-size: 16px;
   font-weight: 600;
   border: 1px solid
-    ${props => (props.disabled ? '#ccc' : shadeColor(props.color, -10))};
+    ${(props) => (props.disabled ? '#ccc' : shadeColor(props.color, -10))};
   border-radius: 4px;
   transition: 200ms;
 
   :hover {
-    transform: ${props => !props.disabled && 'scale(1.05)'};
+    transform: ${(props) => !props.disabled && 'scale(1.05)'};
   }
 
   :active {
-    background: ${props => !props.disabled && shadeColor(props.color, -10)};
+    background: ${(props) => !props.disabled && shadeColor(props.color, -10)};
   }
 `
 

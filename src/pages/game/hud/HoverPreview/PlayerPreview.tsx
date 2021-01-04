@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import React from 'react'
-import Player from '../../../../game/classes/Player'
+import Player from '../../../../core/classes/Player'
 import { COLOR, PRIMARY, BLUE } from '../../../../constants/react'
 import store from '../../../../store'
 

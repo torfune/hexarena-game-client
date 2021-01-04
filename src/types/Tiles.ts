@@ -1,4 +1,4 @@
-import Tile from '../game/classes/Tile'
+import Tile from '../core/classes/Tile'
 
 interface Tiles {
   [key: string]: Tile

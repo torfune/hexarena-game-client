@@ -1,5 +1,5 @@
 import sortByKey from './sortByKey'
-import Player from '../game/classes/Player'
+import Player from '../core/classes/Player'
 import PlayerGroup from '../types/PlayerGroup'
 
 const getPlayerGroups = (players: Player[]) => {

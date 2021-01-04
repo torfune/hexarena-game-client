@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { BOX_SHADOW, PRIMARY } from '../../../constants/react'
 import React from 'react'
+import getGameClientUrl from '../../../utils/getWebClientUrl'
 
 const WIDTH = 500
 
@@ -69,7 +70,7 @@ const ErrorModal: React.FC<Props> = ({ message, goHome }) => (
           if (!goHome) {
             window.location.reload()
           } else {
-            window.location.href = '/'
+            window.location.href = getGameClientUrl()
           }
         }}
       >

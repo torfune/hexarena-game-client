@@ -8,14 +8,15 @@ import getPlayerGroups from '../../../../utils/getPlayerGroups'
 import store from '../../../../store'
 import React from 'react'
 import { Link } from 'react-router-dom'
+import getWebClientUrl from '../../../../utils/getWebClientUrl'
 
 const Container = styled(animated.div)<{ spectating: boolean }>`
   position: absolute;
-  margin-top: ${props => (props.spectating ? '60px' : 0)};
+  margin-top: ${(props) => (props.spectating ? '60px' : 0)};
   left: 0;
-  width: ${props =>
+  width: ${(props) =>
     props.spectating ? `calc(100vw - ${CHAT_WIDTH})` : '100vw'};
-  height: ${props => (props.spectating ? 'calc(100vh - 60px)' : '100vh')};
+  height: ${(props) => (props.spectating ? 'calc(100vh - 60px)' : '100vh')};
   background: #00000088;
   border-bottom: 1px solid #222;
   z-index: 11;
@@ -59,8 +60,8 @@ const RedSheet = styled.div<RedSheetProps>`
   background: ${PRIMARY};
   width: 56px;
   height: 400px;
-  left: ${props => props.left};
-  right: ${props => props.right};
+  left: ${(props) => props.left};
+  right: ${(props) => props.right};
   position: absolute;
   top: -2px;
   box-shadow: 0px 4px 16px #00000033;
@@ -110,11 +111,11 @@ const EndScreen = () => {
         <Table groups={groups} />
 
         {store.spectating ? (
-          <Link to="/">
+          <Link to={getWebClientUrl()}>
             <ContinueButton>Continue</ContinueButton>
           </Link>
         ) : (
-          <a href="/">
+          <a href={getWebClientUrl()}>
             <ContinueButton>Continue</ContinueButton>
           </a>
         )}

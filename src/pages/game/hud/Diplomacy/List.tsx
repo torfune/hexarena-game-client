@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import Player from '../../../../game/classes/Player'
-import AllianceRequest from '../../../../game/classes/AllianceRequest'
+import Player from '../../../../core/classes/Player'
+import AllianceRequest from '../../../../core/classes/AllianceRequest'
 import React from 'react'
 
 const Container = styled.div``
@@ -20,13 +20,13 @@ const Item = styled.div<ItemProps>`
   position: relative;
 
   :hover {
-    background: ${props => (props.clickable ? '#ddd' : null)};
+    background: ${(props) => (props.clickable ? '#ddd' : null)};
   }
 `
 
 const Pattern = styled.div`
   border-radius: 50%;
-  background: ${props => props.color};
+  background: ${(props) => props.color};
   width: 20px;
   height: 20px;
   margin-left: 8px;
@@ -61,7 +61,7 @@ const Button = styled.div<ButtonProps>`
   margin-right: 6px;
 
   img {
-    width: ${props => props.iconSize};
+    width: ${(props) => props.iconSize};
     opacity: 0.7;
   }
 
@@ -90,7 +90,7 @@ interface TimeoutBarProps {
 
 const TimeoutBar = styled.div<TimeoutBarProps>`
   position: absolute;
-  width: ${props => `${props.timeout * 100}%`};
+  width: ${(props) => `${props.timeout * 100}%`};
   transition: 0.2s;
   bottom: 0;
   left: 0;
@@ -129,7 +129,7 @@ const List: React.FC<Props> = ({
   onCreate,
 }) => {
   if (sendingRequest) {
-    players = players.filter(p => p.id !== playerId && !p.allyId && p.alive)
+    players = players.filter((p) => p.id !== playerId && !p.allyId && p.alive)
 
     return (
       <Container>

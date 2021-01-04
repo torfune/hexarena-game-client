@@ -7,7 +7,6 @@ import {
   MAX_SCALE,
   CAMERA_SPEED,
 } from '../../constants/game'
-import Socket from '../../websockets/Socket'
 import createGameLoop from '../functions/createGameLoop'
 import createPixiApp from '../functions/createPixiApp'
 import store from '../../store'
@@ -33,11 +32,12 @@ import HoveredTileInfo from '../../types/HoveredTileInfo'
 import ArmyDragArrow from './ArmyDragArrow'
 import SoundManager from '../../SoundManager'
 import LocalStorageManager from '../../LocalStorageManager'
+import GameStatus from '../../types/GameStatus'
 
 class Game {
   readonly id: string
   readonly mode: GameMode
-  readonly ranked: boolean
+  readonly ranked: boolean = false
   readonly stage: Map<string, Container> = new Map()
   @observable allianceRequests: Map<string, AllianceRequest> = new Map()
   @observable armies: Map<string, Army> = new Map()
@@ -58,12 +58,7 @@ class Game {
   @observable showHud: boolean = true
   @observable fps: number | null = 0
   @observable ping: number | null = 0
-  @observable status:
-    | 'starting'
-    | 'running'
-    | 'finished'
-    | 'aborted'
-    | null = null
+  @observable status: GameStatus | null = null
   @observable time: number | null = null
   @observable playerId: string | null = null
   @observable spawnTile: Tile | null = null
@@ -75,7 +70,6 @@ class Game {
   selectedArmyTile: Tile | null = null
   loop: Ticker | null = null
   pixi: Application | null = null
-  initialized: boolean = false
   pingArray: number[] = []
   fpsArray: number[] = []
   readonly animations: Array<Animation | GoldAnimation> = []
@@ -100,7 +94,6 @@ class Game {
     wheel: (event: any) => void
     resize: (event: any) => void
   } | null = null
-  changeHandlers: { [key: string]: () => void } = {}
   armyDragArrow: ArmyDragArrow | null = null
 
   // Computed getters
@@ -111,10 +104,10 @@ class Game {
     return this.player ? this.player.gold : 0
   }
 
-  constructor(id: string, mode: GameMode, ranked: boolean) {
+  constructor(id: string, mode: GameMode, status: GameStatus) {
     this.id = id
     this.mode = mode
-    this.ranked = ranked
+    this.status = status
 
     // Leaving warning
     window.onbeforeunload = () => {
@@ -191,11 +184,6 @@ class Game {
     if (canvas) {
       canvas.remove()
     }
-    // if (canvasContainer) {
-    // if (canvas) {
-    // canvasContainer.removeChild(canvas)
-    // }
-    // }
 
     if (store.game === this) {
       store.game = null
@@ -336,10 +324,12 @@ class Game {
     this.pixi.renderer.resize(window.innerWidth, window.innerHeight)
   }
   selectPattern = (pattern: string) => {
-    Socket.send('pattern', pattern)
+    if (!store.socket) return
+
+    store.socket.send('pattern', pattern)
   }
   handleKeyDown({ key }: KeyboardEvent) {
-    if (this.status !== 'running' || (store.spectating && store.chatFocus)) {
+    if (this.status !== 'running' || !store.socket) {
       return
     }
 
@@ -347,7 +337,7 @@ class Game {
     this.updateCameraMove()
 
     if (key === 'Escape') {
-      Socket.send('cancel')
+      store.socket.send('cancel')
       return
     }
 
@@ -372,14 +362,10 @@ class Game {
 
     if (!tile || !command) return
 
-    Socket.send('debug', `${command}|${tile.axial.x}|${tile.axial.z}`)
+    store.socket.send('debug', `${command}|${tile.axial.x}|${tile.axial.z}`)
   }
   handleKeyUp({ key }: KeyboardEvent) {
-    if (
-      this.status !== 'running' ||
-      !store.gsConfig ||
-      (store.spectating && store.chatFocus)
-    ) {
+    if (this.status !== 'running' || !store.gsConfig) {
       return
     }
 
@@ -430,7 +416,7 @@ class Game {
     }
   }
   handleMouseUp(event: MouseEvent) {
-    if (!this.cursor) return
+    if (!this.cursor || !store.socket) return
 
     const { hoveredTile, playerId } = this
 
@@ -446,7 +432,7 @@ class Game {
     const dragged = this.dragged
     this.dragged = false
 
-    let button = null
+    let button
     switch (event.button) {
       case 0:
         button = 'left'
@@ -503,7 +489,7 @@ class Game {
         this.actions.push(action)
 
         const { x, z } = hoveredTile.axial
-        Socket.send('action', `${action.id}|${x}|${z}|${actionType}`)
+        store.socket.send('action', `${action.id}|${x}|${z}|${actionType}`)
       }
     }
 
@@ -815,13 +801,19 @@ class Game {
     // }
   }
   acceptRequest(senderId: string) {
-    Socket.send('request', `accept|${senderId}`)
+    if (store.socket) {
+      store.socket.send('request', `accept|${senderId}`)
+    }
   }
   declineRequest(senderId: string) {
-    Socket.send('request', `decline|${senderId}`)
+    if (store.socket) {
+      store.socket.send('request', `decline|${senderId}`)
+    }
   }
   createRequest(receiverId: string) {
-    Socket.send('request', `create|${receiverId}`)
+    if (store.socket) {
+      store.socket.send('request', `create|${receiverId}`)
+    }
   }
   updateBlackOverlays() {
     const tiles = Array.from(this.tiles)
@@ -901,10 +893,12 @@ class Game {
     }
   }
   surrender() {
-    Socket.send('surrender')
+    if (store.socket) {
+      store.socket.send('surrender')
+    }
   }
   sendArmy(tile: Tile) {
-    if (!this.selectedArmyTile) return
+    if (!this.selectedArmyTile || !store.socket) return
 
     let index = null
     for (let i = 0; i < 6; i++) {
@@ -916,7 +910,7 @@ class Game {
 
     if (index !== null) {
       const { x, z } = this.selectedArmyTile.axial
-      Socket.send('sendArmy', `${x}|${z}|${index}`)
+      store.socket.send('sendArmy', `${x}|${z}|${index}`)
       SoundManager.play('ARMY_SEND')
       if (this.armyDragArrow) {
         this.armyDragArrow.destroy()
@@ -944,7 +938,9 @@ class Game {
     this.armyDragArrow = new ArmyDragArrow(tile)
   }
   sendGoldToAlly() {
-    Socket.send('sendGold')
+    if (store.socket) {
+      store.socket.send('sendGold')
+    }
   }
   calculateZoomScale(zoomDirection: number) {
     const scale = this.scale + zoomDirection * this.scale * ZOOM_SPEED
@@ -992,16 +988,9 @@ class Game {
   showNotEnoughGold(tile: Tile) {
     if (!this.player || !store.gsConfig) return
 
-    const {
-      CAPTURE_COST,
-      RECRUIT_COST,
-      CAMP_COST,
-      TOWER_COST,
-      CASTLE_COST,
-    } = store.gsConfig
+    const { RECRUIT_COST, CAMP_COST, TOWER_COST, CASTLE_COST } = store.gsConfig
 
-    const actionType = tile.getActionType(true)
-
+    const actionType = tile.getActionType({ ignoreGold: true })
     if (
       !actionType ||
       (actionType === 'CAPTURE' && this.player.gold >= tile.captureCost()) ||
