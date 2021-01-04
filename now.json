@@ -1,5 +1,5 @@
 {
-  "name": "game-client-live",
+  "name": "hexarena-game-client",
   "routes": [
     { "src": "/privacy", "dest": "/index.html" },
     { "src": "/spectate", "dest": "/index.html" },

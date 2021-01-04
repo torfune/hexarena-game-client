@@ -18,8 +18,8 @@ jobs:
           name: dist
           path: dist
 
-  deploy-production:
-    if: contains(github.ref, 'master')
+  deploy-test:
+    if: contains(github.ref, 'develop')
     runs-on: ubuntu-latest
     needs: build
     steps:
