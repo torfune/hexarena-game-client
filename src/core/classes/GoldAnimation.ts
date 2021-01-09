@@ -65,7 +65,7 @@ class GoldAnimation {
 }
 
 class Coin {
-  baseOffsetY: number = 0
+  capitalOffsetY: number = 0
   speed: number = 0
   image: Sprite
   destroyed: boolean = false
@@ -75,7 +75,7 @@ class Coin {
     readonly offsetX: number,
     private offsetY: number
   ) {
-    this.baseOffsetY = offsetY
+    this.capitalOffsetY = offsetY
     this.speed = SPEED + Math.random() * SPEED
     this.image = createImage('gold')
     this.destroyed = false
@@ -84,7 +84,7 @@ class Coin {
     this.offsetY += this.speed
     this.updatePosition()
 
-    if (this.offsetY - this.baseOffsetY > 32) {
+    if (this.offsetY - this.capitalOffsetY > 32) {
       this.image.alpha -= 0.04
 
       if (this.image.alpha < 0) {

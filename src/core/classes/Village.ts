@@ -74,7 +74,7 @@ class Village {
       image.y = pixel.y + housePosition.y
       image.anchor.set(0.5, 1)
 
-      const scale = 0.8 + Math.random() * 0.4
+      const scale = 1 + Math.random() * 0.1
       if (animate) {
         image.scale.x = 0
         image.scale.y = 0

@@ -10,6 +10,7 @@ import {
   HP_FILL_OFFSET_X,
   HP_FILL_OFFSET_Y,
   HP_BACKGROUND_OFFSET,
+  IMAGE_OFFSET_Y,
 } from '../../constants/game'
 import getImageAnimation from '../functions/getImageAnimation'
 import shade from '../../utils/shade'
@@ -105,24 +106,26 @@ class Tile {
         }
         break
       case 'buildingType':
-        if (value === 'BASE') {
-          if (!this.image.base) {
-            const base = this.addImage('base')
-            base.y -= 10
+        if (value === 'CAPITAL') {
+          if (!this.image.capital) {
+            const capital = this.addImage('capital')
+            capital.y += IMAGE_OFFSET_Y.CAPITAL
           }
         } else if (value === 'CASTLE') {
           if (!this.image.castle) {
-            this.addImage('castle')
             this.removeImage('tower')
+            const castle = this.addImage('castle')
+            castle.anchor.set(0.5, 1)
+            castle.y += IMAGE_OFFSET_Y.CASTLE
           }
         } else if (value === 'TOWER') {
           if (!this.image.tower) {
             const tower = this.addImage('tower')
             tower.anchor.set(0.5, 1)
-            tower.y += 60
+            tower.y += IMAGE_OFFSET_Y.TOWER
           }
         } else if (value === null) {
-          this.removeImage('base')
+          this.removeImage('capital')
           this.removeImage('tower')
           this.removeImage('castle')
         }
@@ -309,7 +312,7 @@ class Tile {
       this.image.armyIcon,
       (image, fraction, context) => {
         image.alpha = fraction
-        image.y = context.baseY - ARMY_ICON_OFFSET_Y * fraction
+        image.y = context.baseY - this.getArmyIconOffsetY() * fraction
       },
       { context: { baseY: pixel.y }, speed: 0.05 }
     )
@@ -323,7 +326,7 @@ class Tile {
       (image, fraction) => {
         fraction = 1 - fraction
         image.alpha = fraction
-        image.y = position.y - ARMY_ICON_OFFSET_Y * fraction
+        image.y = position.y - this.getArmyIconOffsetY() * fraction
       },
       {
         speed: 0.05,
@@ -831,7 +834,7 @@ class Tile {
         return 'Tower'
       } else if (this.building.type === 'CASTLE') {
         return 'Castle'
-      } else if (this.building.type === 'BASE') {
+      } else if (this.building.type === 'CAPITAL') {
         return 'Capital'
       }
     } else if (this.village) {
@@ -922,6 +925,13 @@ class Tile {
     } else {
       return CAPTURE_COST.DEFAULT
     }
+  }
+  getArmyIconOffsetY() {
+    if (this.building) {
+      return ARMY_ICON_OFFSET_Y[this.building.type]
+    }
+
+    return 0
   }
 
   // Prop getters

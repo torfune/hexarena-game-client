@@ -3,7 +3,7 @@ import { Sprite } from 'pixi.js-legacy'
 interface TileImage {
   armyIcon?: Sprite
   background?: Sprite
-  base?: Sprite
+  capital?: Sprite
   blackOverlay?: Sprite
   castle?: Sprite
   contested?: Sprite

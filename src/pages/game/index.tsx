@@ -147,15 +147,13 @@ const GamePage = observer(() => {
     }
   }, [])
 
-  useEffect(() => {
-    if (!store.game) return
-
-    const { mode, status } = store.game
-
-    if (mode === 'TUTORIAL' && status === 'finished') {
-      LocalStorageManager.set('tutorialFinished', String('true'))
-    }
-  })
+  // useEffect(() => {
+  // if (!store.game) return
+  // const { mode, status } = store.game
+  // if (mode === 'TUTORIAL' && status === 'finished') {
+  //   LocalStorageManager.set('tutorialFinished', String('true'))
+  // }
+  // })
 
   const handleResize = () => {
     refresh(Date.now())
@@ -194,7 +192,7 @@ const GamePage = observer(() => {
               <Surrender />
               <Spectators />
 
-              {store.game.mode === 'TUTORIAL' && <Tutorial />}
+              {/*{store.game.mode === 'TUTORIAL' && <Tutorial />}*/}
               {!store.game.player.alive && <DefeatModal />}
             </HudContainer>
           )}

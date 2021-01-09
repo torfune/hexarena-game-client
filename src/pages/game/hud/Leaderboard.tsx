@@ -14,7 +14,7 @@ const GridCSS = css`
 const Container = styled.div<{ spectating: boolean }>`
   background: ${COLOR.HUD_BACKGROUND};
   bottom: 0;
-  right: ${props => (props.spectating ? CHAT_WIDTH : 0)};
+  right: ${(props) => (props.spectating ? CHAT_WIDTH : 0)};
   min-height: 240px;
   width: 320px;
   position: absolute;
@@ -34,8 +34,8 @@ const Container = styled.div<{ spectating: boolean }>`
 `
 
 const Icon = styled.img`
-  height: 18px;
-  opacity: 0.7;
+  height: 12px;
+  opacity: 0.5;
   display: block;
   margin: 0 auto;
   filter: invert(1);
@@ -48,8 +48,9 @@ const Heading = styled.p`
   margin-bottom: 12px;
   margin-right: 16px;
   font-weight: 600;
-  color: #ccc;
-  font-size: 16px;
+  color: #aaa;
+  font-size: 12px;
+  letter-spacing: 1px;
 
   ${GridCSS};
 `
@@ -128,7 +129,7 @@ const Leaderboard = observer(() => {
 
       {groups.map((group, index) => (
         <Group key={index}>
-          {group.players.map(player => (
+          {group.players.map((player) => (
             <Player key={player.id} opacity={player.alive ? 1 : 0.5}>
               <Row>
                 {player.alive ? (

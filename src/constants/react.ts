@@ -3,7 +3,7 @@ export const PRIMARY = '#e84118'
 export const SECONDARY = '#c23616'
 export const BLUE = '#0984e3'
 export const COLOR = {
-  HUD_BORDER: '#000',
+  HUD_BORDER: '#222',
   HUD_BACKGROUND: '#222222ee',
   BLUE: '#0984e3',
   FACEBOOK: '#3C5A99',

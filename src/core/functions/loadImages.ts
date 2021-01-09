@@ -5,7 +5,7 @@ const loader = Loader.shared
 const images = '/static/images'
 
 const loadImages = () => {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     loader
       .add('action-bg', `${images}/action-bg.png?${version}`)
       .add('action-icon-attack', `${images}/action-icon-attack.png?${version}`)
@@ -21,7 +21,7 @@ const loadImages = () => {
       .add('army', `${images}/army.png?${version}`)
       .add('armyIcon', `${images}/army-icon.png?${version}`)
       .add('arrow', `${images}/arrow.png?${version}`)
-      .add('base', `${images}/base.png?${version}`)
+      .add('capital', `${images}/capital.png?${version}`)
       .add('blackOverlay', `${images}/black-overlay.png?${version}`)
       .add('border', `${images}/border.png?${version}`)
       .add('castle', `${images}/castle.png?${version}`)

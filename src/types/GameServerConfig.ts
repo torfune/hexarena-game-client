@@ -18,7 +18,7 @@ interface GameServerConfig {
   // VISION
   DEFAULT_VISION: number
   MOUNTAIN_VISION: number
-  BASE_VISION: number
+  CAPITAL_VISION: number
   CASTLE_VISION: number
 
   // ACTION DURATIONS
@@ -59,7 +59,7 @@ interface GameServerConfig {
 
   // BUILDINGS
   HP: {
-    BASE: 2
+    CAPITAL: 2
     TOWER: 2
     CASTLE: 3
   }
