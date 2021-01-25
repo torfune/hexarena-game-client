@@ -2,9 +2,41 @@ import styled from 'styled-components'
 import TabHeading from './TabHeading'
 import React from 'react'
 import TabDescription from './TabDescription'
-import Video from '../Video';
+import Video from '../Video'
+import villageIcon from '../../icons/village.svg'
 
-const Container = styled.div``
+const Villages = () => (
+  <div>
+    <TabHeading>
+      <img src={villageIcon} />
+      Villages
+    </TabHeading>
+    <TabDescription>
+      <li>Capturing neutral Villages increases your Gold income speed.</li>
+      <li>Raiding Village with an Army gives instant Gold.</li>
+      <li>Village is bound to adjacent tiles of the same color.</li>
+    </TabDescription>
+
+    <Row>
+      <Column>
+        <h2>Capture neutral Village</h2>
+        <Video width="264px" height="120px">
+          <video width="264" autoPlay muted loop>
+            <source src="/static/videos/village-capture.mp4" type="video/mp4" />
+          </video>
+        </Video>
+      </Column>
+      <Column>
+        <h2>Raid enemy Village</h2>
+        <Video width="264px" height="120px">
+          <video width="264" autoPlay muted loop>
+            <source src="/static/videos/village-raid.mp4" type="video/mp4" />
+          </video>
+        </Video>
+      </Column>
+    </Row>
+  </div>
+)
 
 const Row = styled.div`
   display: flex;
@@ -21,42 +53,5 @@ const Column = styled.div`
     color: #fff;
   }
 `
-
-const Villages = () => {
-  return (
-    <Container>
-      <TabHeading>
-        <img src="/static/icons/village.svg" />
-        Villages
-      </TabHeading>
-      <TabDescription>
-        <li>
-          Capturing neutral Villages increases your Gold income speed.
-        </li>
-        <li>Raiding Village with an Army gives instant Gold.</li>
-        <li>Village is bound to adjacent tiles of the same color.</li>
-      </TabDescription>
-
-      <Row>
-        <Column>
-          <h2>Capture neutral Village</h2>
-          <Video width="264px" height="120px" >
-            <video width="264" autoPlay muted loop>
-              <source src="/static/videos/village-capture.mp4" type="video/mp4" />
-            </video>
-          </Video>
-        </Column>
-        <Column>
-          <h2>Raid enemy Village</h2>
-          <Video width="264px" height="120px">
-            <video width="264" autoPlay muted loop>
-              <source src="/static/videos/village-raid.mp4" type="video/mp4" />
-            </video>
-          </Video>
-        </Column>
-      </Row>
-    </Container>
-  )
-}
 
 export default Villages

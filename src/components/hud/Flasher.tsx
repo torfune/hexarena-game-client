@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import styled from 'styled-components'
-import store from '../../store'
+import store from '../../core/store'
 import { useEffect, useState } from 'react'
 import React from 'react'
 

@@ -7,8 +7,8 @@ import createImage from '../functions/createImage'
 import getPixelPosition from '../functions/getPixelPosition'
 import shuffle from '../../utils/shuffle'
 import destroyImage from '../functions/destroyImage'
-import store from '../../store'
-import Animation from '../classes/Animation'
+import store from '../store'
+import Animation from './Animation'
 import chance from '../../utils/chance'
 
 const TREE_MARGIN_X = 70

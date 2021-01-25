@@ -1,10 +1,14 @@
 import { observer } from 'mobx-react-lite'
 import styled, { css } from 'styled-components'
-import store from '../../store'
+import store from '../../core/store'
 import getPlayerGroups from '../../utils/getPlayerGroups'
 import React from 'react'
 import { CHAT_WIDTH, COLOR, BREAKPOINT } from '../../constants/react'
 import getHudScale from '../../utils/getHudScale'
+import goldIcon from '../../icons/gold.svg'
+import hexagonIcon from '../../icons/hexagon.svg'
+import villageIcon from '../../icons/village.svg'
+import skullIcon from '../../icons/skull.svg'
 
 const GridCSS = css`
   display: grid;
@@ -122,9 +126,9 @@ const Leaderboard = observer(() => {
     <Container spectating={store.spectating}>
       <Heading>
         <span>Leaderboard</span>
-        <Icon src="/static/icons/hexagon.svg" />
-        <Icon src="/static/icons/village.svg" />
-        <Icon src="/static/icons/gold.svg" />
+        <Icon src={hexagonIcon} />
+        <Icon src={villageIcon} />
+        <Icon src={goldIcon} />
       </Heading>
 
       {groups.map((group, index) => (
@@ -135,7 +139,7 @@ const Leaderboard = observer(() => {
                 {player.alive ? (
                   <Pattern color={player.pattern} />
                 ) : (
-                  <Skull src="/static/icons/skull.svg" />
+                  <Skull src={skullIcon} />
                 )}
 
                 <p>{player.name}</p>

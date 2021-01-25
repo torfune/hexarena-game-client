@@ -1,6 +1,6 @@
 import { easeInOutQuad } from '../functions/easing'
 import { Sprite } from 'pixi.js-legacy'
-import store from '../../store'
+import store from '../store'
 import roundToDecimals from '../functions/roundToDecimals'
 
 class Animation {

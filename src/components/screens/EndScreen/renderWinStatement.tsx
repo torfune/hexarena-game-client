@@ -1,6 +1,6 @@
 import Player from '../../../core/classes/Player'
 import React from 'react'
-import store from '../../../store'
+import store from '../../../core/store'
 
 const renderWinStatement = (players: Player[]) => {
   if (store.game && store.game.mode === 'FFA') {

@@ -1,5 +1,5 @@
 import { Sprite } from 'pixi.js-legacy'
-import store from '../../store'
+import store from '../store'
 
 const destroyImage = (key: string, image: Sprite) => {
   if (!store.game) return

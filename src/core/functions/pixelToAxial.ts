@@ -1,6 +1,6 @@
 import { TILE_RADIUS } from '../../constants/game'
 import { Pixel, Cube, Axial } from '../../types/coordinates'
-import store from '../../store'
+import store from '../store'
 
 const pixelToAxial = (pixel: Pixel) => {
   if (!store.game) return { x: 0, z: 0 }

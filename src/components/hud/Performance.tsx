@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import store from '../../store'
+import store from '../../core/store'
 import React from 'react'
 import { COLOR } from '../../constants/react'
 import getHudScale from '../../utils/getHudScale'

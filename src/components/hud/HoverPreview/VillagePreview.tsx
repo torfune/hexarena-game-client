@@ -1,6 +1,22 @@
 import styled from 'styled-components'
 import React from 'react'
 import { COLOR } from '../../../constants/react'
+import villageIcon from '../../../icons/village.svg'
+
+interface Props {
+  villageIncome: number
+}
+const VillagePreview = ({ villageIncome }: Props) => (
+  <Container>
+    <Icon src={villageIcon} />
+    <div>
+      <Label>Village</Label>
+      <IncomeDescription>
+        Produces {villageIncome} gold per minute
+      </IncomeDescription>
+    </div>
+  </Container>
+)
 
 const Container = styled.div`
   padding: 6px 12px;
@@ -19,7 +35,7 @@ const Label = styled.p`
 
 const IncomeDescription = styled.p`
   color: #aaa;
-  font-size: 14;
+  font-size: 16px;
 `
 
 const Icon = styled.img`
@@ -27,20 +43,5 @@ const Icon = styled.img`
   height: 32px;
   margin-right: 10px;
 `
-
-interface Props {
-  villageIncome: number
-}
-const VillagePreview: React.FC<Props> = ({ villageIncome }) => (
-  <Container>
-    <Icon src="/static/icons/village.svg" />
-    <div>
-      <Label>Village</Label>
-      <IncomeDescription>
-        Produces {villageIncome} gold per minute
-      </IncomeDescription>
-    </div>
-  </Container>
-)
 
 export default VillagePreview

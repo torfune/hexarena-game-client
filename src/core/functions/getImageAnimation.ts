@@ -1,6 +1,6 @@
 import Animation from '../classes/Animation'
 import { Sprite } from 'pixi.js-legacy'
-import store from '../../store'
+import store from '../store'
 
 const getImageAnimation = (image: Sprite) => {
   if (!store.game) return null

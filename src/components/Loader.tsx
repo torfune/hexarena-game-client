@@ -4,11 +4,10 @@ import { PRIMARY } from '../constants/react'
 import shadeColor from '../utils/shade'
 import { observer } from 'mobx-react-lite'
 import React, { useEffect } from 'react'
-import store from '../store'
+import store from '../core/store'
 import loadImages from '../core/functions/loadImages'
-import Header from './Header'
 import Socket from '../core/websockets/Socket'
-import { version } from '../../_package.json'
+import { version } from '../../package.json'
 import Api, { gsHost } from '../services/Api'
 import SoundManager from '../services/SoundManager'
 import LocalStorageService from '../services/LocalStorageService'
@@ -58,7 +57,6 @@ const Loader: React.FC = () => {
   if (store.loading) {
     return (
       <>
-        <Header />
         <Container>
           <StyledSpinner size="96px" thickness="6px" color="#fff" />
         </Container>
@@ -69,7 +67,6 @@ const Loader: React.FC = () => {
   if (store.error) {
     return (
       <>
-        <Header />
         <Container>
           <ErrorMessage>
             {store.error && store.error.message

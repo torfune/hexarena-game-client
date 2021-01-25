@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import Label from './Label'
 import { observer } from 'mobx-react-lite'
-import store from '../../../store'
+import store from '../../../core/store'
 import { COLOR } from '../../../constants/react'
 
 const Container = styled.div`

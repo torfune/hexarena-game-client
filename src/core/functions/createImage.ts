@@ -1,6 +1,6 @@
 import { Sprite, Loader } from 'pixi.js-legacy'
 import hex from './hex'
-import store from '../../store'
+import store from '../store'
 
 const loader = Loader.shared
 

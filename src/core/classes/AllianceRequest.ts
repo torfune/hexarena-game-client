@@ -2,7 +2,7 @@ import Player from './Player'
 import Primitive from '../../types/Primitive'
 import Prop from '../../types/Prop'
 import createProp from '../../utils/createProp'
-import { observable, computed } from 'mobx'
+import { observable, computed, makeObservable } from 'mobx'
 
 interface Props {
   [key: string]: Prop<Primitive>
@@ -10,7 +10,7 @@ interface Props {
 }
 
 class AllianceRequest {
-  @observable props: Props = {
+  props: Props = {
     timeout: createProp(0),
   }
 
@@ -22,6 +22,11 @@ class AllianceRequest {
     this.id = id
     this.sender = sender
     this.receiver = receiver
+
+    makeObservable(this, {
+      props: observable,
+      timeout: computed,
+    })
   }
 
   setProp(key: keyof Props, value: Primitive) {
@@ -31,7 +36,7 @@ class AllianceRequest {
     this.props[key].current = value
   }
 
-  @computed get timeout() {
+  get timeout() {
     return this.props.timeout.current
   }
 }

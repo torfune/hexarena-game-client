@@ -8,7 +8,114 @@ import Controls from './Controls'
 import Mechanics from './Mechanics'
 import Buildings from './Buildings'
 import Villages from './Villages'
-import store from '../../store'
+import store from '../../core/store'
+import bookIcon from '../../icons/book.svg'
+import crossIcon from '../../icons/cross.svg'
+
+const TABS = [
+  'MECHANICS',
+  'BUILDINGS',
+  'ARMIES',
+  'VILLAGES',
+  'GOAL',
+  'CONTROLS',
+]
+
+const START_TAB = 0
+
+interface Props {
+  show: boolean
+  close: () => void
+}
+const HowToPlay: React.FC<Props> = ({ show, close }) => {
+  const transitions = useTransition(show, null, TRANSITION.SCALE)
+  const [tab, setTab] = useState(TABS[START_TAB])
+
+  useEffect(() => {
+    if (show) {
+      setTab(TABS[START_TAB])
+
+      if (store.game && store.game.loop) {
+        store.game.loop.stop()
+      }
+    } else {
+      if (store.game && store.game.loop) {
+        store.game.loop.start()
+      }
+    }
+  }, [show])
+
+  const handleContinueClick = () => {
+    const currentTabIndex = TABS.indexOf(tab)
+    if (currentTabIndex === TABS.length - 1) {
+      close()
+      return
+    }
+
+    setTab(TABS[currentTabIndex + 1])
+  }
+
+  return (
+    <>
+      {transitions.map(
+        ({ item, key, props }) =>
+          item && (
+            <Container key={key} style={props}>
+              <Header>
+                <Heading>
+                  <img src={bookIcon} />
+                  How to play
+                </Heading>
+                <CloseButton onClick={close}>
+                  <img src={crossIcon} />
+                </CloseButton>
+              </Header>
+
+              <Row>
+                <Navigation>
+                  {TABS.map((TAB) => (
+                    <NavigationItem
+                      key={TAB}
+                      onClick={() => setTab(TAB)}
+                      selected={tab === TAB}
+                    >
+                      {TAB}
+                    </NavigationItem>
+                  ))}
+                </Navigation>
+
+                <TabContent>
+                  {(() => {
+                    switch (tab) {
+                      case 'GOAL':
+                        return <Goal />
+                      case 'CONTROLS':
+                        return <Controls />
+                      case 'MECHANICS':
+                        return <Mechanics />
+                      case 'BUILDINGS':
+                        return <Buildings />
+                      case 'ARMIES':
+                        return <Armies />
+                      case 'VILLAGES':
+                        return <Villages />
+                    }
+                    return null
+                  })()}
+                  <ContinueButton onClick={handleContinueClick}>
+                    {TABS.indexOf(tab) === TABS.length - 1
+                      ? 'Close'
+                      : 'Continue'}
+                  </ContinueButton>
+                </TabContent>
+              </Row>
+            </Container>
+          )
+      )}
+      {show && <Background onClick={close} />}
+    </>
+  )
+}
 
 const Container = styled(animated.div)`
   position: fixed;
@@ -98,8 +205,8 @@ const Navigation = styled.div`
 
 const NavigationItem = styled.p<{ selected: boolean }>`
   padding: 8px 0;
-  color: ${props => (props.selected ? '#fff' : '#888')};
-  font-weight: ${props => (props.selected ? '700' : '600')};
+  color: ${(props) => (props.selected ? '#fff' : '#888')};
+  font-weight: ${(props) => (props.selected ? '700' : '600')};
   font-size: 12px;
 
   :hover {
@@ -118,110 +225,5 @@ const Row = styled.div`
   margin-top: 16px;
   justify-content: space-between;
 `
-
-const TABS = [
-  'MECHANICS',
-  'BUILDINGS',
-  'ARMIES',
-  'VILLAGES',
-  'GOAL',
-  'CONTROLS',
-]
-
-const START_TAB = 0
-
-interface Props {
-  show: boolean
-  close: () => void
-}
-const HowToPlay: React.FC<Props> = ({ show, close }) => {
-  const transitions = useTransition(show, null, TRANSITION.SCALE)
-  const [tab, setTab] = useState(TABS[START_TAB])
-
-  useEffect(() => {
-    if (show) {
-      setTab(TABS[START_TAB])
-
-      if (store.game && store.game.loop) {
-        store.game.loop.stop()
-      }
-    } else {
-      if (store.game && store.game.loop) {
-        store.game.loop.start()
-      }
-    }
-  }, [show])
-
-  const handleContinueClick = () => {
-    const currentTabIndex = TABS.indexOf(tab)
-    if (currentTabIndex === TABS.length - 1) {
-      close()
-      return
-    }
-
-    setTab(TABS[currentTabIndex + 1])
-  }
-
-  return (
-    <>
-      {transitions.map(
-        ({ item, key, props }) =>
-          item && (
-            <Container key={key} style={props}>
-              <Header>
-                <Heading>
-                  <img src="/static/icons/book.svg" />
-                  How to play
-                </Heading>
-                <CloseButton onClick={close}>
-                  <img src="/static/icons/cross.svg" />
-                </CloseButton>
-              </Header>
-
-              <Row>
-                <Navigation>
-                  {TABS.map(TAB => (
-                    <NavigationItem
-                      key={TAB}
-                      onClick={() => setTab(TAB)}
-                      selected={tab === TAB}
-                    >
-                      {TAB}
-                    </NavigationItem>
-                  ))}
-                </Navigation>
-
-                <TabContent>
-                  {(() => {
-                    switch (tab) {
-                      case 'GOAL':
-                        return <Goal />
-                      case 'CONTROLS':
-                        return <Controls />
-                      case 'MECHANICS':
-                        return <Mechanics />
-                      case 'BUILDINGS':
-                        return <Buildings />
-                      case 'ARMIES':
-                        return <Armies />
-                      case 'VILLAGES':
-                        return <Villages />
-                    }
-                    return null
-                  })()}
-                  <ContinueButton onClick={handleContinueClick}>
-                    {TABS.indexOf(tab) === TABS.length - 1
-                      ? 'Close'
-                      : 'Continue'}
-                  </ContinueButton>
-                </TabContent>
-              </Row>
-            </Container>
-          )
-      )}
-      {show && <Background onClick={close} />}
-    </>
-  )
-}
 
 export default HowToPlay

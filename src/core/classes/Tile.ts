@@ -1,6 +1,6 @@
 import getPixelPosition from '../functions/getPixelPosition'
 import Army from './Army'
-import store from '../../store'
+import store from '../store'
 import createImage from '../functions/createImage'
 import hex from '../functions/hex'
 import {

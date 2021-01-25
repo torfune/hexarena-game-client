@@ -3,6 +3,41 @@ import { animated } from 'react-spring'
 import { BOX_SHADOW } from '../../../constants/react'
 import Hexagon from '../../Hexagon'
 import React from 'react'
+import lockIcon from '../../../icons/lock.svg'
+
+interface Props {
+  style: any
+  allPatterns: string[]
+  lockedPatterns: string[]
+  onPatternSelect: (pattern: string) => void
+}
+const PatternSelector: React.FC<Props> = ({
+  style,
+  allPatterns,
+  lockedPatterns,
+  onPatternSelect,
+}) => (
+  <Container style={style}>
+    <Label>Select color</Label>
+
+    <Patterns>
+      {allPatterns.map((pattern) => {
+        const locked = lockedPatterns.includes(pattern)
+
+        return (
+          <PatternWrapper
+            key={pattern}
+            locked={locked}
+            onClick={() => onPatternSelect(pattern)}
+          >
+            <Hexagon color={pattern} size="50px" />
+            <LockIcon src={lockIcon} locked={locked} />
+          </PatternWrapper>
+        )
+      })}
+    </Patterns>
+  </Container>
+)
 
 const Container = styled(animated.div)`
   top: -40px;
@@ -57,39 +92,5 @@ const LockIcon = styled.img<LockIconProps>`
   top: -37px;
   visibility: ${(props) => (props.locked ? 'visible' : 'hidden')};
 `
-
-interface Props {
-  style: any
-  allPatterns: string[]
-  lockedPatterns: string[]
-  onPatternSelect: (pattern: string) => void
-}
-const PatternSelector: React.FC<Props> = ({
-  style,
-  allPatterns,
-  lockedPatterns,
-  onPatternSelect,
-}) => (
-  <Container style={style}>
-    <Label>Select color</Label>
-
-    <Patterns>
-      {allPatterns.map((pattern) => {
-        const locked = lockedPatterns.includes(pattern)
-
-        return (
-          <PatternWrapper
-            key={pattern}
-            locked={locked}
-            onClick={() => onPatternSelect(pattern)}
-          >
-            <Hexagon color={pattern} size="50px" />
-            <LockIcon src="/static/icons/lock.svg" locked={locked} />
-          </PatternWrapper>
-        )
-      })}
-    </Patterns>
-  </Container>
-)
 
 export default PatternSelector

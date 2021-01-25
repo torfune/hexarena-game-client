@@ -4,7 +4,7 @@ import { UNIT_IMAGE_SCALE, UNIT_MAX_DELAY } from '../../../constants/game'
 import roundToDecimals from '../../functions/roundToDecimals'
 import { Pixel } from '../../../types/coordinates'
 import { Sprite } from 'pixi.js-legacy'
-import store from '../../../store'
+import store from '../../store'
 
 class Unit {
   image: Sprite = createImage('army')

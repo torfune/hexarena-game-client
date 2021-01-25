@@ -3,7 +3,7 @@ import List from './List'
 import { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import Label from '../../Label'
-import store from '../../../store'
+import store from '../../../core/store'
 import { BLUE, PRIMARY, COLOR } from '../../../constants/react'
 import React from 'react'
 import getHudScale from '../../../utils/getHudScale'
@@ -64,7 +64,7 @@ const ToggleButton = styled.div`
   }
 `
 
-let flashInterval: NodeJS.Timeout
+let flashInterval: number
 
 const Diplomacy = () => {
   const [sendingRequest, setSendingRequest] = useState(false)

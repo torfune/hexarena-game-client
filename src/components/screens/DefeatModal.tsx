@@ -3,7 +3,7 @@ import { PopIn } from '../Animations'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { BOX_SHADOW, PRIMARY, SECONDARY } from '../../constants/react'
-import store from '../../store'
+import store from '../../core/store'
 import React from 'react'
 
 const WIDTH = 700
@@ -83,7 +83,7 @@ const ScreenOverlay = styled.div`
   opacity: 0.2;
 `
 
-let showTimeout: NodeJS.Timeout | null = null
+let showTimeout: number | null = null
 
 const DefeatModal = () => {
   const [show, setShow] = useState(false)

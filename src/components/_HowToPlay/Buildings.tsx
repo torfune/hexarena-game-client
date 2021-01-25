@@ -2,8 +2,77 @@ import styled from 'styled-components'
 import TabHeading from './TabHeading'
 import React from 'react'
 import TabDescription from './TabDescription'
+import heartIcon from '../../icons/heart.svg'
 
-const Container = styled.div``
+const Buildings = () => (
+  <div>
+    <TabHeading>
+      <img src="/static/images/castle-icon.png" />
+      Buildings
+    </TabHeading>
+
+    <TabDescription>
+      <li>
+        Every building can store and send <span>Army</span>.
+      </li>
+      <li>Strategic placement is very important.</li>
+    </TabDescription>
+
+    <Row>
+      <Building>
+        <BuildingName>Capital</BuildingName>
+        <Image src="/static/images/base-ingame.png" />
+        <BuildingStats>
+          <Health>
+            <img src={heartIcon} />
+            <p>2</p>
+          </Health>
+          <RecruitIcon />
+        </BuildingStats>
+      </Building>
+
+      <Row>
+        <Building>
+          <BuildingName>Camp</BuildingName>
+          <Image src="/static/images/camp-ingame.png" />
+          <BuildingStats>
+            <Health>
+              <img src={heartIcon} />
+              <p>0</p>
+            </Health>
+          </BuildingStats>
+        </Building>
+
+        <Arrow />
+
+        <Building>
+          <BuildingName>Tower</BuildingName>
+          <Image src="/static/images/tower-ingame.png" />
+          <BuildingStats>
+            <Health>
+              <img src={heartIcon} />
+              <p>2</p>
+            </Health>
+          </BuildingStats>
+        </Building>
+
+        <Arrow />
+
+        <Building>
+          <BuildingName>Castle</BuildingName>
+          <Image src="/static/images/castle-ingame.png" />
+          <BuildingStats>
+            <Health>
+              <img src={heartIcon} />
+              <p>3</p>
+            </Health>
+            <RecruitIcon />
+          </BuildingStats>
+        </Building>
+      </Row>
+    </Row>
+  </div>
+)
 
 const Row = styled.div`
   display: flex;
@@ -17,6 +86,7 @@ const BuildingName = styled.p`
   margin-bottom: 8px;
   font-weight: 500;
   text-transform: uppercase;
+
   letter-spacing: 2px;
 `
 
@@ -78,77 +148,5 @@ const BuildingStats = styled.div`
   padding-right: 6px;
   padding-bottom: 4px;
 `
-
-const Buildings = () => {
-  return (
-    <Container>
-      <TabHeading>
-        <img src="/static/images/castle-icon.png" />
-        Buildings
-      </TabHeading>
-
-      <TabDescription>
-        <li>
-          Every building can store and send <span>Army</span>.
-        </li>
-        <li>Strategic placement is very important.</li>
-      </TabDescription>
-
-      <Row>
-        <Building>
-          <BuildingName>Capital</BuildingName>
-          <Image src="/static/images/base-ingame.png" />
-          <BuildingStats>
-            <Health>
-              <img src="/static/icons/heart.svg" />
-              <p>2</p>
-            </Health>
-            <RecruitIcon />
-          </BuildingStats>
-        </Building>
-
-        <Row>
-          <Building>
-            <BuildingName>Camp</BuildingName>
-            <Image src="/static/images/camp-ingame.png" />
-            <BuildingStats>
-              <Health>
-                <img src="/static/icons/heart.svg" />
-                <p>0</p>
-              </Health>
-            </BuildingStats>
-          </Building>
-
-          <Arrow />
-
-          <Building>
-            <BuildingName>Tower</BuildingName>
-            <Image src="/static/images/tower-ingame.png" />
-            <BuildingStats>
-              <Health>
-                <img src="/static/icons/heart.svg" />
-                <p>2</p>
-              </Health>
-            </BuildingStats>
-          </Building>
-
-          <Arrow />
-
-          <Building>
-            <BuildingName>Castle</BuildingName>
-            <Image src="/static/images/castle-ingame.png" />
-            <BuildingStats>
-              <Health>
-                <img src="/static/icons/heart.svg" />
-                <p>3</p>
-              </Health>
-              <RecruitIcon />
-            </BuildingStats>
-          </Building>
-        </Row>
-      </Row>
-    </Container>
-  )
-}
 
 export default Buildings

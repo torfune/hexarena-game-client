@@ -2,7 +2,7 @@ import { Sprite } from 'pixi.js-legacy'
 import createImage from '../functions/createImage'
 import Tile from './Tile'
 import getPixelPosition from '../functions/getPixelPosition'
-import store from '../../store'
+import store from '../store'
 import destroyImage from '../functions/destroyImage'
 
 class ArmyDragArrow {

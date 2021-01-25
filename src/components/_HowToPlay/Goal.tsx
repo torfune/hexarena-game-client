@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import TabHeading from './TabHeading'
 import React from 'react'
 import Video from '../Video'
+import goalIcon from '../../icons/goal.svg'
 
 const Container = styled.div`
   width: 100%;
@@ -21,30 +22,28 @@ const Text = styled.div`
   }
 `
 
-const Goal = () => {
-  return (
-    <Container>
-      <TabHeading>
-        <img src="/static/icons/goal.svg" />
-        Goal
-      </TabHeading>
+const Goal = () => (
+  <Container>
+    <TabHeading>
+      <img src={goalIcon} />
+      Goal
+    </TabHeading>
 
-      <Row>
-        <Text>
-          <p>The goal is to capture enemy Capital.</p>
-          <p>
-            Game automatically ends after 8&nbsp;minutes. Player or Team with
-            the most tiles wins.
-          </p>
-        </Text>
-        <Video width="220px" height="260px">
-          <video width="220" autoPlay muted loop>
-            <source src="/static/videos/victory.mp4" type="video/mp4" />
-          </video>
-        </Video>
-      </Row>
-    </Container>
-  )
-}
+    <Row>
+      <Text>
+        <p>The goal is to capture enemy Capital.</p>
+        <p>
+          Game automatically ends after 8&nbsp;minutes. Player or Team with the
+          most tiles wins.
+        </p>
+      </Text>
+      <Video width="220px" height="260px">
+        <video width="220" autoPlay muted loop>
+          <source src="/static/videos/victory.mp4" type="video/mp4" />
+        </video>
+      </Video>
+    </Row>
+  </Container>
+)
 
 export default Goal

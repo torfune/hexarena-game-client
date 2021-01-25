@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import Label from './Label'
 import { observer } from 'mobx-react-lite'
-import store from '../../../store'
+import store from '../../../core/store'
 
 const Container = styled.div`
   padding: 16px 20px;

@@ -2,7 +2,40 @@ import styled from 'styled-components'
 import React from 'react'
 import Player from '../../../core/classes/Player'
 import { COLOR, PRIMARY, BLUE } from '../../../constants/react'
-import store from '../../../store'
+import store from '../../../core/store'
+import skullIcon from '../../../icons/skull.svg'
+
+interface Props {
+  player: Player
+}
+const PlayerPreview: React.FC<Props> = ({ player }) => {
+  const ally = store.game && store.game.playerId === player.allyId
+
+  return (
+    <Container>
+      {player.pattern === '#ccc' ? (
+        <Icon src={skullIcon} />
+      ) : (
+        <Pattern color={player.pattern} />
+      )}
+      <Name>{player.name}</Name>
+      {!store.spectating && (
+        <AllyOrEnemy background={ally ? BLUE : PRIMARY}>
+          {ally ? 'ALLY' : 'ENEMY'}
+        </AllyOrEnemy>
+      )}
+
+      {/* <Icon src="/static/icons/hexagon.svg" />
+    <Value>{player.tilesCount}</Value>
+
+    <Icon src="/static/icons/village.svg" />
+    <Value>{player.economy}</Value>
+
+    <Icon src="/static/icons/gold.svg" />
+    <Value>{player.gold}</Value> */}
+    </Container>
+  )
+}
 
 const Container = styled.div`
   padding-top: 8px;
@@ -31,13 +64,6 @@ const Icon = styled.img`
   filter: invert(1);
 `
 
-// const Value = styled.p`
-//   font-size: 20px;
-//   margin-right: 16px;
-//   font-weight: 600;
-//   color: #fff;
-// `
-
 interface PatternProps {
   color: string
 }
@@ -60,36 +86,5 @@ const AllyOrEnemy = styled.div<AllyOrEnemyProps>`
   font-size: 14px;
   font-weight: 600;
 `
-
-interface Props {
-  player: Player
-}
-const PlayerPreview: React.FC<Props> = ({ player }) => {
-  const ally = store.game && store.game.playerId === player.allyId
-  return (
-    <Container>
-      {player.pattern === '#ccc' ? (
-        <Icon src="/static/icons/skull.svg" />
-      ) : (
-        <Pattern color={player.pattern} />
-      )}
-      <Name>{player.name}</Name>
-      {!store.spectating && (
-        <AllyOrEnemy background={ally ? BLUE : PRIMARY}>
-          {ally ? 'ALLY' : 'ENEMY'}
-        </AllyOrEnemy>
-      )}
-
-      {/* <Icon src="/static/icons/hexagon.svg" />
-    <Value>{player.tilesCount}</Value>
-
-    <Icon src="/static/icons/village.svg" />
-    <Value>{player.economy}</Value>
-
-    <Icon src="/static/icons/gold.svg" />
-    <Value>{player.gold}</Value> */}
-    </Container>
-  )
-}
 
 export default PlayerPreview

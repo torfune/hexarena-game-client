@@ -2,6 +2,45 @@ import styled from 'styled-components'
 import PlayerGroup from '../../../types/PlayerGroup'
 import React from 'react'
 import { PRIMARY } from '../../../constants/react'
+import skullIcon from '../../../icons/skull.svg'
+
+interface Props {
+  groups: PlayerGroup[]
+}
+const Table: React.FC<Props> = ({ groups }) => (
+  <Container>
+    <Header>
+      <p>Player</p>
+      <p>Tiles</p>
+    </Header>
+
+    {groups.map((group, index) => (
+      <Group key={index}>
+        {group.players.map((player) => (
+          <Player key={player.id}>
+            <NameAndTiles opacity={player.alive ? 1 : 0.5}>
+              {player.alive ? (
+                <Pattern color={player.pattern} />
+              ) : (
+                <Skull src={skullIcon} />
+              )}
+              <p>{player.name}</p>
+              <p>{player.alive ? player.tilesCount : '-'}</p>
+            </NameAndTiles>
+            <ReasonOfDeath>
+              {player.killerName && (
+                <p>
+                  Killed by <span>{player.killerName}</span>
+                </p>
+              )}
+              {!player.alive && !player.killerName && <p>Surrendered.</p>}
+            </ReasonOfDeath>
+          </Player>
+        ))}
+      </Group>
+    ))}
+  </Container>
+)
 
 const Container = styled.div`
   margin: 0 auto;
@@ -84,42 +123,5 @@ const ReasonOfDeath = styled.div`
     opacity: 1;
   }
 `
-interface Props {
-  groups: PlayerGroup[]
-}
-const Table: React.FC<Props> = ({ groups }) => (
-  <Container>
-    <Header>
-      <p>Player</p>
-      <p>Tiles</p>
-    </Header>
-
-    {groups.map((group, index) => (
-      <Group key={index}>
-        {group.players.map((player) => (
-          <Player key={player.id}>
-            <NameAndTiles opacity={player.alive ? 1 : 0.5}>
-              {player.alive ? (
-                <Pattern color={player.pattern} />
-              ) : (
-                <Skull src="/static/icons/skull.svg" />
-              )}
-              <p>{player.name}</p>
-              <p>{player.alive ? player.tilesCount : '-'}</p>
-            </NameAndTiles>
-            <ReasonOfDeath>
-              {player.killerName && (
-                <p>
-                  Killed by <span>{player.killerName}</span>
-                </p>
-              )}
-              {!player.alive && !player.killerName && <p>Surrendered.</p>}
-            </ReasonOfDeath>
-          </Player>
-        ))}
-      </Group>
-    ))}
-  </Container>
-)
 
 export default Table

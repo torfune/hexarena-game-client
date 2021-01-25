@@ -2,35 +2,13 @@ import styled from 'styled-components'
 import TabHeading from './TabHeading'
 import React from 'react'
 import Video from '../Video'
-
-const Container = styled.div`
-  width: 100%;
-`
-
-const Row = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-top: 24px;
-`
-
-const Text = styled.div`
-  width: 300px;
-
-  h2 {
-    font-size: 16px;
-    font-weight: 700;
-  }
-
-  p {
-    margin-bottom: 16px;
-  }
-`
+import controlsIcon from '../../icons/controls.svg'
 
 const Controls = () => {
   return (
     <Container>
       <TabHeading>
-        <img src="/static/icons/controls.svg" />
+        <img src={controlsIcon} />
         Controls
       </TabHeading>
 
@@ -54,5 +32,28 @@ const Controls = () => {
     </Container>
   )
 }
+
+const Container = styled.div`
+  width: 100%;
+`
+
+const Row = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 24px;
+`
+
+const Text = styled.div`
+  width: 300px;
+
+  h2 {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  p {
+    margin-bottom: 16px;
+  }
+`
 
 export default Controls

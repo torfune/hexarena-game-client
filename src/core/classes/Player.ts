@@ -1,8 +1,8 @@
-import store from '../../store'
+import store from '../store'
 import Primitive from '../../types/Primitive'
 import Prop from '../../types/Prop'
 import createProp from '../../utils/createProp'
-import { computed, observable } from 'mobx'
+import { computed, makeAutoObservable, makeObservable, observable } from 'mobx'
 import hex from '../functions/hex'
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
 }
 
 class Player {
-  @observable props: Props = {
+  props: Props = {
     pattern: createProp(''),
     allyId: createProp(null),
     tilesCount: createProp(0),
@@ -26,16 +26,18 @@ class Player {
     killerName: createProp(''),
   }
 
-  readonly id: string
-  readonly name: string
-  readonly registered: boolean
-  @observable ally: Player | null = null
+  id: string
+  name: string
+  registered: boolean
+  ally: Player | null = null
 
   constructor(id: string, name: string, pattern: string, registered: boolean) {
     this.id = id
     this.name = name
     this.props.pattern = createProp(pattern)
     this.registered = registered
+
+    makeAutoObservable(this)
   }
 
   setProp(key: keyof Props, value: Primitive) {
@@ -67,25 +69,25 @@ class Player {
   }
 
   // Prop getters
-  @computed get pattern() {
+  get pattern() {
     return this.props.pattern.current
   }
-  @computed get allyId() {
+  get allyId() {
     return this.props.allyId.current
   }
-  @computed get tilesCount() {
+  get tilesCount() {
     return this.props.tilesCount.current
   }
-  @computed get gold() {
+  get gold() {
     return this.props.gold.current
   }
-  @computed get economy() {
+  get economy() {
     return this.props.economy.current
   }
-  @computed get alive() {
+  get alive() {
     return this.props.alive.current
   }
-  @computed get killerName() {
+  get killerName() {
     return this.props.killerName.current
   }
 }

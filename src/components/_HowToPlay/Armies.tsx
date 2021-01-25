@@ -3,22 +3,13 @@ import TabHeading from './TabHeading'
 import React from 'react'
 import TabDescription from './TabDescription'
 import Video from '../Video'
-
-const Container = styled.div``
-
-const Row = styled.div`
-  margin-top: -8px;
-  display: flex;
-  justify-content: space-between;
-`
-
-const Column = styled.div``
+import armyIcon from '../../icons/army.svg'
 
 const Armies = () => {
   return (
-    <Container>
+    <div>
       <TabHeading>
-        <img src="/static/icons/army.svg" />
+        <img src={armyIcon} />
         Armies
       </TabHeading>
 
@@ -41,8 +32,14 @@ const Armies = () => {
           </video>
         </Video>
       </Row>
-    </Container>
+    </div>
   )
 }
+
+const Row = styled.div`
+  margin-top: -8px;
+  display: flex;
+  justify-content: space-between;
+`
 
 export default Armies

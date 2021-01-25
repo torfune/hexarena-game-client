@@ -1,12 +1,10 @@
-import store from '../store'
+import store from '../core/store'
+
+const w = window as any
+const AudioContext = w.AudioContext || w.webkitAudioContext
+const baseUrl = process.env.PUBLIC_URL + '/sounds'
 
 const isSupported = () => {
-  // maybe we don't need this ?
-  if (typeof window === 'undefined') return false
-
-  const w = window as any
-  const AudioContext = w.AudioContext || w.webkitAudioContext
-
   try {
     new AudioContext()
     return true
@@ -17,27 +15,27 @@ const isSupported = () => {
 
 const SOUNDS = {
   CAPTURE: {
-    url: '/static/sounds/click01.mp3',
+    url: `${baseUrl}/click01.mp3`,
     volume: 0.4,
     offset: 0,
   },
   ACTION: {
-    url: '/static/sounds/click02.mp3',
+    url: `${baseUrl}/click02.mp3`,
     volume: 0.5,
     offset: 0,
   },
   ARMY_SEND: {
-    url: '/static/sounds/click03.mp3',
+    url: `${baseUrl}/click03.mp3`,
     volume: 1,
     offset: 0,
   },
   VILLAGE_RAID: {
-    url: '/static/sounds/coin01.mp3',
+    url: `${baseUrl}/coin01.mp3`,
     volume: 0.2,
     offset: 0,
   },
   BUILDING: {
-    url: '/static/sounds/wave01.mp3',
+    url: `${baseUrl}/wave01.mp3`,
     volume: 0.4,
     offset: 0.5,
   },

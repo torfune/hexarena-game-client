@@ -9,7 +9,7 @@ import {
 } from '../../constants/game'
 import createGameLoop from '../functions/createGameLoop'
 import createPixiApp from '../functions/createPixiApp'
-import store from '../../store'
+import store from '../store'
 import { Pixel, Axial } from '../../types/coordinates'
 import Animation from './Animation'
 import pixelToAxial from '../functions/pixelToAxial'
@@ -21,7 +21,7 @@ import Tile from './Tile'
 import { Ticker, Application, Container } from 'pixi.js-legacy'
 import Action from './Action'
 import { v4 as uuid } from 'uuid'
-import { observable, computed } from 'mobx'
+import { makeAutoObservable } from 'mobx'
 import AllianceRequest from './AllianceRequest'
 import Army from './Army'
 import Player from './Player'
@@ -35,36 +35,36 @@ import LocalStorageService from '../../services/LocalStorageService'
 import GameStatus from '../../types/GameStatus'
 
 class Game {
-  readonly id: string
-  readonly mode: GameMode
-  readonly ranked: boolean = false
-  readonly stage: Map<string, Container> = new Map()
-  @observable allianceRequests: Map<string, AllianceRequest> = new Map()
-  @observable armies: Map<string, Army> = new Map()
-  @observable players: Map<string, Player> = new Map()
-  @observable forests: Map<string, Forest> = new Map()
-  @observable villages: Map<string, Village> = new Map()
-  @observable tiles: Map<string, Tile> = new Map()
-  @observable actions: Action[] = []
-  @observable hoveredTile: Tile | null = null
-  @observable startCountdown: number | null = null
-  @observable incomeAt: number | null = null
-  @observable lastIncomeAt: number | null = null
-  @observable incomeStartedAt: number | null = null
-  @observable serverTime: number | null = null
-  @observable goldAnimation: { tileId: string; count: number } | null = null
-  @observable notification: string | null = null
-  @observable flash: number | null = null
-  @observable showHud: boolean = true
-  @observable fps: number | null = 0
-  @observable ping: number | null = 0
-  @observable status: GameStatus | null = null
-  @observable time: number | null = null
-  @observable playerId: string | null = null
-  @observable spawnTile: Tile | null = null
-  @observable cursor: Pixel | null = null
-  @observable hoveredTileInfo: HoveredTileInfo | null = null // move this to react layer
-  @observable spectators: number | null = 0
+  id: string
+  mode: GameMode
+  ranked: boolean = false
+  stage: Map<string, Container> = new Map()
+  allianceRequests: Map<string, AllianceRequest> = new Map()
+  armies: Map<string, Army> = new Map()
+  players: Map<string, Player> = new Map()
+  forests: Map<string, Forest> = new Map()
+  villages: Map<string, Village> = new Map()
+  tiles: Map<string, Tile> = new Map()
+  actions: Action[] = []
+  hoveredTile: Tile | null = null
+  startCountdown: number | null = null
+  incomeAt: number | null = null
+  lastIncomeAt: number | null = null
+  incomeStartedAt: number | null = null
+  serverTime: number | null = null
+  goldAnimation: { tileId: string; count: number } | null = null
+  notification: string | null = null
+  flash: number | null = null
+  showHud: boolean = true
+  fps: number | null = 0
+  ping: number | null = 0
+  status: GameStatus | null = null
+  time: number | null = null
+  playerId: string | null = null
+  spawnTile: Tile | null = null
+  cursor: Pixel | null = null
+  // hoveredTileInfo: HoveredTileInfo | null = null // move this to react layer
+  spectators: number | null = 0
   scale: number = DEFAULT_SCALE
   targetScale: number = DEFAULT_SCALE
   selectedArmyTile: Tile | null = null
@@ -72,19 +72,16 @@ class Game {
   pixi: Application | null = null
   pingArray: number[] = []
   fpsArray: number[] = []
-  readonly animations: Array<Animation | GoldAnimation> = []
+  animations: Array<Animation | GoldAnimation> = []
   camera: Pixel | null = null
   cameraMove: Pixel = { x: 0, y: 0 }
-  cameraDrag: {
-    camera: Pixel
-    cursor: Pixel
-  } | null = null
+  cameraDrag: { camera: Pixel; cursor: Pixel } | null = null
   dragged: boolean = false
   selectedArmyTargetTiles: Tile[][] = []
   tilesWithPatternPreview: Tile[] = []
-  readonly keyDown: { [key: string]: boolean } = {}
-  private lastUpdatedAt: number = Date.now()
-  private fpsLastUpdatedAt: number = Date.now()
+  keyDown: { [key: string]: boolean } = {}
+  lastUpdatedAt: number = Date.now()
+  fpsLastUpdatedAt: number = Date.now()
   eventListeners: {
     mousemove: (event: any) => void
     mousedown: (event: any) => void
@@ -96,12 +93,20 @@ class Game {
   } | null = null
   armyDragArrow: ArmyDragArrow | null = null
 
-  // Computed getters
-  @computed get player() {
+  // Getters (computed)
+  get player() {
     return this.playerId ? this.players.get(this.playerId) || null : null
   }
-  @computed get gold() {
+  get gold() {
     return this.player ? this.player.gold : 0
+  }
+
+  // Setters (actions)
+  setCursor(cursor: Pixel) {
+    this.cursor = cursor
+  }
+  setTime(time: number) {
+    this.time = time
   }
 
   constructor(id: string, mode: GameMode, status: GameStatus) {
@@ -128,6 +133,38 @@ class Game {
 
     // Global debug reference
     ;(window as any).game = this
+
+    makeAutoObservable(this)
+    // makeObservable(this, {
+    //   allianceRequests: observable,
+    //   armies: observable,
+    //   players: observable,
+    //   forests: observable,
+    //   villages: observable,
+    //   tiles: observable,
+    //   actions: observable,
+    //   hoveredTile: observable,
+    //   startCountdown: observable,
+    //   incomeAt: observable,
+    //   lastIncomeAt: observable,
+    //   incomeStartedAt: observable,
+    //   serverTime: observable,
+    //   goldAnimation: observable,
+    //   notification: observable,
+    //   flash: observable,
+    //   showHud: observable,
+    //   fps: observable,
+    //   ping: observable,
+    //   status: observable,
+    //   time: observable,
+    //   playerId: observable,
+    //   spawnTile: observable,
+    //   cursor: observable,
+    //   hoveredTileInfo: observable,
+    //   spectators: observable,
+    //   player: computed,
+    //   gold: computed,
+    // })
   }
   render(canvas: HTMLElement) {
     const tutorialFinished =
@@ -500,11 +537,11 @@ class Game {
     }
   }
   handleMouseMove({ clientX: x, clientY: y }: MouseEvent) {
-    this.cursor = { x, y }
+    this.setCursor({ x, y })
 
     if (this.cameraDrag) {
-      const cursorDeltaX = Math.abs(this.cursor.x - this.cameraDrag.cursor.x)
-      const cursorDeltaY = Math.abs(this.cursor.y - this.cameraDrag.cursor.y)
+      const cursorDeltaX = Math.abs(x - this.cameraDrag.cursor.x)
+      const cursorDeltaY = Math.abs(y - this.cameraDrag.cursor.y)
       if (cursorDeltaX + cursorDeltaY > 32) {
         this.dragged = true
       }

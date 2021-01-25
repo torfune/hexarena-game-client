@@ -1,4 +1,4 @@
-import store from '../../store'
+import store from '../store'
 import { Axial } from '../../types/coordinates'
 
 const getTileByAxial = (axial: Axial) => {

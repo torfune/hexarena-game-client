@@ -1,9 +1,10 @@
 import styled from 'styled-components'
 import React from 'react'
 import { PRIMARY, COLOR } from '../../constants/react'
-import store from '../../store'
+import store from '../../core/store'
 import getHudScale from '../../utils/getHudScale'
 // import Icon from '../../../components/'
+import flagIcon from '../../icons/flag.svg'
 
 const Container = styled.div`
   background: ${COLOR.HUD_BACKGROUND};
@@ -55,7 +56,7 @@ const Surrender = () => {
   return (
     <Container>
       <Button onClick={store.game.surrender.bind(store.game)}>
-        <Icon src="/static/icons/flag.svg" />
+        <Icon src={flagIcon} />
         <span>Surrender</span>
       </Button>
     </Container>

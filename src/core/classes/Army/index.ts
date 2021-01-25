@@ -1,7 +1,7 @@
 import Unit from './Unit'
 import getPixelPosition from '../../functions/getPixelPosition'
 import getUniqueRandomizedPositions from '../../functions/getUniqueRandomizedPositions'
-import store from '../../../store'
+import store from '../../store'
 import Tile from '../Tile'
 import Player from '../Player'
 import {

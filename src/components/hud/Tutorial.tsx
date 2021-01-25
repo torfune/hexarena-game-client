@@ -2,6 +2,19 @@ import React from 'react'
 import styled from 'styled-components'
 import getHudScale from '../../utils/getHudScale'
 import { COLOR, PRIMARY } from '../../constants/react'
+import goalIcon from '../../icons/goal.svg'
+
+const Tutorial = () => (
+  <Container>
+    <Row>
+      <Heading>Goal</Heading>
+      <Icon src={goalIcon} />
+    </Row>
+    <GoalMessage>
+      Capture <span>red player's</span> Capital to finish tutorial.
+    </GoalMessage>
+  </Container>
+)
 
 const Container = styled.div`
   background: ${COLOR.HUD_BACKGROUND};
@@ -55,19 +68,5 @@ const GoalMessage = styled.p`
     color: ${PRIMARY};
   }
 `
-
-const Tutorial = () => {
-  return (
-    <Container>
-      <Row>
-        <Heading>Goal</Heading>
-        <Icon src="/static/icons/goal.svg" />
-      </Row>
-      <GoalMessage>
-        Capture <span>red player's</span> Capital to finish tutorial.
-      </GoalMessage>
-    </Container>
-  )
-}
 
 export default Tutorial

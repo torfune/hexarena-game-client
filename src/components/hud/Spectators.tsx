@@ -2,8 +2,20 @@ import styled from 'styled-components'
 import React from 'react'
 import { COLOR, CHAT_WIDTH, BREAKPOINT } from '../../constants/react'
 import { observer } from 'mobx-react-lite'
-import store from '../../store'
+import store from '../../core/store'
 import getHudScale from '../../utils/getHudScale'
+import spectateIcon from '../../icons/spectate.svg'
+
+const Spectators = () => {
+  if (!store.game || !store.game.spectators) return null
+
+  return (
+    <Container spectating={store.spectating}>
+      <Icon src={spectateIcon} />
+      <Number>{store.game.spectators}</Number>
+    </Container>
+  )
+}
 
 const Container = styled.div<{ spectating: boolean }>`
   background: ${COLOR.HUD_BACKGROUND};
@@ -38,16 +50,5 @@ const Number = styled.div`
   color: #fff;
   font-size: 32px;
 `
-
-const Spectators = () => {
-  if (!store.game || !store.game.spectators) return null
-
-  return (
-    <Container spectating={store.spectating}>
-      <Icon src="/static/icons/spectate.svg" />
-      <Number>{store.game.spectators}</Number>
-    </Container>
-  )
-}
 
 export default observer(Spectators)

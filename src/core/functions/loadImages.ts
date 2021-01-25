@@ -1,54 +1,54 @@
 import { Loader } from 'pixi.js-legacy'
-import { version } from '../../../_package.json'
+import { version } from '../../../package.json'
 
 const loader = Loader.shared
-const images = '/static/images'
+const baseUrl = process.env.PUBLIC_URL + '/images'
 
 const loadImages = () => {
   return new Promise((resolve) => {
     loader
-      .add('action-bg', `${images}/action-bg.png?${version}`)
-      .add('action-icon-attack', `${images}/action-icon-attack.png?${version}`)
-      .add('action-icon-heal', `${images}/action-icon-heal.png?${version}`)
+      .add('action-bg', `${baseUrl}/action-bg.png?${version}`)
+      .add('action-icon-attack', `${baseUrl}/action-icon-attack.png?${version}`)
+      .add('action-icon-heal', `${baseUrl}/action-icon-heal.png?${version}`)
       .add(
         'action-icon-recruit',
-        `${images}/action-icon-recruit.png?${version}`
+        `${baseUrl}/action-icon-recruit.png?${version}`
       )
-      .add('action-icon-camp', `${images}/action-icon-camp.png?${version}`)
-      .add('action-icon-tower', `${images}/action-icon-tower.png?${version}`)
-      .add('action-icon-castle', `${images}/action-icon-castle.png?${version}`)
-      .add('action-icon-house', `${images}/action-icon-house.png?${version}`)
-      .add('army', `${images}/army.png?${version}`)
-      .add('armyIcon', `${images}/army-icon.png?${version}`)
-      .add('arrow', `${images}/arrow.png?${version}`)
-      .add('capital', `${images}/capital.png?${version}`)
-      .add('blackOverlay', `${images}/black-overlay.png?${version}`)
-      .add('border', `${images}/border.png?${version}`)
-      .add('castle', `${images}/castle.png?${version}`)
-      .add('castle-icon', `${images}/castle-icon.png?${version}`)
-      .add('fog', `${images}/fog.png?${version}`)
-      .add('tree', `${images}/tree.png?${version}`)
-      .add('gold', `${images}/gold.png?${version}`)
-      .add('mountain01', `${images}/mountain01.png?${version}`)
-      .add('mountain02', `${images}/mountain02.png?${version}`)
-      .add('mountain03', `${images}/mountain03.png?${version}`)
-      .add('mountain04', `${images}/mountain04.png?${version}`)
-      .add('mountain05', `${images}/mountain05.png?${version}`)
-      .add('camp', `${images}/camp.png?${version}`)
-      .add('pattern', `${images}/pattern.png?${version}`)
-      .add('tower', `${images}/tower.png?${version}`)
-      .add('tower-icon', `${images}/tower-icon.png?${version}`)
-      .add('house', `${images}/house.png?${version}`)
-      .add('hpBackground2', `${images}/hpBackground2.png?${version}`)
-      .add('hpBackground3', `${images}/hpBackground3.png?${version}`)
-      .add('hpFill', `${images}/hpFill.png?${version}`)
+      .add('action-icon-camp', `${baseUrl}/action-icon-camp.png?${version}`)
+      .add('action-icon-tower', `${baseUrl}/action-icon-tower.png?${version}`)
+      .add('action-icon-castle', `${baseUrl}/action-icon-castle.png?${version}`)
+      .add('action-icon-house', `${baseUrl}/action-icon-house.png?${version}`)
+      .add('army', `${baseUrl}/army.png?${version}`)
+      .add('armyIcon', `${baseUrl}/army-icon.png?${version}`)
+      .add('arrow', `${baseUrl}/arrow.png?${version}`)
+      .add('capital', `${baseUrl}/capital.png?${version}`)
+      .add('blackOverlay', `${baseUrl}/black-overlay.png?${version}`)
+      .add('border', `${baseUrl}/border.png?${version}`)
+      .add('castle', `${baseUrl}/castle.png?${version}`)
+      .add('castle-icon', `${baseUrl}/castle-icon.png?${version}`)
+      .add('fog', `${baseUrl}/fog.png?${version}`)
+      .add('tree', `${baseUrl}/tree.png?${version}`)
+      .add('gold', `${baseUrl}/gold.png?${version}`)
+      .add('mountain01', `${baseUrl}/mountain01.png?${version}`)
+      .add('mountain02', `${baseUrl}/mountain02.png?${version}`)
+      .add('mountain03', `${baseUrl}/mountain03.png?${version}`)
+      .add('mountain04', `${baseUrl}/mountain04.png?${version}`)
+      .add('mountain05', `${baseUrl}/mountain05.png?${version}`)
+      .add('camp', `${baseUrl}/camp.png?${version}`)
+      .add('pattern', `${baseUrl}/pattern.png?${version}`)
+      .add('tower', `${baseUrl}/tower.png?${version}`)
+      .add('tower-icon', `${baseUrl}/tower-icon.png?${version}`)
+      .add('house', `${baseUrl}/house.png?${version}`)
+      .add('hpBackground2', `${baseUrl}/hpBackground2.png?${version}`)
+      .add('hpBackground3', `${baseUrl}/hpBackground3.png?${version}`)
+      .add('hpFill', `${baseUrl}/hpFill.png?${version}`)
       .add(
         'army-drag-arrow-head',
-        `${images}/army-drag-arrow-head.png?${version}`
+        `${baseUrl}/army-drag-arrow-head.png?${version}`
       )
       .add(
         'army-drag-arrow-body',
-        `${images}/army-drag-arrow-body.png?${version}`
+        `${baseUrl}/army-drag-arrow-body.png?${version}`
       )
       .load(resolve)
   })

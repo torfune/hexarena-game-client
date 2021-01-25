@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react'
 import styled, { ThemeConsumer } from 'styled-components'
 import Label from './Label'
 import { Doughnut } from 'react-chartjs-2'
-import { ChartData, ChartOptions } from 'chart.js'
+// import { ChartData, ChartOptions } from 'src/components/hud/Economy/Chart.js'
 import { observer } from 'mobx-react-lite'
-import store from '../../../store'
+import store from '../../../core/store'
 import { COLOR } from '../../../constants/react'
+import { ChartData, ChartOptions } from 'chart.js'
 
 const Container = styled.div``
 

@@ -3,13 +3,104 @@ import { observer } from 'mobx-react-lite'
 import Player from '../../../core/classes/Player'
 import AllianceRequest from '../../../core/classes/AllianceRequest'
 import React from 'react'
+import checkIcon from '../../../icons/check.svg'
+import crossIcon from '../../../icons/cross.svg'
 
-const Container = styled.div``
+interface Props {
+  players: Player[]
+  requests: {
+    sent: AllianceRequest[]
+    received: AllianceRequest[]
+  }
+  playerId: string
+  sendingRequest: boolean
+  onAccept: (id: string) => void
+  onDecline: (id: string) => void
+  onCreate: (id: string) => void
+}
+const List = ({
+  players,
+  requests,
+  playerId,
+  sendingRequest,
+  onAccept,
+  onDecline,
+  onCreate,
+}: Props) => {
+  if (sendingRequest) {
+    players = players.filter((p) => p.id !== playerId && !p.allyId && p.alive)
+
+    return (
+      <div>
+        {players.length > 0 ? (
+          players.map(({ id, name, pattern }) => (
+            <Item
+              key={pattern}
+              clickable={true}
+              onClick={() => {
+                onCreate(id)
+              }}
+            >
+              <Pattern color={pattern} />
+              <Name>{name}</Name>
+            </Item>
+          ))
+        ) : (
+          <NoPlayersText>Every player is already in alliance</NoPlayersText>
+        )}
+      </div>
+    )
+  } else {
+    return (
+      <div>
+        {requests.received.map(({ timeout, sender }) => (
+          <Item key={sender.id}>
+            <Button
+              iconSize="12px"
+              onClick={() => {
+                onAccept(sender.id)
+              }}
+            >
+              <img src={checkIcon} alt="Accept" />
+            </Button>
+            <Button
+              iconSize="10px"
+              onClick={() => {
+                onDecline(sender.id)
+              }}
+            >
+              <img src={crossIcon} alt="Decline" />
+            </Button>
+
+            <Line />
+
+            <Pattern color={sender.pattern} />
+            <Name>{sender.name}</Name>
+
+            <TimeoutBar timeout={timeout} />
+          </Item>
+        ))}
+
+        {requests.sent.map(({ timeout, receiver }) => (
+          <Item key={receiver.id}>
+            <Waiting>request sent</Waiting>
+
+            <Line />
+
+            <Pattern color={receiver.pattern} />
+            <Name>{receiver.name}</Name>
+
+            <TimeoutBar timeout={timeout} />
+          </Item>
+        ))}
+      </div>
+    )
+  }
+}
 
 interface ItemProps {
   clickable?: boolean
 }
-
 const Item = styled.div<ItemProps>`
   margin-top: 8px;
   padding: 8px 12px;
@@ -105,98 +196,5 @@ const NoPlayersText = styled.p`
   margin-top: 12px;
   text-align: center;
 `
-
-interface Props {
-  players: Player[]
-  requests: {
-    sent: AllianceRequest[]
-    received: AllianceRequest[]
-  }
-  playerId: string
-  sendingRequest: boolean
-  onAccept: (id: string) => void
-  onDecline: (id: string) => void
-  onCreate: (id: string) => void
-}
-
-const List: React.FC<Props> = ({
-  players,
-  requests,
-  playerId,
-  sendingRequest,
-  onAccept,
-  onDecline,
-  onCreate,
-}) => {
-  if (sendingRequest) {
-    players = players.filter((p) => p.id !== playerId && !p.allyId && p.alive)
-
-    return (
-      <Container>
-        {players.length > 0 ? (
-          players.map(({ id, name, pattern }) => (
-            <Item
-              key={pattern}
-              clickable={true}
-              onClick={() => {
-                onCreate(id)
-              }}
-            >
-              <Pattern color={pattern} />
-              <Name>{name}</Name>
-            </Item>
-          ))
-        ) : (
-          <NoPlayersText>Every player is already in alliance</NoPlayersText>
-        )}
-      </Container>
-    )
-  } else {
-    return (
-      <Container>
-        {requests.received.map(({ timeout, sender }) => (
-          <Item key={sender.id}>
-            <Button
-              iconSize="12px"
-              onClick={() => {
-                onAccept(sender.id)
-              }}
-            >
-              <img src="/static/icons/check.svg" alt="Accept" />
-            </Button>
-            <Button
-              iconSize="10px"
-              onClick={() => {
-                onDecline(sender.id)
-              }}
-            >
-              <img src="/static/icons/cross.svg" alt="Decline" />
-            </Button>
-
-            <Line />
-
-            <Pattern color={sender.pattern} />
-            <Name>{sender.name}</Name>
-
-            <TimeoutBar timeout={timeout} />
-          </Item>
-        ))}
-
-        {requests.sent.map(({ timeout, receiver }) => (
-          <Item key={receiver.id}>
-            <Waiting>request sent</Waiting>
-
-            <Line />
-
-            <Pattern color={receiver.pattern} />
-            <Name>{receiver.name}</Name>
-
-            <TimeoutBar timeout={timeout} />
-          </Item>
-        ))}
-      </Container>
-    )
-  }
-}
 
 export default observer(List)

@@ -1,5 +1,5 @@
 import Axios, { AxiosRequestConfig } from 'axios'
-import store from '../store'
+import store from '../core/store'
 
 const Api = {
   gs: {

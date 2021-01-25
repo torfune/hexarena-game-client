@@ -1,4 +1,4 @@
-import store from '../../store'
+import store from '../store'
 import Game from '../classes/Game'
 import convert from './convert'
 import convertObject from './convertObject'
@@ -356,7 +356,7 @@ const messageHandlers = {
   gameTime: (payload: string) => {
     const time = Number(payload)
     if (store.game) {
-      store.game.time = time
+      store.game.setTime(time)
     }
   },
   goldAnimation: (payload: string) => {

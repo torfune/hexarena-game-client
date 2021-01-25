@@ -5,7 +5,7 @@ import React from 'react'
 import Income from './Income'
 import Gold from './Gold'
 import Chart from './Chart'
-import store from '../../../store'
+import store from '../../../core/store'
 import getHudScale from '../../../utils/getHudScale'
 
 const Container = styled.div`
