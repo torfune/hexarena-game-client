@@ -20,7 +20,7 @@ import getTileByAxial from '../functions/getTileByAxial'
 import Tile from './Tile'
 import { Ticker, Application, Container } from 'pixi.js-legacy'
 import Action from './Action'
-import uuid = require('uuid/v4')
+import { v4 as uuid } from 'uuid'
 import { observable, computed } from 'mobx'
 import AllianceRequest from './AllianceRequest'
 import Army from './Army'
@@ -30,8 +30,8 @@ import Village from './Village'
 import GameMode from '../../types/GameMode'
 import HoveredTileInfo from '../../types/HoveredTileInfo'
 import ArmyDragArrow from './ArmyDragArrow'
-import SoundManager from '../../SoundManager'
-import LocalStorageManager from '../../LocalStorageManager'
+import SoundManager from '../../services/SoundManager'
+import LocalStorageService from '../../services/LocalStorageService'
 import GameStatus from '../../types/GameStatus'
 
 class Game {
@@ -131,8 +131,8 @@ class Game {
   }
   render(canvas: HTMLElement) {
     const tutorialFinished =
-      !LocalStorageManager.supported ||
-      LocalStorageManager.get('tutorialFinished') === 'true'
+      !LocalStorageService.supported ||
+      LocalStorageService.get('tutorialFinished') === 'true'
 
     if (!this.loop) {
       this.loop = createGameLoop(this.update, this)

@@ -43,6 +43,7 @@ export const HP_FILL_OFFSET_Y = 10
 export const HP_FILL_OFFSET_X = 26
 export const ARMY_ICON_OFFSET_Y = {
   CAPITAL: 185,
+  CAMP: 150,
   TOWER: 160,
   CASTLE: 160,
 }
@@ -53,6 +54,7 @@ export const HP_BACKGROUND_OFFSET = {
 }
 export const IMAGE_OFFSET_Y = {
   CAPITAL: -10,
+  CAMP: 64,
   CASTLE: 60,
   TOWER: 60,
 }

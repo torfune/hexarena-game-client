@@ -9,7 +9,7 @@ import createProp from '../../utils/createProp'
 import { Sprite, Graphics, Loader } from 'pixi.js-legacy'
 import Animation from '../classes/Animation'
 import { easeOutQuad, easeInQuad } from '../functions/easing'
-import SoundManager from '../../SoundManager'
+import SoundManager from '../../services/SoundManager'
 
 const loader = Loader.shared
 const ACTION_RADIUS = 50

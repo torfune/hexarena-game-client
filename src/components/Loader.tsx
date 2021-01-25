@@ -7,11 +7,11 @@ import React, { useEffect } from 'react'
 import store from '../store'
 import loadImages from '../core/functions/loadImages'
 import Header from './Header'
-import Socket from '../websockets/Socket'
-import { version } from '../../package.json'
-import Api, { gsHost } from '../Api'
-import SoundManager from '../SoundManager'
-import LocalStorageManager from '../LocalStorageManager'
+import Socket from '../core/websockets/Socket'
+import { version } from '../../_package.json'
+import Api, { gsHost } from '../services/Api'
+import SoundManager from '../services/SoundManager'
+import LocalStorageService from '../services/LocalStorageService'
 
 const Container = styled.div`
   margin-top: 200px;

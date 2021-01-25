@@ -32,7 +32,7 @@ import BuildingType from '../../types/BuildingType'
 import Forest from './Forest'
 import Village from './Village'
 import { easeInQuad } from '../functions/easing'
-import SoundManager from '../../SoundManager'
+import SoundManager from '../../services/SoundManager'
 
 const loader = Loader.shared
 
@@ -100,7 +100,7 @@ class Tile {
         if (this.camp && !this.image.camp) {
           const camp = this.addImage('camp')
           camp.anchor.set(0.5, 1)
-          camp.y += 68
+          camp.y += IMAGE_OFFSET_Y.CAMP
         } else if (!this.camp && this.image.camp) {
           this.removeImage('camp')
         }
@@ -929,6 +929,8 @@ class Tile {
   getArmyIconOffsetY() {
     if (this.building) {
       return ARMY_ICON_OFFSET_Y[this.building.type]
+    } else if (this.camp) {
+      return ARMY_ICON_OFFSET_Y.CAMP
     }
 
     return 0

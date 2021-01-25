@@ -1,5 +1,5 @@
 import { Loader } from 'pixi.js-legacy'
-import { version } from '../../../package.json'
+import { version } from '../../../_package.json'
 
 const loader = Loader.shared
 const images = '/static/images'

@@ -3,7 +3,7 @@ import getPixelPosition from '../functions/getPixelPosition'
 import Tile from './Tile'
 import { Sprite } from 'pixi.js-legacy'
 import store from '../../store'
-import SoundManager from '../../SoundManager'
+import SoundManager from '../../services/SoundManager'
 
 const SCALE = 0.2
 const SPEED = 0.6
