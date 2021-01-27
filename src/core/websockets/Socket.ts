@@ -36,7 +36,7 @@ class Socket {
           if (messageName === 'game') {
             const [gameMode, gameStatus] = messagePayload.split('|')
 
-            if (gameMode !== '1v1') {
+            if (gameMode !== '1v1' && gameMode !== 'AI') {
               throw new Error(`Invalid Game Mode: ${gameMode}`)
             } else if (
               gameStatus !== 'running' &&
