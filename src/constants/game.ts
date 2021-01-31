@@ -75,8 +75,8 @@ export const UNIT_DOOR_OFFSET = 32
 export const UNIT_MAX_DELAY = 0.4
 
 // COLORS
-export const BEDROCK_BACKGROUND = '#bbb'
-export const BEDROCK_BORDER = '#555'
+export const BEDROCK_BACKGROUND = '#aaa'
+export const BEDROCK_BORDER = '#222'
 
 // DEBUG COMMANDS
 export const DEBUG_COMMANDS = [
@@ -90,11 +90,13 @@ export const DEBUG_COMMANDS = [
   ['8', 'add_gold'],
   ['c', 'clear'],
   ['e', 'add_castle'],
-  ['f', 'dummy_send_army'],
   ['g', 'defeat'],
-  ['r', 'dummy_capture'],
   ['t', 'add_village'],
   ['v', 'add_camp'],
   ['n', 'hp_remove'],
   ['m', 'hp_add'],
+  ['f', 'add_bot'],
+  ['p', 'evaluate_directions'],
+  // ['f', 'dummy_send_army'],
+  // ['r', 'dummy_capture'],
 ]
