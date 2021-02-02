@@ -169,7 +169,7 @@ class Tile {
     // }
   }
   startHover() {
-    if (!store.game) return
+    if (!store.game || !store.game.player?.alive) return
 
     if (this.building && !this.army) {
       this.showHitpoints()
@@ -193,7 +193,14 @@ class Tile {
     }
   }
   addHighlight() {
-    if (!this.owner || !this.image.pattern) return
+    if (
+      !this.owner ||
+      !store.game ||
+      !store.game.player?.alive ||
+      !this.image.pattern
+    ) {
+      return
+    }
 
     this.image.pattern.tint = hex(shade(this.owner.pattern, 10))
   }

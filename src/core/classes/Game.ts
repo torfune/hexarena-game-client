@@ -378,22 +378,6 @@ class Game {
       return
     }
 
-    // if (key === ' ') {
-    //   const keys = Object.keys(this.stage)
-    //   let sum = 0
-    //   console.log('')
-    //   console.log('---- ----')
-    //   for (const k of keys) {
-    //     const amount = this.stage[k].children.length
-    //     console.log(`${k}: ${amount}`)
-    //     sum += amount
-    //   }
-    //   console.log('---- ----')
-    //   console.log(`TOTAL: ${sum}`)
-    //   console.log('---- ----')
-    //   return
-    // }
-
     const tile = this.hoveredTile
     const command = getDebugCommand(key)
 
@@ -739,6 +723,8 @@ class Game {
     return tilesToCapture
   }
   updatePatternPreviews() {
+    if (!this.player?.alive) return
+
     const oldTilesWithPatternPreview = this.tilesWithPatternPreview
     const pattern: { [key: string]: string } = {}
 
