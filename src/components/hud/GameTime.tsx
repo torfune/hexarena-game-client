@@ -2,17 +2,34 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import store from '../../core/store'
 import React from 'react'
-import { CHAT_WIDTH, COLOR, SECONDARY } from '../../constants/react'
+import { COLOR, SECONDARY } from '../../constants/react'
 import getHudScale from '../../utils/getHudScale'
+
+const GameTime = observer(() => {
+  if (!store.game || store.game.time === null) return null
+
+  const minutes = Math.floor(store.game.time / 60)
+  const seconds = store.game.time - minutes * 60
+  const formatted = {
+    minutes: String(minutes).padStart(2, '0'),
+    seconds: String(seconds).padStart(2, '0'),
+  }
+
+  return (
+    <Container spectating={store.spectating}>
+      <Content lessThenMinute={minutes < 1}>
+        {formatted.minutes}:{formatted.seconds}
+      </Content>
+    </Container>
+  )
+})
 
 const Container = styled.div<{ spectating: boolean }>`
   position: absolute;
   top: ${(props) => (props.spectating ? '60px' : 0)};
   left: 0;
-  width: ${(props) =>
-    props.spectating ? `calc(100vw - ${CHAT_WIDTH})` : '100vw'};
+  width: 100vw;
 `
-
 const Content = styled.div<{ lessThenMinute: boolean }>`
   margin: 0 auto;
   background: ${(props) =>
@@ -37,24 +54,5 @@ const Content = styled.div<{ lessThenMinute: boolean }>`
   transform-origin: center top;
   transform: scale(${getHudScale()});
 `
-
-const GameTime = observer(() => {
-  if (!store.game || store.game.time === null) return null
-
-  const minutes = Math.floor(store.game.time / 60)
-  const seconds = store.game.time - minutes * 60
-  const formatted = {
-    minutes: String(minutes).padStart(2, '0'),
-    seconds: String(seconds).padStart(2, '0'),
-  }
-
-  return (
-    <Container spectating={store.spectating}>
-      <Content lessThenMinute={minutes < 1}>
-        {formatted.minutes}:{formatted.seconds}
-      </Content>
-    </Container>
-  )
-})
 
 export default GameTime

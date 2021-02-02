@@ -139,7 +139,7 @@ class Socket {
     console.log('Socket closed.')
 
     store.error = {
-      message: 'Disconnected.',
+      message: 'Disconnected',
       goHome: false,
     }
   }

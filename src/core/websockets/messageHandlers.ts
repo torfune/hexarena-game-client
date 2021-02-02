@@ -13,7 +13,6 @@ import Village from '../classes/Village'
 import Forest from '../classes/Forest'
 import updateProps from '../functions/updateProps'
 import GoldAnimation from '../classes/GoldAnimation'
-import { CHAT_WIDTH } from '../../constants/react'
 import SoundManager from '../../services/SoundManager'
 
 // Handlers: Gameserver -> Frontend

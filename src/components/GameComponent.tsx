@@ -9,7 +9,7 @@ import Lobby from './screens/Lobby'
 import loadImages from '../core/functions/loadImages'
 import LocalStorageService from '../services/LocalStorageService'
 import GameTime from './hud/GameTime'
-import Spectators from './hud/Spectators'
+import Spectators from './hud/SpectatorCount'
 import HowToPlay from './_HowToPlay'
 import Player from '../core/classes/Player'
 import Leaderboard from './hud/Leaderboard'
@@ -108,7 +108,7 @@ const GameComponent = observer(({ spectate }: Props) => {
       gameStatus = result.gameStatus
     } catch (error) {
       console.error(error)
-      store.error = { message: 'Connection failed.' }
+      store.error = { message: 'Connection failed' }
       return
     }
 
@@ -131,14 +131,6 @@ const GameComponent = observer(({ spectate }: Props) => {
     }
   }, [])
 
-  // useEffect(() => {
-  // if (!store.game) return
-  // const { mode, status } = store.game
-  // if (mode === 'TUTORIAL' && status === 'finished') {
-  //   LocalStorageManager.set('tutorialFinished', String('true'))
-  // }
-  // })
-
   const handleResize = () => {
     refresh(Date.now())
   }
@@ -157,25 +149,20 @@ const GameComponent = observer(({ spectate }: Props) => {
         <>
           {store.game.status === 'starting' && <Lobby />}
 
-          {store.game.status === 'running' && store.game.player && (
+          {store.game.status === 'running' && (
             <HudContainer>
               <GameTime />
-
-              {store.game.player.alive && (
-                <>
-                  {/*{store.game.mode === '2v2' &&*/}
-                  {/*  renderDiplomacy(store.game.player)}*/}
-
-                  <HoverPreview />
-                  <Leaderboard />
-                  <Economy />
-                </>
-              )}
-
-              <Surrender />
+              <HoverPreview />
+              <Leaderboard />
+              <Economy />
               <Spectators />
 
-              {!store.game.player.alive && <DefeatModal />}
+              {/*{store.game.mode === '2v2' &&*/}
+              {/*  renderDiplomacy(store.game.player)}*/}
+
+              {store.game.player && (
+                <>{store.game.player.alive ? <Surrender /> : <DefeatModal />}</>
+              )}
             </HudContainer>
           )}
 

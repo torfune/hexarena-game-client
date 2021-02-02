@@ -5,7 +5,6 @@ import Players from './Players'
 import React from 'react'
 import Spinner from '../../Spinner'
 import getPlayerGroups from '../../../utils/getPlayerGroups'
-import { CHAT_WIDTH, BREAKPOINT } from '../../../constants/react'
 import Player from '../../../core/classes/Player'
 
 const Lobby = () => {
@@ -64,7 +63,6 @@ const Lobby = () => {
 const Container = styled.div`
   position: absolute;
   top: 0;
-  width: calc(100vw - ${CHAT_WIDTH});
   height: 100vh;
   padding-left: 64px;
   padding-right: 64px;
@@ -72,10 +70,7 @@ const Container = styled.div`
   display: grid;
   grid-template-columns: 2fr 1.5fr 2fr;
   grid-gap: 16px;
-
-  @media (max-width: ${BREAKPOINT.HIDE_CHAT}) {
-    width: 100vw;
-  }
+  //width: calc(100vw);
 `
 
 const CentralSection = styled.div<{ ffa: boolean }>`

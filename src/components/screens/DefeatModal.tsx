@@ -5,6 +5,46 @@ import { observer } from 'mobx-react-lite'
 import { BOX_SHADOW, PRIMARY, SECONDARY } from '../../constants/react'
 import store from '../../core/store'
 import React from 'react'
+import getWebClientUrl from '../../utils/getWebClientUrl'
+
+let showTimeout: number | null = null
+
+const DefeatModal = () => {
+  const [show, setShow] = useState(false)
+
+  useEffect(() => {
+    showTimeout = setTimeout(() => {
+      setShow(true)
+    }, 1000)
+
+    return () => {
+      if (showTimeout) {
+        clearTimeout(showTimeout)
+        showTimeout = null
+      }
+    }
+  }, [])
+
+  if (!show || !store.game) return null
+
+  return (
+    <PopIn>
+      <ScreenOverlay />
+
+      <Container>
+        <h2>You have lost your capital!</h2>
+        <ButtonContainer>
+          <a href={getWebClientUrl()}>
+            <ContinueButton>Continue</ContinueButton>
+          </a>
+          <a href={`${getWebClientUrl()}/spectate?gameId=${store.game.id}`}>
+            <SpectateButton color={SECONDARY}>Spectate</SpectateButton>
+          </a>
+        </ButtonContainer>
+      </Container>
+    </PopIn>
+  )
+}
 
 const WIDTH = 700
 
@@ -27,14 +67,12 @@ const Container = styled.div`
     color: #222;
   }
 `
-
 const ButtonContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 100px;
   width: 100%;
 `
-
 const ContinueButton = styled.div`
   background: ${PRIMARY};
   color: #fff;
@@ -53,7 +91,6 @@ const ContinueButton = styled.div`
     transform: scale(1.05);
   }
 `
-
 const SpectateButton = styled.div`
   background: #00a8ff;
   color: #fff;
@@ -72,7 +109,6 @@ const SpectateButton = styled.div`
     transform: scale(1.05);
   }
 `
-
 const ScreenOverlay = styled.div`
   width: 100vw;
   height: 100vh;
@@ -82,50 +118,5 @@ const ScreenOverlay = styled.div`
   background: #000000;
   opacity: 0.2;
 `
-
-let showTimeout: number | null = null
-
-const DefeatModal = () => {
-  const [show, setShow] = useState(false)
-
-  useEffect(() => {
-    showTimeout = setTimeout(() => {
-      setShow(true)
-    }, 1000)
-
-    return () => {
-      if (showTimeout) {
-        clearTimeout(showTimeout)
-        showTimeout = null
-      }
-    }
-  }, [])
-
-  const handleSpectateClick = () => {
-    store.spectating = true
-  }
-
-  if (!show || !store.game) return null
-
-  return (
-    <PopIn>
-      <ScreenOverlay />
-
-      <Container>
-        <h2>You have lost your base!</h2>
-        <ButtonContainer>
-          <a href="/game">
-            <ContinueButton>Continue</ContinueButton>
-          </a>
-          <a href={`/spectate?game=${store.game.id}`}>
-            <SpectateButton onClick={handleSpectateClick} color={SECONDARY}>
-              Spectate
-            </SpectateButton>
-          </a>
-        </ButtonContainer>
-      </Container>
-    </PopIn>
-  )
-}
 
 export default observer(DefeatModal)

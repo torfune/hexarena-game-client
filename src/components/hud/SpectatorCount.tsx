@@ -1,12 +1,12 @@
 import styled from 'styled-components'
 import React from 'react'
-import { COLOR, CHAT_WIDTH, BREAKPOINT } from '../../constants/react'
+import { COLOR } from '../../constants/react'
 import { observer } from 'mobx-react-lite'
 import store from '../../core/store'
 import getHudScale from '../../utils/getHudScale'
 import spectateIcon from '../../icons/spectate.svg'
 
-const Spectators = () => {
+const SpectatorCount = () => {
   if (!store.game || !store.game.spectators) return null
 
   return (
@@ -21,8 +21,8 @@ const Container = styled.div<{ spectating: boolean }>`
   background: ${COLOR.HUD_BACKGROUND};
   width: 90px;
   position: absolute;
-  right: ${(props) => (props.spectating ? CHAT_WIDTH : 0)};
-  top: ${(props) => (props.spectating ? '60px' : 0)};
+  right: 0;
+  top: 0;
   display: flex;
   flex-direction: column;
   border-bottom-left-radius: 8px;
@@ -31,24 +31,21 @@ const Container = styled.div<{ spectating: boolean }>`
   padding-top: 6px;
   padding-bottom: 6px;
 
-  @media (max-width: ${BREAKPOINT.HIDE_CHAT}) {
-    right: 0;
-  }
-
   /* Resolution scaling */
   transform-origin: right top;
   transform: scale(${getHudScale()});
 `
 
 const Icon = styled.img`
-  height: 36px;
+  height: 24px;
   filter: invert(1);
+  opacity: 0.5;
 `
-
 const Number = styled.div`
   text-align: center;
   color: #fff;
   font-size: 32px;
+  font-weight: 300;
 `
 
-export default observer(Spectators)
+export default observer(SpectatorCount)

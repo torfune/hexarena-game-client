@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 import store from '../../core/store'
 import getPlayerGroups from '../../utils/getPlayerGroups'
 import React from 'react'
-import { CHAT_WIDTH, COLOR, BREAKPOINT } from '../../constants/react'
+import { COLOR } from '../../constants/react'
 import getHudScale from '../../utils/getHudScale'
 import goldIcon from '../../icons/gold.svg'
 import hexagonIcon from '../../icons/hexagon.svg'
@@ -18,7 +18,7 @@ const GridCSS = css`
 const Container = styled.div<{ spectating: boolean }>`
   background: ${COLOR.HUD_BACKGROUND};
   bottom: 0;
-  right: ${(props) => (props.spectating ? CHAT_WIDTH : 0)};
+  right: 0;
   min-height: 240px;
   width: 320px;
   position: absolute;
@@ -27,10 +27,6 @@ const Container = styled.div<{ spectating: boolean }>`
   border-top: 1px solid ${COLOR.HUD_BORDER};
   border-left: 1px solid ${COLOR.HUD_BORDER};
   overflow: hidden;
-
-  @media (max-width: ${BREAKPOINT.HIDE_CHAT}) {
-    right: 0;
-  }
 
   /* Resolution scaling */
   transform-origin: right bottom;

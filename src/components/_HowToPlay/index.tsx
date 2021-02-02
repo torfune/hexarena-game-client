@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import React, { useState, useEffect } from 'react'
-import { PRIMARY, Z_INDEX, TRANSITION } from '../../constants/react'
+import { PRIMARY, TRANSITION } from '../../constants/react'
 import { useTransition, animated } from 'react-spring'
 import Armies from './Armies'
 import Goal from './Goal'
@@ -127,7 +127,7 @@ const Container = styled(animated.div)`
   width: 800px;
   color: #fff;
   left: calc(50vw - 400px);
-  z-index: ${Z_INDEX.HEADER + 2};
+  z-index: 1;
   padding: 16px 32px;
   box-shadow: 0px 0px 32px #000000aa;
 `
@@ -140,7 +140,7 @@ const Background = styled.div`
   background: #000;
   opacity: 0.6;
   position: fixed;
-  z-index: ${Z_INDEX.HEADER + 1};
+  z-index: 1;
 `
 
 const Heading = styled.p`

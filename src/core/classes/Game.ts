@@ -28,7 +28,6 @@ import Player from './Player'
 import Forest from './Forest'
 import Village from './Village'
 import GameMode from '../../types/GameMode'
-import HoveredTileInfo from '../../types/HoveredTileInfo'
 import ArmyDragArrow from './ArmyDragArrow'
 import SoundManager from '../../services/SoundManager'
 import LocalStorageService from '../../services/LocalStorageService'
@@ -63,7 +62,6 @@ class Game {
   playerId: string | null = null
   spawnTile: Tile | null = null
   cursor: Pixel | null = null
-  // hoveredTileInfo: HoveredTileInfo | null = null // move this to react layer
   spectators: number | null = 0
   scale: number = DEFAULT_SCALE
   targetScale: number = DEFAULT_SCALE
@@ -227,7 +225,7 @@ class Game {
     }
   }
   update() {
-    if (!this.camera || !this.pixi) return
+    if (!this.camera || !this.pixi || store.error) return
 
     const now = Date.now()
     const fraction = 16.66 / (now - this.lastUpdatedAt)
@@ -723,8 +721,6 @@ class Game {
     return tilesToCapture
   }
   updatePatternPreviews() {
-    if (!this.player?.alive) return
-
     const oldTilesWithPatternPreview = this.tilesWithPatternPreview
     const pattern: { [key: string]: string } = {}
 
@@ -759,7 +755,7 @@ class Game {
     }
 
     // Hovered tile
-    if (this.hoveredTile && this.player) {
+    if (this.hoveredTile && this.player && this.player.alive) {
       const tilesToCapture = this.getTilesToCapture(
         this.hoveredTile,
         this.player.id
