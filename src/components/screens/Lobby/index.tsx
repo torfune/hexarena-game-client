@@ -41,10 +41,7 @@ const Lobby = () => {
       <Players players={playersLeft} />
 
       <CentralSection ffa={store.game.mode === 'FFA'}>
-        <GameModeText>
-          <p>{store.game.ranked ? 'RANKED' : 'NORMAL'}</p>
-          <h2>{store.game.mode}</h2>
-        </GameModeText>
+        <GameModeText>{store.game.mode}</GameModeText>
 
         <Countdown>
           {store.game.startCountdown || (
@@ -70,7 +67,7 @@ const Container = styled.div`
   display: grid;
   grid-template-columns: 2fr 1.5fr 2fr;
   grid-gap: 16px;
-  //width: calc(100vw);
+  width: 100vw;
 `
 
 const CentralSection = styled.div<{ ffa: boolean }>`
@@ -79,9 +76,7 @@ const CentralSection = styled.div<{ ffa: boolean }>`
   flex-direction: column;
   align-items: center;
   background: #222;
-  border-left: 1px solid #111;
-  border-right: 1px solid #111;
-  padding-top: 64px;
+  padding-top: 128px;
   padding-left: 32px;
   padding-right: 32px;
 
@@ -96,25 +91,17 @@ const CentralSection = styled.div<{ ffa: boolean }>`
 `
 
 const GameModeText = styled.div`
-  color: #fff;
+  color: #ddd;
   text-align: center;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #ddd;
   padding-bottom: 8px;
-
-  p {
-    font-size: 24px;
-    font-weight: 500;
-    color: #ccc;
-  }
-  h2 {
-    font-size: 64px;
-    font-weight: 600;
-  }
+  font-size: 32px;
+  font-weight: 600;
 `
 
 const Countdown = styled.div`
-  font-size: 80px;
-  color: #ccc;
+  font-size: 64px;
+  color: #fff;
   margin-top: 32px;
   height: 150px;
   font-weight: 300;
@@ -123,11 +110,11 @@ const Countdown = styled.div`
 `
 
 const VS = styled.p`
-  font-size: 80px;
+  font-size: 32px;
   margin-top: 24px;
-  color: #fff;
-  font-weight: 600;
-  border-top: 1px solid #ccc;
+  color: #ddd;
+  font-weight: 500;
+  border-top: 1px solid #ddd;
   padding-top: 8px;
 `
 

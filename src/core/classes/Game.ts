@@ -36,7 +36,6 @@ import GameStatus from '../../types/GameStatus'
 class Game {
   id: string
   mode: GameMode
-  ranked: boolean = false
   stage: Map<string, Container> = new Map()
   allianceRequests: Map<string, AllianceRequest> = new Map()
   armies: Map<string, Army> = new Map()

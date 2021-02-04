@@ -9,10 +9,9 @@ import { TRANSITION } from '../../../constants/react'
 
 const Container = styled.div`
   display: flex;
-  justify-content: center;
+  padding: 160px;
   align-items: center;
   flex-direction: column;
-  height: 700px;
 `
 
 const PlayerContainer = styled.div`
@@ -20,7 +19,6 @@ const PlayerContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: 1px solid #000;
   background: #222;
   border-radius: 12px;
   height: 180px;
@@ -34,9 +32,9 @@ const Pattern = styled.div<{ color: string; hoverEffect?: boolean }>`
   width: 96px;
   height: 96px;
   border-radius: 16px;
-  border: 1px solid #000;
   background: ${(props) => props.color};
   transition: 200ms;
+  cursor: ${(props) => (props.hoverEffect ? 'pointer' : 'null')};
 
   :hover {
     transform: ${(props) => (props.hoverEffect ? 'scale(1.1)' : null)};
