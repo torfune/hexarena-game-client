@@ -1,0 +1,9 @@
+{
+  "name": "hexarena-game-client",
+  "routes": [
+    { "src": "/spectate", "dest": "/index.html" },
+    { "src": "/play", "dest": "/index.html" }
+  ]
+}
+
+
