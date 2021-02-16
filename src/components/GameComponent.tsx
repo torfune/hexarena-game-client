@@ -1,6 +1,5 @@
-import Ally from './hud/Ally'
 import HoverPreview from './hud/HoverPreview'
-import Api, { gsHost } from '../services/Api'
+import Api, { getGameServerHostname } from '../services/Api'
 import SoundManager from '../services/SoundManager'
 import GameStatus from '../types/GameStatus'
 import { observer } from 'mobx-react-lite'
@@ -11,10 +10,8 @@ import LocalStorageService from '../services/LocalStorageService'
 import GameTime from './hud/GameTime'
 import Spectators from './hud/SpectatorCount'
 import HowToPlay from './_HowToPlay'
-import Player from '../core/classes/Player'
 import Leaderboard from './hud/Leaderboard'
 import NotificationManager from './hud/NotificationManager'
-import Diplomacy from './hud/Diplomacy'
 import DefeatModal from './screens/DefeatModal'
 import EndScreen from './screens/EndScreen'
 import Surrender from './hud/Surrender'
@@ -28,7 +25,6 @@ import qs from 'query-string'
 import store from '../core/store'
 import { version } from '../../package.json'
 import ErrorModal from './screens/ErrorModal'
-import GlobalStyle from './GlobalStyle'
 
 interface Props {
   spectate: boolean
@@ -99,8 +95,8 @@ const GameComponent = observer(({ spectate }: Props) => {
     let gameMode: GameMode
     let gameStatus: GameStatus
     try {
-      const serverHost = await gsHost()
-      const result = await store.socket.connect(serverHost, gameId, {
+      const hostname = await getGameServerHostname()
+      const result = await store.socket.connect(hostname, gameId, {
         accessKey: accessKey as string | null,
         spectate,
       })

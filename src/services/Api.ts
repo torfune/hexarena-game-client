@@ -5,64 +5,76 @@ const Api = {
   gs: {
     get: async (path: string, config?: AxiosRequestConfig) => {
       const { protocol } = window.location
-      const host = await gsHost()
+      const host = await getGameServerHostname()
       return Axios.get(`${protocol}//${host + path}`, config)
     },
   },
   ws: {
     get: (path: string, config?: AxiosRequestConfig) => {
       const { protocol } = window.location
-      return Axios.get(`${protocol}//${wsHost() + path}`, config)
+      return Axios.get(`${protocol}//${getWebServerHostname() + path}`, config)
     },
     post: (path: string, data: any, config?: AxiosRequestConfig) => {
       const { protocol } = window.location
-      return Axios.post(`${protocol}//${wsHost() + path}`, data, config)
+      return Axios.post(
+        `${protocol}//${getWebServerHostname() + path}`,
+        data,
+        config
+      )
     },
     patch: (path: string, data: any, config?: AxiosRequestConfig) => {
       const { protocol } = window.location
-      return Axios.patch(`${protocol}//${wsHost() + path}`, data, config)
+      return Axios.patch(
+        `${protocol}//${getWebServerHostname() + path}`,
+        data,
+        config
+      )
     },
   },
 }
 
-const wsHost = () => {
-  switch (window.location.hostname) {
-    case 'localhost':
+const getWebServerHostname = () => {
+  switch (window.location.origin) {
+    case 'http://localhost:4000':
       return 'localhost:7000'
-    case 'dev.hexarena.io':
+
+    case 'https://test.hexarena.io':
       return 'us-ws-0.hexarena.io'
-    case 'hexarena.io':
+
+    case 'https://hexarena.io':
       return 'us-ws-1.hexarena.io'
+
     default:
-      return `${window.location.hostname}:7000`
+      return 'us-ws-0.hexarena.io'
   }
 }
 
-export const gsHost = async () => {
-  if (store.gsHost) return store.gsHost
+export const getGameServerHostname = async () => {
+  if (store.gameServerHostname) return store.gameServerHostname
 
-  switch (window.location.hostname) {
-    case 'localhost': {
-      const hostname = 'localhost:8000'
-      store.gsHost = hostname
-      return hostname
+  switch (window.location.origin) {
+    case 'http://localhost:4000': {
+      store.gameServerHostname = 'localhost:8000'
+      break
     }
-    case 'dev.hexarena.io': {
-      const hostname = 'us-gs-0.hexarena.io'
-      store.gsHost = hostname
-      return hostname
+
+    case 'https://test.hexarena.io': {
+      store.gameServerHostname = 'us-gs-0.hexarena.io'
+      break
     }
-    case 'hexarena.io':
-    case 'hex-gc-live.now.sh': {
+
+    case 'https://hexarena.io': {
       const { data: hostname } = await Api.ws.get('/config/gs-host')
-      store.gsHost = hostname
-      return hostname
+      store.gameServerHostname = hostname
+      break
     }
+
     default:
-      const hostname = `${window.location.hostname}:8000`
-      store.gsHost = hostname
-      return hostname
+      store.gameServerHostname = 'us-gs-0.hexarena.io'
+      break
   }
+
+  return store.gameServerHostname!
 }
 
 export default Api

@@ -1,7 +1,7 @@
 .DS_Store
 .idea
 .vscode
-dist
+build
 node_modules
 .next
 .now

@@ -1,4 +1,4 @@
-import { makeAutoObservable, observable } from 'mobx'
+import { makeAutoObservable } from 'mobx'
 import GameServerConfig from '../types/GameServerConfig'
 import Game from './classes/Game'
 import Socket from './websockets/Socket'
@@ -15,7 +15,7 @@ class Store {
     message: string
     goHome?: boolean
   }
-  gsHost: string | null = null
+  gameServerHostname: string | null = null
 
   constructor() {
     makeAutoObservable(this)

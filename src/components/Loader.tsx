@@ -5,12 +5,6 @@ import shadeColor from '../utils/shade'
 import { observer } from 'mobx-react-lite'
 import React, { useEffect } from 'react'
 import store from '../core/store'
-import loadImages from '../core/functions/loadImages'
-import Socket from '../core/websockets/Socket'
-import { version } from '../../package.json'
-import Api, { gsHost } from '../services/Api'
-import SoundManager from '../services/SoundManager'
-import LocalStorageService from '../services/LocalStorageService'
 
 const Container = styled.div`
   margin-top: 200px;
