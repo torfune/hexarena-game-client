@@ -7,7 +7,6 @@ class Store {
   game: Game | null = null
   socket: Socket | null = null
   showGuide: boolean = false
-  spectating: boolean = false
   gsConfig?: GameServerConfig
   loading: boolean = true
   settings: { sound: boolean } = { sound: false }

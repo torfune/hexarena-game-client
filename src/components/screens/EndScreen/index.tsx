@@ -9,6 +9,7 @@ import store from '../../../core/store'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import getWebClientUrl from '../../../utils/getWebClientUrl'
+import isSpectating from '../../../utils/isSpectating'
 
 const EndScreen = () => {
   const spring = useSpring({ top: 0, from: { top: -4000 } })
@@ -19,14 +20,14 @@ const EndScreen = () => {
   const message = store.game.time <= 0 ? `Time's up!` : 'The game has finished!'
 
   return (
-    <Container style={spring} spectating={store.spectating}>
+    <Container style={spring}>
       <Box>
         <Heading>{message}</Heading>
         <WinStatement>{renderWinStatement(groups[0].players)}</WinStatement>
 
         <Table groups={groups} />
 
-        {store.spectating ? (
+        {isSpectating() ? (
           <Link to={getWebClientUrl()}>
             <ContinueButton>Continue</ContinueButton>
           </Link>
@@ -43,12 +44,12 @@ const EndScreen = () => {
   )
 }
 
-const Container = styled(animated.div)<{ spectating: boolean }>`
+const Container = styled(animated.div)`
   position: absolute;
-  margin-top: ${(props) => (props.spectating ? '60px' : 0)};
+  margin-top: 0;
   left: 0;
   width: 100vw;
-  height: ${(props) => (props.spectating ? 'calc(100vh - 60px)' : '100vh')};
+  height: 100vh;
   background: #00000088;
   border-bottom: 1px solid #222;
   z-index: 11;

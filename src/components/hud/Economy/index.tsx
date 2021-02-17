@@ -5,8 +5,23 @@ import React from 'react'
 import Income from './Income'
 import Gold from './Gold'
 import Chart from './Chart'
-import store from '../../../core/store'
 import getHudScale from '../../../utils/getHudScale'
+import isSpectating from '../../../utils/isSpectating'
+
+const Economy = observer(() => (
+  <Container>
+    {!isSpectating() && (
+      <GoldSection>
+        <Income />
+        <Gold />
+      </GoldSection>
+    )}
+
+    <ChartSection>
+      <Chart />
+    </ChartSection>
+  </Container>
+))
 
 const Container = styled.div`
   background: ${COLOR.HUD_BACKGROUND};
@@ -36,20 +51,5 @@ const ChartSection = styled.div`
   display: flex;
   justify-content: space-between;
 `
-
-const Economy = observer(() => (
-  <Container>
-    {!store.spectating && (
-      <GoldSection>
-        <Income />
-        <Gold />
-      </GoldSection>
-    )}
-
-    <ChartSection>
-      <Chart />
-    </ChartSection>
-  </Container>
-))
 
 export default Economy

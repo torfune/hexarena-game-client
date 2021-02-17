@@ -10,12 +10,51 @@ import hexagonIcon from '../../icons/hexagon.svg'
 import villageIcon from '../../icons/village.svg'
 import skullIcon from '../../icons/skull.svg'
 
+const Leaderboard = observer(() => {
+  if (!store.game) return null
+
+  const groups = getPlayerGroups(Array.from(store.game.players.values()))
+
+  return (
+    <Container>
+      <Heading>
+        <span>Leaderboard</span>
+        <Icon src={hexagonIcon} />
+        <Icon src={villageIcon} />
+        <Icon src={goldIcon} />
+      </Heading>
+
+      {groups.map((group, index) => (
+        <Group key={index}>
+          {group.players.map((player) => (
+            <Player key={player.id} opacity={player.alive ? 1 : 0.5}>
+              <Row>
+                {player.alive ? (
+                  <Pattern color={player.pattern} />
+                ) : (
+                  <Skull src={skullIcon} />
+                )}
+
+                <p>{player.name}</p>
+              </Row>
+
+              <p>{player.tilesCount}</p>
+              <p>{player.economy}</p>
+              <p>{player.gold}</p>
+            </Player>
+          ))}
+        </Group>
+      ))}
+    </Container>
+  )
+})
+
 const GridCSS = css`
   display: grid;
   grid-template-columns: auto 44px 44px 44px;
 `
 
-const Container = styled.div<{ spectating: boolean }>`
+const Container = styled.div`
   background: ${COLOR.HUD_BACKGROUND};
   bottom: 0;
   right: 0;
@@ -112,44 +151,5 @@ const Player = styled.div<PlayerProps>`
     color: #fff;
   }
 `
-
-const Leaderboard = observer(() => {
-  if (!store.game) return null
-
-  const groups = getPlayerGroups(Array.from(store.game.players.values()))
-
-  return (
-    <Container spectating={store.spectating}>
-      <Heading>
-        <span>Leaderboard</span>
-        <Icon src={hexagonIcon} />
-        <Icon src={villageIcon} />
-        <Icon src={goldIcon} />
-      </Heading>
-
-      {groups.map((group, index) => (
-        <Group key={index}>
-          {group.players.map((player) => (
-            <Player key={player.id} opacity={player.alive ? 1 : 0.5}>
-              <Row>
-                {player.alive ? (
-                  <Pattern color={player.pattern} />
-                ) : (
-                  <Skull src={skullIcon} />
-                )}
-
-                <p>{player.name}</p>
-              </Row>
-
-              <p>{player.tilesCount}</p>
-              <p>{player.economy}</p>
-              <p>{player.gold}</p>
-            </Player>
-          ))}
-        </Group>
-      ))}
-    </Container>
-  )
-})
 
 export default Leaderboard

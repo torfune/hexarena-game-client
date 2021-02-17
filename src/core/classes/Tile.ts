@@ -33,6 +33,7 @@ import Forest from './Forest'
 import Village from './Village'
 import { easeInQuad } from '../functions/easing'
 import SoundManager from '../../services/SoundManager'
+import isSpectating from '../../utils/isSpectating'
 
 const loader = Loader.shared
 
@@ -607,7 +608,7 @@ class Tile {
     // Set camera to capital
     if (!store.game.spawnTile && this.ownerId === store.game.playerId) {
       store.game.spawnTile = this
-    } else if (!store.game.spawnTile && store.spectating) {
+    } else if (!store.game.spawnTile && isSpectating()) {
       store.game.spawnTile = this
     }
   }

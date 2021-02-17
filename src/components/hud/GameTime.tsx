@@ -16,7 +16,7 @@ const GameTime = observer(() => {
   }
 
   return (
-    <Container spectating={store.spectating}>
+    <Container>
       <Content lessThenMinute={minutes < 1}>
         {formatted.minutes}:{formatted.seconds}
       </Content>
@@ -24,9 +24,9 @@ const GameTime = observer(() => {
   )
 })
 
-const Container = styled.div<{ spectating: boolean }>`
+const Container = styled.div`
   position: absolute;
-  top: ${(props) => (props.spectating ? '60px' : 0)};
+  top: 0;
   left: 0;
   width: 100vw;
 `

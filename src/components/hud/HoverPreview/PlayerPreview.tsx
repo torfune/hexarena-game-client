@@ -4,6 +4,7 @@ import Player from '../../../core/classes/Player'
 import { COLOR, PRIMARY, BLUE } from '../../../constants/react'
 import store from '../../../core/store'
 import skullIcon from '../../../icons/skull.svg'
+import isSpectating from '../../../utils/isSpectating'
 
 interface Props {
   player: Player
@@ -19,20 +20,11 @@ const PlayerPreview: React.FC<Props> = ({ player }) => {
         <Pattern color={player.pattern} />
       )}
       <Name>{player.name}</Name>
-      {!store.spectating && (
+      {!isSpectating() && (
         <AllyOrEnemy background={ally ? BLUE : PRIMARY}>
           {ally ? 'ALLY' : 'ENEMY'}
         </AllyOrEnemy>
       )}
-
-      {/* <Icon src="/static/icons/hexagon.svg" />
-    <Value>{player.tilesCount}</Value>
-
-    <Icon src="/static/icons/village.svg" />
-    <Value>{player.economy}</Value>
-
-    <Icon src="/static/icons/gold.svg" />
-    <Value>{player.gold}</Value> */}
     </Container>
   )
 }

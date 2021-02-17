@@ -10,14 +10,14 @@ const SpectatorCount = () => {
   if (!store.game || !store.game.spectators) return null
 
   return (
-    <Container spectating={store.spectating}>
+    <Container>
       <Icon src={spectateIcon} />
       <Number>{store.game.spectators}</Number>
     </Container>
   )
 }
 
-const Container = styled.div<{ spectating: boolean }>`
+const Container = styled.div`
   background: ${COLOR.HUD_BACKGROUND};
   width: 90px;
   position: absolute;
