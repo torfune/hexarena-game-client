@@ -2,8 +2,14 @@ import styled from 'styled-components'
 import { PRIMARY } from '../constants/react'
 import React, { ButtonHTMLAttributes, FC } from 'react'
 
-const Button: FC<ButtonHTMLAttributes<any>> = ({ className, children }) => (
-  <Container className={className}>{children}</Container>
+const Button: FC<ButtonHTMLAttributes<any>> = ({
+  className,
+  children,
+  onClick,
+}) => (
+  <Container className={className} onClick={onClick}>
+    {children}
+  </Container>
 )
 
 const Container = styled.button`

@@ -75,7 +75,6 @@ const GameComponent = observer(() => {
       } else {
         store.error = {
           message: `Version mismatch. Client: ${version}. Server: ${statusResponse.data.version}`,
-          goHome: true,
         }
       }
       console.error('Version mismatch')
@@ -173,12 +172,7 @@ const GameComponent = observer(() => {
         </>
       )}
 
-      {store.error && (
-        <ErrorModal
-          message={store.error.message}
-          goHome={store.error.goHome || true}
-        />
-      )}
+      {store.error && <ErrorModal message={store.error.message} />}
 
       <HowToPlay
         show={store.showGuide}

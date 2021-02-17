@@ -12,7 +12,6 @@ class Store {
   settings: { sound: boolean } = { sound: false }
   error?: {
     message: string
-    goHome?: boolean
   }
   gameServerHostname: string | null = null
 

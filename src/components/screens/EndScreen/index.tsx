@@ -10,6 +10,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import getWebClientUrl from '../../../utils/getWebClientUrl'
 import isSpectating from '../../../utils/isSpectating'
+import cancelSpectate from '../../../utils/cancelSpectate'
 
 const EndScreen = () => {
   const spring = useSpring({ top: 0, from: { top: -4000 } })
@@ -28,9 +29,7 @@ const EndScreen = () => {
         <Table groups={groups} />
 
         {isSpectating() ? (
-          <Link to={getWebClientUrl()}>
-            <ContinueButton>Continue</ContinueButton>
-          </Link>
+          <ContinueButton onClick={cancelSpectate}>Continue</ContinueButton>
         ) : (
           <a href={getWebClientUrl()}>
             <ContinueButton>Continue</ContinueButton>
@@ -105,7 +104,7 @@ const Heading = styled.p`
   font-weight: 700;
   color: #fff;
 `
-const ContinueButton = styled.div`
+const ContinueButton = styled.button`
   background: ${PRIMARY};
   border-radius: 4px;
   box-shadow: 0px 4px 16px #00000033;

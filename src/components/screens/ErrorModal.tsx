@@ -4,21 +4,26 @@ import React from 'react'
 import getGameClientUrl from '../../utils/getWebClientUrl'
 import Button from '../Button'
 import getWebClientUrl from '../../utils/getWebClientUrl'
+import isSpectating from '../../utils/isSpectating'
+import cancelSpectate from '../../utils/cancelSpectate'
 
 interface Props {
   message: string
-  goHome: boolean
 }
-const ErrorModal: React.FC<Props> = ({ message, goHome }) => (
+const ErrorModal: React.FC<Props> = ({ message }) => (
   <>
     <BlackOverlay />
 
     <Container>
       <h2>{message}</h2>
 
-      <a href={getWebClientUrl()}>
-        <StyledButton>Continue</StyledButton>
-      </a>
+      {isSpectating() ? (
+        <StyledButton onClick={cancelSpectate}>Continue</StyledButton>
+      ) : (
+        <a href={getWebClientUrl()}>
+          <StyledButton>Continue</StyledButton>
+        </a>
+      )}
     </Container>
   </>
 )
