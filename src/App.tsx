@@ -11,10 +11,10 @@ function App() {
       <Router>
         <Switch>
           <Route path="/play">
-            <GameComponent spectate={false} />
+            <GameComponent />
           </Route>
           <Route path="/spectate">
-            <GameComponent spectate={true} />
+            <GameComponent />
           </Route>
           <Route>
             <PageNotFound />

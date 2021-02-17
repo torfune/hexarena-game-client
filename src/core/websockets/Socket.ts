@@ -3,6 +3,7 @@ import messageHandlers from './messageHandlers'
 import { IncomingMessage } from './messages'
 import GameMode from '../../types/GameMode'
 import GameStatus from '../../types/GameStatus'
+import isSpectating from '../../utils/isSpectating'
 
 class Socket {
   connected: boolean = false
@@ -11,9 +12,9 @@ class Socket {
   connect(
     host: string,
     gameId: string,
-    { spectate, accessKey }: { spectate?: boolean; accessKey: string | null }
+    { accessKey }: { spectate?: boolean; accessKey: string | null }
   ): Promise<{ gameMode: GameMode; gameStatus: GameStatus }> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
       this.ws = new WebSocket(`${wsProtocol}//${host}`)
 
@@ -24,7 +25,7 @@ class Socket {
         this.connected = true
         console.log(`Connected to Game Server [${host}]`)
 
-        if (spectate) {
+        if (isSpectating()) {
           this.send('spectate', gameId)
         } else {
           this.send('play', `${gameId}|${accessKey}`)
@@ -49,12 +50,9 @@ class Socket {
 
             console.log(`Connected to Game Instance [${gameId}]`)
             resolve({ gameMode, gameStatus })
+          } else if (messageName === 'error') {
+            reject(new Error(messagePayload || 'Connection failed.'))
           }
-
-          // else if (messageName === 'error') {
-          //   store.error = { message: 'Connection failed' }
-          //   reject(new Error('Connection failed'))
-          // }
         })
       })
     })
@@ -138,9 +136,8 @@ class Socket {
     this.connected = false
     console.log('Socket closed.')
 
-    store.error = {
-      message: 'Disconnected',
-      goHome: false,
+    if (!store.error) {
+      store.error = { message: 'Disconnected' }
     }
   }
 

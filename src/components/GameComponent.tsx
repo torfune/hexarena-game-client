@@ -25,11 +25,9 @@ import qs from 'query-string'
 import store from '../core/store'
 import { version } from '../../package.json'
 import ErrorModal from './screens/ErrorModal'
+import isSpectating from '../utils/isSpectating'
 
-interface Props {
-  spectate: boolean
-}
-const GameComponent = observer(({ spectate }: Props) => {
+const GameComponent = observer(() => {
   const [_, refresh] = useState(Date.now())
 
   const connect = async () => {
@@ -42,7 +40,10 @@ const GameComponent = observer(({ spectate }: Props) => {
     if (!gameId || typeof gameId !== 'string') {
       store.error = { message: 'Connection failed' }
       throw new Error('Missing Game ID in URL.')
-    } else if (!spectate && (!accessKey || typeof accessKey !== 'string')) {
+    } else if (
+      !isSpectating() &&
+      (!accessKey || typeof accessKey !== 'string')
+    ) {
       store.error = { message: 'Connection failed' }
       throw new Error('Missing Access Key in URL.')
     }
@@ -77,7 +78,7 @@ const GameComponent = observer(({ spectate }: Props) => {
           goHome: true,
         }
       }
-      console.log('Version mismatch')
+      console.error('Version mismatch')
       return
     }
 
@@ -98,13 +99,12 @@ const GameComponent = observer(({ spectate }: Props) => {
       const hostname = await getGameServerHostname()
       const result = await store.socket.connect(hostname, gameId, {
         accessKey: accessKey as string | null,
-        spectate,
       })
       gameMode = result.gameMode
       gameStatus = result.gameStatus
     } catch (error) {
       console.error(error)
-      store.error = { message: 'Connection failed' }
+      store.error = { message: error.message }
       return
     }
 
