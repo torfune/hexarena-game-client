@@ -65,8 +65,8 @@ const GameComponent = observer(() => {
     const [configResponse, statusResponse] = responses
 
     // Check client version
-    const serverVersion = statusResponse.data.version.slice(0, 4)
-    const clientVersion = version.slice(0, 4)
+    const serverVersion = statusResponse.data.version.split('.')[0]
+    const clientVersion = version.split('.')[0]
     if (serverVersion !== clientVersion) {
       const lastVersionReloaded = LocalStorageService.get('lastVersionReloaded')
       if (lastVersionReloaded !== clientVersion) {
