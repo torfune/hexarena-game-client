@@ -7,6 +7,77 @@ import Player from '../../../core/classes/Player'
 import PatternSelector from './PatternSelector'
 import { TRANSITION } from '../../../constants/react'
 
+interface Props {
+  players: Player[]
+}
+const Players: React.FC<Props> = ({ players }) => {
+  const [showSelector, setShowSelector] = useState(false)
+  const transitions = useTransition(showSelector, null, TRANSITION.SCALE)
+
+  if (!store.game || !store.game.player || !store.gsConfig) return null
+
+  const { pattern, id: playerId } = store.game.player
+  const { PATTERNS } = store.gsConfig
+  const lockedPatterns = Array.from(store.game.players.values())
+    .filter((player) => player.pattern !== pattern)
+    .map(({ pattern }) => pattern)
+
+  const handlePatternClick = () => {
+    setShowSelector(true)
+  }
+
+  const handleClickOutside = () => {
+    setShowSelector(false)
+  }
+
+  const handlePatternSelect = (pattern: string) => {
+    if (lockedPatterns.includes(pattern) || !store.game) return
+
+    store.game.selectPattern(pattern)
+    setShowSelector(false)
+  }
+
+  return (
+    <Container>
+      {players.map((player) => (
+        <PlayerContainer key={player.id}>
+          {player.id === playerId ? (
+            <>
+              <Pattern
+                color={player.pattern}
+                onClick={handlePatternClick}
+                hoverEffect
+              />
+              <Name>{player.name}</Name>
+            </>
+          ) : (
+            <>
+              <Pattern color={player.pattern} />
+              <Name>???</Name>
+            </>
+          )}
+
+          {player.id === playerId &&
+            transitions.map(
+              ({ item, key, props }) =>
+                item && (
+                  <PatternSelector
+                    key={key}
+                    style={props}
+                    allPatterns={PATTERNS}
+                    lockedPatterns={lockedPatterns}
+                    onPatternSelect={handlePatternSelect}
+                  />
+                )
+            )}
+        </PlayerContainer>
+      ))}
+
+      {showSelector && <DarkOverlay onClick={handleClickOutside} />}
+    </Container>
+  )
+}
+
 const Container = styled.div`
   display: flex;
   padding: 160px;
@@ -60,71 +131,5 @@ const DarkOverlay = styled.div`
   background: #000;
   opacity: 0.5;
 `
-
-interface Props {
-  players: Player[]
-}
-const Players: React.FC<Props> = ({ players }) => {
-  const [showSelector, setShowSelector] = useState(false)
-  const transitions = useTransition(showSelector, null, TRANSITION.SCALE)
-
-  if (!store.game || !store.game.player || !store.gsConfig) return null
-
-  const { pattern, id: playerId } = store.game.player
-  const { PATTERNS } = store.gsConfig
-  const lockedPatterns = Array.from(store.game.players.values())
-    .filter((player) => player.pattern !== pattern)
-    .map(({ pattern }) => pattern)
-
-  const handlePatternClick = () => {
-    setShowSelector(true)
-  }
-
-  const handleClickOutside = () => {
-    setShowSelector(false)
-  }
-
-  const handlePatternSelect = (pattern: string) => {
-    if (lockedPatterns.includes(pattern) || !store.game) return
-
-    store.game.selectPattern(pattern)
-    setShowSelector(false)
-  }
-
-  return (
-    <Container>
-      {players.map((player) => (
-        <PlayerContainer key={player.id}>
-          {player.id === playerId ? (
-            <Pattern
-              color={player.pattern}
-              onClick={handlePatternClick}
-              hoverEffect
-            />
-          ) : (
-            <Pattern color={player.pattern} />
-          )}
-          <Name>{player.name}</Name>
-
-          {player.id === playerId &&
-            transitions.map(
-              ({ item, key, props }) =>
-                item && (
-                  <PatternSelector
-                    key={key}
-                    style={props}
-                    allPatterns={PATTERNS}
-                    lockedPatterns={lockedPatterns}
-                    onPatternSelect={handlePatternSelect}
-                  />
-                )
-            )}
-        </PlayerContainer>
-      ))}
-
-      {showSelector && <DarkOverlay onClick={handleClickOutside} />}
-    </Container>
-  )
-}
 
 export default observer(Players)
