@@ -1,4 +1,4 @@
-import { animated, useTransition, config } from 'react-spring'
+import { animated, useTransition } from 'react-spring'
 import React from 'react'
 
 interface Props {

@@ -1,6 +1,6 @@
 // import React from 'react'
 import GlobalStyle from '../components/GlobalStyle'
-import ErrorModal from '../components/screens/ErrorModal'
+import ErrorModal from '../components/ErrorModal'
 import store from '../core/store'
 
 // function App({ Component, pageProps }: AppProps) {

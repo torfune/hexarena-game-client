@@ -1,9 +1,9 @@
 import styled from 'styled-components'
 import { animated } from 'react-spring'
-import { BOX_SHADOW } from '../../../constants/react'
-import Hexagon from '../../Hexagon'
+import { BOX_SHADOW } from '../../constants/react'
+import Hexagon from '../Hexagon'
 import React from 'react'
-import lockIcon from '../../../icons/lock.svg'
+import lockIcon from '../../icons/lock.svg'
 
 interface Props {
   style: any

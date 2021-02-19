@@ -1,11 +1,11 @@
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import store from '../../../core/store'
+import store from '../../core/store'
 import { useTransition } from 'react-spring'
 import React, { useState } from 'react'
-import Player from '../../../core/classes/Player'
+import Player from '../../core/classes/Player'
 import PatternSelector from './PatternSelector'
-import { TRANSITION } from '../../../constants/react'
+import { TRANSITION } from '../../constants/react'
 
 interface Props {
   players: Player[]

@@ -1,22 +1,21 @@
-import HoverPreview from './hud/HoverPreview'
+import HoverPreview from './HUD/HoverPreview'
 import Api, { getGameServerHostname } from '../services/Api'
 import SoundManager from '../services/SoundManager'
 import GameStatus from '../types/GameStatus'
 import { observer } from 'mobx-react-lite'
-import Economy from './hud/Economy'
-import Lobby from './screens/Lobby'
+import Economy from './HUD/Economy'
+import Lobby from './Lobby'
 import loadImages from '../core/functions/loadImages'
 import LocalStorageService from '../services/LocalStorageService'
-import GameTime from './hud/GameTime'
-import Spectators from './hud/SpectatorCount'
+import GameTime from './HUD/GameTime'
+import Spectators from './HUD/SpectatorCount'
 import HowToPlay from './_HowToPlay'
-import Leaderboard from './hud/Leaderboard'
-import NotificationManager from './hud/NotificationManager'
-import DefeatModal from './screens/DefeatModal'
-import EndScreen from './screens/EndScreen'
-import Surrender from './hud/Surrender'
+import Leaderboard from './HUD/Leaderboard'
+import NotificationManager from './HUD/NotificationManager'
+import EndModal from './EndModal'
+import Surrender from './HUD/Surrender'
 import GameMode from '../types/GameMode'
-import Flasher from './hud/Flasher'
+import Flasher from './HUD/Flasher'
 import Game from '../core/classes/Game'
 import React, { useEffect, useState } from 'react'
 import Socket from '../core/websockets/Socket'
@@ -24,7 +23,7 @@ import styled from 'styled-components'
 import qs from 'query-string'
 import store from '../core/store'
 import { version } from '../../package.json'
-import ErrorModal from './screens/ErrorModal'
+import ErrorModal from './ErrorModal'
 import isSpectating from '../utils/isSpectating'
 
 const GameComponent = observer(() => {
@@ -146,29 +145,19 @@ const GameComponent = observer(() => {
 
           {store.game.status === 'running' && (
             <HudContainer>
-              <GameTime />
               <HoverPreview />
+              <GameTime />
               <Leaderboard />
               <Economy />
               <Spectators />
+              <Flasher />
+              <NotificationManager />
 
-              {/*{store.game.mode === '2v2' &&*/}
-              {/*  renderDiplomacy(store.game.player)}*/}
-
-              {store.game.player && (
-                <>{store.game.player.alive ? <Surrender /> : <DefeatModal />}</>
-              )}
+              {store.game.player && store.game.player.alive && <Surrender />}
             </HudContainer>
           )}
 
-          {store.game.status === 'running' && (
-            <>
-              <Flasher />
-              <NotificationManager />
-            </>
-          )}
-
-          {store.game.status === 'finished' && <EndScreen />}
+          {store.game.status === 'finished' && <EndModal />}
         </>
       )}
 

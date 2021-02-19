@@ -1,5 +1,4 @@
 import { observer } from 'mobx-react-lite'
-import List from './List'
 import { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import Label from '../../Label'
@@ -7,6 +6,7 @@ import store from '../../../core/store'
 import { BLUE, PRIMARY, COLOR } from '../../../constants/react'
 import React from 'react'
 import getHudScale from '../../../utils/getHudScale'
+import List from './List'
 
 const Container = styled.div`
   z-index: 2;

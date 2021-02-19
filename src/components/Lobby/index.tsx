@@ -1,11 +1,11 @@
 import styled, { css } from 'styled-components'
-import store from '../../../core/store'
+import store from '../../core/store'
 import { observer } from 'mobx-react-lite'
 import Players from './Players'
 import React from 'react'
-import Spinner from '../../Spinner'
-import getPlayerGroups from '../../../utils/getPlayerGroups'
-import Player from '../../../core/classes/Player'
+import Spinner from '../Spinner'
+import getPlayerGroups from '../../utils/getPlayerGroups'
+import Player from '../../core/classes/Player'
 
 const Lobby = () => {
   if (!store.game || !store.game.mode) return null
