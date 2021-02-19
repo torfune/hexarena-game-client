@@ -1,6 +1,5 @@
-import { PopIn } from './Animations'
 import styled from 'styled-components'
-import { BOX_SHADOW } from '../constants/react'
+import { BOX_SHADOW, Z_INDEX } from '../constants/react'
 import React, { FC } from 'react'
 
 interface Props {
@@ -8,15 +7,15 @@ interface Props {
   title: string
 }
 const Modal: FC<Props> = ({ width, title, children }) => (
-  <PopIn>
-    <ScreenOverlay />
-
+  <>
     <Container width={width}>
       <h2>{title}</h2>
 
       {children}
     </Container>
-  </PopIn>
+
+    <ScreenOverlay />
+  </>
 )
 
 const Container = styled.div<{ width: number }>`
@@ -31,7 +30,7 @@ const Container = styled.div<{ width: number }>`
   transform: translateX(-${(props) => props.width / 2}px);
   box-shadow: ${BOX_SHADOW};
   border-radius: 16px;
-  z-index: 10;
+  z-index: ${Z_INDEX.MODAL + 1};
 
   h2 {
     font-size: 24px;
@@ -45,8 +44,9 @@ const ScreenOverlay = styled.div`
   top: 0;
   left: 0;
   position: fixed;
-  background: #000000;
-  opacity: 0.2;
+  background: #000;
+  opacity: 0.4;
+  z-index: ${Z_INDEX.MODAL};
 `
 
 export default Modal

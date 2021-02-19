@@ -17,7 +17,7 @@ const EndScreen = () => {
   }
 
   return (
-    <Modal width={600} title={title}>
+    <Modal width={500} title={title}>
       {isSpectating() ? (
         <StyledButton onClick={cancelSpectate}>Continue</StyledButton>
       ) : (

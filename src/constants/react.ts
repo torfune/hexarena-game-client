@@ -21,3 +21,8 @@ export const TRANSITION = {
     leave: { transform: 'scale(0)', opacity: 0 },
   },
 }
+
+export const Z_INDEX = {
+  MODAL: 20,
+  HUD: 10,
+}

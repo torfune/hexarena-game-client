@@ -9,7 +9,6 @@ import loadImages from '../core/functions/loadImages'
 import LocalStorageService from '../services/LocalStorageService'
 import GameTime from './HUD/GameTime'
 import Spectators from './HUD/SpectatorCount'
-import HowToPlay from './_HowToPlay'
 import Leaderboard from './HUD/Leaderboard'
 import NotificationManager from './HUD/NotificationManager'
 import EndModal from './EndModal'
@@ -25,6 +24,7 @@ import store from '../core/store'
 import { version } from '../../package.json'
 import ErrorModal from './ErrorModal'
 import isSpectating from '../utils/isSpectating'
+import { Z_INDEX } from '../constants/react'
 
 const GameComponent = observer(() => {
   const [_, refresh] = useState(Date.now())
@@ -150,8 +150,8 @@ const GameComponent = observer(() => {
               <Leaderboard />
               <Economy />
               <Spectators />
-              <Flasher />
               <NotificationManager />
+              <Flasher />
 
               {store.game.player && store.game.player.alive && <Surrender />}
             </HudContainer>
@@ -163,10 +163,10 @@ const GameComponent = observer(() => {
 
       {store.error && <ErrorModal message={store.error.message} />}
 
-      <HowToPlay
-        show={store.showGuide}
-        close={() => (store.showGuide = false)}
-      />
+      {/*<HowToPlay*/}
+      {/*  show={store.showGuide}*/}
+      {/*  close={() => (store.showGuide = false)}*/}
+      {/*/>*/}
     </Container>
   )
 })
@@ -177,9 +177,8 @@ const Container = styled.div`
   overflow: hidden;
   position: relative;
 `
-
 const HudContainer = styled.div`
-  z-index: 10;
+  z-index: ${Z_INDEX.HUD};
   position: absolute;
   top: 0;
   left: 0;
@@ -193,13 +192,5 @@ interface GameCanvasProps {
 const GameCanvas = styled.div<GameCanvasProps>`
   visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
 `
-
-// const renderDiplomacy = (player: Player) => {
-//   if (player.ally) {
-//     return <Ally ally={player.ally} playerGold={player.gold} />
-//   }
-//
-//   return <Diplomacy />
-// }
 
 export default GameComponent

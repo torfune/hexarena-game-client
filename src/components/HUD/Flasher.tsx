@@ -4,25 +4,8 @@ import store from '../../core/store'
 import { useEffect, useState } from 'react'
 import React from 'react'
 
-const OPACITY = 0.3
-
-interface ContainerProps {
-  opacity: number
-}
-const Container = styled.div<ContainerProps>`
-  position: absolute;
-  z-index: 1;
-  background: red;
-  width: 100vw;
-  height: 100vh;
-  top: 0;
-  left: 0;
-  transition: 100ms;
-  opacity: ${(props) => props.opacity};
-`
-
 const Flasher = () => {
-  const [opacity, setOpacity] = useState(0)
+  const [visible, setVisible] = useState(false)
 
   if (!store.game) return null
 
@@ -31,13 +14,25 @@ const Flasher = () => {
       return
     }
 
-    setOpacity(OPACITY)
+    setVisible(true)
     setTimeout(() => {
-      setOpacity(0)
+      setVisible(false)
     }, 100)
   }, [store.game.flash])
 
-  return <Container opacity={opacity} />
+  return visible ? <Container /> : null
 }
+
+const Container = styled.div`
+  position: absolute;
+  z-index: 1;
+  background: red;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  transition: 100ms;
+  opacity: 0.2;
+`
 
 export default observer(Flasher)
