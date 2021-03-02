@@ -20,24 +20,22 @@ const VillagePreview = ({ villageIncome }: Props) => (
 
 const Container = styled.div`
   padding: 6px 12px;
-  background: ${COLOR.HUD_BACKGROUND};
-  border: 1px solid ${COLOR.HUD_BORDER};
+  background: ${COLOR.GREY_600};
+  border: 1px solid ${COLOR.GREY_800};
   border-radius: 8px;
   color: #fff;
   display: flex;
   align-items: center;
 `
-
 const Label = styled.p`
   font-weight: 500;
   font-size: 20px;
 `
-
 const IncomeDescription = styled.p`
-  color: #aaa;
   font-size: 16px;
+  color: #fff;
+  opacity: 0.5;
 `
-
 const Icon = styled.img`
   filter: invert(1);
   height: 32px;

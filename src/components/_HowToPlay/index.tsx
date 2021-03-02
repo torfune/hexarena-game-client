@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import React, { useState, useEffect } from 'react'
-import { PRIMARY, TRANSITION } from '../../constants/react'
+import { COLOR, TRANSITION } from '../../constants/react'
 import { useTransition, animated } from 'react-spring'
 import Armies from './Armies'
 import Goal from './Goal'
@@ -183,7 +183,7 @@ const Header = styled.div`
 `
 
 const ContinueButton = styled.div`
-  background: ${PRIMARY};
+  background: ${COLOR.YELLOW};
   font-weight: 500;
   border-radius: 4px;
   width: 200px;

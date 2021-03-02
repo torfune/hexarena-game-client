@@ -1,16 +1,15 @@
 import styled from 'styled-components'
-import { BOX_SHADOW, Z_INDEX } from '../constants/react'
+import { BOX_SHADOW, COLOR, Z_INDEX } from '../constants/react'
 import React, { FC } from 'react'
 
 interface Props {
   width: number
-  title: string
+  title?: string
 }
 const Modal: FC<Props> = ({ width, title, children }) => (
   <>
     <Container width={width}>
-      <h2>{title}</h2>
-
+      {title && <h2>{title}</h2>}
       {children}
     </Container>
 
@@ -22,10 +21,10 @@ const Container = styled.div<{ width: number }>`
   position: absolute;
   top: 200px;
   width: ${(props) => props.width}px;
-  background: #222;
+  background: ${COLOR.GREY_800};
   text-align: center;
-  padding-top: 80px;
-  padding-bottom: 80px;
+  padding-top: 64px;
+  padding-bottom: 64px;
   left: 50vw;
   transform: translateX(-${(props) => props.width / 2}px);
   box-shadow: ${BOX_SHADOW};

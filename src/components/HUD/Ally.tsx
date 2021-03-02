@@ -69,15 +69,15 @@ const Ally: React.FC<Props> = ({ ally, playerGold }) => (
 
 const Container = styled.div`
   z-index: 2;
-  background: ${COLOR.HUD_BACKGROUND};
+  background: ${COLOR.GREY_600};
   bottom: 0;
   right: calc(319px * ${getHudScale()});
   position: absolute;
   user-select: none;
   border-top-left-radius: 8px;
-  border-top: 1px solid ${COLOR.HUD_BORDER};
-  border-left: 1px solid ${COLOR.HUD_BORDER};
-  border-right: 1px solid ${COLOR.HUD_BORDER};
+  border-top: 1px solid ${COLOR.GREY_800};
+  border-left: 1px solid ${COLOR.GREY_800};
+  border-right: 1px solid ${COLOR.GREY_800};
   overflow: hidden;
   padding: 16px;
 

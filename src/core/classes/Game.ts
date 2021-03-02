@@ -32,6 +32,8 @@ import ArmyDragArrow from './ArmyDragArrow'
 import SoundManager from '../../services/SoundManager'
 import LocalStorageService from '../../services/LocalStorageService'
 import GameStatus from '../../types/GameStatus'
+import { COLOR } from '../../constants/react'
+import isSpectating from '../../utils/isSpectating'
 
 class Game {
   id: string
@@ -224,7 +226,14 @@ class Game {
     }
   }
   update() {
-    if (!this.camera || !this.pixi || store.error) return
+    if (
+      !this.camera ||
+      !this.pixi ||
+      store.error ||
+      this.status === 'finished'
+    ) {
+      return
+    }
 
     const now = Date.now()
     const fraction = 16.66 / (now - this.lastUpdatedAt)
@@ -396,7 +405,14 @@ class Game {
     }
   }
   handleMouseDown(event: MouseEvent) {
-    if (this.status !== 'running' || !this.cursor || !this.camera) return
+    if (
+      this.status !== 'running' ||
+      !this.cursor ||
+      !this.camera ||
+      (!this.player?.alive && !isSpectating())
+    ) {
+      return
+    }
 
     const { clientX: x, clientY: y, button } = event
     const { hoveredTile } = this
@@ -529,8 +545,7 @@ class Game {
     }
   }
   handleWheelMove({ deltaY, detail }: WheelEvent) {
-    const chat = document.getElementById('chat')
-    if (chat && chat.matches(':hover')) return
+    if (!this.player?.alive && !isSpectating()) return
 
     const delta = deltaY || detail
     const zoomDirection = (delta < 0 ? -1 : 1) * -1
@@ -1000,7 +1015,7 @@ class Game {
       fraction = 1
     }
 
-    ctx.fillStyle = '#fff'
+    ctx.fillStyle = COLOR.GREY_100
     ctx.fillRect(0, 0, BAR_WIDTH * fraction, BAR_HEIGHT)
   }
   showNotEnoughGold(tile: Tile) {

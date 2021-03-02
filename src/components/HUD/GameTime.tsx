@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import store from '../../core/store'
 import React from 'react'
-import { COLOR, SECONDARY } from '../../constants/react'
+import { COLOR } from '../../constants/react'
 import getHudScale from '../../utils/getHudScale'
 
 const GameTime = observer(() => {
@@ -17,7 +17,7 @@ const GameTime = observer(() => {
 
   return (
     <Container>
-      <Content lessThenMinute={minutes < 1}>
+      <Content lessThanMinute={minutes < 1}>
         {formatted.minutes}:{formatted.seconds}
       </Content>
     </Container>
@@ -30,19 +30,18 @@ const Container = styled.div`
   left: 0;
   width: 100vw;
 `
-const Content = styled.div<{ lessThenMinute: boolean }>`
+const Content = styled.div<{ lessThanMinute: boolean }>`
   margin: 0 auto;
-  background: ${(props) =>
-    props.lessThenMinute ? SECONDARY : COLOR.HUD_BACKGROUND};
+  background: ${(props) => (props.lessThanMinute ? COLOR.RED : COLOR.GREY_600)};
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
+  box-shadow: ${(props) =>
+    props.lessThanMinute ? 'rgba(0, 0, 0, 0.2) 0px 1px 4px' : null};
   border: ${(props) =>
-    props.lessThenMinute
-      ? `1px solid ${SECONDARY}`
-      : `1px solid ${COLOR.HUD_BORDER}`};
+    props.lessThanMinute ? `none` : `1px solid ${COLOR.GREY_800}`};
   border-top: none;
   color: #fff;
-  font-size: ${(props) => (props.lessThenMinute ? '28px' : '18px')};
+  font-size: ${(props) => (props.lessThanMinute ? '28px' : '18px')};
   font-weight: 600;
   padding: 4px 0;
   text-align: center;

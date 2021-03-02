@@ -1,18 +1,32 @@
 import styled from 'styled-components'
-import { PRIMARY } from '../constants/react'
+import { COLOR, SHADOW } from '../constants/react'
 import React, { ButtonHTMLAttributes, FC } from 'react'
 
-const Button: FC<ButtonHTMLAttributes<any>> = ({
+interface Props {
+  background?: keyof typeof COLOR
+  backgroundHover?: keyof typeof COLOR
+}
+const Button: FC<Props & ButtonHTMLAttributes<any>> = ({
   className,
   children,
   onClick,
+  background = 'YELLOW',
+  backgroundHover = 'YELLOW_HOVER',
 }) => (
-  <Container className={className} onClick={onClick}>
+  <Container
+    className={className}
+    onClick={onClick}
+    background={COLOR[background]}
+    backgroundHover={COLOR[backgroundHover]}
+  >
     {children}
   </Container>
 )
 
-const Container = styled.button`
+const Container = styled.button<{
+  background: string
+  backgroundHover: string
+}>`
   width: 256px;
   height: 46px;
   border-radius: 4px;
@@ -23,16 +37,15 @@ const Container = styled.button`
   align-items: center;
   justify-content: center;
   transition: 250ms;
-  background: ${PRIMARY};
-  box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 8px;
+  background: ${(props) => props.background};
+  box-shadow: ${SHADOW.SMALL};
   text-transform: uppercase;
   letter-spacing: 2px;
   color: #fff;
   cursor: pointer;
 
   &:hover {
-    transform: scale(1.05);
-    box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 24px;
+    background: ${(props) => props.backgroundHover};
   }
 `
 

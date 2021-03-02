@@ -37,7 +37,15 @@ class Socket {
           if (messageName === 'game') {
             const [gameMode, gameStatus] = messagePayload.split('|')
 
-            if (gameMode !== '1v1' && gameMode !== 'AI') {
+            if (
+              gameMode !== '1v1' &&
+              gameMode !== '2v2' &&
+              gameMode !== 'FFA-3' &&
+              gameMode !== 'FFA-6' &&
+              gameMode !== 'AI_1v1' &&
+              gameMode !== 'AI_FFA-3' &&
+              gameMode !== 'AI_FFA-6'
+            ) {
               throw new Error(`Invalid Game Mode: ${gameMode}`)
             } else if (
               gameStatus !== 'running' &&
@@ -103,9 +111,6 @@ class Socket {
         break
       case 'startCountdown':
         messageHandlers.startCountdown(messagePayload)
-        break
-      case 'spectate':
-        messageHandlers.spectate(messagePayload)
         break
       case 'status':
         messageHandlers.status(messagePayload)

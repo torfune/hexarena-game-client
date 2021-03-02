@@ -3,23 +3,23 @@ import { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import Label from '../../Label'
 import store from '../../../core/store'
-import { BLUE, PRIMARY, COLOR } from '../../../constants/react'
+import { COLOR } from '../../../constants/react'
 import React from 'react'
 import getHudScale from '../../../utils/getHudScale'
 import List from './List'
 
 const Container = styled.div`
   z-index: 2;
-  background: ${COLOR.HUD_BACKGROUND};
+  background: ${COLOR.GREY_600};
   bottom: 0;
   right: calc(319px * ${getHudScale()});
   width: 300px;
   position: absolute;
   user-select: none;
   border-top-left-radius: 8px;
-  border-top: 1px solid ${COLOR.HUD_BORDER};
-  border-left: 1px solid ${COLOR.HUD_BORDER};
-  border-right: 1px solid ${COLOR.HUD_BORDER};
+  border-top: 1px solid ${COLOR.GREY_800};
+  border-left: 1px solid ${COLOR.GREY_800};
+  border-right: 1px solid ${COLOR.GREY_800};
   overflow: hidden;
 
   /* Resolution scaling */
@@ -141,7 +141,7 @@ const Diplomacy = () => {
 
   return (
     <Container ref={containerRef}>
-      <Header color={blueHeader ? BLUE : undefined}>
+      <Header color={blueHeader ? COLOR.BLUE : undefined}>
         <h2>Diplomacy</h2>
       </Header>
       <Content>
@@ -157,7 +157,7 @@ const Diplomacy = () => {
         />
         <ToggleButton
           onClick={handleButtonClick}
-          color={sendingRequest ? PRIMARY : BLUE}
+          color={sendingRequest ? COLOR.YELLOW : COLOR.BLUE}
         >
           {sendingRequest ? 'Cancel' : 'Send request'}
         </ToggleButton>

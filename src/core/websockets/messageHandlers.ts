@@ -1,5 +1,4 @@
 import store from '../store'
-import Game from '../classes/Game'
 import convert from './convert'
 import convertObject from './convertObject'
 import convertArray from './convertArray'
@@ -275,8 +274,8 @@ const messageHandlers = {
       gold: 'number',
       economy: 'number',
       alive: 'boolean',
-      registered: 'boolean',
       killerName: 'string',
+      surrendered: 'boolean',
     }) as {
       id: string | null
       name: string | null
@@ -286,13 +285,13 @@ const messageHandlers = {
       gold: number | null
       economy: number | null
       alive: boolean
-      registered: boolean
       killerName: string | null
+      surrendered: boolean
     }[]
 
     for (let i = 0; i < parsed.length; i++) {
       const fields = parsed[i]
-      const { id, name, pattern, registered } = fields
+      const { id, name, pattern } = fields
 
       if (!id || !name || !pattern) continue
 
@@ -300,7 +299,7 @@ const messageHandlers = {
 
       // Create
       if (!player) {
-        player = new Player(id, name, pattern, registered)
+        player = new Player(id, name, pattern)
         store.game.players.set(id, player)
       }
 
@@ -425,39 +424,6 @@ const messageHandlers = {
     } else {
       store.game.status = status
     }
-  },
-  spectate: (payload: string) => {
-    console.warn('spectate unhandled')
-
-    // const { id, mode, ranked } = convertObject(payload, {
-    //   id: 'string',
-    //   mode: 'string',
-    //   ranked: 'boolean',
-    // }) as {
-    //   id: string | null
-    //   mode: string | null
-    //   ranked: boolean
-    // }
-    // if (!id || !mode || (mode !== '1v1' && mode !== '2v2' && mode !== 'FFA')) {
-    //   return
-    // }
-    //
-    // if (store.game) {
-    //   store.game.destroy()
-    // }
-    //
-    // store.game = new Game(id, mode, ranked)
-    // store.game.scale = 0.2
-    // store.game.targetScale = 0.2
-    // store.game.setCameraToAxialPosition(
-    //   { x: 0, z: 0 },
-    //   Number(CHAT_WIDTH.replace('px', ''))
-    // )
-    // store.spectating = true
-    //
-    // if (store.routerHistory && store.routerHistory.push) {
-    //   store.routerHistory.push(`/spectate?game=${id}`)
-    // }
   },
   spectators: (payload: string) => {
     const spectators = Number(payload)

@@ -1,21 +1,20 @@
 import styled from 'styled-components'
 import React from 'react'
-import { PRIMARY, COLOR } from '../../constants/react'
+import { COLOR } from '../../constants/react'
 import store from '../../core/store'
 import getHudScale from '../../utils/getHudScale'
-// import Icon from '../../../components/'
 import flagIcon from '../../icons/flag.svg'
 
 const Container = styled.div`
-  background: ${COLOR.HUD_BACKGROUND};
+  background: ${COLOR.GREY_600};
   top: 0;
   left: 0;
   width: 200px;
   position: absolute;
   user-select: none;
   border-bottom-right-radius: 8px;
-  border-bottom: 1px solid ${COLOR.HUD_BORDER};
-  border-right: 1px solid ${COLOR.HUD_BORDER};
+  border-bottom: 1px solid ${COLOR.GREY_800};
+  border-right: 1px solid ${COLOR.GREY_800};
   overflow: hidden;
   padding: 16px;
 
@@ -25,7 +24,7 @@ const Container = styled.div`
 `
 
 const Button = styled.div`
-  background: #666;
+  background: ${COLOR.GREY_400};
   font-weight: 600;
   font-size: 12px;
   color: #fff;
@@ -40,7 +39,7 @@ const Button = styled.div`
   justify-content: center;
 
   :hover {
-    background: ${PRIMARY};
+    background: ${COLOR.GREY_200};
   }
 `
 

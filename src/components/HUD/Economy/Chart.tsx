@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import styled, { ThemeConsumer } from 'styled-components'
+import React from 'react'
+import styled from 'styled-components'
 import Label from './Label'
 import { Doughnut } from 'react-chartjs-2'
-// import { ChartData, ChartOptions } from 'src/components/hud/Economy/Chart.js'
 import { observer } from 'mobx-react-lite'
 import store from '../../../core/store'
 import { COLOR } from '../../../constants/react'
@@ -31,7 +30,9 @@ const OPTIONS: ChartOptions = {
 const Chart = () => {
   if (!store.game) return null
 
-  const players = Array.from(store.game.players.values())
+  const players = Array.from(store.game.players.values()).filter(
+    (player) => player.alive
+  )
   const data: ChartData = {
     labels: players.map((p) => p.name),
     datasets: [
@@ -39,7 +40,7 @@ const Chart = () => {
         data: players.map((p) => p.economy),
         backgroundColor: players.map((p) => p.pattern),
         borderWidth: 1,
-        borderColor: COLOR.HUD_BACKGROUND,
+        borderColor: COLOR.GREY_600,
       },
     ],
   }

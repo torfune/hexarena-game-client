@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { animated } from 'react-spring'
-import { BOX_SHADOW } from '../../constants/react'
+import { BOX_SHADOW, COLOR, SHADOW } from '../../constants/react'
 import Hexagon from '../Hexagon'
 import React from 'react'
 import lockIcon from '../../icons/lock.svg'
@@ -41,28 +41,27 @@ const PatternSelector: React.FC<Props> = ({
 
 const Container = styled(animated.div)`
   top: -40px;
-  box-shadow: ${BOX_SHADOW};
-  background: #fff;
+  box-shadow: ${SHADOW.MEDIUM};
+  background: ${COLOR.GREY_100};
   position: absolute;
-  border-radius: 40px;
-  padding: 20px 0 16px 0;
+  border-radius: 16px;
+  padding: 32px;
   z-index: 2;
-  width: 300px;
+  width: 360px;
 `
-
 const Patterns = styled.div`
   justify-content: center;
   display: flex;
   flex-wrap: wrap;
-  margin-top: 8px;
+  margin-top: 16px;
 `
-
 const Label = styled.p`
   text-align: center;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
-  color: #444;
+  color: ${COLOR.GREY_800};
   text-transform: uppercase;
+  letter-spacing: 1px;
 `
 
 interface PatternWrapperProps {

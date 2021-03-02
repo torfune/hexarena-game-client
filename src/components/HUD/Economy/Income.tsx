@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import Label from './Label'
 import { observer } from 'mobx-react-lite'
-import store from '../../../core/store'
+import { COLOR } from '../../../constants/react'
 
 const Container = styled.div`
   padding: 16px 20px;
@@ -13,7 +13,7 @@ const IncomeBar = styled.canvas`
   height: 36px;
   width: 200px;
   margin-top: 12px;
-  background: #666;
+  background: ${COLOR.GREY_200};
   border-radius: 4px;
   overflow: hidden;
 `

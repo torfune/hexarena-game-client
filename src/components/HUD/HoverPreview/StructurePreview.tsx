@@ -4,8 +4,8 @@ import { COLOR } from '../../../constants/react'
 
 const Container = styled.div`
   padding: 6px 12px;
-  background: ${COLOR.HUD_BACKGROUND};
-  border: 1px solid ${COLOR.HUD_BORDER};
+  background: ${COLOR.GREY_600};
+  border: 1px solid ${COLOR.GREY_800};
   border-radius: 8px;
   color: #fff;
   font-weight: 500;

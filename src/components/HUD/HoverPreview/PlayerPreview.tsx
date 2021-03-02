@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import React from 'react'
 import Player from '../../../core/classes/Player'
-import { COLOR, PRIMARY, BLUE } from '../../../constants/react'
+import { COLOR } from '../../../constants/react'
 import store from '../../../core/store'
 import skullIcon from '../../../icons/skull.svg'
 import isSpectating from '../../../utils/isSpectating'
@@ -21,7 +21,7 @@ const PlayerPreview: React.FC<Props> = ({ player }) => {
       )}
       <Name>{player.name}</Name>
       {!isSpectating() && (
-        <AllyOrEnemy background={ally ? BLUE : PRIMARY}>
+        <AllyOrEnemy background={ally ? COLOR.BLUE : COLOR.RED}>
           {ally ? 'ALLY' : 'ENEMY'}
         </AllyOrEnemy>
       )}
@@ -30,15 +30,12 @@ const PlayerPreview: React.FC<Props> = ({ player }) => {
 }
 
 const Container = styled.div`
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 12px;
-  padding-right: 12px;
   display: flex;
   align-items: center;
-  background: ${COLOR.HUD_BACKGROUND};
-  border: 1px solid ${COLOR.HUD_BORDER};
+  background: ${COLOR.GREY_600};
+  border: 1px solid ${COLOR.GREY_800};
   border-radius: 8px;
+  padding: 8px 12px;
 `
 
 const Name = styled.h4`
@@ -68,7 +65,7 @@ const Pattern = styled.div<PatternProps>`
   border-radius: 6px;
   background: ${({ color }) => color};
   position: relative;
-  border: 1px solid ${COLOR.HUD_BORDER};
+  border: 1px solid ${COLOR.GREY_800};
 `
 const AllyOrEnemy = styled.div<AllyOrEnemyProps>`
   background: ${({ background }) => background};

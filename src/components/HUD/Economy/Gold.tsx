@@ -6,7 +6,7 @@ import store from '../../../core/store'
 import { COLOR } from '../../../constants/react'
 
 const Container = styled.div`
-  border-left: 1px solid ${COLOR.HUD_BORDER};
+  border-left: 1px solid ${COLOR.GREY_800};
   padding: 16px 20px 8px 20px;
   text-align: right;
   width: 130px;

@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import getHudScale from '../../utils/getHudScale'
-import { COLOR, PRIMARY } from '../../constants/react'
+import { COLOR } from '../../constants/react'
 import goalIcon from '../../icons/goal.svg'
 
 const Tutorial = () => (
@@ -17,15 +17,15 @@ const Tutorial = () => (
 )
 
 const Container = styled.div`
-  background: ${COLOR.HUD_BACKGROUND};
+  background: ${COLOR.GREY_600};
   top: 0;
   right: 0;
   width: 380px;
   position: absolute;
   user-select: none;
   border-bottom-left-radius: 8px;
-  border-bottom: 1px solid ${COLOR.HUD_BORDER};
-  border-left: 1px solid ${COLOR.HUD_BORDER};
+  border-bottom: 1px solid ${COLOR.GREY_800};
+  border-left: 1px solid ${COLOR.GREY_800};
   overflow: hidden;
   padding-top: 16px;
   padding-bottom: 16px;
@@ -65,7 +65,7 @@ const GoalMessage = styled.p`
   margin-top: 16px;
 
   > span {
-    color: ${PRIMARY};
+    color: ${COLOR.RED};
   }
 `
 

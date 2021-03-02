@@ -24,15 +24,15 @@ const Economy = observer(() => (
 ))
 
 const Container = styled.div`
-  background: ${COLOR.HUD_BACKGROUND};
+  background: ${COLOR.GREY_600};
   bottom: 0;
   left: 0;
   min-height: 240px;
   position: absolute;
   user-select: none;
   border-top-right-radius: 8px;
-  border-top: 1px solid ${COLOR.HUD_BORDER};
-  border-right: 1px solid ${COLOR.HUD_BORDER};
+  border-top: 1px solid ${COLOR.GREY_800};
+  border-right: 1px solid ${COLOR.GREY_800};
   overflow: hidden;
 
   /* Resolution scaling */
@@ -43,7 +43,7 @@ const Container = styled.div`
 const GoldSection = styled.div`
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid ${COLOR.HUD_BORDER};
+  border-bottom: 1px solid ${COLOR.GREY_800};
 `
 
 const ChartSection = styled.div`

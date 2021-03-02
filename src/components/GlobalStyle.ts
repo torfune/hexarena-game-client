@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components'
+import { COLOR } from '../constants/react'
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -15,7 +16,7 @@ const GlobalStyle = createGlobalStyle`
     min-height: 100vh;
     width: 100vw;
     overflow-x: hidden;
-    background: #2a2a2a;
+    background: ${COLOR.GREY_200};
   }
 
   a {

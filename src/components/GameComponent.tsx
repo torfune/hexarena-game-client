@@ -129,39 +129,58 @@ const GameComponent = observer(() => {
     refresh(Date.now())
   }
 
+  const renderModal = () => {
+    const { game } = store
+
+    if (game?.status === 'finished' || (game?.player && !game?.player.alive)) {
+      return <EndModal />
+    }
+
+    if (store.error) {
+      return <ErrorModal message={store.error.message} />
+    }
+  }
+
+  const gameStatus = store.game ? store.game.status : null
+
   return (
     <Container>
       <GameCanvas
         id="game-canvas"
         visible={
           !!store.game &&
-          (store.game.status === 'running' || store.game.status === 'finished')
+          (gameStatus === 'running' || gameStatus === 'finished')
         }
       />
 
       {store.game && (
         <>
-          {store.game.status === 'starting' && <Lobby />}
+          {gameStatus === 'starting' && <Lobby />}
 
-          {store.game.status === 'running' && (
+          {(gameStatus === 'running' || gameStatus === 'finished') && (
             <HudContainer>
-              <HoverPreview />
               <GameTime />
               <Leaderboard />
               <Economy />
               <Spectators />
-              <NotificationManager />
-              <Flasher />
 
-              {store.game.player && store.game.player.alive && <Surrender />}
+              {store.game.player && store.game.player.alive && (
+                <>
+                  <Surrender />
+                  <Flasher />
+                  <NotificationManager />
+                </>
+              )}
+
+              {(store.game?.player?.alive || isSpectating()) && (
+                <HoverPreview />
+              )}
             </HudContainer>
           )}
-
-          {store.game.status === 'finished' && <EndModal />}
         </>
       )}
 
-      {store.error && <ErrorModal message={store.error.message} />}
+      {renderModal()}
 
       {/*<HowToPlay*/}
       {/*  show={store.showGuide}*/}

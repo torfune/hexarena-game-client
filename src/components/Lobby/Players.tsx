@@ -1,16 +1,17 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import store from '../../core/store'
 import { useTransition } from 'react-spring'
 import React, { useState } from 'react'
 import Player from '../../core/classes/Player'
 import PatternSelector from './PatternSelector'
-import { TRANSITION } from '../../constants/react'
+import { COLOR, SHADOW, TRANSITION } from '../../constants/react'
 
 interface Props {
   players: Player[]
+  ffa?: boolean
 }
-const Players: React.FC<Props> = ({ players }) => {
+const Players: React.FC<Props> = ({ players, ffa }) => {
   const [showSelector, setShowSelector] = useState(false)
   const transitions = useTransition(showSelector, null, TRANSITION.SCALE)
 
@@ -38,7 +39,7 @@ const Players: React.FC<Props> = ({ players }) => {
   }
 
   return (
-    <Container>
+    <Container ffa={ffa}>
       {players.map((player) => (
         <PlayerContainer key={player.id}>
           {player.id === playerId ? (
@@ -78,27 +79,38 @@ const Players: React.FC<Props> = ({ players }) => {
   )
 }
 
-const Container = styled.div`
+const Container = styled.div<{ ffa?: boolean }>`
   display: flex;
-  padding: 160px;
+  padding-top: 128px;
   align-items: center;
   flex-direction: column;
-`
 
+  ${(props) =>
+    props.ffa &&
+    css`
+      max-width: 800px;
+      padding-top: 0;
+      flex-direction: row;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-left: auto;
+      margin-right: auto;
+    `}
+`
 const PlayerContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: #222;
-  border-radius: 12px;
+  background: ${COLOR.GREY_600};
+  box-shadow: ${SHADOW.MEDIUM};
+  border-radius: 10px;
   height: 180px;
   width: 180px;
   padding-top: 8px;
   position: relative;
-  margin: 16px 0;
+  margin: 16px;
 `
-
 const Pattern = styled.div<{ color: string; hoverEffect?: boolean }>`
   width: 96px;
   height: 96px;
@@ -106,12 +118,12 @@ const Pattern = styled.div<{ color: string; hoverEffect?: boolean }>`
   background: ${(props) => props.color};
   transition: 200ms;
   cursor: ${(props) => (props.hoverEffect ? 'pointer' : 'null')};
+  box-shadow: ${SHADOW.MEDIUM};
 
   :hover {
     transform: ${(props) => (props.hoverEffect ? 'scale(1.1)' : null)};
   }
 `
-
 const Name = styled.div`
   margin-top: 16px;
   color: #fff;
@@ -120,7 +132,6 @@ const Name = styled.div`
   font-size: 20px;
   overflow: hidden;
 `
-
 const DarkOverlay = styled.div`
   position: fixed;
   top: 0;

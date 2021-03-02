@@ -55,7 +55,7 @@ const GridCSS = css`
 `
 
 const Container = styled.div`
-  background: ${COLOR.HUD_BACKGROUND};
+  background: ${COLOR.GREY_600};
   bottom: 0;
   right: 0;
   min-height: 240px;
@@ -63,8 +63,8 @@ const Container = styled.div`
   position: absolute;
   user-select: none;
   border-top-left-radius: 8px;
-  border-top: 1px solid ${COLOR.HUD_BORDER};
-  border-left: 1px solid ${COLOR.HUD_BORDER};
+  border-top: 1px solid ${COLOR.GREY_800};
+  border-left: 1px solid ${COLOR.GREY_800};
   overflow: hidden;
 
   /* Resolution scaling */
@@ -82,12 +82,10 @@ const Icon = styled.img`
 
 const Heading = styled.p`
   text-transform: uppercase;
-  margin-top: 16px;
-  margin-left: 16px;
-  margin-bottom: 12px;
-  margin-right: 16px;
+  margin: 16px 16px 12px 16px;
   font-weight: 600;
-  color: #aaa;
+  color: #fff;
+  opacity: 0.5;
   font-size: 12px;
   letter-spacing: 1px;
 
@@ -110,7 +108,7 @@ const Pattern = styled.div<PatternProps>`
   margin-right: 8px;
   position: relative;
   top: -1px;
-  border: 1px solid ${COLOR.HUD_BACKGROUND};
+  border: 1px solid ${COLOR.GREY_600};
 `
 
 const Skull = styled.img`
@@ -123,10 +121,8 @@ const Skull = styled.img`
 `
 
 const Group = styled.div`
-  background: #222;
+  background: ${COLOR.GREY_800};
   margin-top: 10px;
-  border-top: 1px solid ${COLOR.HUD_BORDER};
-  border-bottom: 1px solid ${COLOR.HUD_BORDER};
 
   :first-child {
     margin-top: 0;

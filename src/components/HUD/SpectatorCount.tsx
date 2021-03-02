@@ -18,7 +18,7 @@ const SpectatorCount = () => {
 }
 
 const Container = styled.div`
-  background: ${COLOR.HUD_BACKGROUND};
+  background: ${COLOR.GREY_600};
   width: 90px;
   position: absolute;
   right: 0;
@@ -26,8 +26,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   border-bottom-left-radius: 8px;
-  border-bottom: 1px solid ${COLOR.HUD_BORDER};
-  border-left: 1px solid ${COLOR.HUD_BORDER};
+  border-bottom: 1px solid ${COLOR.GREY_800};
+  border-left: 1px solid ${COLOR.GREY_800};
   padding-top: 6px;
   padding-bottom: 6px;
 

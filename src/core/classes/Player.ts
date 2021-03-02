@@ -2,7 +2,7 @@ import store from '../store'
 import Primitive from '../../types/Primitive'
 import Prop from '../../types/Prop'
 import createProp from '../../utils/createProp'
-import { computed, makeAutoObservable, makeObservable, observable } from 'mobx'
+import { makeAutoObservable } from 'mobx'
 import hex from '../functions/hex'
 
 interface Props {
@@ -24,18 +24,17 @@ class Player {
     economy: createProp(0),
     alive: createProp(true),
     killerName: createProp(''),
+    surrendered: createProp(false),
   }
 
   id: string
   name: string
-  registered: boolean
   ally: Player | null = null
 
-  constructor(id: string, name: string, pattern: string, registered: boolean) {
+  constructor(id: string, name: string, pattern: string) {
     this.id = id
     this.name = name
     this.props.pattern = createProp(pattern)
-    this.registered = registered
 
     makeAutoObservable(this)
   }
@@ -89,6 +88,9 @@ class Player {
   }
   get killerName() {
     return this.props.killerName.current
+  }
+  get surrendered() {
+    return this.props.surrendered.current
   }
 }
 

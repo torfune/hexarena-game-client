@@ -6,14 +6,18 @@ import React from 'react'
 import Spinner from '../Spinner'
 import getPlayerGroups from '../../utils/getPlayerGroups'
 import Player from '../../core/classes/Player'
+import { COLOR, SHADOW } from '../../constants/react'
+import formatMode from '../../utils/formatMode'
 
 const Lobby = () => {
-  if (!store.game || !store.game.mode) return null
+  if (!store.game || !store.game.mode || store.game.players.size === 0) {
+    return null
+  }
 
   let playersLeft: Player[] = []
   let playersRight: Player[] = []
 
-  if (store.game.mode !== 'FFA') {
+  if (!store.game.mode.includes('FFA')) {
     const { playerId } = store.game
     const groups = getPlayerGroups(Array.from(store.game.players.values()))
     const groupLeft = groups.find(
@@ -36,28 +40,32 @@ const Lobby = () => {
     playersRight = players.slice(3, 6)
   }
 
-  return (
-    <Container>
-      <Players players={playersLeft} />
+  const ffa = store.game.mode.includes('FFA')
 
-      <CentralSection ffa={store.game.mode === 'FFA'}>
-        <GameModeText>{store.game.mode}</GameModeText>
+  return (
+    <Container ffa={ffa}>
+      {!ffa && <Players players={playersLeft} />}
+
+      <InfoSection ffa={ffa}>
+        <GameModeText>{formatMode(store.game.mode)}</GameModeText>
 
         <Countdown>
           {store.game.startCountdown || (
             <Spinner size="68px" thickness="2px" color="#aaa" />
           )}
         </Countdown>
+      </InfoSection>
 
-        {store.game.mode !== 'FFA' && <VS>VS</VS>}
-      </CentralSection>
-
-      <Players players={playersRight} />
+      {!ffa ? (
+        <Players players={playersRight} />
+      ) : (
+        <Players players={playersLeft.concat(playersRight)} ffa />
+      )}
     </Container>
   )
 }
 
-const Container = styled.div`
+const Container = styled.div<{ ffa: boolean }>`
   position: absolute;
   top: 0;
   height: 100vh;
@@ -68,54 +76,53 @@ const Container = styled.div`
   grid-template-columns: 2fr 1.5fr 2fr;
   grid-gap: 16px;
   width: 100vw;
-`
-
-const CentralSection = styled.div<{ ffa: boolean }>`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: #222;
-  padding-top: 128px;
-  padding-left: 32px;
-  padding-right: 32px;
 
   ${(props) =>
     props.ffa &&
     css`
-      border-bottom: 1px solid #111;
-      border-bottom-left-radius: 32px;
-      border-bottom-right-radius: 32px;
-      height: 400px;
+      display: block;
     `}
 `
+const InfoSection = styled.div<{ ffa: boolean }>`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: ${COLOR.GREY_600};
+  padding-top: 128px;
+  padding-left: 32px;
+  padding-right: 32px;
+  box-shadow: ${SHADOW.MEDIUM};
 
+  ${(props) =>
+    props.ffa &&
+    css`
+      width: 380px;
+      padding-top: 32px;
+      height: auto;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      margin-bottom: 64px;
+      margin-left: auto;
+      margin-right: auto;
+    `}
+`
 const GameModeText = styled.div`
-  color: #ddd;
+  color: ${COLOR.GREY_100};
   text-align: center;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid ${COLOR.GREY_100};
   padding-bottom: 8px;
   font-size: 32px;
   font-weight: 600;
 `
-
 const Countdown = styled.div`
   font-size: 64px;
-  color: #fff;
-  margin-top: 32px;
+  color: ${COLOR.GREY_100};
+  margin-top: 16px;
   height: 150px;
   font-weight: 300;
   display: flex;
   align-items: center;
-`
-
-const VS = styled.p`
-  font-size: 32px;
-  margin-top: 24px;
-  color: #ddd;
-  font-weight: 500;
-  border-top: 1px solid #ddd;
-  padding-top: 8px;
 `
 
 export default observer(Lobby)

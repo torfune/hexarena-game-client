@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import React from 'react'
 import { ActionType } from '../../../core/classes/Action'
-import { COLOR, PRIMARY } from '../../../constants/react'
+import { COLOR } from '../../../constants/react'
 import { observer } from 'mobx-react-lite'
 import store from '../../../core/store'
 import GameServerConfig from '../../../types/GameServerConfig'
@@ -140,11 +140,9 @@ const Container = styled.div`
   display: flex;
   align-items: center;
 `
-
 const Circle = styled.div`
   border-radius: 50%;
-  background: #222;
-  border: 1px solid ${COLOR.HUD_BORDER};
+  background: ${COLOR.GREY_800};
   width: 74px;
   height: 74px;
   display: flex;
@@ -152,11 +150,10 @@ const Circle = styled.div`
   justify-content: center;
   z-index: 1;
 `
-
 const Rectangle = styled.div`
   border-radius: 12px;
-  background: ${COLOR.HUD_BACKGROUND};
-  border: 1px solid ${COLOR.HUD_BORDER};
+  background: ${COLOR.GREY_600};
+  border: 1px solid ${COLOR.GREY_800};
   position: relative;
   left: -30px;
   padding-left: 42px;
@@ -164,44 +161,37 @@ const Rectangle = styled.div`
   color: #fff;
   height: 56px;
 `
-
 const MainSection = styled.div`
   padding-top: 4px;
   margin-right: 16px;
 `
-
 const CostSection = styled.div`
-  border-left: 1px solid ${COLOR.HUD_BORDER};
+  border-left: 1px solid ${COLOR.GREY_800};
   text-align: center;
   padding-bottom: 1px;
 `
-
 const CostLabel = styled.p`
   font-size: 12px;
   font-weight: 500;
-  padding-left: 16px;
-  padding-right: 16px;
-  padding-bottom: 3px;
-  padding-top: 3px;
-  border-bottom: 1px solid ${COLOR.HUD_BORDER};
-  color: #aaa;
+  padding: 3px 16px;
+  border-bottom: 1px solid ${COLOR.GREY_800};
+  color: #fff;
+  opacity: 0.5;
 `
-
 const CostValue = styled.p<{ red: boolean }>`
   font-size: 26px;
   font-weight: 600;
   margin-top: 1px;
   color: ${(props) => (props.red ? '#e84118' : '#fff')};
 `
-
 const ClickToStart = styled.p`
-  color: #aaa;
+  color: #fff;
+  opacity: 0.5;
   font-size: 16px;
   margin-top: 1px;
 `
-
 const NotEnoughGold = styled.div`
-  background: ${PRIMARY};
+  background: ${COLOR.RED};
   color: #fff;
   padding: 2px 6px;
   border-radius: 2px;
@@ -209,13 +199,11 @@ const NotEnoughGold = styled.div`
   font-weight: 600;
   margin-top: 3px;
 `
-
 const Icon = styled.img<{ opaque: boolean; dontInvert?: boolean }>`
   height: 34px;
   filter: ${(props) => (props.dontInvert ? null : 'invert(1)')};
   opacity: ${(props) => (props.opaque ? '0.6' : 1)};
 `
-
 const Label = styled.p`
   color: #fff;
   font-size: 20px;
