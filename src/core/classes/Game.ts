@@ -261,7 +261,7 @@ class Game {
         const axial = pixelToAxial(pixel)
 
         this.scale = this.targetScale
-        this.setCameraToAxialPosition(axial)
+        this.setCameraToAxial(axial)
       }
     }
 
@@ -759,7 +759,7 @@ class Game {
 
     this.updateBorders()
   }
-  setCameraToAxialPosition(axial: Axial, xOffset: number = 0) {
+  setCameraToAxial(axial: Axial, xOffset: number = 0) {
     if (!this.pixi) return
 
     const { innerWidth, innerHeight } = window

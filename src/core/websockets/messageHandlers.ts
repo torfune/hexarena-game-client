@@ -13,6 +13,7 @@ import Forest from '../classes/Forest'
 import updateProps from '../functions/updateProps'
 import GoldAnimation from '../classes/GoldAnimation'
 import SoundManager from '../../services/SoundManager'
+import isSpectating from '../../utils/isSpectating'
 
 // Handlers: Gameserver -> Frontend
 const messageHandlers = {
@@ -221,7 +222,12 @@ const messageHandlers = {
       SoundManager.play('CAPTURE')
     }
     if (!store.game.camera && store.game.spawnTile) {
-      store.game.setCameraToAxialPosition(store.game.spawnTile.axial)
+      if (isSpectating()) {
+        store.game.setCameraToAxial({ x: 0, z: 0 })
+        store.game.targetScale
+      } else {
+        store.game.setCameraToAxial(store.game.spawnTile.axial)
+      }
     }
     store.game.updateBlackOverlays()
     store.game.updateBorders()
