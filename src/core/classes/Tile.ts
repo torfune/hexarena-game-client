@@ -241,7 +241,7 @@ class Tile {
     if (key === 'background') {
       texture = 'pattern'
     } else if (key === 'mountain') {
-      texture = `mountain0${Math.floor(Math.random() * 5 + 1)}`
+      texture = `mountain-${Math.floor(Math.random() * 5 + 1)}`
     }
 
     const pixel = getPixelPosition(this.axial)
