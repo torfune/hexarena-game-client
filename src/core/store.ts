@@ -13,7 +13,7 @@ class Store {
   error?: {
     message: string
   }
-  gameServerHostname: string | null = null
+  gameServerHost: string | null = null
 
   constructor() {
     makeAutoObservable(this)

@@ -1,5 +1,5 @@
 import HoverPreview from './HUD/HoverPreview'
-import Api, { getGameServerHostname } from '../services/Api'
+import Api, { getGameServerHost } from '../services/Api'
 import SoundManager from '../services/SoundManager'
 import GameStatus from '../types/GameStatus'
 import { observer } from 'mobx-react-lite'
@@ -94,7 +94,7 @@ const GameComponent = observer(() => {
     let gameMode: GameMode
     let gameStatus: GameStatus
     try {
-      const hostname = await getGameServerHostname()
+      const hostname = await getGameServerHost()
       const result = await store.socket.connect(hostname, gameId, {
         accessKey: accessKey as string | null,
       })

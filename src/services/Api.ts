@@ -5,7 +5,7 @@ const Api = {
   gs: {
     get: async (path: string, config?: AxiosRequestConfig) => {
       const { protocol } = window.location
-      const host = await getGameServerHostname()
+      const host = await getGameServerHost()
       return Axios.get(`${protocol}//${host + path}`, config)
     },
   },
@@ -49,32 +49,13 @@ const getWebServerHostname = () => {
   }
 }
 
-export const getGameServerHostname = async () => {
-  if (store.gameServerHostname) return store.gameServerHostname
+export const getGameServerHost = async () => {
+  if (store.gameServerHost) return store.gameServerHost
 
-  switch (window.location.origin) {
-    case 'http://localhost:4000': {
-      store.gameServerHostname = 'localhost:8000'
-      break
-    }
+  const { data } = await Api.ws.get('/config/game-server-host')
+  store.gameServerHost = data.gameServerHost
 
-    case 'https://test.hexarena.io': {
-      store.gameServerHostname = 'us-gs-0.hexarena.io'
-      break
-    }
-
-    case 'https://hexarena.io': {
-      const { data: hostname } = await Api.ws.get('/config/gs-host')
-      store.gameServerHostname = hostname
-      break
-    }
-
-    default:
-      store.gameServerHostname = 'us-gs-0.hexarena.io'
-      break
-  }
-
-  return store.gameServerHostname!
+  return store.gameServerHost!
 }
 
 export default Api

@@ -1,6 +1,6 @@
 {
   "name": "hexarena-game-client",
-  "version": "4.0.0",
+  "version": "3.0.0",
   "private": true,
   "scripts": {
     "dev": "react-scripts start",
