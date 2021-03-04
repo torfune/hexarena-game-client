@@ -38,10 +38,10 @@ const getWebServerHostname = () => {
     case 'http://localhost:4000':
       return 'localhost:7000'
 
-    case 'https://test.hexarena.io':
+    case 'https://game.test.hexarena.io':
       return 'us-ws-0.hexarena.io'
 
-    case 'https://hexarena.io':
+    case 'https://game.hexarena.io':
       return 'us-ws-1.hexarena.io'
 
     default:
