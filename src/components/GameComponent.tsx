@@ -24,7 +24,8 @@ import store from '../core/store'
 import { version } from '../../package.json'
 import ErrorModal from './ErrorModal'
 import isSpectating from '../utils/isSpectating'
-import { Z_INDEX } from '../constants/react'
+import { COLOR, Z_INDEX } from '../constants/react'
+import Spinner from './Spinner'
 
 const GameComponent = observer(() => {
   const [_, refresh] = useState(Date.now())
@@ -145,6 +146,13 @@ const GameComponent = observer(() => {
 
   return (
     <Container>
+      {store.showLoadingCover && (
+        <LoadingCover>
+          <Spinner size={'64px'} thickness={'2px'} color={'#fff'} />
+          <p>loading</p>
+        </LoadingCover>
+      )}
+
       <GameCanvas
         id="game-canvas"
         visible={
@@ -181,11 +189,6 @@ const GameComponent = observer(() => {
       )}
 
       {renderModal()}
-
-      {/*<HowToPlay*/}
-      {/*  show={store.showGuide}*/}
-      {/*  close={() => (store.showGuide = false)}*/}
-      {/*/>*/}
     </Container>
   )
 })
@@ -210,6 +213,28 @@ interface GameCanvasProps {
 }
 const GameCanvas = styled.div<GameCanvasProps>`
   visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
+`
+const LoadingCover = styled.div`
+  background: ${COLOR.GREY_200};
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: ${Z_INDEX.LOADING_COVER};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 256px;
+
+  > p {
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #fff;
+    margin-top: 32px;
+  }
 `
 
 export default GameComponent

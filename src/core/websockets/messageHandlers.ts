@@ -228,6 +228,7 @@ const messageHandlers = {
       } else {
         store.game.setCameraToAxial(store.game.spawnTile.axial)
       }
+      store.showLoadingCover = false
     }
     store.game.updateBlackOverlays()
     store.game.updateBorders()

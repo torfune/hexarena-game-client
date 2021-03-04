@@ -14,6 +14,7 @@ class Store {
     message: string
   }
   gameServerHost: string | null = null
+  showLoadingCover: boolean = true
 
   constructor() {
     makeAutoObservable(this)

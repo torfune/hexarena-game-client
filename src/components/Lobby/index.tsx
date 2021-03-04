@@ -6,7 +6,7 @@ import React from 'react'
 import Spinner from '../Spinner'
 import getPlayerGroups from '../../utils/getPlayerGroups'
 import Player from '../../core/classes/Player'
-import { COLOR, SHADOW } from '../../constants/react'
+import { COLOR, SHADOW, Z_INDEX } from '../../constants/react'
 import formatMode from '../../utils/formatMode'
 
 const Lobby = () => {
@@ -71,11 +71,12 @@ const Container = styled.div<{ ffa: boolean }>`
   height: 100vh;
   padding-left: 64px;
   padding-right: 64px;
-  z-index: 1;
+  z-index: ${Z_INDEX.LOBBY};
   display: grid;
   grid-template-columns: 2fr 1.5fr 2fr;
   grid-gap: 16px;
   width: 100vw;
+  background: ${COLOR.GREY_200};
 
   ${(props) =>
     props.ffa &&

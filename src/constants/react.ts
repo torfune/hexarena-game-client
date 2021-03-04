@@ -33,6 +33,8 @@ export const TRANSITION = {
 }
 
 export const Z_INDEX = {
-  MODAL: 20,
+  MODAL: 40,
+  LOBBY: 30,
+  LOADING_COVER: 20,
   HUD: 10,
 }
