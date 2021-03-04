@@ -34,6 +34,7 @@ import Village from './Village'
 import { easeInQuad } from '../functions/easing'
 import SoundManager from '../../services/SoundManager'
 import isSpectating from '../../utils/isSpectating'
+import getTexture from '../functions/getTexture'
 
 const loader = Loader.shared
 
@@ -311,13 +312,13 @@ class Tile {
   showArmyIcon() {
     const pixel = getPixelPosition(this.axial)
 
-    this.image.armyIcon = createImage('armyIcon')
-    this.image.armyIcon.x = pixel.x
-    this.image.armyIcon.y = pixel.y
-    this.image.armyIcon.alpha = 0
+    this.image['army-icon'] = createImage('army-icon')
+    this.image['army-icon'].x = pixel.x
+    this.image['army-icon'].y = pixel.y
+    this.image['army-icon'].alpha = 0
 
     new Animation(
-      this.image.armyIcon,
+      this.image['army-icon'],
       (image, fraction, context) => {
         image.alpha = fraction
         image.y = context.baseY - this.getArmyIconOffsetY() * fraction
@@ -326,11 +327,11 @@ class Tile {
     )
   }
   hideArmyIcon() {
-    if (!this.image.armyIcon) return
+    if (!this.image['army-icon']) return
 
     const position = getPixelPosition(this.axial)
     new Animation(
-      this.image.armyIcon,
+      this.image['army-icon'],
       (image, fraction) => {
         fraction = 1 - fraction
         image.alpha = fraction
@@ -340,7 +341,7 @@ class Tile {
         speed: 0.05,
         onFinish: (image) => {
           if (store.game) {
-            const stage = store.game.stage.get('armyIcon')
+            const stage = store.game.stage.get('army-icon')
             if (stage) {
               stage.removeChild(image)
             }
@@ -355,43 +356,43 @@ class Tile {
 
     // Remove
     if (!this.building) {
-      this.removeImage('hpBackground')
+      this.removeImage('hp-background')
       return
     }
 
     // Add
-    if (!this.image.hpBackground) {
+    if (!this.image['hp-background']) {
       const pixel = getPixelPosition(this.axial)
       const image = createImage(
-        'hpBackground',
-        `hpBackground${this.building.type === 'CASTLE' ? '3' : '2'}`
+        'hp-background',
+        `hp-background-${this.building.type === 'CASTLE' ? '3' : '2'}`
       )
       image.x = pixel.x
       image.y = pixel.y
       image.alpha = 0
-      this.image.hpBackground = image
+      this.image['hp-background'] = image
 
-      const fillTexture = loader.resources['hpFill'].texture
-      this.image.hpFill1 = new Sprite(fillTexture)
-      this.image.hpFill2 = new Sprite(fillTexture)
-      this.image.hpFill3 = new Sprite(fillTexture)
-      this.image.hpFill1.anchor.set(0.5, 0.5)
-      this.image.hpFill2.anchor.set(0.5, 0.5)
-      this.image.hpFill3.anchor.set(0.5, 0.5)
-      this.image.hpFill1.y = HP_FILL_OFFSET_Y * -1
-      this.image.hpFill2.y = HP_FILL_OFFSET_Y * -1
-      this.image.hpFill3.y = HP_FILL_OFFSET_Y * -1
+      const fillTexture = getTexture('hp-fill')
+      this.image['hp-fill-1'] = new Sprite(fillTexture)
+      this.image['hp-fill-2'] = new Sprite(fillTexture)
+      this.image['hp-fill-3'] = new Sprite(fillTexture)
+      this.image['hp-fill-1'].anchor.set(0.5, 0.5)
+      this.image['hp-fill-2'].anchor.set(0.5, 0.5)
+      this.image['hp-fill-3'].anchor.set(0.5, 0.5)
+      this.image['hp-fill-1'].y = HP_FILL_OFFSET_Y * -1
+      this.image['hp-fill-2'].y = HP_FILL_OFFSET_Y * -1
+      this.image['hp-fill-3'].y = HP_FILL_OFFSET_Y * -1
       if (this.building.type === 'CASTLE') {
-        this.image.hpFill1.x = HP_FILL_OFFSET_X * 2 * -1
-        this.image.hpFill3.x = HP_FILL_OFFSET_X * 2
+        this.image['hp-fill-1'].x = HP_FILL_OFFSET_X * 2 * -1
+        this.image['hp-fill-3'].x = HP_FILL_OFFSET_X * 2
       } else {
-        this.image.hpFill1.x = HP_FILL_OFFSET_X * -1
-        this.image.hpFill2.x = HP_FILL_OFFSET_X
-        this.image.hpFill3.visible = false
+        this.image['hp-fill-1'].x = HP_FILL_OFFSET_X * -1
+        this.image['hp-fill-2'].x = HP_FILL_OFFSET_X
+        this.image['hp-fill-3'].visible = false
       }
-      image.addChild(this.image.hpFill1)
-      image.addChild(this.image.hpFill2)
-      image.addChild(this.image.hpFill3)
+      image.addChild(this.image['hp-fill-1'])
+      image.addChild(this.image['hp-fill-2'])
+      image.addChild(this.image['hp-fill-3'])
 
       if (
         this.building.hp !== gsConfig.HP[this.building.type] ||
@@ -403,8 +404,8 @@ class Tile {
 
     // Upgrade
     if (this.building.type === 'CASTLE') {
-      const { texture } = loader.resources['hpBackground3']
-      this.image.hpBackground.texture = texture
+      const { texture } = loader.resources['hp-background-3']
+      this.image['hp-background'].texture = texture
 
       if (
         this.building.hp !== gsConfig.HP[this.building.type] ||
@@ -413,16 +414,24 @@ class Tile {
         this.showHitpoints()
       }
 
-      if (this.image.hpFill1 && this.image.hpFill2 && this.image.hpFill3) {
-        this.image.hpFill1.x = HP_FILL_OFFSET_X * 2 * -1
-        this.image.hpFill2.x = 0
-        this.image.hpFill3.x = HP_FILL_OFFSET_X * 2
-        this.image.hpFill3.visible = true
+      if (
+        this.image['hp-fill-1'] &&
+        this.image['hp-fill-2'] &&
+        this.image['hp-fill-3']
+      ) {
+        this.image['hp-fill-1'].x = HP_FILL_OFFSET_X * 2 * -1
+        this.image['hp-fill-2'].x = 0
+        this.image['hp-fill-3'].x = HP_FILL_OFFSET_X * 2
+        this.image['hp-fill-3'].visible = true
       }
     }
 
     // Update
-    if (!this.image.hpFill1 || !this.image.hpFill2 || !this.image.hpFill3) {
+    if (
+      !this.image['hp-fill-1'] ||
+      !this.image['hp-fill-2'] ||
+      !this.image['hp-fill-3']
+    ) {
       return
     }
 
@@ -432,24 +441,24 @@ class Tile {
 
     switch (this.building.hp) {
       case 0:
-        this.image.hpFill1.visible = false
-        this.image.hpFill2.visible = false
-        this.image.hpFill3.visible = false
+        this.image['hp-fill-1'].visible = false
+        this.image['hp-fill-2'].visible = false
+        this.image['hp-fill-3'].visible = false
         break
       case 1:
-        this.image.hpFill1.visible = true
-        this.image.hpFill2.visible = false
-        this.image.hpFill3.visible = false
+        this.image['hp-fill-1'].visible = true
+        this.image['hp-fill-2'].visible = false
+        this.image['hp-fill-3'].visible = false
         break
       case 2:
-        this.image.hpFill1.visible = true
-        this.image.hpFill2.visible = true
-        this.image.hpFill3.visible = false
+        this.image['hp-fill-1'].visible = true
+        this.image['hp-fill-2'].visible = true
+        this.image['hp-fill-3'].visible = false
         break
       case 3:
-        this.image.hpFill1.visible = true
-        this.image.hpFill2.visible = true
-        this.image.hpFill3.visible = true
+        this.image['hp-fill-1'].visible = true
+        this.image['hp-fill-2'].visible = true
+        this.image['hp-fill-3'].visible = true
         break
     }
 
@@ -472,7 +481,7 @@ class Tile {
     }
   }
   showHitpoints() {
-    if (this.hpVisible || !this.image.hpBackground || !this.building) {
+    if (this.hpVisible || !this.image['hp-background'] || !this.building) {
       return
     }
 
@@ -480,7 +489,7 @@ class Tile {
 
     const building = this.building
     const pixel = getPixelPosition(this.axial)
-    const animation = getImageAnimation(this.image.hpBackground)
+    const animation = getImageAnimation(this.image['hp-background'])
 
     let initialFraction: number | undefined = undefined
     if (animation && animation instanceof Animation) {
@@ -489,7 +498,7 @@ class Tile {
     }
 
     new Animation(
-      this.image.hpBackground,
+      this.image['hp-background'],
       (image, fraction, context) => {
         image.alpha = fraction
         image.y = context.baseY - HP_BACKGROUND_OFFSET[building.type] * fraction
@@ -502,7 +511,7 @@ class Tile {
     )
   }
   hideHitpoints() {
-    if (!this.hpVisible || !this.building || !this.image.hpBackground) {
+    if (!this.hpVisible || !this.building || !this.image['hp-background']) {
       return
     }
 
@@ -510,7 +519,7 @@ class Tile {
 
     const building = this.building
     const pixel = getPixelPosition(this.axial)
-    const animation = getImageAnimation(this.image.hpBackground)
+    const animation = getImageAnimation(this.image['hp-background'])
 
     let initialFraction
     if (animation && animation instanceof Animation) {
@@ -519,7 +528,7 @@ class Tile {
     }
 
     new Animation(
-      this.image.hpBackground,
+      this.image['hp-background'],
       (image, fraction, context) => {
         fraction = 1 - fraction
         image.alpha = fraction
@@ -810,22 +819,22 @@ class Tile {
 
     const pixel = getPixelPosition(this.axial)
 
-    this.image.patternPreview = createImage('patternPreview', 'pattern')
-    this.image.patternPreview.x = pixel.x
-    this.image.patternPreview.y = pixel.y
-    this.image.patternPreview.tint = hex(pattern)
-    this.image.patternPreview.alpha = 0.3
+    this.image['pattern-preview'] = createImage('pattern-preview', 'pattern')
+    this.image['pattern-preview'].x = pixel.x
+    this.image['pattern-preview'].y = pixel.y
+    this.image['pattern-preview'].tint = hex(pattern)
+    this.image['pattern-preview'].alpha = 0.3
   }
   removePatternPreview() {
-    if (!this.image.patternPreview || !store.game) return
+    if (!this.image['pattern-preview'] || !store.game) return
 
     if (this.image.pattern) {
       this.image.pattern.visible = true
     }
 
-    const stage = store.game.stage.get('patternPreview')
+    const stage = store.game.stage.get('pattern-preview')
     if (stage) {
-      stage.removeChild(this.image.patternPreview)
+      stage.removeChild(this.image['pattern-preview'])
     }
   }
   getStructureName() {

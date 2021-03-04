@@ -10,6 +10,7 @@ import { Sprite, Graphics, Loader } from 'pixi.js-legacy'
 import Animation from './Animation'
 import { easeOutQuad, easeInQuad } from '../functions/easing'
 import SoundManager from '../../services/SoundManager'
+import getTexture from '../functions/getTexture'
 
 const loader = Loader.shared
 const ACTION_RADIUS = 50
@@ -54,7 +55,7 @@ class Action {
 
     const pixel = getPixelPosition(this.tile.axial)
 
-    this.background = new Sprite(loader.resources['action-bg'].texture)
+    this.background = new Sprite(getTexture('action-bg'))
     this.background.anchor.set(0.5)
     this.icon = new Sprite(this.getIconTexture())
     this.icon.anchor.set(0.5)
@@ -182,25 +183,25 @@ class Action {
   getIconTexture() {
     switch (this.type) {
       case 'CAPTURE':
-        return loader.resources['action-icon-attack'].texture
+        return getTexture('action-icon-attack')
       case 'RECRUIT':
         if (
           store.gsConfig &&
           this.tile.building &&
           this.tile.building.hp < store.gsConfig.HP[this.tile.building.type]
         ) {
-          return loader.resources['action-icon-heal'].texture
+          return getTexture('action-icon-heal')
         } else {
-          return loader.resources['action-icon-recruit'].texture
+          return getTexture('action-icon-recruit')
         }
       case 'CAMP':
-        return loader.resources['action-icon-camp'].texture
+        return getTexture('action-icon-camp')
       case 'TOWER':
-        return loader.resources['action-icon-tower'].texture
+        return getTexture('action-icon-tower')
       case 'CASTLE':
-        return loader.resources['action-icon-castle'].texture
+        return getTexture('action-icon-castle')
       case 'HOUSE':
-        return loader.resources['action-icon-house'].texture
+        return getTexture('action-icon-house')
     }
   }
 

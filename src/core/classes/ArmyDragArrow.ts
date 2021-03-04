@@ -7,8 +7,8 @@ import destroyImage from '../functions/destroyImage'
 
 class ArmyDragArrow {
   tile: Tile
-  body: Sprite = createImage('armyDragArrow', 'army-drag-arrow-body')
-  head: Sprite = createImage('armyDragArrow', 'army-drag-arrow-head')
+  body: Sprite = createImage('army-drag-arrow', 'army-drag-arrow-body')
+  head: Sprite = createImage('army-drag-arrow', 'army-drag-arrow-head')
 
   constructor(tile: Tile) {
     this.tile = tile
@@ -85,8 +85,8 @@ class ArmyDragArrow {
   destroy() {
     if (!store.game) return
 
-    destroyImage('armyDragArrow', this.body)
-    destroyImage('armyDragArrow', this.head)
+    destroyImage('army-drag-arrow', this.body)
+    destroyImage('army-drag-arrow', this.head)
 
     if (store.game.armyDragArrow === this) {
       store.game.armyDragArrow = null

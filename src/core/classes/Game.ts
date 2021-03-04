@@ -134,47 +134,10 @@ class Game {
     ;(window as any).game = this
 
     makeAutoObservable(this)
-    // makeObservable(this, {
-    //   allianceRequests: observable,
-    //   armies: observable,
-    //   players: observable,
-    //   forests: observable,
-    //   villages: observable,
-    //   tiles: observable,
-    //   actions: observable,
-    //   hoveredTile: observable,
-    //   startCountdown: observable,
-    //   incomeAt: observable,
-    //   lastIncomeAt: observable,
-    //   incomeStartedAt: observable,
-    //   serverTime: observable,
-    //   goldAnimation: observable,
-    //   notification: observable,
-    //   flash: observable,
-    //   showHud: observable,
-    //   fps: observable,
-    //   ping: observable,
-    //   status: observable,
-    //   time: observable,
-    //   playerId: observable,
-    //   spawnTile: observable,
-    //   cursor: observable,
-    //   hoveredTileInfo: observable,
-    //   spectators: observable,
-    //   player: computed,
-    //   gold: computed,
-    // })
   }
   render(canvas: HTMLElement) {
-    const tutorialFinished =
-      !LocalStorageService.supported ||
-      LocalStorageService.get('tutorialFinished') === 'true'
-
     if (!this.loop) {
       this.loop = createGameLoop(this.update, this)
-      // if (this.mode === 'TUTORIAL' && !tutorialFinished) {
-      //   this.loop.stop()
-      // }
     }
 
     if (!this.pixi) {
@@ -189,11 +152,6 @@ class Game {
     }
 
     canvas.appendChild(this.pixi.view)
-
-    // Tutorial
-    // if (this.mode === 'TUTORIAL' && !tutorialFinished) {
-    //   store.showGuide = true
-    // }
   }
   destroy() {
     for (let i = 0; i < TILE_IMAGES.length; i++) {
