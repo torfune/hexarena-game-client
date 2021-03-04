@@ -52,8 +52,12 @@ const getWebServerHostname = () => {
 export const getGameServerHost = async () => {
   if (store.gameServerHost) return store.gameServerHost
 
-  const { data } = await Api.ws.get('/config/game-server-host')
-  store.gameServerHost = data.gameServerHost
+  if (window.location.origin === 'http://localhost:4000') {
+    store.gameServerHost = 'localhost:8000'
+  } else {
+    const { data } = await Api.ws.get('/config/game-server-host')
+    store.gameServerHost = data.gameServerHost
+  }
 
   return store.gameServerHost!
 }
