@@ -404,8 +404,7 @@ class Tile {
 
     // Upgrade
     if (this.building.type === 'CASTLE') {
-      const { texture } = loader.resources['hp-background-3']
-      this.image['hp-background'].texture = texture
+      this.image['hp-background'].texture = getTexture('hp-background-3')
 
       if (
         this.building.hp !== gsConfig.HP[this.building.type] ||
