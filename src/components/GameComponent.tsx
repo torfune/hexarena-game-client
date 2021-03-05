@@ -1,5 +1,4 @@
 import HoverPreview from './HUD/HoverPreview'
-import Api, { getGameServerHost } from '../services/Api'
 import SoundManager from '../services/SoundManager'
 import GameStatus from '../types/GameStatus'
 import { observer } from 'mobx-react-lite'
@@ -26,6 +25,7 @@ import ErrorModal from './ErrorModal'
 import isSpectating from '../utils/isSpectating'
 import { COLOR, Z_INDEX } from '../constants/react'
 import Spinner from './Spinner'
+import GameServerApi from '../services/GameServerApi'
 
 const GameComponent = observer(() => {
   const [_, refresh] = useState(Date.now())
@@ -36,10 +36,16 @@ const GameComponent = observer(() => {
     const canvas = document.getElementById('game-canvas')
     if (!canvas) throw new Error('Cannot find canvas.')
 
-    const { gameId, accessKey } = qs.parse(window.location.search)
+    const { gameId, accessKey, gameServerHost } = qs.parse(
+      window.location.search
+    )
+
     if (!gameId || typeof gameId !== 'string') {
       store.error = { message: 'Connection failed' }
       throw new Error('Missing Game ID in URL.')
+    } else if (!gameServerHost || typeof gameServerHost !== 'string') {
+      store.error = { message: 'Connection failed' }
+      throw new Error('Missing Game Server Host in URL.')
     } else if (
       !isSpectating() &&
       (!accessKey || typeof accessKey !== 'string')
@@ -52,14 +58,13 @@ const GameComponent = observer(() => {
     let responses
     try {
       responses = await Promise.all([
-        Api.gs.get(`/config`),
-        Api.gs.get('/status'),
-        Api.ws.get('/status'),
+        GameServerApi.getConfig(),
+        GameServerApi.getStatus(),
       ])
     } catch (error) {
       console.error(error)
       store.loading = false
-      store.error = { message: 'Connection failed.' }
+      store.error = { message: 'Connection failed' }
       return
     }
     const [configResponse, statusResponse] = responses
@@ -95,8 +100,7 @@ const GameComponent = observer(() => {
     let gameMode: GameMode
     let gameStatus: GameStatus
     try {
-      const hostname = await getGameServerHost()
-      const result = await store.socket.connect(hostname, gameId, {
+      const result = await store.socket.connect(gameServerHost, gameId, {
         accessKey: accessKey as string | null,
       })
       gameMode = result.gameMode
