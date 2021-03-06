@@ -116,7 +116,7 @@ const GameComponent = observer(() => {
     store.game.render(canvas)
 
     // Load Settings from Local Storage
-    store.settings.sound = LocalStorageService.get('soundEnabled') === 'true'
+    // store.settings.sound = LocalStorageService.get('soundEnabled') === 'true'
 
     // Done
     store.loading = false
@@ -129,6 +129,12 @@ const GameComponent = observer(() => {
       window.removeEventListener('resize', handleResize)
     }
   }, [])
+
+  useEffect(() => {
+    if (!store.showLoadingCover) {
+      SoundManager.play('GAME_START')
+    }
+  }, [store.showLoadingCover])
 
   const handleResize = () => {
     refresh(Date.now())

@@ -146,11 +146,16 @@ class Tile {
     }
 
     // Sounds
-    if (
-      this.ownerId === store.game.playerId &&
-      ((key === 'camp' && value) || (key === 'buildingType' && value))
-    ) {
-      SoundManager.play('BUILDING')
+    if (this.ownerId === store.game.playerId) {
+      if (key === 'camp' && this.camp) {
+        SoundManager.play('CAMP_CREATE')
+      } else if (key === 'buildingType') {
+        if (value === 'TOWER') {
+          SoundManager.play('TOWER_CREATE')
+        } else if (value === 'CASTLE') {
+          SoundManager.play('CASTLE_CREATE')
+        }
+      }
     }
   }
 

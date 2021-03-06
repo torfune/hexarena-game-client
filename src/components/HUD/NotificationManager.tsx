@@ -7,7 +7,7 @@ import { animated, useTransition } from 'react-spring'
 import { Pixel } from '../../types/coordinates'
 import { BOX_SHADOW } from '../../constants/react'
 
-const Notification = styled(animated.div)<{ position: Pixel }>`
+const StyledNotification = styled(animated.div)<{ position: Pixel }>`
   position: absolute;
   left: ${(props) => props.position.x}px;
   top: ${(props) => props.position.y}px;
@@ -77,9 +77,9 @@ const NotificationManager: React.FC = () => {
   return (
     <>
       {transitions.map(({ item, props, key }) => (
-        <Notification key={key} style={props} position={item.position}>
+        <StyledNotification key={key} style={props} position={item.position}>
           {item.text}
-        </Notification>
+        </StyledNotification>
       ))}
     </>
   )

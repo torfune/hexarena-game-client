@@ -1,4 +1,5 @@
 import store from '../core/store'
+import isSpectating from '../utils/isSpectating'
 
 const w = window as any
 const AudioContext = w.AudioContext || w.webkitAudioContext
@@ -14,30 +15,80 @@ const isSupported = () => {
 }
 
 const SOUNDS = {
-  CAPTURE: {
-    url: `${baseUrl}/click01.mp3`,
-    volume: 0.4,
-    offset: 0,
-  },
-  ACTION: {
-    url: `${baseUrl}/click02.mp3`,
-    volume: 0.5,
-    offset: 0,
-  },
-  ARMY_SEND: {
-    url: `${baseUrl}/click03.mp3`,
-    volume: 1,
-    offset: 0,
-  },
-  VILLAGE_RAID: {
-    url: `${baseUrl}/coin01.mp3`,
+  ACTION_CREATE: {
+    url: `${baseUrl}/action-create.mp3`,
     volume: 0.2,
     offset: 0,
   },
-  BUILDING: {
-    url: `${baseUrl}/wave01.mp3`,
-    volume: 0.4,
-    offset: 0.5,
+  ACTION_FAILURE: {
+    url: `${baseUrl}/action-failure.mp3`,
+    volume: 0.8,
+    offset: 0,
+  },
+  ARMY_CREATE: {
+    url: `${baseUrl}/army-create.mp3`,
+    volume: 1,
+    offset: 0,
+  },
+  ARMY_SEND: {
+    url: `${baseUrl}/army-send.mp3`,
+    volume: 0.6,
+    offset: 0,
+  },
+  CAMP_CREATE: {
+    url: `${baseUrl}/camp-create.mp3`,
+    volume: 0.8,
+    offset: 0,
+  },
+  CASTLE_CREATE: {
+    url: `${baseUrl}/castle-create.mp3`,
+    volume: 0.8,
+    offset: 0,
+  },
+  DEFEAT: {
+    url: `${baseUrl}/defeat.mp3`,
+    volume: 1,
+    offset: 0,
+  },
+  GAME_START: {
+    url: `${baseUrl}/game-start.mp3`,
+    volume: 0.1,
+    offset: 0,
+  },
+  INCOME: {
+    url: `${baseUrl}/income.mp3`,
+    volume: 0.3,
+    offset: 0,
+  },
+  ARMY_SELECT: {
+    url: `${baseUrl}/army-select.mp3`,
+    volume: 1,
+    offset: 0.1,
+  },
+  TILE_CAPTURE: {
+    url: `${baseUrl}/tile-capture.mp3`,
+    volume: 1,
+    offset: 0,
+  },
+  TOWER_CREATE: {
+    url: `${baseUrl}/tower-create.mp3`,
+    volume: 0.5,
+    offset: 0,
+  },
+  VICTORY: {
+    url: `${baseUrl}/victory.mp3`,
+    volume: 1,
+    offset: 0,
+  },
+  VILLAGE_CAPTURE: {
+    url: `${baseUrl}/village-capture.mp3`,
+    volume: 0.5,
+    offset: 0,
+  },
+  VILLAGE_DESTROY: {
+    url: `${baseUrl}/village-destroy.mp3`,
+    volume: 0.5,
+    offset: 0,
   },
 }
 
@@ -64,8 +115,9 @@ class SoundManager {
       request.send()
     }
   }
+
   static play(soundKey: keyof typeof SOUNDS) {
-    if (!store.settings.sound || !this.context) return
+    if (!store.settings.sound || !this.context || isSpectating()) return
 
     const sound = SOUNDS[soundKey]
     const buffer = this.buffers[soundKey]

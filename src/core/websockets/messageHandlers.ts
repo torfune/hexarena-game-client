@@ -184,7 +184,7 @@ const messageHandlers = {
       camp: boolean
     }[]
 
-    let playCaptureSound = false
+    let sound: 'VILLAGE_CAPTURE' | 'TILE_CAPTURE' | null = null
     for (let i = 0; i < parsed.length; i++) {
       const fields = parsed[i]
       const { id, x, z, mountain, bedrock } = fields
@@ -210,7 +210,11 @@ const messageHandlers = {
         tile.ownerId !== store.game.playerId &&
         parsed[i].ownerId === store.game.playerId
       ) {
-        playCaptureSound = true
+        if (tile.village) {
+          sound = 'VILLAGE_CAPTURE'
+        } else if (!sound) {
+          sound = 'TILE_CAPTURE'
+        }
       }
 
       // Update
@@ -218,8 +222,8 @@ const messageHandlers = {
     }
 
     // Side effects
-    if (playCaptureSound) {
-      SoundManager.play('CAPTURE')
+    if (sound) {
+      SoundManager.play(sound)
     }
     if (!store.game.camera && store.game.spawnTile) {
       if (isSpectating()) {

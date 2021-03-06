@@ -42,7 +42,7 @@ class GoldAnimation {
       store.game.animations.push(this)
     }
 
-    SoundManager.play('VILLAGE_RAID')
+    SoundManager.play('VILLAGE_DESTROY')
   }
   update() {
     for (let i = this.coins.length - 1; i >= 0; i--) {

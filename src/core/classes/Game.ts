@@ -386,6 +386,7 @@ class Game {
       (hoveredTile.building || hoveredTile.camp) &&
       button !== 2
     ) {
+      SoundManager.play('ARMY_SELECT')
       this.selectArmy(hoveredTile)
       return
     }
@@ -995,6 +996,7 @@ class Game {
     }
 
     this.notification = `${Date.now()}|Not enough gold`
+    SoundManager.play('ACTION_FAILURE')
   }
 }
 

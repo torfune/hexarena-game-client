@@ -4,6 +4,7 @@ import Prop from '../../types/Prop'
 import createProp from '../../utils/createProp'
 import { makeAutoObservable } from 'mobx'
 import hex from '../functions/hex'
+import SoundManager from '../../services/SoundManager'
 
 interface Props {
   [key: string]: Prop<Primitive>
@@ -69,6 +70,15 @@ class Player {
           this.ally = store.game.players.get(this.allyId) || null
         }
         break
+      }
+
+      case 'gold': {
+        if (
+          this.id === store.game.playerId &&
+          this.props[key].previous + 1 === this.gold
+        ) {
+          SoundManager.play('INCOME')
+        }
       }
     }
   }

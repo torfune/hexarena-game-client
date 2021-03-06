@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import styled from 'styled-components'
 import store from '../core/store'
-import React from 'react'
+import React, { useEffect } from 'react'
 import getWebClientUrl from '../utils/getWebClientUrl'
 import isSpectating from '../utils/isSpectating'
 import cancelSpectate from '../utils/cancelSpectate'
@@ -9,9 +9,35 @@ import Modal from './Modal'
 import Button from './Button'
 import getPlacementMessage from '../utils/getPlacementMessage'
 import getGameServerUrl from '../utils/getGameServerUrl'
+import SoundManager from '../services/SoundManager'
 
 const EndModal = () => {
   const { game } = store
+
+  useEffect(() => {
+    if (isSpectating() || !game) return
+
+    if (game.mode === 'FFA-6') {
+      if (game.player!.ffaPlace! <= 3) {
+        SoundManager.play('VICTORY')
+      } else {
+        SoundManager.play('DEFEAT')
+      }
+    } else if (game.mode === 'FFA-3') {
+      if (game.player!.ffaPlace! <= 2) {
+        SoundManager.play('VICTORY')
+      } else {
+        SoundManager.play('DEFEAT')
+      }
+    } else if (game.mode.includes('1v1')) {
+      if (game.player?.alive && !game.player.surrendered) {
+        SoundManager.play('VICTORY')
+      } else {
+        SoundManager.play('DEFEAT')
+      }
+    }
+  }, [])
+
   if (
     !game ||
     game.time === null ||

@@ -71,7 +71,10 @@ class Action {
     this.image.x = pixel.x
     this.image.y = pixel.y
 
-    SoundManager.play('ACTION')
+    if (owner.id === store.game?.playerId) {
+      SoundManager.play('ACTION_CREATE')
+    }
+
     new Animation(
       this.image,
       (image: Sprite, fraction: number, context: any) => {
@@ -123,6 +126,7 @@ class Action {
         break
     }
   }
+
   update() {
     if (this.status === 'PENDING' || !store.game || store.game.ping === null) {
       return
@@ -150,6 +154,7 @@ class Action {
     this.fill.arc(0, 0, ACTION_RADIUS, startAngle, endAngle)
     this.fill.endFill()
   }
+
   destroy() {
     if (!store.game) return
 
@@ -159,6 +164,10 @@ class Action {
     }
 
     this.tile.action = null
+
+    if (this.type === 'RECRUIT' && this.owner.id === store.game.playerId) {
+      SoundManager.play('ARMY_CREATE')
+    }
 
     new Animation(
       this.image,

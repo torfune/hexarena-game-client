@@ -9,11 +9,14 @@ class Store {
   showGuide: boolean = false
   gsConfig?: GameServerConfig
   loading: boolean = true
-  settings: { sound: boolean } = { sound: false }
+  settings: {
+    sound: boolean
+  } = {
+    sound: true,
+  }
   error?: {
     message: string
   }
-  gameServerHost: string | null = null
   showLoadingCover: boolean = true
 
   constructor() {
