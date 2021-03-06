@@ -137,7 +137,11 @@ const GameComponent = observer(() => {
   const renderModal = () => {
     const { game } = store
 
-    if (game?.status === 'finished' || (game?.player && !game?.player.alive)) {
+    if (
+      game?.status === 'finished' ||
+      (game?.player && !game?.player.alive) ||
+      (game?.player && game?.player.surrendered)
+    ) {
       return <EndModal />
     }
 

@@ -51,12 +51,14 @@ class Player {
     this.props[key].current = value
 
     switch (key) {
-      case 'pattern': {
-        const tiles = Array.from(store.game.tiles.values())
-        for (let i = tiles.length - 1; i >= 0; i--) {
-          const tile = tiles[i]
-          if (tile.image.pattern && tile.ownerId === this.id) {
-            tile.image.pattern.tint = hex(String(value))
+      case 'surrendered': {
+        if (this.surrendered) {
+          const tiles = Array.from(store.game.tiles.values())
+          for (let i = tiles.length - 1; i >= 0; i--) {
+            const tile = tiles[i]
+            if (tile.image.pattern && tile.ownerId === this.id) {
+              tile.image.pattern.tint = hex('#ccc')
+            }
           }
         }
         break
@@ -68,6 +70,14 @@ class Player {
         }
         break
       }
+    }
+  }
+
+  getPattern() {
+    if (this.surrendered) {
+      return '#ccc'
+    } else {
+      return this.pattern
     }
   }
 

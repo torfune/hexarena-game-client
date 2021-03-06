@@ -1,5 +1,6 @@
 import { Axial } from '../types/coordinates'
 import isSpectating from '../utils/isSpectating'
+import { COLOR } from './react'
 
 // TILE
 export const TILE_RADIUS = 73.8
@@ -79,8 +80,8 @@ export const UNIT_DOOR_OFFSET = 32
 export const UNIT_MAX_DELAY = 0.4
 
 // COLORS
-export const BEDROCK_BACKGROUND = '#aaa'
-export const BEDROCK_BORDER = '#222'
+export const BEDROCK_BACKGROUND = '#5D6D7C'
+export const BEDROCK_BORDER = COLOR.GREY_800
 
 // DEBUG COMMANDS
 export const DEBUG_COMMANDS = [

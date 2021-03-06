@@ -3,7 +3,7 @@ import React from 'react'
 import Player from '../../../core/classes/Player'
 import { COLOR } from '../../../constants/react'
 import store from '../../../core/store'
-import skullIcon from '../../../icons/skull.svg'
+import botIcon from '../../../icons/bot.svg'
 import isSpectating from '../../../utils/isSpectating'
 
 interface Props {
@@ -14,8 +14,8 @@ const PlayerPreview: React.FC<Props> = ({ player }) => {
 
   return (
     <Container>
-      {player.pattern === '#ccc' ? (
-        <Icon src={skullIcon} />
+      {player.surrendered ? (
+        <Icon src={botIcon} />
       ) : (
         <Pattern color={player.pattern} />
       )}
@@ -48,7 +48,7 @@ const Name = styled.h4`
 
 const Icon = styled.img`
   height: 18px;
-  opacity: 0.8;
+  //opacity: 1;
   margin-right: 4px;
   filter: invert(1);
 `

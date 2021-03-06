@@ -8,13 +8,14 @@ import cancelSpectate from '../utils/cancelSpectate'
 import Modal from './Modal'
 import Button from './Button'
 import getPlacementMessage from '../utils/getPlacementMessage'
+import getGameServerUrl from '../utils/getGameServerUrl'
 
 const EndModal = () => {
   const { game } = store
   if (
     !game ||
     game.time === null ||
-    (game.mode.includes('FFA') && !game.player?.ffaPlace)
+    (game.mode.includes('FFA') && !game.player?.ffaPlace && !isSpectating())
   ) {
     return null
   }
@@ -95,7 +96,9 @@ const EndModal = () => {
           {showSpectateButton && (
             <StyledButton
               onClick={() => {
-                const url = `${getWebClientUrl()}/spectate?gameId=${game.id}`
+                const url = `${getWebClientUrl()}/spectate?gameId=${
+                  game.id
+                }&gameServerHost=${getGameServerUrl()?.split('//')[1]}`
                 window.location.href = url
               }}
               marginTop={16}

@@ -2,7 +2,7 @@
 
 "action-bg.png":
 {
-	"frame": {"x":392,"y":828,"w":256,"h":296},
+	"frame": {"x":2,"y":877,"w":256,"h":296},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":296},
@@ -10,7 +10,7 @@
 },
 "action-icon-attack.png":
 {
-	"frame": {"x":2,"y":281,"w":158,"h":158},
+	"frame": {"x":778,"y":128,"w":158,"h":158},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":158,"h":158},
@@ -18,7 +18,7 @@
 },
 "action-icon-camp.png":
 {
-	"frame": {"x":162,"y":281,"w":158,"h":158},
+	"frame": {"x":2,"y":288,"w":158,"h":158},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":158,"h":158},
@@ -26,7 +26,7 @@
 },
 "action-icon-castle.png":
 {
-	"frame": {"x":322,"y":281,"w":158,"h":158},
+	"frame": {"x":162,"y":288,"w":158,"h":158},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":158,"h":158},
@@ -34,7 +34,7 @@
 },
 "action-icon-heal.png":
 {
-	"frame": {"x":482,"y":281,"w":158,"h":158},
+	"frame": {"x":322,"y":288,"w":158,"h":158},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":158,"h":158},
@@ -42,7 +42,7 @@
 },
 "action-icon-house.png":
 {
-	"frame": {"x":642,"y":281,"w":158,"h":158},
+	"frame": {"x":482,"y":288,"w":158,"h":158},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":158,"h":158},
@@ -50,7 +50,7 @@
 },
 "action-icon-recruit.png":
 {
-	"frame": {"x":2,"y":441,"w":158,"h":158},
+	"frame": {"x":642,"y":288,"w":158,"h":158},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":158,"h":158},
@@ -58,7 +58,7 @@
 },
 "action-icon-tower.png":
 {
-	"frame": {"x":162,"y":441,"w":158,"h":158},
+	"frame": {"x":802,"y":288,"w":158,"h":158},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":158,"h":158},
@@ -82,7 +82,7 @@
 },
 "army-icon.png":
 {
-	"frame": {"x":650,"y":828,"w":256,"h":296},
+	"frame": {"x":260,"y":877,"w":256,"h":296},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":296},
@@ -98,7 +98,7 @@
 },
 "arrow.png":
 {
-	"frame": {"x":2,"y":1424,"w":257,"h":297},
+	"frame": {"x":2,"y":1473,"w":257,"h":297},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":257,"h":297},
@@ -106,7 +106,7 @@
 },
 "black-overlay.png":
 {
-	"frame": {"x":2,"y":1126,"w":256,"h":296},
+	"frame": {"x":518,"y":877,"w":256,"h":296},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":296},
@@ -114,7 +114,7 @@
 },
 "border.png":
 {
-	"frame": {"x":260,"y":1126,"w":256,"h":296},
+	"frame": {"x":2,"y":1175,"w":256,"h":296},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":296},
@@ -138,7 +138,7 @@
 },
 "capital.png":
 {
-	"frame": {"x":322,"y":441,"w":256,"h":176},
+	"frame": {"x":2,"y":448,"w":256,"h":176},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":176},
@@ -162,7 +162,7 @@
 },
 "fog.png":
 {
-	"frame": {"x":261,"y":1424,"w":288,"h":328},
+	"frame": {"x":261,"y":1473,"w":288,"h":328},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":288,"h":328},
@@ -170,7 +170,7 @@
 },
 "gold.png":
 {
-	"frame": {"x":551,"y":1424,"w":335,"h":335},
+	"frame": {"x":551,"y":1473,"w":335,"h":335},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":335,"h":335},
@@ -218,7 +218,7 @@
 },
 "logo.png":
 {
-	"frame": {"x":2,"y":828,"w":388,"h":234},
+	"frame": {"x":433,"y":641,"w":388,"h":234},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":388,"h":234},
@@ -226,7 +226,7 @@
 },
 "mountain-1.png":
 {
-	"frame": {"x":650,"y":627,"w":216,"h":199},
+	"frame": {"x":215,"y":641,"w":216,"h":199},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":216,"h":199},
@@ -234,7 +234,7 @@
 },
 "mountain-2.png":
 {
-	"frame": {"x":224,"y":627,"w":211,"h":191},
+	"frame": {"x":704,"y":448,"w":211,"h":191},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":211,"h":191},
@@ -242,7 +242,7 @@
 },
 "mountain-3.png":
 {
-	"frame": {"x":437,"y":627,"w":211,"h":191},
+	"frame": {"x":2,"y":641,"w":211,"h":191},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":211,"h":191},
@@ -250,7 +250,7 @@
 },
 "mountain-4.png":
 {
-	"frame": {"x":580,"y":441,"w":220,"h":184},
+	"frame": {"x":260,"y":448,"w":220,"h":184},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":220,"h":184},
@@ -258,15 +258,23 @@
 },
 "mountain-5.png":
 {
-	"frame": {"x":2,"y":627,"w":220,"h":184},
+	"frame": {"x":482,"y":448,"w":220,"h":184},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":220,"h":184},
 	"sourceSize": {"w":220,"h":184}
 },
+"overlay.png":
+{
+	"frame": {"x":260,"y":1175,"w":258,"h":296},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":258,"h":296},
+	"sourceSize": {"w":258,"h":296}
+},
 "pattern.png":
 {
-	"frame": {"x":518,"y":1126,"w":256,"h":296},
+	"frame": {"x":520,"y":1175,"w":256,"h":296},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":296},
@@ -305,8 +313,8 @@
 	"version": "1.0",
 	"image": "spritesheet.png",
 	"format": "RGBA8888",
-	"size": {"w":908,"h":1761},
+	"size": {"w":962,"h":1810},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:e1fca8b94d88ff808089784e1e19865c:79a977abc8e020961d77d2d0e9f992ac:729adc6043343cfda41c447ce8f464d6$"
+	"smartupdate": "$TexturePacker:SmartUpdate:52baba2f9b82f4d51577947e0aa26c29:6c06f2fe0a1a1ad9d9bdc5a025c63540:729adc6043343cfda41c447ce8f464d6$"
 }
 }

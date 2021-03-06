@@ -1,5 +1,5 @@
 import Axios from 'axios'
-import getGameServerUrl from '../utils/getGameServerHost'
+import getGameServerUrl from '../utils/getGameServerUrl'
 
 class GameServerApi {
   static getConfig() {

@@ -36,8 +36,6 @@ import SoundManager from '../../services/SoundManager'
 import isSpectating from '../../utils/isSpectating'
 import getTexture from '../functions/getTexture'
 
-const loader = Loader.shared
-
 interface Props {
   [key: string]: Prop<Primitive>
   camp: Prop<boolean>
@@ -171,7 +169,13 @@ class Tile {
     // }
   }
   startHover() {
-    if (!store.game || !store.game.player?.alive) return
+    if (
+      !store.game ||
+      !store.game.player?.alive ||
+      store.game.player.surrendered
+    ) {
+      return
+    }
 
     if (this.building && !this.army) {
       this.showHitpoints()
@@ -198,13 +202,14 @@ class Tile {
     if (
       !this.owner ||
       !store.game ||
-      !store.game.player?.alive ||
+      store.game.player?.alive ||
+      store.game.player?.surrendered ||
       !this.image.pattern
     ) {
       return
     }
 
-    this.image.pattern.tint = hex(shade(this.owner.pattern, 10))
+    this.image.pattern.tint = hex(shade(this.owner.getPattern(), 10))
   }
   addArmy(army: Army) {
     const { gsConfig } = store
@@ -227,7 +232,7 @@ class Tile {
   removeHighlight() {
     if (!this.owner || !this.image.pattern) return
 
-    this.image.pattern.tint = hex(this.owner.pattern)
+    this.image.pattern.tint = hex(this.owner.getPattern())
   }
   removeContested() {
     // this.image.contested.visible = false
@@ -239,7 +244,7 @@ class Tile {
 
     let texture: string = key
     if (key === 'background') {
-      texture = 'pattern'
+      texture = this.bedrock ? 'overlay' : 'pattern'
     } else if (key === 'mountain') {
       texture = `mountain-${Math.floor(Math.random() * 5 + 1)}`
     }
@@ -556,7 +561,7 @@ class Tile {
       }
 
       const image = this.addImage('pattern', false)
-      image.tint = hex(newOwner.pattern)
+      image.tint = hex(newOwner.getPattern())
 
       if (Date.now() - this.createdAt > 500) {
         image.alpha = 0
@@ -654,7 +659,7 @@ class Tile {
     }
 
     if (this.image.pattern && this.owner) {
-      this.image.pattern.tint = hex(this.owner.pattern)
+      this.image.pattern.tint = hex(this.owner.getPattern())
     }
 
     for (let i = 0; i < 6; i++) {

@@ -118,7 +118,7 @@ class Game {
       if (
         !store.error &&
         this.player &&
-        this.player.alive &&
+        !this.player.surrendered &&
         this.status === 'running' &&
         store.gsConfig &&
         !store.gsConfig.DEBUG_MODE
@@ -188,7 +188,8 @@ class Game {
       !this.camera ||
       !this.pixi ||
       store.error ||
-      this.status === 'finished'
+      this.status === 'finished' ||
+      (this.player && (!this.player.alive || this.player.surrendered))
     ) {
       return
     }
@@ -367,7 +368,7 @@ class Game {
       this.status !== 'running' ||
       !this.cursor ||
       !this.camera ||
-      (!this.player?.alive && !isSpectating())
+      this.player?.surrendered
     ) {
       return
     }
@@ -719,7 +720,7 @@ class Game {
         const players = Array.from(this.players.values())
         for (let k = 0; k < players.length; k++) {
           if (players[k].id === action.owner.id) {
-            pattern[`${t.axial.x}|${t.axial.z}`] = players[k].pattern
+            pattern[`${t.axial.x}|${t.axial.z}`] = players[k].getPattern()
             break
           }
         }
@@ -739,7 +740,7 @@ class Game {
         if (this.tilesWithPatternPreview.includes(t)) continue
 
         this.tilesWithPatternPreview.push(t)
-        pattern[`${t.axial.x}|${t.axial.z}`] = this.player.pattern
+        pattern[`${t.axial.x}|${t.axial.z}`] = this.player.getPattern()
       }
     }
 

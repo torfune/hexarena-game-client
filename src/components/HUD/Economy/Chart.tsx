@@ -38,7 +38,7 @@ const Chart = () => {
     datasets: [
       {
         data: players.map((p) => p.economy),
-        backgroundColor: players.map((p) => p.pattern),
+        backgroundColor: players.map((p) => p.getPattern()),
         borderWidth: 1,
         borderColor: COLOR.GREY_600,
       },

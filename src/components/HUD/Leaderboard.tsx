@@ -9,6 +9,7 @@ import goldIcon from '../../icons/gold.svg'
 import hexagonIcon from '../../icons/hexagon.svg'
 import villageIcon from '../../icons/village.svg'
 import skullIcon from '../../icons/skull.svg'
+import botIcon from '../../icons/bot.svg'
 
 const Leaderboard = observer(() => {
   if (!store.game) return null
@@ -29,10 +30,12 @@ const Leaderboard = observer(() => {
           {group.players.map((player) => (
             <Player key={player.id} opacity={player.alive ? 1 : 0.5}>
               <Row>
-                {player.alive ? (
-                  <Pattern color={player.pattern} />
+                {player.surrendered && player.alive ? (
+                  <PlayerIcon src={botIcon} />
+                ) : !player.alive ? (
+                  <PlayerIcon src={skullIcon} />
                 ) : (
-                  <Skull src={skullIcon} />
+                  <Pattern color={player.getPattern()} />
                 )}
 
                 <p>{player.name}</p>
@@ -111,7 +114,7 @@ const Pattern = styled.div<PatternProps>`
   border: 1px solid ${COLOR.GREY_600};
 `
 
-const Skull = styled.img`
+const PlayerIcon = styled.img`
   height: 16px;
   width: 16px;
   margin-right: 8px;

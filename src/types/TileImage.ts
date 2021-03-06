@@ -4,7 +4,7 @@ interface TileImage {
   'army-icon'?: Sprite
   'background'?: Sprite
   'capital'?: Sprite
-  'black-overlay'?: Sprite
+  // 'black-overlay'?: Sprite
   'castle'?: Sprite
   'contested'?: Sprite
   'forest'?: Sprite
