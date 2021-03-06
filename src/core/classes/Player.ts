@@ -13,6 +13,9 @@ interface Props {
   gold: Prop<number>
   economy: Prop<number>
   alive: Prop<boolean>
+  killerName: Prop<string | null>
+  surrendered: Prop<boolean>
+  ffaPlace: Prop<number | null>
 }
 
 class Player {
@@ -25,6 +28,7 @@ class Player {
     alive: createProp(true),
     killerName: createProp(''),
     surrendered: createProp(false),
+    ffaPlace: createProp(null),
   }
 
   id: string
@@ -91,6 +95,9 @@ class Player {
   }
   get surrendered() {
     return this.props.surrendered.current
+  }
+  get ffaPlace() {
+    return this.props.ffaPlace.current
   }
 }
 

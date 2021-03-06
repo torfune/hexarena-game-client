@@ -283,6 +283,7 @@ const messageHandlers = {
       alive: 'boolean',
       killerName: 'string',
       surrendered: 'boolean',
+      ffaPlace: 'number',
     }) as {
       id: string | null
       name: string | null
@@ -294,6 +295,7 @@ const messageHandlers = {
       alive: boolean
       killerName: string | null
       surrendered: boolean
+      ffaPlace: number | null
     }[]
 
     for (let i = 0; i < parsed.length; i++) {

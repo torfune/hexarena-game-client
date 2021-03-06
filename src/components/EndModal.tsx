@@ -7,10 +7,17 @@ import isSpectating from '../utils/isSpectating'
 import cancelSpectate from '../utils/cancelSpectate'
 import Modal from './Modal'
 import Button from './Button'
+import getPlacementMessage from '../utils/getPlacementMessage'
 
 const EndModal = () => {
   const { game } = store
-  if (!game || game.time === null) return null
+  if (
+    !game ||
+    game.time === null ||
+    (game.mode.includes('FFA') && !game.player?.ffaPlace)
+  ) {
+    return null
+  }
 
   let result: string
   let reason = ''
@@ -20,23 +27,38 @@ const EndModal = () => {
   } else {
     if (!game.player) return null
 
-    if (game.player.surrendered) {
-      result = 'DEFEAT'
-      reason = 'You have surrendered.'
-    } else if (game.time === 0 && game.player.alive) {
-      if (game.mode.includes('FFA')) {
-        result = 'VICTORY'
-        reason = 'You have survived.'
+    // FFA
+    if (game.mode.includes('FFA')) {
+      if (game.player.surrendered) {
+        result = getPlacementMessage(game.player.ffaPlace!)
+        reason = 'You have surrendered.'
+      } else if (game.time === 0 && game.player.alive) {
+        result = getPlacementMessage(game.player.ffaPlace!)
+        reason = `Time's up.`
+      } else if (!game.player.alive) {
+        result = getPlacementMessage(game.player.ffaPlace!)
+        reason = 'You have lost your capital.'
       } else {
+        result = getPlacementMessage(game.player.ffaPlace!)
+        reason = 'All enemies have been eliminated.'
+      }
+    }
+
+    // 1v1
+    else {
+      if (game.player.surrendered) {
+        result = 'DEFEAT'
+        reason = 'You have surrendered.'
+      } else if (game.time === 0 && game.player.alive) {
         result = 'DRAW'
         reason = `Time's up.`
+      } else if (!game.player.alive) {
+        result = 'DEFEAT'
+        reason = 'You have lost your capital.'
+      } else {
+        result = 'VICTORY'
+        reason = 'All enemies have been eliminated.'
       }
-    } else if (!game.player.alive) {
-      result = 'DEFEAT'
-      reason = 'You have lost your capital.'
-    } else {
-      result = 'VICTORY'
-      reason = 'All enemies have been eliminated.'
     }
   }
 
@@ -61,22 +83,27 @@ const EndModal = () => {
         </StyledButton>
       ) : (
         <>
-          <StyledAnchor href={getWebClientUrl()}>
-            <StyledButton marginTop={48}>Continue</StyledButton>
-          </StyledAnchor>
+          <StyledButton
+            onClick={() => {
+              window.location.href = getWebClientUrl()
+            }}
+            marginTop={48}
+          >
+            Continue
+          </StyledButton>
 
           {showSpectateButton && (
-            <StyledAnchor
-              href={`${getWebClientUrl()}/spectate?gameId=${game.id}`}
+            <StyledButton
+              onClick={() => {
+                const url = `${getWebClientUrl()}/spectate?gameId=${game.id}`
+                window.location.href = url
+              }}
+              marginTop={16}
+              background="GREEN"
+              backgroundHover="GREEN_HOVER"
             >
-              <StyledButton
-                marginTop={16}
-                background="GREEN"
-                backgroundHover="GREEN_HOVER"
-              >
-                Spectate
-              </StyledButton>
-            </StyledAnchor>
+              Spectate
+            </StyledButton>
           )}
         </>
       )}
@@ -87,8 +114,8 @@ const EndModal = () => {
 const ResultText = styled.p`
   color: #fff;
   font-weight: 600;
-  font-size: 36px;
-  letter-spacing: 8px;
+  font-size: 40px;
+  letter-spacing: 2px;
 `
 const ReasonText = styled.p`
   color: #fff;
@@ -96,13 +123,10 @@ const ReasonText = styled.p`
   margin-top: 8px;
   font-size: 16px;
 `
-const StyledAnchor = styled.a`
-  display: inline-block;
-`
 const StyledButton = styled(Button)<{ marginTop?: number }>`
-  margin-top: ${(props) => props.marginTop}px;
   margin-left: auto;
   margin-right: auto;
+  margin-top: ${(props) => props.marginTop}px;
 `
 
 export default observer(EndModal)
