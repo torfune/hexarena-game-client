@@ -363,6 +363,7 @@ const messageHandlers = {
   flash: (payload: string) => {
     if (!store.game) return
     store.game.flash = convert(payload, 'number') as number | null
+    SoundManager.play('VILLAGE_LOSE')
   },
   gameTime: (payload: string) => {
     const time = Number(payload)

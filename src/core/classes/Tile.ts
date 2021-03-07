@@ -93,10 +93,18 @@ class Tile {
     this.props[key].current = value
 
     switch (key) {
-      case 'ownerId':
+      case 'ownerId': {
         this.updateOwner()
+
+        const { playerId } = store.game
+        const { current, previous } = this.props.ownerId
+        if (previous === playerId && current !== playerId) {
+          SoundManager.play('TILE_LOSE')
+        }
         break
-      case 'camp':
+      }
+
+      case 'camp': {
         if (this.camp && !this.image.camp) {
           const camp = this.addImage('camp')
           camp.anchor.set(0.5, 1)
@@ -105,7 +113,9 @@ class Tile {
           this.removeImage('camp')
         }
         break
-      case 'buildingType':
+      }
+
+      case 'buildingType': {
         if (value === 'CAPITAL') {
           if (!this.image.capital) {
             const capital = this.addImage('capital')
@@ -131,7 +141,9 @@ class Tile {
         }
         this.updateHitpoints()
         break
-      case 'buildingHp':
+      }
+
+      case 'buildingHp': {
         this.updateHitpoints()
         if (
           this.action &&
@@ -143,6 +155,7 @@ class Tile {
           this.action.icon.texture = this.action.getIconTexture()
         }
         break
+      }
     }
 
     // Sounds
@@ -230,6 +243,10 @@ class Tile {
 
     this.army = army
     this.showArmyIcon()
+
+    if (this.owner && this.owner.id === store.game?.playerId) {
+      SoundManager.play('ARMY_ARRIVE')
+    }
   }
   addContested() {
     // this.image.contested.visible = true

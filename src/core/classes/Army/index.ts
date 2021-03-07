@@ -14,6 +14,7 @@ import {
 import Prop from '../../../types/Prop'
 import Primitive from '../../../types/Primitive'
 import createProp from '../../../utils/createProp'
+import SoundManager from '../../../services/SoundManager'
 
 interface Props {
   [key: string]: Prop<Primitive>

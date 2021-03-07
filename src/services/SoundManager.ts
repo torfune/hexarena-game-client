@@ -19,8 +19,8 @@ const isSupported = () => {
 
 const SOUNDS = {
   ACTION_CREATE: {
-    url: `${baseUrl}/action-create.mp3`,
-    volume: 0.2,
+    url: `${baseUrl}/action-create-b.mp3`,
+    volume: 1,
     offset: 0,
   },
   ACTION_FAILURE: {
@@ -33,14 +33,24 @@ const SOUNDS = {
     volume: 1,
     offset: 0,
   },
+  ARMY_SELECT: {
+    url: `${baseUrl}/army-select.mp3`,
+    volume: 1,
+    offset: 0.1,
+  },
   ARMY_SEND: {
     url: `${baseUrl}/army-send.mp3`,
     volume: 0.6,
     offset: 0,
   },
+  ARMY_ARRIVE: {
+    url: `${baseUrl}/army-arrive.mp3`,
+    volume: 1,
+    offset: 0,
+  },
   CAMP_CREATE: {
     url: `${baseUrl}/camp-create.mp3`,
-    volume: 0.8,
+    volume: 0.6,
     offset: 0,
   },
   CASTLE_CREATE: {
@@ -60,17 +70,17 @@ const SOUNDS = {
   },
   INCOME: {
     url: `${baseUrl}/income.mp3`,
-    volume: 0.3,
+    volume: 0.2,
     offset: 0,
-  },
-  ARMY_SELECT: {
-    url: `${baseUrl}/army-select.mp3`,
-    volume: 1,
-    offset: 0.1,
   },
   TILE_CAPTURE: {
     url: `${baseUrl}/tile-capture.mp3`,
-    volume: 1,
+    volume: 0.4,
+    offset: 0,
+  },
+  TILE_LOSE: {
+    url: `${baseUrl}/tile-lose.mp3`,
+    volume: 0.6,
     offset: 0,
   },
   TOWER_CREATE: {
@@ -85,7 +95,12 @@ const SOUNDS = {
   },
   VILLAGE_CAPTURE: {
     url: `${baseUrl}/village-capture.mp3`,
-    volume: 0.5,
+    volume: 0.4,
+    offset: 0,
+  },
+  VILLAGE_LOSE: {
+    url: `${baseUrl}/village-lose.mp3`,
+    volume: 0.4,
     offset: 0,
   },
   VILLAGE_DESTROY: {
@@ -99,6 +114,11 @@ class SoundManager {
   static supported = isSupported()
   static context: AudioContext | null = null
   static buffers: { [key: string]: AudioBuffer } = {}
+  static playing: Partial<
+    {
+      [K in keyof typeof SOUNDS]: boolean
+    }
+  > = {}
 
   static init() {
     if (!this.supported) return
@@ -120,7 +140,14 @@ class SoundManager {
   }
 
   static play(soundKey: keyof typeof SOUNDS) {
-    if (!store.settings.sound || !this.context || isSpectating()) return
+    if (
+      !store.settings.sound ||
+      !this.context ||
+      this.playing[soundKey] ||
+      isSpectating()
+    ) {
+      return
+    }
 
     const sound = SOUNDS[soundKey]
     const buffer = this.buffers[soundKey]
@@ -134,6 +161,11 @@ class SoundManager {
     node.connect(this.context.destination)
     source.connect(node)
     source.start(0, sound.offset)
+
+    this.playing[soundKey] = true
+    source.onended = () => {
+      this.playing[soundKey] = false
+    }
   }
 }
 
