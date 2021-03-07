@@ -1,5 +1,8 @@
 import store from '../core/store'
 import isSpectating from '../utils/isSpectating'
+import roundToDecimals from '../core/functions/roundToDecimals'
+
+const MASTER_VOLUME = 0.25
 
 const w = window as any
 const AudioContext = w.AudioContext || w.webkitAudioContext
@@ -127,7 +130,7 @@ class SoundManager {
     const source = this.context.createBufferSource()
     source.buffer = buffer
     const node = this.context.createGain()
-    node.gain.value = sound.volume
+    node.gain.value = roundToDecimals(sound.volume * MASTER_VOLUME, 2)
     node.connect(this.context.destination)
     source.connect(node)
     source.start(0, sound.offset)
