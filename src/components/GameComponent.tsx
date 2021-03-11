@@ -26,12 +26,13 @@ import isSpectating from '../utils/isSpectating'
 import { COLOR, Z_INDEX } from '../constants/react'
 import Spinner from './Spinner'
 import GameServerApi from '../services/GameServerApi'
+import ReconnectingOverlay from './ReconnectingOverlay'
 
 const GameComponent = observer(() => {
   const [_, refresh] = useState(Date.now())
 
   const connect = async () => {
-    console.log('connecting ...')
+    console.log('Connecting to Game Server ...')
 
     const canvas = document.getElementById('game-canvas')
     if (!canvas) throw new Error('Cannot find canvas.')
@@ -96,13 +97,15 @@ const GameComponent = observer(() => {
     SoundManager.init()
 
     // Connect Socket
-    store.socket = new Socket()
+    store.socket = new Socket(
+      gameServerHost,
+      gameId,
+      accessKey as string | null
+    )
     let gameMode: GameMode
     let gameStatus: GameStatus
     try {
-      const result = await store.socket.connect(gameServerHost, gameId, {
-        accessKey: accessKey as string | null,
-      })
+      const result = await store.socket.connect()
       gameMode = result.gameMode
       gameStatus = result.gameStatus
     } catch (error) {
@@ -114,9 +117,6 @@ const GameComponent = observer(() => {
     // Create Game instance
     store.game = new Game(gameId, gameMode, gameStatus)
     store.game.render(canvas)
-
-    // Load Settings from Local Storage
-    // store.settings.sound = LocalStorageService.get('soundEnabled') === 'true'
 
     // Done
     store.loading = false
@@ -203,6 +203,8 @@ const GameComponent = observer(() => {
       )}
 
       {renderModal()}
+
+      {store.socket?.reconnecting && <ReconnectingOverlay />}
     </Container>
   )
 })

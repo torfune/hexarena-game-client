@@ -445,6 +445,47 @@ const messageHandlers = {
       store.game.spectators = spectators
     }
   },
+
+  // Clean-up
+  destroyVillages: (payload: string) => {
+    const villagesIds = payload.split('><')
+    for (let i = 0; i < villagesIds.length; i++) {
+      const village = store.game?.villages.get(villagesIds[i])
+      if (village) {
+        village.destroy()
+      }
+    }
+  },
+  destroyArmies: (payload: string) => {
+    const armiesIds = payload.split('><')
+    for (let i = 0; i < armiesIds.length; i++) {
+      const army = store.game?.armies.get(armiesIds[i])
+      if (army) {
+        army.destroy()
+      }
+    }
+  },
+  destroyForests: (payload: string) => {
+    const forestsIds = payload.split('><')
+    for (let i = 0; i < forestsIds.length; i++) {
+      const forest = store.game?.forests.get(forestsIds[i])
+      if (forest) {
+        forest.destroy()
+      }
+    }
+  },
+  destroyActions: (payload: string) => {
+    const actionsIds = payload.split('><')
+    for (let i = 0; i < actionsIds.length; i++) {
+      const action = store.game?.actions.find(
+        (action) => action.id === actionsIds[i]
+      )
+      if (action) {
+        action.destroy()
+      }
+    }
+  },
+
   ping: () => {},
 }
 

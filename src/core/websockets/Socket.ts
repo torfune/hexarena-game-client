@@ -4,31 +4,46 @@ import { IncomingMessage } from './messages'
 import GameMode from '../../types/GameMode'
 import GameStatus from '../../types/GameStatus'
 import isSpectating from '../../utils/isSpectating'
+import { makeAutoObservable } from 'mobx'
+
+const RECONNECT_RATE = 500
 
 class Socket {
   connected: boolean = false
+  reconnecting: boolean = false
+  host: string
+  gameId: string
+  accessKey: string | null
+  messageQueue: string[] = []
   ws?: WebSocket
 
-  connect(
-    host: string,
-    gameId: string,
-    { accessKey }: { spectate?: boolean; accessKey: string | null }
-  ): Promise<{ gameMode: GameMode; gameStatus: GameStatus }> {
+  constructor(host: string, gameId: string, accessKey: string | null) {
+    this.host = host
+    this.gameId = gameId
+    this.accessKey = accessKey
+
+    makeAutoObservable(this)
+  }
+
+  connect(): Promise<{ gameMode: GameMode; gameStatus: GameStatus }> {
+    console.log('Connecting Socket ...')
+
     return new Promise((resolve, reject) => {
       const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-      this.ws = new WebSocket(`${wsProtocol}//${host}`)
+      this.ws = new WebSocket(`${wsProtocol}//${this.host}`)
 
-      this.ws.addEventListener('message', this.handleMessage)
-      this.ws.addEventListener('error', this.handleError)
-      this.ws.addEventListener('close', this.handleClose)
+      this.ws.addEventListener('message', this.handleMessage.bind(this))
+      this.ws.addEventListener('error', this.handleError.bind(this))
+      this.ws.addEventListener('close', this.handleClose.bind(this))
       this.ws.addEventListener('open', () => {
         this.connected = true
-        console.log(`Connected to Game Server [${host}]`)
+        this.reconnecting = false
+        console.log(`Socket connected to Game Server [${this.host}]`)
 
         if (isSpectating()) {
-          this.send('spectate', gameId)
+          this.send('spectate', this.gameId)
         } else {
-          this.send('play', `${gameId}|${accessKey}`)
+          this.send('play', `${this.gameId}|${this.accessKey}`)
         }
 
         this.ws!.addEventListener('message', ({ data }: { data: string }) => {
@@ -56,7 +71,14 @@ class Socket {
               throw new Error(`Invalid Game Status: ${gameStatus}`)
             }
 
-            console.log(`Connected to Game Instance [${gameId}]`)
+            console.log(`Connected to Game Instance [${this.gameId}]`)
+
+            // Send messages in queue
+            for (const message of this.messageQueue) {
+              this.ws?.send(message)
+            }
+            this.messageQueue = []
+
             resolve({ gameMode, gameStatus })
           } else if (messageName === 'error') {
             reject(new Error(messagePayload || 'Connection failed.'))
@@ -124,6 +146,18 @@ class Socket {
       case 'spectators':
         messageHandlers.spectators(messagePayload)
         break
+      case 'destroyVillages':
+        messageHandlers.destroyVillages(messagePayload)
+        break
+      case 'destroyArmies':
+        messageHandlers.destroyArmies(messagePayload)
+        break
+      case 'destroyForests':
+        messageHandlers.destroyForests(messagePayload)
+        break
+      case 'destroyActions':
+        messageHandlers.destroyActions(messagePayload)
+        break
       case 'ping':
         messageHandlers.ping()
         break
@@ -137,18 +171,41 @@ class Socket {
     console.error(event)
   }
 
-  handleClose() {
+  handleClose(event: CloseEvent) {
     this.connected = false
-    console.log('Socket closed.')
 
-    if (!store.error) {
-      store.error = { message: 'Disconnected' }
+    // !event.wasClean &&
+    if (
+      (event.code === 4000 || event.code === 1006) &&
+      store.game?.status === 'running'
+    ) {
+      console.log('Reconnecting ...')
+      this.reconnecting = true
+
+      if (this.reconnecting) {
+        setTimeout(() => {
+          this.connect()
+        }, RECONNECT_RATE)
+      } else {
+        this.connect()
+      }
+    } else {
+      if (!store.error) {
+        store.error = { message: 'Disconnected' }
+      }
     }
   }
 
   send(message: string, payload: string = '') {
+    const data = `${message}//${payload}`
+
+    if (this.reconnecting) {
+      this.messageQueue.push(data)
+      return
+    }
+
     if (this.ws) {
-      this.ws.send(`${message}//${payload}`)
+      this.ws.send(data)
     }
   }
 }

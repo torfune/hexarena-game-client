@@ -14,7 +14,6 @@ import {
 import Prop from '../../../types/Prop'
 import Primitive from '../../../types/Primitive'
 import createProp from '../../../utils/createProp'
-import SoundManager from '../../../services/SoundManager'
 
 interface Props {
   [key: string]: Prop<Primitive>
@@ -134,7 +133,7 @@ class Army {
   }
   moveOn(tileId: string) {
     const { gsConfig, game } = store
-    if (!gsConfig || !game) return
+    if (!gsConfig || !game || game.selectedArmyTile?.id === tileId) return
 
     const tile = game.tiles.get(tileId)
     if (!tile) {

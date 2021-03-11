@@ -21,6 +21,10 @@ export type IncomingMessage =
   | 'villages'
   | 'spectators'
   | 'ping'
+  | 'destroyVillages'
+  | 'destroyArmies'
+  | 'destroyActions'
+  | 'destroyForests'
 
 // Game Client -> Game Server
 export type MessageToSend =
