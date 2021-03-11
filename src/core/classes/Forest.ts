@@ -118,6 +118,13 @@ class Forest {
   destroy() {
     if (!store.game) return
 
+    for (let i = this.trees.length - 1; i >= 0; i--) {
+      const image = this.trees[i]
+      if (image) {
+        this.treeFallAnimation(image)
+      }
+    }
+
     store.game.forests.delete(this.id)
     this.tile.forest = null
   }

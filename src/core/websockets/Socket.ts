@@ -174,10 +174,10 @@ class Socket {
   handleClose(event: CloseEvent) {
     this.connected = false
 
-    // !event.wasClean &&
     if (
-      (event.code === 4000 || event.code === 1006) &&
-      store.game?.status === 'running'
+      (event.code === 4000 || event.code === 1006 || !event.wasClean) &&
+      store.game?.status === 'running' &&
+      !isSpectating()
     ) {
       console.log('Reconnecting ...')
       this.reconnecting = true
