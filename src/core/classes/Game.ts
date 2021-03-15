@@ -963,10 +963,10 @@ class Game {
 
     ctx.clearRect(0, 0, BAR_WIDTH, BAR_HEIGHT)
 
-    const now = Date.now() //- ping
+    const now = Date.now()
     const total = incomeAt - incomeStartedAt
     const onePercent = total / 100
-    const current = now - incomeStartedAt
+    const current = now - incomeStartedAt - (this.ping || 0)
 
     let fraction = roundToDecimals(current / onePercent / 100, 2)
     if (fraction < 0) {
