@@ -87,6 +87,11 @@ const EndModal = () => {
         reason = 'All enemies have been eliminated.'
       }
     }
+
+    // AFK message
+    if (game.player.afkKicked) {
+      reason = 'You were AFK for too long.'
+    }
   }
 
   let alivePlayersCount = 0

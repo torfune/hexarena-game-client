@@ -17,6 +17,7 @@ interface Props {
   killerName: Prop<string | null>
   surrendered: Prop<boolean>
   ffaPlace: Prop<number | null>
+  afkKicked: Prop<boolean>
 }
 
 class Player {
@@ -30,6 +31,7 @@ class Player {
     killerName: createProp(''),
     surrendered: createProp(false),
     ffaPlace: createProp(null),
+    afkKicked: createProp(false),
   }
 
   id: string
@@ -118,6 +120,9 @@ class Player {
   }
   get ffaPlace() {
     return this.props.ffaPlace.current
+  }
+  get afkKicked() {
+    return this.props.afkKicked.current
   }
 }
 

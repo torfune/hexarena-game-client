@@ -288,6 +288,7 @@ const messageHandlers = {
       killerName: 'string',
       surrendered: 'boolean',
       ffaPlace: 'number',
+      afkKicked: 'boolean',
     }) as {
       id: string | null
       name: string | null
@@ -300,6 +301,7 @@ const messageHandlers = {
       killerName: string | null
       surrendered: boolean
       ffaPlace: number | null
+      afkKicked: boolean
     }[]
 
     for (let i = 0; i < parsed.length; i++) {
