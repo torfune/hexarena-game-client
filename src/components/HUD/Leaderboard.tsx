@@ -10,11 +10,31 @@ import hexagonIcon from '../../icons/hexagon.svg'
 import villageIcon from '../../icons/village.svg'
 import skullIcon from '../../icons/skull.svg'
 import botIcon from '../../icons/bot.svg'
+import Player from '../../core/classes/Player'
 
 const Leaderboard = observer(() => {
   if (!store.game) return null
 
-  const groups = getPlayerGroups(Array.from(store.game.players.values()))
+  let alivePlayers: Player[] = []
+  let defeatedPlayers: Player[] = []
+  for (const player of Array.from(store.game.players.values())) {
+    if (player.alive && !player.surrendered) {
+      alivePlayers.push(player)
+    } else {
+      defeatedPlayers.push(player)
+    }
+  }
+
+  if (store.game.mode.includes('FFA')) {
+    let newDefeatedPlayers: Player[] = []
+    for (let i = 0; i < defeatedPlayers.length; i++) {
+      const player = defeatedPlayers[i]
+      if (player.ffaPlace) {
+        newDefeatedPlayers[player.ffaPlace] = player
+      }
+    }
+    defeatedPlayers = newDefeatedPlayers
+  }
 
   return (
     <Container>
@@ -25,28 +45,26 @@ const Leaderboard = observer(() => {
         <Icon src={goldIcon} />
       </Heading>
 
-      {groups.map((group, index) => (
-        <Group key={index}>
-          {group.players.map((player) => (
-            <Player key={player.id} opacity={player.alive ? 1 : 0.5}>
-              <Row>
-                {player.surrendered && player.alive ? (
-                  <PlayerIcon src={botIcon} />
-                ) : !player.alive ? (
-                  <PlayerIcon src={skullIcon} />
-                ) : (
-                  <Pattern color={player.getPattern()} />
-                )}
+      {alivePlayers.concat(defeatedPlayers).map((player) => (
+        <PlayerRow key={player.id} opacity={player.alive ? 1 : 0.5}>
+          <Row>
+            {player.ffaPlace && <PlayerPlace>{player.ffaPlace}.</PlayerPlace>}
 
-                <p>{player.name}</p>
-              </Row>
+            {player.surrendered && player.alive ? (
+              <PlayerIcon src={botIcon} />
+            ) : !player.alive ? (
+              <PlayerIcon src={skullIcon} />
+            ) : (
+              <Pattern color={player.getPattern()} />
+            )}
 
-              <p>{player.tilesCount}</p>
-              <p>{player.economy}</p>
-              <p>{player.gold}</p>
-            </Player>
-          ))}
-        </Group>
+            <p>{player.name}</p>
+          </Row>
+
+          <PlayerValueText>{player.tilesCount}</PlayerValueText>
+          <PlayerValueText>{player.economy}</PlayerValueText>
+          <PlayerValueText>{player.gold}</PlayerValueText>
+        </PlayerRow>
       ))}
     </Container>
   )
@@ -100,6 +118,11 @@ const Row = styled.div`
   align-items: center;
 `
 
+const PlayerPlace = styled.div`
+  color: #fff;
+  margin-right: 8px;
+`
+
 interface PatternProps {
   color: string
 }
@@ -124,13 +147,6 @@ const PlayerIcon = styled.img`
 `
 
 const Group = styled.div`
-  background: ${COLOR.GREY_800};
-  margin-top: 10px;
-
-  :first-child {
-    margin-top: 0;
-  }
-
   p {
     text-align: center;
   }
@@ -139,9 +155,11 @@ const Group = styled.div`
 interface PlayerProps {
   opacity: number
 }
-const Player = styled.div<PlayerProps>`
+const PlayerRow = styled.div<PlayerProps>`
   padding: 10px 16px;
   opacity: ${({ opacity }) => opacity};
+  background: ${COLOR.GREY_800};
+  margin-top: 10px;
 
   ${GridCSS};
 
@@ -149,6 +167,10 @@ const Player = styled.div<PlayerProps>`
     font-weight: 500;
     color: #fff;
   }
+`
+
+const PlayerValueText = styled.p`
+  text-align: center;
 `
 
 export default Leaderboard
