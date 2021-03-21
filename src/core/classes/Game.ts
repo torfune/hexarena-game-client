@@ -6,6 +6,7 @@ import {
   MIN_SCALE,
   MAX_SCALE,
   CAMERA_SPEED,
+  MAX_CLICK_DURATION,
 } from '../../constants/game'
 import createGameLoop from '../functions/createGameLoop'
 import createPixiApp from '../functions/createPixiApp'
@@ -74,7 +75,7 @@ class Game {
   animations: Array<Animation | GoldAnimation> = []
   camera: Pixel | null = null
   cameraMove: Pixel = { x: 0, y: 0 }
-  cameraDrag: { camera: Pixel; cursor: Pixel } | null = null
+  cameraDrag: { camera: Pixel; cursor: Pixel; createdAt: number } | null = null
   dragged: boolean = false
   selectedArmyTargetTiles: Tile[][] = []
   tilesWithPatternPreview: Tile[] = []
@@ -392,14 +393,14 @@ class Game {
     }
 
     // Army - unselect
-    if (
-      this.selectedArmyTile &&
-      hoveredTile === this.selectedArmyTile &&
-      button !== 2
-    ) {
-      this.selectedArmyTile.unselectArmy()
-      return
-    }
+    // if (
+    //   this.selectedArmyTile &&
+    //   hoveredTile === this.selectedArmyTile &&
+    //   button !== 2
+    // ) {
+    //   this.selectedArmyTile.unselectArmy()
+    //   return
+    // }
 
     this.cameraDrag = {
       cursor: { x, y },
@@ -407,6 +408,7 @@ class Game {
         x: this.camera.x,
         y: this.camera.y,
       },
+      createdAt: Date.now(),
     }
   }
   handleMouseUp(event: MouseEvent) {
@@ -414,11 +416,13 @@ class Game {
 
     const { hoveredTile, playerId } = this
 
-    let cursorDelta: number | null = null
+    let cursorDelta: number = 0
+    let timeDelta: number = 0
     if (this.cameraDrag) {
       cursorDelta =
         Math.abs(this.cursor.x - this.cameraDrag.cursor.x) +
         Math.abs(this.cursor.y - this.cameraDrag.cursor.y)
+      timeDelta = Date.now() - this.cameraDrag.createdAt
       this.cameraDrag = null
     }
 
@@ -443,15 +447,19 @@ class Game {
     // Right mouse button
     if (button === 'right') return
 
+    // Unselect army
     if (!hoveredTile) {
       if (this.selectedArmyTile) {
         this.selectedArmyTile.unselectArmy()
       }
       return
+    } else if (hoveredTile === this.selectedArmyTile) {
+      this.selectedArmyTile.unselectArmy()
+      return
     }
 
     // Standard click
-    if (cursorDelta !== null && cursorDelta < 32) {
+    if (cursorDelta < 32 && timeDelta < MAX_CLICK_DURATION) {
       // Army - send
       if (this.selectedArmyTile && hoveredTile !== this.selectedArmyTile) {
         this.sendArmy(hoveredTile)
@@ -460,6 +468,7 @@ class Game {
 
       // Army - select
       if (
+        !this.selectedArmyTile &&
         hoveredTile.ownerId === playerId &&
         hoveredTile.army &&
         hoveredTile.army.ownerId === playerId &&
@@ -470,7 +479,7 @@ class Game {
       }
 
       // Create action
-      if (hoveredTile.bedrock) return
+      if (hoveredTile.bedrock || this.selectedArmyTile === hoveredTile) return
 
       if (button && !dragged && this.player) {
         const actionType = hoveredTile.getActionType()

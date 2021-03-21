@@ -83,6 +83,9 @@ export const UNIT_MAX_DELAY = 0.4
 export const BEDROCK_BACKGROUND = '#5D6D7C'
 export const BEDROCK_BORDER = COLOR.GREY_800
 
+// MISC
+export const MAX_CLICK_DURATION = 500
+
 // DEBUG COMMANDS
 export const DEBUG_COMMANDS = [
   ['1', 'capture'],

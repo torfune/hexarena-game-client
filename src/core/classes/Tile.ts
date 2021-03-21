@@ -648,8 +648,9 @@ class Tile {
     }
   }
   selectArmy() {
-    if (!this.image.pattern || !store.game || !this.army || !store.gsConfig)
+    if (!this.image.pattern || !store.game || !this.army || !store.gsConfig) {
       return
+    }
 
     const armyTargetTiles: Tile[][] = []
     for (let i = 0; i < 6; i++) {
