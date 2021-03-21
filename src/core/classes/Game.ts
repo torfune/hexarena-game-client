@@ -75,7 +75,7 @@ class Game {
   animations: Array<Animation | GoldAnimation> = []
   camera: Pixel | null = null
   cameraMove: Pixel = { x: 0, y: 0 }
-  cameraDrag: { camera: Pixel; cursor: Pixel; createdAt: number } | null = null
+  cameraDrag: { camera: Pixel; cursor: Pixel } | null = null
   dragged: boolean = false
   selectedArmyTargetTiles: Tile[][] = []
   tilesWithPatternPreview: Tile[] = []
@@ -92,6 +92,8 @@ class Game {
     resize: (event: any) => void
   } | null = null
   armyDragArrow: ArmyDragArrow | null = null
+  clickedAt: number = 0
+  armySelectedAt: number = 0
 
   // Getters (computed)
   get player() {
@@ -377,6 +379,8 @@ class Game {
     const { clientX: x, clientY: y, button } = event
     const { hoveredTile } = this
 
+    this.clickedAt = Date.now()
+
     // Army - select
     if (
       !this.selectedArmyTile &&
@@ -408,7 +412,6 @@ class Game {
         x: this.camera.x,
         y: this.camera.y,
       },
-      createdAt: Date.now(),
     }
   }
   handleMouseUp(event: MouseEvent) {
@@ -417,13 +420,16 @@ class Game {
     const { hoveredTile, playerId } = this
 
     let cursorDelta: number = 0
-    let timeDelta: number = 0
     if (this.cameraDrag) {
       cursorDelta =
         Math.abs(this.cursor.x - this.cameraDrag.cursor.x) +
         Math.abs(this.cursor.y - this.cameraDrag.cursor.y)
-      timeDelta = Date.now() - this.cameraDrag.createdAt
       this.cameraDrag = null
+    }
+
+    let timeDelta: number = 0
+    if (this.clickedAt) {
+      timeDelta = Date.now() - this.clickedAt
     }
 
     // Clear dragged
@@ -453,7 +459,12 @@ class Game {
         this.selectedArmyTile.unselectArmy()
       }
       return
-    } else if (hoveredTile === this.selectedArmyTile) {
+    }
+    if (
+      this.selectedArmyTile &&
+      this.selectedArmyTile === this.hoveredTile &&
+      Date.now() - this.armySelectedAt > MAX_CLICK_DURATION
+    ) {
       this.selectedArmyTile.unselectArmy()
       return
     }
@@ -935,6 +946,7 @@ class Game {
   }
   selectArmy(tile: Tile) {
     this.selectedArmyTile = tile
+    this.armySelectedAt = this.clickedAt
     tile.selectArmy()
 
     this.armyDragArrow = new ArmyDragArrow(tile)
