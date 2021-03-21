@@ -963,10 +963,10 @@ class Game {
 
     ctx.clearRect(0, 0, BAR_WIDTH, BAR_HEIGHT)
 
-    const now = Date.now()
+    const now = Date.now() - (this.ping || 0)
     const total = incomeAt - incomeStartedAt
     const onePercent = total / 100
-    const current = now - incomeStartedAt - (this.ping || 0)
+    const current = now - incomeStartedAt
 
     let fraction = roundToDecimals(current / onePercent / 100, 2)
     if (fraction < 0) {
@@ -1001,3 +1001,5 @@ class Game {
 }
 
 export default Game
+
+// Server: incomeStarted = 0

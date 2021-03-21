@@ -394,7 +394,7 @@ const messageHandlers = {
     store.game.incomeAt = convert(payload, 'number') as number | null
 
     if (!store.game.incomeStartedAt) {
-      store.game.incomeStartedAt = Date.now() // - store.ping
+      store.game.incomeStartedAt = Date.now() - (store.game.ping || 0)
     }
   },
   lastIncomeAt: (payload: string) => {
