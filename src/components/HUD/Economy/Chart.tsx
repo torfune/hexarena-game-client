@@ -58,6 +58,7 @@ const Chart = () => {
       {
         data: players.map((p) => p.economy),
         backgroundColor: players.map((p) => p.getPattern()),
+        maxBarThickness: 64,
       },
     ],
   }
