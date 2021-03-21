@@ -90,9 +90,7 @@ const getActionIcon = (actionType: ActionType | 'SEND_ARMY' | 'REPAIR') => {
     case 'RECRUIT':
       return recruitIcon
     case 'REPAIR':
-      return `${baseImageUrl}/hpFill.png`
-    case 'HOUSE':
-      return `${baseImageUrl}/house-icon.png`
+      return `${baseImageUrl}/hp-fill.png`
     case 'SEND_ARMY':
       return armyIcon
   }
