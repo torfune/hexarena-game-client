@@ -206,9 +206,16 @@ const messageHandlers = {
         }
       }
 
+      const playersId = Array.from(store.game.players.values()).map(
+        (player) => player.id
+      )
+
       if (
-        tile.ownerId !== store.game.playerId &&
-        parsed[i].ownerId === store.game.playerId
+        (tile.ownerId !== store.game.playerId &&
+          parsed[i].ownerId === store.game.playerId) ||
+        (isSpectating() &&
+          tile.ownerId !== parsed[i].ownerId &&
+          playersId.includes(parsed[i].ownerId!))
       ) {
         if (tile.village) {
           sound = 'VILLAGE_CAPTURE'
