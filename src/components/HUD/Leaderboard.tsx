@@ -25,6 +25,12 @@ const Leaderboard = observer(() => {
     }
   }
 
+  // Sort alive players
+  alivePlayers.sort((a, b) => {
+    return b.tilesCount - a.tilesCount
+  })
+
+  // Sort defeated players
   if (store.game.mode.includes('FFA')) {
     let newDefeatedPlayers: Player[] = []
     for (let i = 0; i < defeatedPlayers.length; i++) {
@@ -45,10 +51,10 @@ const Leaderboard = observer(() => {
         <Icon src={goldIcon} />
       </Heading>
 
-      {alivePlayers.concat(defeatedPlayers).map((player) => (
+      {alivePlayers.concat(defeatedPlayers).map((player, index) => (
         <PlayerRow key={player.id} opacity={player.alive ? 1 : 0.5}>
           <Row>
-            {player.ffaPlace && <PlayerPlace>{player.ffaPlace}.</PlayerPlace>}
+            <PlayerPlace>{player.ffaPlace || index + 1}.</PlayerPlace>
 
             {player.surrendered && player.alive ? (
               <PlayerIcon src={botIcon} />
