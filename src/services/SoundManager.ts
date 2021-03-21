@@ -22,91 +22,109 @@ const SOUNDS = {
     url: `${baseUrl}/action-create-b.mp3`,
     volume: 1,
     offset: 0,
+    playInSpectate: false,
   },
   ACTION_FAILURE: {
     url: `${baseUrl}/action-failure.mp3`,
     volume: 0.8,
     offset: 0,
+    playInSpectate: false,
   },
   ARMY_CREATE: {
     url: `${baseUrl}/army-create.mp3`,
     volume: 1,
     offset: 0,
+    playInSpectate: true,
   },
   ARMY_SELECT: {
     url: `${baseUrl}/army-select.mp3`,
     volume: 1,
     offset: 0.1,
+    playInSpectate: false,
   },
   ARMY_SEND: {
     url: `${baseUrl}/army-send.mp3`,
     volume: 0.6,
     offset: 0,
+    playInSpectate: false,
   },
   ARMY_ARRIVE: {
     url: `${baseUrl}/army-arrive.mp3`,
     volume: 1,
     offset: 0,
+    playInSpectate: true,
   },
   CAMP_CREATE: {
     url: `${baseUrl}/camp-create.mp3`,
     volume: 0.6,
     offset: 0,
+    playInSpectate: true,
   },
   CASTLE_CREATE: {
     url: `${baseUrl}/castle-create.mp3`,
     volume: 0.8,
     offset: 0,
+    playInSpectate: true,
   },
   DEFEAT: {
     url: `${baseUrl}/defeat.mp3`,
     volume: 1,
     offset: 0,
+    playInSpectate: false,
   },
   GAME_START: {
     url: `${baseUrl}/game-start.mp3`,
     volume: 0.1,
     offset: 0,
+    playInSpectate: false,
   },
   INCOME: {
     url: `${baseUrl}/income.mp3`,
     volume: 0.2,
     offset: 0,
+    playInSpectate: false,
   },
   TILE_CAPTURE: {
     url: `${baseUrl}/tile-capture.mp3`,
     volume: 0.4,
     offset: 0,
+    playInSpectate: true,
   },
   TILE_LOSE: {
     url: `${baseUrl}/tile-lose.mp3`,
     volume: 0.6,
     offset: 0,
+    playInSpectate: false,
   },
   TOWER_CREATE: {
     url: `${baseUrl}/tower-create.mp3`,
     volume: 0.5,
     offset: 0,
+    playInSpectate: true,
   },
   VICTORY: {
     url: `${baseUrl}/victory.mp3`,
     volume: 1,
     offset: 0,
+    playInSpectate: false,
   },
   VILLAGE_CAPTURE: {
     url: `${baseUrl}/village-capture.mp3`,
     volume: 0.4,
     offset: 0,
+    playInSpectate: true,
   },
   VILLAGE_LOSE: {
     url: `${baseUrl}/village-lose.mp3`,
     volume: 0.4,
     offset: 0,
+    playInSpectate: false,
   },
   VILLAGE_DESTROY: {
     url: `${baseUrl}/village-destroy.mp3`,
     volume: 0.5,
     offset: 0,
+    playInSpectate: false,
   },
 }
 
@@ -140,19 +158,14 @@ class SoundManager {
   }
 
   static play(soundKey: keyof typeof SOUNDS) {
-    if (
-      !store.settings.sound ||
-      !this.context ||
-      this.playing[soundKey] ||
-      isSpectating()
-    ) {
+    if (!store.settings.sound || !this.context || this.playing[soundKey]) {
       return
     }
 
     const sound = SOUNDS[soundKey]
     const buffer = this.buffers[soundKey]
 
-    if (!sound || !buffer) return
+    if (!sound || !buffer || (isSpectating() && !sound.playInSpectate)) return
 
     const source = this.context.createBufferSource()
     source.buffer = buffer
