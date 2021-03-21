@@ -127,6 +127,7 @@ const Row = styled.div`
 const PlayerPlace = styled.div`
   color: #fff;
   margin-right: 8px;
+  width: 14px;
 `
 
 interface PatternProps {
@@ -150,12 +151,6 @@ const PlayerIcon = styled.img`
   position: relative;
   top: -1px;
   filter: invert(1);
-`
-
-const Group = styled.div`
-  p {
-    text-align: center;
-  }
 `
 
 interface PlayerProps {

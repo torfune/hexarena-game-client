@@ -1,29 +1,44 @@
 import React from 'react'
 import styled from 'styled-components'
 import Label from './Label'
-import { Doughnut } from 'react-chartjs-2'
+import { Bar } from 'react-chartjs-2'
 import { observer } from 'mobx-react-lite'
 import store from '../../../core/store'
-import { COLOR } from '../../../constants/react'
 import { ChartData, ChartOptions } from 'chart.js'
+import { COLOR } from '../../../constants/react'
 
-const Container = styled.div``
+const CHART_WIDTH = 360
+const CHART_HEIGHT = 150
 
-const ChartWrapper = styled.div`
-  margin-top: 16px;
-`
-
-const OPTIONS: ChartOptions = {
-  legend: {
-    position: 'right',
-    labels: {
-      fontFamily: 'Montserrat',
-      usePointStyle: true,
-      fontSize: 14,
-      fontColor: '#fff',
-      fontStyle: '500',
-      padding: 8,
-    },
+const CHART_OPTIONS: ChartOptions = {
+  legend: { display: false },
+  scales: {
+    yAxes: [
+      {
+        ticks: {
+          suggestedMin: 0,
+          beginAtZero: true,
+          fontFamily: 'Montserrat',
+          fontStyle: '600',
+          fontColor: 'rgba(255, 255, 255, 0.5)',
+        },
+        gridLines: {
+          color: COLOR.GREY_800,
+        },
+      },
+    ],
+    xAxes: [
+      {
+        ticks: {
+          fontColor: '#fff',
+          fontFamily: 'Montserrat',
+          fontStyle: '600',
+        },
+        gridLines: {
+          color: COLOR.GREY_800,
+        },
+      },
+    ],
   },
 }
 
@@ -33,27 +48,40 @@ const Chart = () => {
   const players = Array.from(store.game.players.values()).filter(
     (player) => player.alive
   )
+  players.sort((a, b) => {
+    return b.economy - a.economy
+  })
+
   const data: ChartData = {
     labels: players.map((p) => p.name),
     datasets: [
       {
         data: players.map((p) => p.economy),
         backgroundColor: players.map((p) => p.getPattern()),
-        borderWidth: 1,
-        borderColor: COLOR.GREY_600,
       },
     ],
   }
 
   return (
     <Container>
-      <Label>Economy overview</Label>
+      <Label>Economy comparison</Label>
 
       <ChartWrapper>
-        <Doughnut data={data} options={OPTIONS} height={140} width={300} />
+        <Bar
+          data={data}
+          options={CHART_OPTIONS}
+          height={CHART_HEIGHT}
+          width={CHART_WIDTH}
+        />
       </ChartWrapper>
     </Container>
   )
 }
+
+const Container = styled.div``
+
+const ChartWrapper = styled.div`
+  margin-top: 16px;
+`
 
 export default observer(Chart)
