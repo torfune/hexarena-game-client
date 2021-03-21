@@ -116,12 +116,12 @@ class Game {
     // Leaving warning
     window.onbeforeunload = () => {
       if (
-        !store.error &&
         this.player &&
-        !this.player.surrendered &&
+        this.player.alive &&
         this.status === 'running' &&
-        store.gsConfig &&
-        !store.gsConfig.DEBUG_MODE
+        !isSpectating() &&
+        !store.error &&
+        !this.player.surrendered
       ) {
         return true
       }
