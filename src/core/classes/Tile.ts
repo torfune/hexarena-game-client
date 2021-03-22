@@ -159,7 +159,10 @@ class Tile {
     }
 
     // Sounds
-    if (this.ownerId === store.game.playerId || isSpectating()) {
+    if (
+      this.ownerId === store.game.playerId ||
+      (isSpectating() && Date.now() - this.createdAt >= 500)
+    ) {
       if (key === 'camp' && this.camp) {
         SoundManager.play('CAMP_CREATE')
       } else if (key === 'buildingType') {
