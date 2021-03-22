@@ -1,7 +1,7 @@
 import { Text, TextStyle } from 'pixi.js-legacy'
 import store from '../store'
 
-const createText = (content: string, stageName: string) => {
+const createText = (content: string) => {
   const text = new Text(
     content,
     new TextStyle({
@@ -14,11 +14,8 @@ const createText = (content: string, stageName: string) => {
 
   text.anchor.set(0.5, 0.5)
 
-  if (store.game) {
-    const stage = store.game.stage.get(stageName)
-    if (stage) {
-      stage.addChild(text)
-    }
+  if (store.game && store.game.pixi) {
+    store.game.pixi.stage.addChild(text)
   }
 
   return text

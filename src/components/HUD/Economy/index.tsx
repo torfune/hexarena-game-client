@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { COLOR } from '../../../constants/react'
+import { COLOR } from '../../../constants/constants-react'
 import { observer } from 'mobx-react-lite'
 import React from 'react'
 import Income from './Income'

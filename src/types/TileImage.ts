@@ -1,10 +1,9 @@
 import { Sprite } from 'pixi.js-legacy'
 
 interface TileImage {
-  'army-icon'?: Sprite
   'background'?: Sprite
   'capital'?: Sprite
-  // 'black-overlay'?: Sprite
+  'hover-hexagon'?: Sprite
   'castle'?: Sprite
   'contested'?: Sprite
   'forest'?: Sprite
@@ -18,6 +17,7 @@ interface TileImage {
   'tower'?: Sprite
   'camp'?: Sprite
   'village'?: Sprite
+  'overlay'?: Sprite
 }
 
 export default TileImage

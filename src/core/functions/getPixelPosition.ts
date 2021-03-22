@@ -1,4 +1,4 @@
-import { TILE_RADIUS } from '../../constants/game'
+import { TILE_RADIUS } from '../../constants/constants-game'
 import { Axial, Pixel } from '../../types/coordinates'
 
 const getPixelPosition = ({ x, z }: Axial): Pixel => ({

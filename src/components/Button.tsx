@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { COLOR, SHADOW } from '../constants/react'
+import { COLOR, SHADOW } from '../constants/constants-react'
 import React, { ButtonHTMLAttributes, FC } from 'react'
 
 interface Props {

@@ -1,5 +1,5 @@
 import { Axial } from '../types/coordinates'
-import { NEIGHBOR_DIRECTIONS } from '../constants/game'
+import { NEIGHBOR_DIRECTIONS } from '../constants/constants-game'
 
 const axialInDirection = (
   axial: Axial,

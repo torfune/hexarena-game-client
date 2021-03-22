@@ -5,7 +5,7 @@ import { useTransition } from 'react-spring'
 import React, { useState } from 'react'
 import Player from '../../core/classes/Player'
 import PatternSelector from './PatternSelector'
-import { COLOR, SHADOW, TRANSITION } from '../../constants/react'
+import { COLOR, SHADOW, TRANSITION } from '../../constants/constants-react'
 
 interface Props {
   players: Player[]

@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import store from '../../core/store'
 import React from 'react'
-import { COLOR } from '../../constants/react'
+import { COLOR } from '../../constants/constants-react'
 import getHudScale from '../../utils/getHudScale'
 
 const GameTime = observer(() => {

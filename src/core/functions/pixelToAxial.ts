@@ -1,4 +1,4 @@
-import { TILE_RADIUS } from '../../constants/game'
+import { TILE_RADIUS } from '../../constants/constants-game'
 import { Pixel, Cube, Axial } from '../../types/coordinates'
 import store from '../store'
 

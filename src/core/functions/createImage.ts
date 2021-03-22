@@ -2,29 +2,31 @@ import { Sprite } from 'pixi.js-legacy'
 import hex from './hex'
 import store from '../store'
 import getTexture from './getTexture'
+import { IMAGE_Z_INDEX } from '../../constants/constants-game'
+import getImageZIndex from './getImageZIndex'
 
-const createImage = (stageName: string, textureName?: string) => {
-  if (!store.game) return new Sprite()
+interface Options {
+  tint?: string
+  zIndex?: number
+  axialZ?: number
+}
 
-  // const texture = textureName
-  //   ? loader.resources[textureName].texture
-  //   : loader.resources[stageName].texture
+const createImage = (textureName: string, options: Options = {}) => {
+  if (!store.game || !store.game.pixi) return new Sprite()
 
-  // new PIXI.Sprite()
-
-  const image = new Sprite(getTexture(textureName || stageName))
+  const image = new Sprite(getTexture(textureName))
 
   image.anchor.set(0.5, 0.5)
+  image.zIndex = getImageZIndex(textureName, {
+    zIndex: options.zIndex,
+    axialZ: options.axialZ,
+  })
 
-  // Special properties
-  if (stageName === 'background') {
-    image.tint = hex('#eee')
+  if (options.tint) {
+    image.tint = hex(options.tint)
   }
 
-  const stage = store.game.stage.get(stageName)
-  if (!stage) return new Sprite()
-
-  stage.addChild(image)
+  store.game.pixi.stage.addChild(image)
   return image
 }
 

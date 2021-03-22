@@ -5,7 +5,7 @@ import { Bar } from 'react-chartjs-2'
 import { observer } from 'mobx-react-lite'
 import store from '../../../core/store'
 import { ChartData, ChartOptions } from 'chart.js'
-import { COLOR } from '../../../constants/react'
+import { COLOR } from '../../../constants/constants-react'
 
 const CHART_WIDTH = 360
 const CHART_HEIGHT = 150

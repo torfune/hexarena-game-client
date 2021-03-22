@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { animated } from 'react-spring'
-import { BOX_SHADOW, COLOR, SHADOW } from '../../constants/react'
+import { BOX_SHADOW, COLOR, SHADOW } from '../../constants/constants-react'
 import Hexagon from '../Hexagon'
 import React from 'react'
 import lockIcon from '../../icons/lock.svg'

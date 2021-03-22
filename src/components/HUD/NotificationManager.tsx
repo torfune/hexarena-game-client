@@ -5,7 +5,7 @@ import * as React from 'react'
 import { observer } from 'mobx-react-lite'
 import { animated, useTransition } from 'react-spring'
 import { Pixel } from '../../types/coordinates'
-import { BOX_SHADOW } from '../../constants/react'
+import { BOX_SHADOW } from '../../constants/constants-react'
 
 const StyledNotification = styled(animated.div)<{ position: Pixel }>`
   position: absolute;

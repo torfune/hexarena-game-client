@@ -6,7 +6,7 @@ import React from 'react'
 import Spinner from '../Spinner'
 import getPlayerGroups from '../../utils/getPlayerGroups'
 import Player from '../../core/classes/Player'
-import { COLOR, SHADOW, Z_INDEX } from '../../constants/react'
+import { COLOR, SHADOW, Z_INDEX } from '../../constants/constants-react'
 import formatMode from '../../utils/formatMode'
 
 const Lobby = () => {

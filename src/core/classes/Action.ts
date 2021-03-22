@@ -6,13 +6,14 @@ import Player from './Player'
 import Primitive from '../../types/Primitive'
 import Prop from '../../types/Prop'
 import createProp from '../../utils/createProp'
-import { Sprite, Graphics, Loader } from 'pixi.js-legacy'
+import { Sprite, Graphics } from 'pixi.js-legacy'
 import Animation from './Animation'
 import { easeOutQuad, easeInQuad } from '../functions/easing'
 import SoundManager from '../../services/SoundManager'
 import getTexture from '../functions/getTexture'
+import { IMAGE_Z_INDEX } from '../../constants/constants-game'
+import getImageZIndex from '../functions/getImageZIndex'
 
-const loader = Loader.shared
 const ACTION_RADIUS = 50
 
 export type ActionType =
@@ -70,6 +71,7 @@ class Action {
     this.image.alpha = 0
     this.image.x = pixel.x
     this.image.y = pixel.y
+    this.image.zIndex = getImageZIndex('action', { axialZ: tile.axial.z })
 
     if (owner.id === store.game?.playerId) {
       SoundManager.play('ACTION_CREATE')
@@ -99,11 +101,8 @@ class Action {
       }
     }, 1000)
 
-    if (store.game) {
-      const stage = store.game.stage.get('action')
-      if (stage) {
-        stage.addChild(this.image)
-      }
+    if (store.game && store.game.pixi) {
+      store.game.pixi.stage.addChild(this.image)
     }
   }
 
@@ -179,12 +178,9 @@ class Action {
         speed: 0.06,
         ease: easeInQuad,
         onFinish: () => {
-          if (!store.game) return
+          if (!store.game || !store.game.pixi) return
 
-          const stage = store.game.stage.get('action')
-          if (stage) {
-            stage.removeChild(this.image)
-          }
+          store.game.pixi.stage.removeChild(this.image)
         },
       }
     )

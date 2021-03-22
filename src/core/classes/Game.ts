@@ -1,13 +1,12 @@
 import GoldAnimation from './GoldAnimation'
 import {
   DEFAULT_SCALE,
-  TILE_IMAGES,
   ZOOM_SPEED,
   MIN_SCALE,
   MAX_SCALE,
   CAMERA_SPEED,
   MAX_CLICK_DURATION,
-} from '../../constants/game'
+} from '../../constants/constants-game'
 import createGameLoop from '../functions/createGameLoop'
 import createPixiApp from '../functions/createPixiApp'
 import store from '../store'
@@ -31,15 +30,14 @@ import Village from './Village'
 import GameMode from '../../types/GameMode'
 import ArmyDragArrow from './ArmyDragArrow'
 import SoundManager from '../../services/SoundManager'
-import LocalStorageService from '../../services/LocalStorageService'
 import GameStatus from '../../types/GameStatus'
-import { COLOR } from '../../constants/react'
+import { COLOR } from '../../constants/constants-react'
 import isSpectating from '../../utils/isSpectating'
 
 class Game {
   id: string
   mode: GameMode
-  stage: Map<string, Container> = new Map()
+  // stage: Map<string, Container> = new Map()
   allianceRequests: Map<string, AllianceRequest> = new Map()
   armies: Map<string, Army> = new Map()
   players: Map<string, Player> = new Map()
@@ -124,7 +122,8 @@ class Game {
         this.status === 'running' &&
         !isSpectating() &&
         !store.error &&
-        !this.player.surrendered
+        !this.player.surrendered &&
+        !store.gsConfig?.DEBUG_MODE
       ) {
         return true
       }
@@ -145,11 +144,13 @@ class Game {
 
     if (!this.pixi) {
       this.pixi = createPixiApp()
-      for (let i = 0; i < TILE_IMAGES.length; i++) {
-        const container = new Container()
-        this.stage.set(TILE_IMAGES[i], container)
-        this.pixi.stage.addChild(container)
-      }
+      this.pixi.stage.sortableChildren = true
+
+      // for (let i = 0; i < TILE_IMAGES.length; i++) {
+      //   const container = new Container()
+      //   this.stage.set(TILE_IMAGES[i], container)
+      //   this.pixi.stage.addChild(container)
+      // }
 
       this.pixi.view.id = this.id
     }
@@ -157,14 +158,14 @@ class Game {
     canvas.appendChild(this.pixi.view)
   }
   destroy() {
-    for (let i = 0; i < TILE_IMAGES.length; i++) {
-      const stage = this.stage.get(TILE_IMAGES[i])
-      if (stage) {
-        stage.removeChildren()
-      }
-    }
+    // for (let i = 0; i < TILE_IMAGES.length; i++) {
+    //   const stage = this.stage.get(TILE_IMAGES[i])
+    //   if (stage) {
+    //   }
+    // }
 
     if (this.pixi) {
+      this.pixi.stage.removeChildren()
       this.pixi.destroy()
       this.pixi = null
     }
@@ -873,37 +874,37 @@ class Game {
     }
   }
   updateArmyTileHighlights() {
-    const { gsConfig } = store
-    if (!gsConfig) return
-
-    let direction = null
-
-    for (let i = 0; i < 6; i++) {
-      const armyTiles = this.selectedArmyTargetTiles[i]
-
-      for (let j = 0; j < armyTiles.length; j++) {
-        armyTiles[j].removeHighlight()
-      }
-    }
-
-    if (!this.hoveredTile) return
-
-    for (let i = 0; i < 6; i++) {
-      if (this.selectedArmyTargetTiles[i].includes(this.hoveredTile)) {
-        direction = i
-        break
-      }
-    }
-
-    if (direction !== null) {
-      const targetTiles = this.selectedArmyTargetTiles[direction]
-      for (let i = 0; i < targetTiles.length; i++) {
-        const t = targetTiles[i]
-        if (!t || !t.owner || t.owner.id !== this.playerId) continue
-        t.addHighlight()
-        if (t.building || t.camp) break
-      }
-    }
+    // const { gsConfig } = store
+    // if (!gsConfig) return
+    //
+    // let direction = null
+    //
+    // for (let i = 0; i < 6; i++) {
+    //   const armyTiles = this.selectedArmyTargetTiles[i]
+    //
+    //   for (let j = 0; j < armyTiles.length; j++) {
+    //     armyTiles[j].removeHoverHexagon()
+    //   }
+    // }
+    //
+    // if (!this.hoveredTile) return
+    //
+    // for (let i = 0; i < 6; i++) {
+    //   if (this.selectedArmyTargetTiles[i].includes(this.hoveredTile)) {
+    //     direction = i
+    //     break
+    //   }
+    // }
+    //
+    // if (direction !== null) {
+    //   const targetTiles = this.selectedArmyTargetTiles[direction]
+    //   for (let i = 0; i < targetTiles.length; i++) {
+    //     const t = targetTiles[i]
+    //     if (!t || !t.owner || t.owner.id !== this.playerId) continue
+    //     t.addHoverHexagon()
+    //     if (t.building || t.camp) break
+    //   }
+    // }
   }
   surrender() {
     if (store.socket) {
@@ -925,11 +926,15 @@ class Game {
       const { x, z } = this.selectedArmyTile.axial
       store.socket.send('sendArmy', `${x}|${z}|${index}`)
       SoundManager.play('ARMY_SEND')
-      if (this.armyDragArrow) {
-        this.armyDragArrow.destroy()
-      }
-    } else {
-      this.selectedArmyTile.unselectArmy()
+      // if (this.armyDragArrow) {
+      //   this.armyDragArrow.destroy()
+      // }
+    }
+
+    this.selectedArmyTile.unselectArmy()
+
+    if (this.hoveredTile) {
+      this.hoveredTile.startHover()
     }
   }
   updateStageScale() {

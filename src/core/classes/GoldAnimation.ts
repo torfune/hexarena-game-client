@@ -110,9 +110,8 @@ class Coin {
 
     this.destroyed = true
 
-    const stage = store.game.stage.get('gold')
-    if (stage) {
-      stage.removeChild(this.image)
+    if (store.game.pixi) {
+      store.game.pixi.stage.removeChild(this.image)
     }
   }
 }

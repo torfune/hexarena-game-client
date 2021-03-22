@@ -44,7 +44,7 @@ class Forest {
     const treePosition = shuffle(TREE_POSITION)
     const now = Date.now()
     for (let i = 0; i < treeCount; i++) {
-      const image = createImage('tree')
+      const image = createImage('tree', { axialZ: tile.axial.z })
       image.x = pixel.x + treePosition[i].x
       image.y = pixel.y + treePosition[i].y
       image.anchor.set(0.5, 1)

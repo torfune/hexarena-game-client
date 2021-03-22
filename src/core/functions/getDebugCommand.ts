@@ -1,4 +1,4 @@
-import { DEBUG_COMMANDS } from '../../constants/game'
+import { DEBUG_COMMANDS } from '../../constants/constants-game'
 
 const getDebugCommand = (key: string) => {
   for (const command of DEBUG_COMMANDS) {

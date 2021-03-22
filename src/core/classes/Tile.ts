@@ -11,7 +11,10 @@ import {
   HP_FILL_OFFSET_Y,
   HP_BACKGROUND_OFFSET,
   IMAGE_OFFSET_Y,
-} from '../../constants/game'
+  HOVER_HEXAGON_OPACITY,
+  IMAGE_Z_INDEX,
+  FOG_Z_INDEX,
+} from '../../constants/constants-game'
 import getImageAnimation from '../functions/getImageAnimation'
 import shade from '../../utils/shade'
 import Player from './Player'
@@ -199,8 +202,14 @@ class Tile {
       this.showHitpoints()
     }
 
-    if (this.getActionType() && !store.game.selectedArmyTile) {
-      this.addHighlight()
+    // console.log('Start hover!')
+    // console.log(store.game.selectedArmyTile)
+
+    if (
+      (this.getActionType() && !store.game.selectedArmyTile) ||
+      (this.building && this.army)
+    ) {
+      this.addHoverHexagon()
     }
   }
   endHover() {
@@ -212,22 +221,52 @@ class Tile {
       this.hideHitpoints()
     }
 
-    if (this.owner && game.selectedArmyTile !== this) {
-      this.removeHighlight()
+    if (game.selectedArmyTile !== this) {
+      this.removeHoverHexagon()
     }
   }
-  addHighlight() {
-    if (
-      !this.owner ||
-      !store.game ||
-      store.game.player?.alive ||
-      store.game.player?.surrendered ||
-      !this.image.pattern
-    ) {
-      return
+  addHoverHexagon() {
+    if (this.bedrock || this.image['overlay']) return
+
+    // console.log('addHoverHexagon')
+
+    // if (
+    //   !this.owner ||
+    //   !store.game ||
+    //   store.game.player?.alive ||
+    //   store.game.player?.surrendered ||
+    //   !this.image.pattern
+    // ) {
+    //   return
+    // }
+
+    const pixel = getPixelPosition(this.axial)
+    const image = createImage('overlay')
+
+    image.x = pixel.x
+    image.y = pixel.y
+    image.scale.set(0)
+    image.tint = hex('#000')
+    this.image['overlay'] = image
+
+    const animation = getImageAnimation(this.image['overlay'])
+    let initialFraction: number | undefined = undefined
+    if (animation && animation instanceof Animation) {
+      initialFraction = 1 - animation.fraction
+      animation.destroy()
     }
 
-    this.image.pattern.tint = hex(shade(this.owner.getPattern(), 10))
+    new Animation(
+      this.image['overlay'],
+      (image, fraction) => {
+        image.alpha = fraction * HOVER_HEXAGON_OPACITY
+        image.scale.set(fraction)
+      },
+      {
+        initialFraction,
+        speed: 0.1,
+      }
+    )
   }
   addArmy(army: Army) {
     const { gsConfig } = store
@@ -242,7 +281,7 @@ class Tile {
     }
 
     this.army = army
-    this.showArmyIcon()
+    // this.showArmyIcon()
 
     if (this.owner && this.owner.id === store.game?.playerId) {
       SoundManager.play('ARMY_ARRIVE')
@@ -251,32 +290,73 @@ class Tile {
   addContested() {
     // this.image.contested.visible = true
   }
-  removeHighlight() {
-    if (!this.owner || !this.image.pattern) return
+  removeHoverHexagon() {
+    const image = this.image['overlay']
+    if (!image || !store.game) return
 
-    this.image.pattern.tint = hex(this.owner.getPattern())
+    delete this.image['overlay']
+
+    const animation = getImageAnimation(image)
+    let initialFraction
+    if (animation && animation instanceof Animation) {
+      initialFraction = 1 - animation.fraction
+      animation.destroy()
+    }
+
+    new Animation(
+      image,
+      (image, fraction) => {
+        fraction = 1 - fraction
+        image.alpha = fraction * HOVER_HEXAGON_OPACITY
+        image.scale.set(fraction)
+      },
+      {
+        initialFraction,
+        speed: 0.1,
+        onFinish: (image) => {
+          if (store.game && store.game.pixi) {
+            store.game.pixi.stage.removeChild(image)
+          }
+        },
+      }
+    )
   }
-  removeContested() {
-    // this.image.contested.visible = false
-  }
-  addImage(key: keyof TileImage, animate = true) {
+
+  addImage(imageName: keyof TileImage, animate = true) {
     if (Date.now() - this.createdAt < 500) {
       animate = false
     }
 
-    let texture: string = key
-    if (key === 'background') {
+    let texture: string = imageName
+    let zIndex: number | undefined = undefined
+    let axialZ: number | undefined = undefined
+
+    if (imageName === 'background') {
       texture = this.bedrock ? 'overlay' : 'pattern'
-    } else if (key === 'mountain') {
+    } else if (imageName === 'mountain') {
       texture = `mountain-${Math.floor(Math.random() * 5 + 1)}`
+      zIndex = IMAGE_Z_INDEX.indexOf('mountain')
+    }
+
+    if (
+      imageName === 'castle' ||
+      imageName === 'capital' ||
+      imageName === 'tower' ||
+      imageName === 'camp' ||
+      imageName === 'mountain'
+    ) {
+      axialZ = this.axial.z
     }
 
     const pixel = getPixelPosition(this.axial)
-    const image = createImage(key, texture)
+    const image = createImage(texture, {
+      zIndex,
+      axialZ,
+    })
 
     image.x = pixel.x
     image.y = pixel.y
-    this.image[key] = image
+    this.image[imageName] = image
 
     if (animate) {
       image.alpha = 0
@@ -295,6 +375,7 @@ class Tile {
 
     return image
   }
+
   removeImage(key: keyof TileImage, animate = true) {
     const image = this.image[key]
 
@@ -310,73 +391,32 @@ class Tile {
           image.scale.set(1 - fraction)
         },
         {
-          context: {
-            stage: store.game.stage.get(key),
-          },
-          onFinish: (image, context) => {
-            context.stage.removeChild(image)
+          onFinish: (image) => {
+            if (store.game && store.game.pixi) {
+              store.game.pixi.stage.removeChild(image)
+            }
           },
           speed: 0.05,
         }
       )
     } else {
-      const stage = store.game.stage.get(key)
-      if (stage) {
-        stage.removeChild(image)
+      if (store.game && store.game.pixi) {
+        store.game.pixi.stage.removeChild(image)
       }
     }
   }
+
   removeArmy() {
     if (!this.army || !store.game) return
 
     this.army = null
-    this.hideArmyIcon()
+    // this.hideArmyIcon()
 
     if (store.game.selectedArmyTile === this) {
       this.unselectArmy()
     }
   }
-  showArmyIcon() {
-    const pixel = getPixelPosition(this.axial)
 
-    this.image['army-icon'] = createImage('army-icon')
-    this.image['army-icon'].x = pixel.x
-    this.image['army-icon'].y = pixel.y
-    this.image['army-icon'].alpha = 0
-
-    new Animation(
-      this.image['army-icon'],
-      (image, fraction, context) => {
-        image.alpha = fraction
-        image.y = context.baseY - this.getArmyIconOffsetY() * fraction
-      },
-      { context: { baseY: pixel.y }, speed: 0.05 }
-    )
-  }
-  hideArmyIcon() {
-    if (!this.image['army-icon']) return
-
-    const position = getPixelPosition(this.axial)
-    new Animation(
-      this.image['army-icon'],
-      (image, fraction) => {
-        fraction = 1 - fraction
-        image.alpha = fraction
-        image.y = position.y - this.getArmyIconOffsetY() * fraction
-      },
-      {
-        speed: 0.05,
-        onFinish: (image) => {
-          if (store.game) {
-            const stage = store.game.stage.get('army-icon')
-            if (stage) {
-              stage.removeChild(image)
-            }
-          }
-        },
-      }
-    )
-  }
   updateHitpoints() {
     const { gsConfig } = store
     if (!gsConfig) return
@@ -391,8 +431,8 @@ class Tile {
     if (!this.image['hp-background']) {
       const pixel = getPixelPosition(this.axial)
       const image = createImage(
-        'hp-background',
-        `hp-background-${this.building.type === 'CASTLE' ? '3' : '2'}`
+        `hp-background-${this.building.type === 'CASTLE' ? '3' : '2'}`,
+        { zIndex: IMAGE_Z_INDEX.indexOf('hp-background') }
       )
       image.x = pixel.x
       image.y = pixel.y
@@ -493,7 +533,7 @@ class Tile {
       !this.isHovered()
     ) {
       setTimeout(
-        (() => {
+        () => {
           if (
             this.building &&
             this.building.hp === gsConfig.HP[this.building.type] &&
@@ -501,7 +541,8 @@ class Tile {
           ) {
             this.hideHitpoints()
           }
-        }).bind(this),
+        },
+        // }).bind(this),
         500
       )
     }
@@ -670,7 +711,7 @@ class Tile {
       }
     }
 
-    this.hideArmyIcon()
+    // this.hideArmyIcon()
     this.army.leaveBuilding()
     store.game.selectedArmyTargetTiles = armyTargetTiles
   }
@@ -681,20 +722,13 @@ class Tile {
       store.game.armyDragArrow.destroy()
     }
 
-    if (this.image.pattern && this.owner) {
-      this.image.pattern.tint = hex(this.owner.getPattern())
-    }
-
-    for (let i = 0; i < 6; i++) {
-      const armyTiles = store.game.selectedArmyTargetTiles[i]
-      for (let j = 0; j < armyTiles.length; j++) {
-        armyTiles[j].removeHighlight()
-      }
-    }
-
     if (this.army) {
-      this.showArmyIcon()
+      // this.showArmyIcon()
       this.army.joinBuilding()
+    }
+
+    if (store.game.hoveredTile !== this) {
+      this.removeHoverHexagon()
     }
 
     store.game.selectedArmyTile = null
@@ -716,7 +750,7 @@ class Tile {
 
       if (!this.neighbors[i] && !image) {
         const pixel = getPixelPosition(this.axial)
-        const newImage = createImage('fog')
+        const newImage = createImage('fog', { zIndex: FOG_Z_INDEX })
 
         newImage.x = pixel.x
         newImage.y = pixel.y
@@ -846,23 +880,22 @@ class Tile {
 
     const pixel = getPixelPosition(this.axial)
 
-    this.image['pattern-preview'] = createImage('pattern-preview', 'pattern')
+    this.image['pattern-preview'] = createImage('pattern')
     this.image['pattern-preview'].x = pixel.x
     this.image['pattern-preview'].y = pixel.y
     this.image['pattern-preview'].tint = hex(pattern)
     this.image['pattern-preview'].alpha = 0.3
   }
   removePatternPreview() {
-    if (!this.image['pattern-preview'] || !store.game) return
+    if (!this.image['pattern-preview'] || !store.game || !store.game.pixi) {
+      return
+    }
 
     if (this.image.pattern) {
       this.image.pattern.visible = true
     }
 
-    const stage = store.game.stage.get('pattern-preview')
-    if (stage) {
-      stage.removeChild(this.image['pattern-preview'])
-    }
+    store.game.pixi.stage.removeChild(this.image['pattern-preview'])
   }
   getStructureName() {
     if (this.bedrock) {
@@ -969,15 +1002,6 @@ class Tile {
     } else {
       return CAPTURE_COST.DEFAULT
     }
-  }
-  getArmyIconOffsetY() {
-    if (this.building) {
-      return ARMY_ICON_OFFSET_Y[this.building.type]
-    } else if (this.camp) {
-      return ARMY_ICON_OFFSET_Y.CAMP
-    }
-
-    return 0
   }
 
   // Prop getters

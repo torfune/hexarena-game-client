@@ -10,10 +10,11 @@ import {
   UNIT_POSITION_OFFSET,
   UNIT_MOVEMENT_SPEED,
   UNIT_DOOR_OFFSET,
-} from '../../../constants/game'
+} from '../../../constants/constants-game'
 import Prop from '../../../types/Prop'
 import Primitive from '../../../types/Primitive'
 import createProp from '../../../utils/createProp'
+import ArmyBar from './ArmyIcon'
 
 interface Props {
   [key: string]: Prop<Primitive>
@@ -37,11 +38,13 @@ class Army {
   isDestroying: boolean = false
   isMoving: boolean = false
   units: Unit[] = []
+  bar: ArmyBar
 
   constructor(id: string, tile: Tile, owner: Player) {
     this.id = id
     this.tile = tile
     this.owner = owner
+    this.bar = new ArmyBar(tile)
 
     this.props.tileId = createProp(tile.id)
     this.props.ownerId = createProp(owner.id)
@@ -95,6 +98,7 @@ class Army {
         break
     }
   }
+
   update() {
     if (!store.game) return
 
@@ -122,6 +126,8 @@ class Army {
       this.animationFraction = 1
     }
 
+    this.bar.update()
+
     for (let i = 0; i < UNIT_COUNT; i++) {
       this.units[i].update(this.animationFraction)
     }
@@ -131,6 +137,7 @@ class Army {
       this.animationFraction = null
     }
   }
+
   moveOn(tileId: string) {
     const { gsConfig, game } = store
     if (!gsConfig || !game || game.selectedArmyTile?.id === tileId) return
@@ -163,6 +170,8 @@ class Army {
       UNIT_POSITION_OFFSET
     )
 
+    this.bar.moveOn(tile)
+
     for (let i = 0; i < UNIT_COUNT; i++) {
       if (tile.building || tile.camp) {
         this.units[i].moveOn(doorPosition.x, doorPosition.y)
@@ -180,6 +189,7 @@ class Army {
       tile.addArmy(this)
     }
   }
+
   leaveBuilding() {
     const { gsConfig, game } = store
     if (!gsConfig || !game) return
@@ -199,6 +209,7 @@ class Army {
       this.units[i].moveOn(randomizedPositions[i].x, randomizedPositions[i].y)
     }
   }
+
   joinBuilding() {
     const { gsConfig, game } = store
     if (!gsConfig || !game) return
@@ -216,8 +227,11 @@ class Army {
       this.units[i].moveOn(doorPosition.x, doorPosition.y)
     }
   }
+
   destroy() {
     this.isDestroying = true
+
+    this.bar.destroy()
 
     if (this.tile.army && this.tile.army === this) {
       this.tile.removeArmy()

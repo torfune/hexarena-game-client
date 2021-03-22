@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { BOX_SHADOW, COLOR, Z_INDEX } from '../constants/react'
+import { BOX_SHADOW, COLOR, Z_INDEX } from '../constants/constants-react'
 import React, { FC } from 'react'
 
 interface Props {

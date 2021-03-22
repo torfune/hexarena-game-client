@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import React from 'react'
 import Player from '../../../core/classes/Player'
-import { COLOR } from '../../../constants/react'
+import { COLOR } from '../../../constants/constants-react'
 import store from '../../../core/store'
 import botIcon from '../../../icons/bot.svg'
 import isSpectating from '../../../utils/isSpectating'

@@ -1,31 +1,37 @@
 import { Axial } from '../types/coordinates'
 import isSpectating from '../utils/isSpectating'
-import { COLOR } from './react'
+import { COLOR } from './constants-react'
 
 // TILE
 export const TILE_RADIUS = 73.8
-export const TILE_IMAGES = [
+export const FOG_Z_INDEX = 5000
+export const IMAGE_Z_INDEX = [
   'gold',
   'fog',
   'arrow',
   'action',
-  'army-icon',
   'castle',
   'tower',
   'capital',
   'hp-background',
   'hp-fill',
   'camp',
-  'army-drag-arrow',
+  'army-drag-arrow-body',
+  'army-drag-arrow-head',
   'mountain',
   'house',
+  'army-icon',
   'tree',
   'army',
   'border',
   'pattern-preview',
+  'hover-hexagon',
+  'overlay',
   'pattern',
   'background',
 ].reverse()
+
+export const HOVER_HEXAGON_OPACITY = 0.1
 
 export const NEIGHBOR_DIRECTIONS: Axial[] = [
   { x: 1, z: -1 },
@@ -43,10 +49,11 @@ export const CAMERA_SPEED = 24
 export const HP_FILL_OFFSET_Y = 10
 export const HP_FILL_OFFSET_X = 26
 export const ARMY_ICON_OFFSET_Y = {
-  CAPITAL: 185,
-  CAMP: 150,
-  TOWER: 160,
-  CASTLE: 160,
+  DEFAULT: 100,
+  CAMP: 90,
+  TOWER: 125,
+  CASTLE: 125,
+  CAPITAL: 150,
 }
 export const HP_BACKGROUND_OFFSET = {
   CAPITAL: 135,

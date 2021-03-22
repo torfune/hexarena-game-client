@@ -1,7 +1,7 @@
 import Spinner from './Spinner'
 import styled from 'styled-components'
 import React from 'react'
-import { Z_INDEX } from '../constants/react'
+import { Z_INDEX } from '../constants/constants-react'
 
 const ReconnectingOverlay = () => {
   return (

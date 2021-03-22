@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import React from 'react'
-import { COLOR } from '../../../constants/react'
+import { COLOR } from '../../../constants/constants-react'
 
 const Container = styled.div`
   padding: 6px 12px;

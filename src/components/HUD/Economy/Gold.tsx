@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import Label from './Label'
 import { observer } from 'mobx-react-lite'
 import store from '../../../core/store'
-import { COLOR } from '../../../constants/react'
+import { COLOR } from '../../../constants/constants-react'
 
 const Container = styled.div`
   border-left: 1px solid ${COLOR.GREY_800};

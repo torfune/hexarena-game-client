@@ -1,6 +1,9 @@
 import createImage from '../../functions/createImage'
 import { easeOutCubic } from '../../functions/easing'
-import { UNIT_IMAGE_SCALE, UNIT_MAX_DELAY } from '../../../constants/game'
+import {
+  UNIT_IMAGE_SCALE,
+  UNIT_MAX_DELAY,
+} from '../../../constants/constants-game'
 import roundToDecimals from '../../functions/roundToDecimals'
 import { Pixel } from '../../../types/coordinates'
 import { Sprite } from 'pixi.js-legacy'
@@ -19,6 +22,7 @@ class Unit {
     this.image.scale.x = UNIT_IMAGE_SCALE
     this.image.scale.y = UNIT_IMAGE_SCALE
   }
+
   update(fraction: number) {
     if (this.delay === null || !this.originalPosition || !this.targetPosition) {
       return
@@ -36,6 +40,7 @@ class Unit {
     this.image.x = this.originalPosition.x + delta.x * easedFraction
     this.image.y = this.originalPosition.y + delta.y * easedFraction
   }
+
   moveOn(x: number, y: number) {
     this.targetPosition = { x, y }
     this.originalPosition = {
@@ -45,6 +50,7 @@ class Unit {
 
     this.delay = roundToDecimals(Math.random() * UNIT_MAX_DELAY, 2)
   }
+
   setAlpha(alpha: number) {
     if (alpha < 0) {
       alpha = 0
@@ -56,13 +62,11 @@ class Unit {
 
     this.image.alpha = alpha
   }
-  destroy() {
-    if (!store.game) return
 
-    const stage = store.game.stage.get('army')
-    if (stage) {
-      stage.removeChild(this.image)
-    }
+  destroy() {
+    if (!store.game || !store.game.pixi) return
+
+    store.game.pixi.stage.removeChild(this.image)
   }
 }
 
