@@ -41,8 +41,8 @@ class Animation {
       store.game.animations.push(this)
     }
   }
-  update() {
-    this.fraction = roundToDecimals(this.fraction + this.speed, 2)
+  update(delta: number) {
+    this.fraction = roundToDecimals(this.fraction + this.speed * delta, 2)
 
     if (this.fraction > 1) {
       this.fraction = 1

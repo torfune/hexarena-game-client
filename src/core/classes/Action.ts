@@ -11,18 +11,11 @@ import Animation from './Animation'
 import { easeOutQuad, easeInQuad } from '../functions/easing'
 import SoundManager from '../../services/SoundManager'
 import getTexture from '../functions/getTexture'
-import { IMAGE_Z_INDEX } from '../../constants/constants-game'
 import getImageZIndex from '../functions/getImageZIndex'
 
 const ACTION_RADIUS = 50
 
-export type ActionType =
-  | 'CAPTURE'
-  | 'RECRUIT'
-  | 'CAMP'
-  | 'TOWER'
-  | 'CASTLE'
-  | 'HOUSE'
+export type ActionType = 'CAPTURE' | 'RECRUIT' | 'CAMP' | 'TOWER' | 'CASTLE'
 export type ActionStatus = 'PENDING' | 'RUNNING' | 'FINISHED'
 
 interface Props {
@@ -205,8 +198,6 @@ class Action {
         return getTexture('action-icon-tower')
       case 'CASTLE':
         return getTexture('action-icon-castle')
-      case 'HOUSE':
-        return getTexture('action-icon-house')
     }
   }
 

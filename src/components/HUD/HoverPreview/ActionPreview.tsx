@@ -70,8 +70,6 @@ const getActionLabel = (actionType: ActionType | 'SEND_ARMY' | 'REPAIR') => {
       return 'Train Army'
     case 'REPAIR':
       return 'Repair building'
-    case 'HOUSE':
-      return 'Build House'
     case 'SEND_ARMY':
       return 'Send army'
   }
@@ -115,8 +113,6 @@ const getActionCost = (
       return gsConfig.RECRUIT_COST
     case 'REPAIR':
       return gsConfig.RECRUIT_COST
-    case 'HOUSE':
-      return gsConfig.HOUSE_COST
     case 'SEND_ARMY':
       return 0
   }

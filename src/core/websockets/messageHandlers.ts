@@ -48,8 +48,7 @@ const messageHandlers = {
         type !== 'RECRUIT' &&
         type !== 'CAMP' &&
         type !== 'TOWER' &&
-        type !== 'CASTLE' &&
-        type !== 'HOUSE'
+        type !== 'CASTLE'
       ) {
         continue
       }

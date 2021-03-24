@@ -30,7 +30,7 @@ class Socket {
 
     return new Promise((resolve, reject) => {
       const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-      this.ws = new WebSocket(`${wsProtocol}//${this.host}`)
+      this.ws = new WebSocket(`${wsProtocol}//${this.host}/ws`)
 
       this.ws.addEventListener('message', this.handleMessage.bind(this))
       this.ws.addEventListener('error', this.handleError.bind(this))
@@ -89,6 +89,8 @@ class Socket {
   }
 
   handleMessage({ data }: { data: string }) {
+    console.log(data)
+
     const [messageName, messagePayload] = data.split('//')
 
     switch (messageName as IncomingMessage) {

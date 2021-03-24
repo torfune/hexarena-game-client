@@ -187,7 +187,7 @@ class Game {
       store.game = null
     }
   }
-  update() {
+  update(delta: number) {
     if (
       !this.camera ||
       !this.pixi ||
@@ -198,23 +198,22 @@ class Game {
       return
     }
 
-    const now = Date.now()
-    const fraction = 16.66 / (now - this.lastUpdatedAt)
-    this.lastUpdatedAt = now
-    this.fpsArray.push(Math.round(fraction * 60))
-    if (this.fpsArray.length > 20) {
-      this.fpsArray.shift()
-    }
-
-    if (now - this.fpsLastUpdatedAt > 2000) {
-      const sum = this.fpsArray.reduce((item, acc) => acc + item, 0)
-      this.fps = Math.round(sum / this.fpsArray.length)
-      this.fpsLastUpdatedAt = now
-    }
+    // const now = Date.now()
+    // const fraction = 16.66 / (now - this.lastUpdatedAt)
+    // this.lastUpdatedAt = now
+    // this.fpsArray.push(Math.round(fraction * 60))
+    // if (this.fpsArray.length > 20) {
+    //   this.fpsArray.shift()
+    // }
+    // if (now - this.fpsLastUpdatedAt > 2000) {
+    //   const sum = this.fpsArray.reduce((item, acc) => acc + item, 0)
+    //   this.fps = Math.round(sum / this.fpsArray.length)
+    //   this.fpsLastUpdatedAt = now
+    // }
 
     // Animations
     for (let i = this.animations.length - 1; i >= 0; i--) {
-      this.animations[i].update()
+      this.animations[i].update(delta)
       if (this.animations[i].finished) {
         this.animations.splice(i, 1)
       }
