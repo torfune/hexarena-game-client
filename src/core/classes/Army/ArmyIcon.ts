@@ -4,7 +4,6 @@ import getPixelPosition from '../../functions/getPixelPosition'
 import store from '../../store'
 import {
   ARMY_ICON_OFFSET_Y,
-  IMAGE_Z_INDEX,
   UNIT_MOVEMENT_SPEED,
 } from '../../../constants/constants-game'
 import { easeOutCubic } from '../../functions/easing'
@@ -102,8 +101,6 @@ class ArmyIcon {
   getOffsetY(tile: Tile) {
     if (tile.building) {
       return ARMY_ICON_OFFSET_Y[tile.building.type]
-    } else if (tile.camp) {
-      return ARMY_ICON_OFFSET_Y.CAMP
     }
 
     return ARMY_ICON_OFFSET_Y.DEFAULT

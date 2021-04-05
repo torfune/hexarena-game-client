@@ -14,6 +14,7 @@ import updateProps from '../functions/updateProps'
 import GoldAnimation from '../classes/GoldAnimation'
 import SoundManager from '../../services/SoundManager'
 import isSpectating from '../../utils/isSpectating'
+import Building from '../classes/Building'
 
 // Handlers: Gameserver -> Frontend
 const messageHandlers = {
@@ -127,35 +128,51 @@ const messageHandlers = {
 
     const parsed = convertArray(payload, {
       id: 'string',
-      tileId: 'string',
       ownerId: 'string',
-      destroyed: 'boolean',
+      tileId: 'string',
+      buildingId: 'string',
     }) as {
       id: string | null
-      tileId: string | null
       ownerId: string | null
-      destroyed: number | null
+      tileId: string | null
+      buildingId: string | null
     }[]
 
     for (let i = 0; i < parsed.length; i++) {
       const fields = parsed[i]
-      const { id, tileId, ownerId, destroyed } = fields
+      const { id, ownerId, tileId, buildingId } = fields
 
-      if (!id || !tileId || !ownerId) continue
+      if (!id || !ownerId) continue
 
       let army = store.game.armies.get(id) || null
+      const tile = store.game.tiles.get(tileId || '') || null
+      const building = store.game.buildings.get(buildingId || '') || null
 
       // Create
       if (!army) {
-        const tile = store.game.tiles.get(tileId) || null
         const owner = store.game.players.get(ownerId) || null
-        if (!tile || !owner || destroyed) continue
-        army = new Army(id, tile, owner)
+        if (!owner) {
+          console.error('Army owner not found.')
+          continue
+        }
+
+        // Army is not visible to this Player
+        if (!tile && !building) {
+          return
+        }
+
+        army = new Army(id, owner, tile, building)
         store.game.armies.set(id, army)
       }
 
       // Update
-      updateProps(army, parsed[i])
+      if (tileId !== army.tile?.id) {
+        army.setTile(tile)
+      }
+
+      if (buildingId !== army.building?.id) {
+        army.setBuilding(building)
+      }
     }
   },
   tiles: (payload: string) => {
@@ -166,21 +183,15 @@ const messageHandlers = {
       x: 'number',
       z: 'number',
       ownerId: 'string',
-      buildingType: 'string',
-      buildingHp: 'number',
       mountain: 'boolean',
       bedrock: 'boolean',
-      camp: 'boolean',
     }) as {
       id: string | null
       x: number | null
       z: number | null
       ownerId: string | null
-      buildingType: string | null
-      buildingHp: number | null
       mountain: boolean
       bedrock: boolean
-      camp: boolean
     }[]
 
     let sound: 'VILLAGE_CAPTURE' | 'TILE_CAPTURE' | null = null
@@ -195,7 +206,6 @@ const messageHandlers = {
       // Create
       if (!tile) {
         tile = new Tile(id, { x, z }, mountain, bedrock)
-        store.game.tiles.set(id, tile)
         tile.updateNeighbors()
         for (let i = 0; i < 6; i++) {
           const n = tile.neighbors[i]
@@ -205,15 +215,15 @@ const messageHandlers = {
         }
       }
 
+      // Select sound
       const playersId = Array.from(store.game.players.values()).map(
         (player) => player.id
       )
-
       if (
-        (tile.ownerId !== store.game.playerId &&
+        (tile.owner?.id !== store.game.playerId &&
           parsed[i].ownerId === store.game.playerId) ||
         (isSpectating() &&
-          tile.ownerId !== parsed[i].ownerId &&
+          tile.owner?.id !== parsed[i].ownerId &&
           playersId.includes(parsed[i].ownerId!))
       ) {
         if (tile.village) {
@@ -224,7 +234,11 @@ const messageHandlers = {
       }
 
       // Update
-      updateProps(tile, parsed[i])
+      const { ownerId } = fields
+      if ((!tile.owner && !ownerId) || tile.owner?.id !== ownerId) {
+        const owner = ownerId ? store.game.players.get(ownerId) || null : null
+        tile.setOwner(owner)
+      }
     }
 
     // Side effects
@@ -250,32 +264,44 @@ const messageHandlers = {
     const parsed = convertArray(payload, {
       id: 'string',
       tileId: 'string',
-      houseCount: 'number',
+      housesCount: 'number',
+      yieldDuration: 'number',
+      yieldAt: 'number',
     }) as {
       id: string | null
       tileId: string | null
-      houseCount: number | null
+      housesCount: number | null
+      yieldDuration: number | null
+      yieldAt: number | null
     }[]
 
     for (let i = 0; i < parsed.length; i++) {
       const fields = parsed[i]
-      const { id, tileId, houseCount } = fields
+      const { id, tileId, housesCount, yieldAt, yieldDuration } = fields
 
-      if (!id || !tileId || houseCount === null) continue
+      if (!id || !tileId || housesCount === null) continue
 
       let village = store.game.villages.get(id)
 
       // Create
-      if (!village && houseCount) {
+      if (!village && housesCount) {
         const tile = store.game.tiles.get(tileId)
         if (!tile) continue
-        village = new Village(id, tile, houseCount)
+        village = new Village(id, tile, housesCount)
         store.game.villages.set(id, village)
       }
 
       // Update
       if (village) {
-        updateProps(village, parsed[i])
+        if (housesCount !== village.housesCount) {
+          village.setHousesCount(housesCount)
+        }
+        if (yieldAt !== village.yieldAt) {
+          village.setYieldAt(yieldAt)
+        }
+        if (yieldDuration !== village.yieldDuration) {
+          village.setYieldDuration(yieldDuration)
+        }
       }
     }
   },
@@ -366,6 +392,57 @@ const messageHandlers = {
       }
     }
   },
+  buildings: (payload: string) => {
+    if (!store.game) return
+
+    const parsed = convertArray(payload, {
+      id: 'string',
+      tileId: 'string',
+      type: 'string',
+      hp: 'number',
+    }) as {
+      id: string | null
+      tileId: string | null
+      type: string | null
+      hp: number | null
+    }[]
+
+    for (let i = 0; i < parsed.length; i++) {
+      const fields = parsed[i]
+      const { id, tileId, type, hp } = fields
+
+      if (!id || !tileId || !type || hp === null) continue
+
+      if (
+        type !== 'CAPITAL' &&
+        type !== 'CAMP' &&
+        type !== 'TOWER' &&
+        type !== 'CASTLE'
+      ) {
+        continue
+      }
+
+      let building = store.game.buildings.get(id)
+
+      // Create
+      if (!building) {
+        const tile = store.game.tiles.get(tileId)
+        if (!tile) continue
+        tile.setBuilding(new Building(id, tile, type, hp))
+      }
+
+      // Update
+      else {
+        if (type !== building.type) {
+          building.setType(type)
+        }
+
+        if (hp !== building.hp) {
+          building.setHp(hp)
+        }
+      }
+    }
+  },
 
   // - Objects & Primitives -
   flash: (payload: string) => {
@@ -408,10 +485,10 @@ const messageHandlers = {
     store.game.lastIncomeAt = convert(payload, 'number') as number | null
     store.game.incomeStartedAt = Date.now() // - store.ping
   },
-  notification: (payload: string) => {
-    if (!store.game) return
-    store.game.notification = convert(payload, 'string') as string | null
-  },
+  // notification: (payload: string) => {
+  //   if (!store.game) return
+  //   store.game.notification = convert(payload, 'string') as string | null
+  // },
   playerId: (payload: string) => {
     if (!store.game) return
     store.game.playerId = convert(payload, 'string') as string | null
@@ -452,6 +529,18 @@ const messageHandlers = {
     if (store.game) {
       store.game.spectators = spectators
     }
+  },
+  attentionNotification: (payload: string) => {
+    const { tileId } = convertObject(payload, {
+      tileId: 'string',
+    }) as {
+      tileId: string
+    }
+
+    const tile = store.game!.tiles.get(tileId)
+    if (!tile) return
+
+    tile.createAttentionNotification()
   },
 
   // Clean-up

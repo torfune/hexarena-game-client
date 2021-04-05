@@ -103,14 +103,14 @@ class Forest {
 
     new Animation(
       image,
-      (image: Sprite, fraction: number) => {
+      (image, fraction) => {
         image.rotation = (Math.PI / 2) * fraction * direction
         image.alpha = 1 - fraction
       },
       {
         speed: 0.02,
-        onFinish: (image: Sprite) => {
-          destroyImage('tree', image)
+        onFinish: (image) => {
+          destroyImage('tree', image as Sprite)
         },
       }
     )

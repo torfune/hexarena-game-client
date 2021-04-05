@@ -58,10 +58,10 @@ class ArmyDragArrow {
     this.head.rotation = angle
 
     let canSendArmy = false
-    const { hoveredTile, selectedArmyTile } = store.game
-    if (hoveredTile && selectedArmyTile) {
+    const { hoveredTile, selectedArmy } = store.game
+    if (hoveredTile && selectedArmy) {
       let index = null
-      for (let i = 0; i < 6; i++) {
+      for (let i = 0; i < store.game.selectedArmyTargetTiles.length; i++) {
         if (store.game.selectedArmyTargetTiles[i].includes(hoveredTile)) {
           index = i
           break

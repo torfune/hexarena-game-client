@@ -123,7 +123,7 @@ const getActionDescription = (
 ) => {
   if (!store.game) return null
 
-  if (actionType === 'SEND_ARMY' && !store.game.selectedArmyTile) {
+  if (actionType === 'SEND_ARMY' && !store.game.selectedArmy) {
     return 'Drag & drop to send army'
   }
 

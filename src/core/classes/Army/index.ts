@@ -11,28 +11,14 @@ import {
   UNIT_MOVEMENT_SPEED,
   UNIT_DOOR_OFFSET,
 } from '../../../constants/constants-game'
-import Prop from '../../../types/Prop'
-import Primitive from '../../../types/Primitive'
-import createProp from '../../../utils/createProp'
 import ArmyBar from './ArmyIcon'
-
-interface Props {
-  [key: string]: Prop<Primitive>
-  tileId: Prop<string>
-  ownerId: Prop<string>
-  destroyed: Prop<boolean>
-}
+import Building from '../Building'
 
 class Army {
-  props: Props = {
-    tileId: createProp(''),
-    ownerId: createProp(''),
-    destroyed: createProp(false),
-  }
-
   readonly id: string
-  tile: Tile
-  owner: Player
+  readonly owner: Player
+  tile: Tile | null = null
+  building: Building | null = null
   alpha: number = 1
   animationFraction: number | null = null
   isDestroying: boolean = false
@@ -40,16 +26,18 @@ class Army {
   units: Unit[] = []
   bar: ArmyBar
 
-  constructor(id: string, tile: Tile, owner: Player) {
+  constructor(
+    id: string,
+    owner: Player,
+    tile: Tile | null,
+    building: Building | null
+  ) {
     this.id = id
     this.tile = tile
     this.owner = owner
-    this.bar = new ArmyBar(tile)
+    this.bar = new ArmyBar(tile || building!.tile)
 
-    this.props.tileId = createProp(tile.id)
-    this.props.ownerId = createProp(owner.id)
-
-    const position = getPixelPosition(tile.axial)
+    const position = getPixelPosition((tile || building!.tile).axial)
     const randomizedPositions = getUniqueRandomizedPositions(
       UNIT_COUNT,
       UNIT_RADIUS,
@@ -57,45 +45,14 @@ class Army {
       UNIT_POSITION_OFFSET
     )
 
-    const isInside = tile.building || tile.camp
-
     for (let i = 0; i < UNIT_COUNT; i++) {
-      if (isInside) {
+      if (building) {
         this.units.push(new Unit(position.x, position.y))
       } else {
         this.units.push(
           new Unit(randomizedPositions[i].x, randomizedPositions[i].y)
         )
       }
-    }
-  }
-
-  setProp(key: keyof Props, value: Primitive) {
-    if (
-      !store.game ||
-      (this.props[key].current === value && key !== 'tileId')
-    ) {
-      return
-    }
-
-    this.props[key].previous = this.props[key].current
-    this.props[key].current = value
-
-    switch (key) {
-      case 'tileId':
-        this.moveOn(this.tileId)
-        break
-      case 'destroyed':
-        if (this.destroyed) {
-          this.destroy()
-        }
-        break
-      case 'ownerId':
-        const owner = store.game.players.get(this.ownerId)
-        if (owner) {
-          this.owner = owner
-        }
-        break
     }
   }
 
@@ -138,115 +95,97 @@ class Army {
     }
   }
 
-  moveOn(tileId: string) {
-    const { gsConfig, game } = store
-    if (!gsConfig || !game || game.selectedArmyTile?.id === tileId) return
+  setTile(newTile: Tile | null) {
+    console.log(`ARMY set TILE: `, newTile?.axial)
 
-    const tile = game.tiles.get(tileId)
-    if (!tile) {
-      this.destroy()
+    if (this.building) {
+      this.building.setArmy(null)
+    }
+
+    if (!newTile) {
+      this.tile = null
       return
     }
 
-    if (this.tile.army && this.tile.army.id === this.id) {
-      this.tile.removeArmy()
-    }
-
-    this.tile = tile
     this.isMoving = true
     this.animationFraction = 0
 
-    const sameOwner = tile.owner && tile.owner.id === this.ownerId
-    const allyOwner = tile.owner && tile.owner.id === this.owner.allyId
-    const position = getPixelPosition(tile.axial)
-    const doorPosition = {
-      x: position.x,
-      y: position.y + UNIT_DOOR_OFFSET,
-    }
-    const randomizedPositions = getUniqueRandomizedPositions(
+    const position = getPixelPosition(newTile.axial)
+    const unitPositions = getUniqueRandomizedPositions(
       UNIT_COUNT,
       UNIT_RADIUS,
       position,
       UNIT_POSITION_OFFSET
     )
 
-    this.bar.moveOn(tile)
-
+    this.bar.moveOn(newTile)
     for (let i = 0; i < UNIT_COUNT; i++) {
-      if (tile.building || tile.camp) {
-        this.units[i].moveOn(doorPosition.x, doorPosition.y)
-      } else {
-        this.units[i].moveOn(randomizedPositions[i].x, randomizedPositions[i].y)
+      this.units[i].moveOn(unitPositions[i].x, unitPositions[i].y)
+    }
+
+    this.tile = newTile
+  }
+
+  setBuilding(newBuilding: Building | null) {
+    console.log(`ARMY set BUILDING: `, newBuilding?.type)
+
+    if (this.building) {
+      this.building.setArmy(null)
+    }
+
+    if (!newBuilding) {
+      if (this.building && this.building.army?.id === this.id) {
+        this.building.setArmy(null)
       }
+      this.building = null
+      return
     }
-
-    if (
-      (sameOwner || allyOwner) &&
-      !this.isDestroying &&
-      (tile.camp ||
-        (tile.building && tile.building.hp === gsConfig.HP[tile.building.type]))
-    ) {
-      tile.addArmy(this)
-    }
-  }
-
-  leaveBuilding() {
-    const { gsConfig, game } = store
-    if (!gsConfig || !game) return
 
     this.isMoving = true
     this.animationFraction = 0
 
-    const position = getPixelPosition(this.tile.axial)
-    const randomizedPositions = getUniqueRandomizedPositions(
-      UNIT_COUNT,
-      UNIT_RADIUS,
-      position,
-      UNIT_POSITION_OFFSET
-    )
-
-    for (let i = 0; i < UNIT_COUNT; i++) {
-      this.units[i].moveOn(randomizedPositions[i].x, randomizedPositions[i].y)
-    }
-  }
-
-  joinBuilding() {
-    const { gsConfig, game } = store
-    if (!gsConfig || !game) return
-
-    this.isMoving = true
-    this.animationFraction = 0
-
-    const position = getPixelPosition(this.tile.axial)
+    const position = getPixelPosition(newBuilding.tile.axial)
     const doorPosition = {
       x: position.x,
       y: position.y + UNIT_DOOR_OFFSET,
     }
 
+    this.bar.moveOn(newBuilding.tile)
     for (let i = 0; i < UNIT_COUNT; i++) {
       this.units[i].moveOn(doorPosition.x, doorPosition.y)
     }
+
+    this.building = newBuilding
+    this.building.setArmy(this)
   }
+
+  // leaveBuilding() {
+  //   const { gsConfig, game } = store
+  //   if (!gsConfig || !game) return
+  //
+  //   this.isMoving = true
+  //   this.animationFraction = 0
+  //
+  //   const position = getPixelPosition(this.tile.axial)
+  //   const randomizedPositions = getUniqueRandomizedPositions(
+  //     UNIT_COUNT,
+  //     UNIT_RADIUS,
+  //     position,
+  //     UNIT_POSITION_OFFSET
+  //   )
+  //
+  //   for (let i = 0; i < UNIT_COUNT; i++) {
+  //     this.units[i].moveOn(randomizedPositions[i].x, randomizedPositions[i].y)
+  //   }
+  // }
 
   destroy() {
     this.isDestroying = true
-
     this.bar.destroy()
 
-    if (this.tile.army && this.tile.army === this) {
-      this.tile.removeArmy()
+    if (this.building && this.building.army?.id === this.id) {
+      this.building.setArmy(null)
     }
-  }
-
-  // Prop getters
-  get tileId() {
-    return this.props.tileId.current
-  }
-  get ownerId() {
-    return this.props.ownerId.current
-  }
-  get destroyed() {
-    return this.props.destroyed.current
   }
 }
 

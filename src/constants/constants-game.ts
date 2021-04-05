@@ -1,10 +1,12 @@
 import { Axial } from '../types/coordinates'
 import isSpectating from '../utils/isSpectating'
-import { COLOR } from './constants-react'
 
 // TILE
 export const TILE_RADIUS = 73.8
 export const FOG_Z_INDEX = 5000
+export const ATTENTION_NOTIFICATION_Z_INDEX = 4000
+export const ATTENTION_NOTIFICATION_RADIUS = 180
+export const ATTENTION_NOTIFICATION_ALPHA = 0.5
 export const IMAGE_Z_INDEX = [
   'gold',
   'fog',
@@ -16,13 +18,14 @@ export const IMAGE_Z_INDEX = [
   'hp-background',
   'hp-fill',
   'camp',
+  'house',
   'army-drag-arrow-body',
   'army-drag-arrow-head',
   'mountain',
-  'house',
   'army-icon',
   'tree',
   'army',
+  'village-bar',
   'border',
   'pattern-preview',
   'hover-hexagon',
@@ -87,8 +90,10 @@ export const UNIT_DOOR_OFFSET = 32
 export const UNIT_MAX_DELAY = 0.4
 
 // COLORS
+export const BORDER_COLOR = '#333'
+export const MOUNTAIN_BACKGROUND = '#eee'
 export const BEDROCK_BACKGROUND = '#5D6D7C'
-export const BEDROCK_BORDER = COLOR.GREY_800
+export const BEDROCK_BORDER = '#333'
 
 // MISC
 export const MAX_CLICK_DURATION = 500
@@ -98,20 +103,20 @@ export const DEBUG_COMMANDS = [
   ['1', 'capture'],
   ['2', 'add_army'],
   ['3', 'lose_tile'],
-  ['4', 'add_forest'],
-  ['5', 'building'],
-  ['6', 'add_player'],
-  ['7', 'send_army'],
-  ['8', 'add_gold'],
-  ['c', 'clear'],
-  ['e', 'add_castle'],
-  ['g', 'defeat'],
-  ['t', 'add_village'],
-  ['v', 'add_camp'],
-  ['n', 'hp_remove'],
-  ['m', 'hp_add'],
-  ['f', 'add_bot'],
-  ['p', 'evaluate_directions'],
+  ['4', 'building'],
+  ['5', 'add_bot'],
+  // ['4', 'add_forest'],
+  // ['6', 'add_player'],
+  // ['7', 'send_army'],
+  // ['8', 'add_gold'],
+  // ['c', 'clear'],
+  // ['e', 'add_castle'],
+  // ['g', 'defeat'],
+  // ['t', 'add_village'],
+  // ['v', 'add_camp'],
+  // ['n', 'hp_remove'],
+  // ['m', 'hp_add'],
+  // ['p', 'evaluate_directions'],
   // ['f', 'dummy_send_army'],
   // ['r', 'dummy_capture'],
 ]

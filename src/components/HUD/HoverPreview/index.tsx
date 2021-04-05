@@ -53,11 +53,15 @@ const HoverPreview = () => {
     | null = hoveredTile.getActionType({ ignoreGold: true })
   const structure = hoveredTile.getStructureName()
 
-  if (hoveredTile.army && hoveredTile.ownerId === store.game.playerId) {
+  if (
+    hoveredTile.building &&
+    hoveredTile.building.army &&
+    hoveredTile.owner?.id === store.game.playerId
+  ) {
     actionType = 'SEND_ARMY'
   }
 
-  if (store.game.selectedArmyTile) {
+  if (store.game.selectedArmy) {
     actionType = null
   }
 
@@ -71,15 +75,16 @@ const HoverPreview = () => {
 
   if (!actionType) {
     if (hoveredTile.village) {
-      const { VILLAGE_BASE_INCOME, HOUSE_INCOME } = store.gsConfig
-      const villageIncome =
-        VILLAGE_BASE_INCOME +
-        (hoveredTile.village.houseCount - 3) * HOUSE_INCOME
-      return (
-        <Container cursor={cursor}>
-          <VillagePreview villageIncome={villageIncome} />
-        </Container>
-      )
+      // const { VILLAGE_BASE_INCOME, HOUSE_INCOME } = store.gsConfig
+      // const villageIncome =
+      //   VILLAGE_BASE_INCOME +
+      //   (hoveredTile.village.housesCount - 3) * HOUSE_INCOME
+      // return (
+      //   <Container cursor={cursor}>
+      //     <VillagePreview villageIncome={villageIncome} />
+      //   </Container>
+      // )
+      return null
     } else if (structure !== 'Plains') {
       return (
         <Container cursor={cursor}>

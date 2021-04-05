@@ -2,27 +2,29 @@ import { easeInOutQuad } from '../functions/easing'
 import { Sprite } from 'pixi.js-legacy'
 import store from '../store'
 import roundToDecimals from '../functions/roundToDecimals'
+import { Graphics } from 'pixi.js'
 
 class Animation {
-  updateScale(): any {
-    throw new Error('Method not implemented.')
-  }
   readonly speed: number = 0.1
   readonly initialFraction: number = 0
   readonly ease: (t: number) => number = easeInOutQuad
   readonly context: any = {}
   fraction: number = 0
-  readonly onFinish?: (image: Sprite, context: any) => void
+  readonly onFinish?: (image: Sprite | Graphics, context: any) => void
   finished: boolean = false
 
   constructor(
-    readonly image: Sprite,
-    readonly onUpdate: (image: Sprite, ease: number, context: any) => void,
+    readonly image: Sprite | Graphics,
+    readonly onUpdate: (
+      image: Sprite | Graphics,
+      ease: number,
+      context: any
+    ) => void,
     options?: {
       context?: any
       ease?: (t: number) => number
       initialFraction?: number
-      onFinish?: (image: Sprite, context: any) => void
+      onFinish?: (image: Sprite | Graphics, context: any) => void
       speed?: number
     }
   ) {

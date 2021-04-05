@@ -59,7 +59,7 @@ class Player {
           const tiles = Array.from(store.game.tiles.values())
           for (let i = tiles.length - 1; i >= 0; i--) {
             const tile = tiles[i]
-            if (tile.image.pattern && tile.ownerId === this.id) {
+            if (tile.image.pattern && tile.owner?.id === this.id) {
               tile.image.pattern.tint = hex('#ccc')
             }
           }

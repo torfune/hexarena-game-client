@@ -72,7 +72,7 @@ class Action {
 
     new Animation(
       this.image,
-      (image: Sprite, fraction: number, context: any) => {
+      (image, fraction, context: any) => {
         image.scale.set(fraction)
         image.alpha = fraction
         context.fill.alpha = fraction
@@ -163,7 +163,7 @@ class Action {
 
     new Animation(
       this.image,
-      (image: Sprite, fraction: number) => {
+      (image, fraction) => {
         image.scale.set(1 - fraction)
         image.alpha = 1 - fraction
       },

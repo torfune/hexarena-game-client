@@ -118,6 +118,8 @@ const GameComponent = observer(() => {
     store.game = new Game(gameId, gameMode, gameStatus)
     store.game.render(canvas)
 
+    console.log('Game rendered')
+
     // Done
     store.loading = false
   }

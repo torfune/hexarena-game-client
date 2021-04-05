@@ -121,8 +121,8 @@ class Socket {
       case 'lastIncomeAt':
         messageHandlers.lastIncomeAt(messagePayload)
         break
-      case 'notification':
-        messageHandlers.notification(messagePayload)
+      case 'attentionNotification':
+        messageHandlers.attentionNotification(messagePayload)
         break
       case 'playerId':
         messageHandlers.playerId(messagePayload)
@@ -141,6 +141,9 @@ class Socket {
         break
       case 'tiles':
         messageHandlers.tiles(messagePayload)
+        break
+      case 'buildings':
+        messageHandlers.buildings(messagePayload)
         break
       case 'villages':
         messageHandlers.villages(messagePayload)

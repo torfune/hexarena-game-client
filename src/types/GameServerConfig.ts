@@ -1,6 +1,6 @@
 interface GameServerConfig {
   DEBUG_MODE: boolean
-  ARMY_RANGE: number
+  ARMY_HP: number
   CAPTURE_COST: {
     DEFAULT: number
     FOREST: number
@@ -10,12 +10,11 @@ interface GameServerConfig {
   CAMP_COST: number
   TOWER_COST: number
   CASTLE_COST: number
-  VILLAGE_BASE_INCOME: number
-  HOUSE_INCOME: number
   HP: {
-    CAPITAL: 2
-    TOWER: 2
-    CASTLE: 3
+    CAPITAL: number
+    CAMP: number
+    TOWER: number
+    CASTLE: number
   }
   PATTERNS: string[]
 }

@@ -18,7 +18,7 @@ import roundToDecimals from '../functions/roundToDecimals'
 import getDebugCommand from '../functions/getDebugCommand'
 import getTileByAxial from '../functions/getTileByAxial'
 import Tile from './Tile'
-import { Ticker, Application, Container } from 'pixi.js-legacy'
+import { Ticker, Application } from 'pixi.js-legacy'
 import Action from './Action'
 import { v4 as uuid } from 'uuid'
 import { makeAutoObservable } from 'mobx'
@@ -33,17 +33,18 @@ import SoundManager from '../../services/SoundManager'
 import GameStatus from '../../types/GameStatus'
 import { COLOR } from '../../constants/constants-react'
 import isSpectating from '../../utils/isSpectating'
+import Building from './Building'
 
 class Game {
   id: string
   mode: GameMode
-  // stage: Map<string, Container> = new Map()
   allianceRequests: Map<string, AllianceRequest> = new Map()
   armies: Map<string, Army> = new Map()
   players: Map<string, Player> = new Map()
   forests: Map<string, Forest> = new Map()
   villages: Map<string, Village> = new Map()
   tiles: Map<string, Tile> = new Map()
+  buildings: Map<string, Building> = new Map()
   actions: Action[] = []
   hoveredTile: Tile | null = null
   startCountdown: number | null = null
@@ -65,11 +66,9 @@ class Game {
   spectators: number | null = 0
   scale: number = DEFAULT_SCALE
   targetScale: number = DEFAULT_SCALE
-  selectedArmyTile: Tile | null = null
   loop: Ticker | null = null
   pixi: Application | null = null
   pingArray: number[] = []
-  fpsArray: number[] = []
   animations: Array<Animation | GoldAnimation> = []
   camera: Pixel | null = null
   cameraMove: Pixel = { x: 0, y: 0 }
@@ -79,7 +78,6 @@ class Game {
   tilesWithPatternPreview: Tile[] = []
   keyDown: { [key: string]: boolean } = {}
   lastUpdatedAt: number = Date.now()
-  fpsLastUpdatedAt: number = Date.now()
   eventListeners: {
     mousemove: (event: any) => void
     mousedown: (event: any) => void
@@ -92,6 +90,7 @@ class Game {
   armyDragArrow: ArmyDragArrow | null = null
   clickedAt: number = 0
   armySelectedAt: number = 0
+  selectedArmy: Army | null = null
 
   // Getters (computed)
   get player() {
@@ -199,17 +198,10 @@ class Game {
     }
 
     // const now = Date.now()
-    // const fraction = 16.66 / (now - this.lastUpdatedAt)
+    // const updateDuration = now - this.lastUpdatedAt
+    // console.log(`Frame Duration: ${updateDuration}`)
+    // console.log(`FPS: ${1000 / updateDuration}`)
     // this.lastUpdatedAt = now
-    // this.fpsArray.push(Math.round(fraction * 60))
-    // if (this.fpsArray.length > 20) {
-    //   this.fpsArray.shift()
-    // }
-    // if (now - this.fpsLastUpdatedAt > 2000) {
-    //   const sum = this.fpsArray.reduce((item, acc) => acc + item, 0)
-    //   this.fps = Math.round(sum / this.fpsArray.length)
-    //   this.fpsLastUpdatedAt = now
-    // }
 
     // Animations
     for (let i = this.animations.length - 1; i >= 0; i--) {
@@ -278,6 +270,12 @@ class Game {
     const armies = Array.from(this.armies.values())
     for (let i = 0; i < armies.length; i++) {
       armies[i].update()
+    }
+
+    // Armies
+    const villages = Array.from(this.villages.values())
+    for (let i = 0; i < villages.length; i++) {
+      villages[i].updateBar()
     }
 
     // Army drag arrow
@@ -383,28 +381,26 @@ class Game {
 
     // Army - select
     if (
-      !this.selectedArmyTile &&
+      !this.selectedArmy &&
       hoveredTile &&
-      hoveredTile.ownerId === this.playerId &&
-      hoveredTile.army &&
-      hoveredTile.army.ownerId === this.playerId &&
-      (hoveredTile.building || hoveredTile.camp) &&
+      hoveredTile.owner?.id === this.playerId &&
+      hoveredTile.building?.army?.owner?.id === this.playerId &&
       button !== 2
     ) {
       SoundManager.play('ARMY_SELECT')
-      this.selectArmy(hoveredTile)
+      this.selectArmy(hoveredTile.building.army)
       return
     }
 
     // Army - unselect
-    // if (
-    //   this.selectedArmyTile &&
-    //   hoveredTile === this.selectedArmyTile &&
-    //   button !== 2
-    // ) {
-    //   this.selectedArmyTile.unselectArmy()
-    //   return
-    // }
+    if (
+      this.selectedArmy &&
+      hoveredTile === this.selectedArmy.tile &&
+      button !== 2
+    ) {
+      this.unselectArmy()
+      return
+    }
 
     this.cameraDrag = {
       cursor: { x, y },
@@ -453,44 +449,41 @@ class Game {
     // Right mouse button
     if (button === 'right') return
 
-    // Unselect army
     if (!hoveredTile) {
-      if (this.selectedArmyTile) {
-        this.selectedArmyTile.unselectArmy()
+      // Unselect army
+      if (this.selectedArmy) {
+        this.unselectArmy()
       }
       return
     }
-    if (
-      this.selectedArmyTile &&
-      this.selectedArmyTile === this.hoveredTile &&
-      Date.now() - this.armySelectedAt > MAX_CLICK_DURATION
-    ) {
-      this.selectedArmyTile.unselectArmy()
-      return
-    }
+    // if (
+    //   this.selectedArmyTile &&
+    //   this.selectedArmyTile === this.hoveredTile &&
+    //   Date.now() - this.armySelectedAt > MAX_CLICK_DURATION
+    // ) {
+    //   this.selectedArmyTile.unselectArmy()
+    //   return
+    // }
 
     // Standard click
     if (cursorDelta < 32 && timeDelta < MAX_CLICK_DURATION) {
       // Army - send
-      if (this.selectedArmyTile && hoveredTile !== this.selectedArmyTile) {
+      if (this.selectedArmy && hoveredTile !== this.selectedArmy.tile) {
         this.sendArmy(hoveredTile)
         return
       }
 
       // Army - select
       if (
-        !this.selectedArmyTile &&
-        hoveredTile.ownerId === playerId &&
-        hoveredTile.army &&
-        hoveredTile.army.ownerId === playerId &&
-        hoveredTile.building
+        !this.selectedArmy &&
+        hoveredTile.building?.army?.owner?.id === playerId
       ) {
-        this.selectArmy(hoveredTile)
+        this.selectArmy(hoveredTile.building.army)
         return
       }
 
       // Create action
-      if (hoveredTile.bedrock || this.selectedArmyTile === hoveredTile) return
+      if (hoveredTile.bedrock || this.selectedArmy?.tile === hoveredTile) return
 
       if (button && !dragged && this.player) {
         const actionType = hoveredTile.getActionType()
@@ -508,7 +501,7 @@ class Game {
     }
 
     // Army - drag & drop send
-    else if (this.selectedArmyTile && this.selectedArmyTile !== hoveredTile) {
+    else if (this.selectedArmy && this.selectedArmy.tile !== hoveredTile) {
       this.sendArmy(hoveredTile)
       return
     }
@@ -557,56 +550,56 @@ class Game {
     if (!store.gsConfig) return []
 
     const tilesToCapture = []
-    const actionType = tile.getActionType()
+    // const actionType = tile.getActionType()
 
     // Attack hover
-    if (
-      this.playerId === playerId &&
-      actionType === 'CAPTURE' &&
-      !this.selectedArmyTile &&
-      !tile.bedrock
-    ) {
-      tilesToCapture.push(tile)
-    }
+    // if (
+    //   this.playerId === playerId &&
+    //   actionType === 'CAPTURE' &&
+    //   !this.selectedArmy &&
+    //   !tile.bedrock
+    // ) {
+    //   tilesToCapture.push(tile)
+    // }
 
     // Upgrade hover
-    if (actionType === 'CASTLE' && !this.selectedArmyTile && !tile.army) {
-      for (let i = 0; i < 6; i++) {
-        const n = tile.neighbors[i]
-        if (n && !tilesToCapture.includes(n) && !n.owner) {
-          tilesToCapture.push(n)
-        }
-      }
-    }
+    // if (actionType === 'CASTLE' && !this.selectedArmyTile && !tile.army) {
+    //   for (let i = 0; i < 6; i++) {
+    //     const n = tile.neighbors[i]
+    //     if (n && !tilesToCapture.includes(n) && !n.owner) {
+    //       tilesToCapture.push(n)
+    //     }
+    //   }
+    // }
 
     // Actions (CAPTURE, CASTLE)
-    for (let i = 0; i < this.actions.length; i++) {
-      const action = this.actions[i]
-
-      if (
-        action.type === 'CAPTURE' &&
-        action.owner.id === playerId &&
-        !tilesToCapture.includes(action.tile)
-      ) {
-        tilesToCapture.push(action.tile)
-        continue
-      }
-
-      if (action.type === 'CASTLE' && action.owner.id === playerId) {
-        for (let j = 0; j < 6; j++) {
-          const n = action.tile.neighbors[j]
-          if (n && !tilesToCapture.includes(n) && !n.owner) {
-            tilesToCapture.push(n)
-          }
-        }
-      }
-    }
+    // for (let i = 0; i < this.actions.length; i++) {
+    //   const action = this.actions[i]
+    //
+    //   if (
+    //     action.type === 'CAPTURE' &&
+    //     action.owner.id === playerId &&
+    //     !tilesToCapture.includes(action.tile)
+    //   ) {
+    //     tilesToCapture.push(action.tile)
+    //     continue
+    //   }
+    //
+    //   if (action.type === 'CASTLE' && action.owner.id === playerId) {
+    //     for (let j = 0; j < 6; j++) {
+    //       const n = action.tile.neighbors[j]
+    //       if (n && !tilesToCapture.includes(n) && !n.owner) {
+    //         tilesToCapture.push(n)
+    //       }
+    //     }
+    //   }
+    // }
 
     // Army sending
     if (
       this.player &&
       playerId === this.playerId &&
-      this.selectedArmyTile &&
+      this.selectedArmy &&
       (!tile.action || tile.action.type !== 'CAPTURE')
     ) {
       let direction = null
@@ -625,41 +618,25 @@ class Game {
           if (!t) continue
 
           // Enemy Mountain
-          if (
-            t.mountain &&
-            t.owner &&
-            t.ownerId !== playerId &&
-            t.ownerId !== this.player.allyId
-          ) {
+          if (t.mountain && t.owner && t.owner?.id !== playerId) {
             break
           }
 
-          // Owned Castle & Capital
-          if (t.ownerId === playerId && t.building) {
-            break
-          }
-
-          // Owned empty Camp
-          if (t.ownerId === playerId && t.camp) {
+          // Owned Building
+          if (t.owner?.id === playerId && t.building) {
             break
           }
 
           // Ally tile
-          if (t.ownerId && t.ownerId === this.player.allyId) {
+          if (t.owner?.id && t.owner?.id === this.player.allyId) {
             break
           }
 
           // Enemy structure
-          if (t.ownerId !== playerId && !t.bedrock) {
+          if (t.owner?.id !== playerId && !t.bedrock) {
             tilesToCapture.push(t)
 
-            if (
-              t.mountain ||
-              t.forest ||
-              t.building ||
-              (t.camp && t.army) ||
-              (!t.owner && t.camp)
-            ) {
+            if (t.mountain || t.forest || t.building) {
               break
             }
           }
@@ -688,11 +665,7 @@ class Game {
           continue
         }
 
-        if (n.camp && n.army && n.owner) {
-          continue
-        }
-
-        if (n.ownerId !== playerId && n.ownerId === t.ownerId) {
+        if (n.owner?.id !== playerId && n.owner?.id === t.owner?.id) {
           tilesToCapture.push(n)
           if (n.village) {
             villageTiles.push(n)
@@ -721,32 +694,32 @@ class Game {
     this.tilesWithPatternPreview = []
 
     // Actions
-    for (let i = 0; i < this.actions.length; i++) {
-      const action = this.actions[i]
-
-      if (action.type !== 'CAPTURE' && action.type !== 'CASTLE') continue
-
-      const tilesToCapture = this.getTilesToCapture(
-        action.tile,
-        action.owner.id
-      )
-
-      for (let j = 0; j < tilesToCapture.length; j++) {
-        const t = tilesToCapture[j]
-
-        if (this.tilesWithPatternPreview.includes(t)) continue
-
-        this.tilesWithPatternPreview.push(t)
-
-        const players = Array.from(this.players.values())
-        for (let k = 0; k < players.length; k++) {
-          if (players[k].id === action.owner.id) {
-            pattern[`${t.axial.x}|${t.axial.z}`] = players[k].getPattern()
-            break
-          }
-        }
-      }
-    }
+    // for (let i = 0; i < this.actions.length; i++) {
+    //   const action = this.actions[i]
+    //
+    //   if (action.type !== 'CAPTURE' && action.type !== 'CASTLE') continue
+    //
+    //   const tilesToCapture = this.getTilesToCapture(
+    //     action.tile,
+    //     action.owner.id
+    //   )
+    //
+    //   for (let j = 0; j < tilesToCapture.length; j++) {
+    //     const t = tilesToCapture[j]
+    //
+    //     if (this.tilesWithPatternPreview.includes(t)) continue
+    //
+    //     this.tilesWithPatternPreview.push(t)
+    //
+    //     const players = Array.from(this.players.values())
+    //     for (let k = 0; k < players.length; k++) {
+    //       if (players[k].id === action.owner.id) {
+    //         pattern[`${t.axial.x}|${t.axial.z}`] = players[k].getPattern()
+    //         break
+    //       }
+    //     }
+    //   }
+    // }
 
     // Hovered tile
     if (this.hoveredTile && this.player && this.player.alive) {
@@ -813,16 +786,6 @@ class Game {
     //   this.cameraMove.y++
     // }
   }
-  acceptRequest(senderId: string) {
-    if (store.socket) {
-      store.socket.send('request', `accept|${senderId}`)
-    }
-  }
-  declineRequest(senderId: string) {
-    if (store.socket) {
-      store.socket.send('request', `decline|${senderId}`)
-    }
-  }
   createRequest(receiverId: string) {
     if (store.socket) {
       store.socket.send('request', `create|${receiverId}`)
@@ -867,43 +830,40 @@ class Game {
     if (changed) {
       this.updatePatternPreviews()
 
-      if (this.selectedArmyTile) {
+      if (this.selectedArmy) {
         this.updateArmyTileHighlights()
       }
     }
   }
   updateArmyTileHighlights() {
-    // const { gsConfig } = store
-    // if (!gsConfig) return
-    //
-    // let direction = null
-    //
-    // for (let i = 0; i < 6; i++) {
-    //   const armyTiles = this.selectedArmyTargetTiles[i]
-    //
-    //   for (let j = 0; j < armyTiles.length; j++) {
-    //     armyTiles[j].removeHoverHexagon()
-    //   }
-    // }
-    //
-    // if (!this.hoveredTile) return
-    //
-    // for (let i = 0; i < 6; i++) {
-    //   if (this.selectedArmyTargetTiles[i].includes(this.hoveredTile)) {
-    //     direction = i
-    //     break
-    //   }
-    // }
-    //
-    // if (direction !== null) {
-    //   const targetTiles = this.selectedArmyTargetTiles[direction]
-    //   for (let i = 0; i < targetTiles.length; i++) {
-    //     const t = targetTiles[i]
-    //     if (!t || !t.owner || t.owner.id !== this.playerId) continue
-    //     t.addHoverHexagon()
-    //     if (t.building || t.camp) break
-    //   }
-    // }
+    let direction = null
+
+    for (let i = 0; i < 6; i++) {
+      const armyTiles = this.selectedArmyTargetTiles[i]
+
+      for (let j = 0; j < armyTiles.length; j++) {
+        armyTiles[j].removeHoverHexagon()
+      }
+    }
+
+    if (!this.hoveredTile) return
+
+    for (let i = 0; i < 6; i++) {
+      if (this.selectedArmyTargetTiles[i].includes(this.hoveredTile)) {
+        direction = i
+        break
+      }
+    }
+
+    if (direction !== null) {
+      const targetTiles = this.selectedArmyTargetTiles[direction]
+      for (let i = 0; i < targetTiles.length; i++) {
+        const t = targetTiles[i]
+        if (!t || !t.owner || t.owner.id !== this.playerId) continue
+        t.addHoverHexagon()
+        if (t.building) break
+      }
+    }
   }
   surrender() {
     if (store.socket) {
@@ -911,7 +871,9 @@ class Game {
     }
   }
   sendArmy(tile: Tile) {
-    if (!this.selectedArmyTile || !store.socket) return
+    if (!this.selectedArmy || !store.socket || !this.selectedArmy.building) {
+      return
+    }
 
     let index = null
     for (let i = 0; i < 6; i++) {
@@ -921,16 +883,16 @@ class Game {
       }
     }
 
-    if (index !== null) {
-      const { x, z } = this.selectedArmyTile.axial
+    if (index !== null && this.selectedArmy.building) {
+      const { x, z } = this.selectedArmy.building.tile.axial
       store.socket.send('sendArmy', `${x}|${z}|${index}`)
       SoundManager.play('ARMY_SEND')
-      // if (this.armyDragArrow) {
-      //   this.armyDragArrow.destroy()
-      // }
+      if (this.armyDragArrow) {
+        this.armyDragArrow.destroy()
+      }
     }
 
-    this.selectedArmyTile.unselectArmy()
+    this.unselectArmy()
 
     if (this.hoveredTile) {
       this.hoveredTile.startHover()
@@ -948,12 +910,49 @@ class Game {
     this.pixi.stage.x = this.camera.x
     this.pixi.stage.y = this.camera.y
   }
-  selectArmy(tile: Tile) {
-    this.selectedArmyTile = tile
+  selectArmy(army: Army) {
+    this.selectedArmy = army
     this.armySelectedAt = this.clickedAt
-    tile.selectArmy()
+    this.armyDragArrow = new ArmyDragArrow(army.building!.tile)
 
-    this.armyDragArrow = new ArmyDragArrow(tile)
+    const armyTargetTiles: Tile[][] = []
+    for (let i = 0; i < 6; i++) {
+      armyTargetTiles[i] = []
+
+      const nextTile = army.building!.tile.neighbors[i]
+      if (nextTile) {
+        armyTargetTiles[i].push(nextTile)
+      }
+
+      for (let j = 1; j < store.gsConfig!.ARMY_HP; j++) {
+        const lastTile = armyTargetTiles[i][armyTargetTiles[i].length - 1]
+        const nextTile = lastTile.neighbors[i]
+        if (!nextTile) break
+
+        armyTargetTiles[i].push(nextTile)
+      }
+    }
+
+    // army.leaveBuilding()
+    this.selectedArmyTargetTiles = armyTargetTiles
+  }
+  unselectArmy() {
+    //   if (!store.game || !store.game.selectedArmyTile) return
+    //
+    if (this.armyDragArrow) {
+      this.armyDragArrow.destroy()
+    }
+
+    // if (this.selectedArmy) {
+    //   this.selectedArmy.joinBuilding()
+    // }
+
+    // if (this.hoveredTile !== this.selectedArmy?.tile) {
+    // this.removeHoverHexagon()
+    // }
+
+    this.selectedArmy = null
+    this.updatePatternPreviews()
   }
   sendGoldToAlly() {
     if (store.socket) {
@@ -1011,7 +1010,7 @@ class Game {
     const actionType = tile.getActionType({ ignoreGold: true })
     if (
       !actionType ||
-      (actionType === 'CAPTURE' && this.player.gold >= tile.captureCost()) ||
+      // (actionType === 'CAPTURE' && this.player.gold >= tile.captureCost()) ||
       (actionType === 'TOWER' && this.player.gold >= TOWER_COST) ||
       (actionType === 'CAMP' && this.player.gold >= CAMP_COST) ||
       (actionType === 'CASTLE' && this.player.gold >= CASTLE_COST) ||
@@ -1026,5 +1025,3 @@ class Game {
 }
 
 export default Game
-
-// Server: incomeStarted = 0
