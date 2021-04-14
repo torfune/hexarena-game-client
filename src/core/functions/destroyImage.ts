@@ -1,7 +1,7 @@
 import { Sprite } from 'pixi.js-legacy'
 import store from '../store'
 
-const destroyImage = (key: string, image: Sprite) => {
+const destroyImage = (image: Sprite) => {
   if (!store.game || !store.game.pixi) return
 
   store.game.pixi.stage.removeChild(image)

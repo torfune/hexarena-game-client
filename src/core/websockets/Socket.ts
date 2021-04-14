@@ -89,9 +89,8 @@ class Socket {
   }
 
   handleMessage({ data }: { data: string }) {
-    console.log(data)
-
     const [messageName, messagePayload] = data.split('//')
+    // console.log(`${messageName}: `, messagePayload)
 
     switch (messageName as IncomingMessage) {
       case 'actions':
@@ -162,6 +161,9 @@ class Socket {
         break
       case 'destroyActions':
         messageHandlers.destroyActions(messagePayload)
+        break
+      case 'destroyBuildings':
+        messageHandlers.destroyBuildings(messagePayload)
         break
       case 'ping':
         messageHandlers.ping()

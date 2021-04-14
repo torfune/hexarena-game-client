@@ -165,11 +165,16 @@ const messageHandlers = {
         store.game.armies.set(id, army)
       }
 
-      // Update
-      if (tileId !== army.tile?.id) {
-        army.setTile(tile)
+      // Destroy
+      if (!tile && !building) {
+        army.destroy()
+        return
       }
 
+      // Update
+      if (tileId !== (army.tile?.id || null)) {
+        army.setTile(tile)
+      }
       if (buildingId !== army.building?.id) {
         army.setBuilding(building)
       }
@@ -485,10 +490,6 @@ const messageHandlers = {
     store.game.lastIncomeAt = convert(payload, 'number') as number | null
     store.game.incomeStartedAt = Date.now() // - store.ping
   },
-  // notification: (payload: string) => {
-  //   if (!store.game) return
-  //   store.game.notification = convert(payload, 'string') as string | null
-  // },
   playerId: (payload: string) => {
     if (!store.game) return
     store.game.playerId = convert(payload, 'string') as string | null
@@ -579,6 +580,15 @@ const messageHandlers = {
       )
       if (action) {
         action.destroy()
+      }
+    }
+  },
+  destroyBuildings: (payload: string) => {
+    const buildingsIds = payload.split('><')
+    for (let i = 0; i < buildingsIds.length; i++) {
+      const building = store.game?.buildings.get(buildingsIds[i])
+      if (building) {
+        building.destroy()
       }
     }
   },

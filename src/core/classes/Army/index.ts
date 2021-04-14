@@ -96,7 +96,7 @@ class Army {
   }
 
   setTile(newTile: Tile | null) {
-    console.log(`ARMY set TILE: `, newTile?.axial)
+    console.log(`ARMY set TILE: `, newTile?.axial || null)
 
     if (this.building) {
       this.building.setArmy(null)
@@ -127,7 +127,7 @@ class Army {
   }
 
   setBuilding(newBuilding: Building | null) {
-    console.log(`ARMY set BUILDING: `, newBuilding?.type)
+    console.log(`ARMY set BUILDING: `, newBuilding?.type || null)
 
     if (this.building) {
       this.building.setArmy(null)

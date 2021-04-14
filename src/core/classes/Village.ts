@@ -54,8 +54,6 @@ class Village {
   }
 
   setYieldAt(newYieldAt: number | null) {
-    console.log(`newYieldAt: ${newYieldAt}`)
-
     if (!this.barImage && newYieldAt) {
       const pixel = getPixelPosition(this.tile.axial)
 
@@ -91,7 +89,7 @@ class Village {
 
       this.updateBar()
     } else if (this.barImage && !newYieldAt) {
-      destroyImage('village-bar', this.barImage)
+      destroyImage(this.barImage)
       this.barImage = null
     }
 
@@ -165,7 +163,7 @@ class Village {
     store.game.villages.delete(this.id)
     this.tile.village = null
     for (let i = 0; i < this.houses.length; i++) {
-      destroyImage('house', this.houses[i])
+      destroyImage(this.houses[i])
     }
   }
 }

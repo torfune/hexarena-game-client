@@ -197,12 +197,6 @@ class Game {
       return
     }
 
-    // const now = Date.now()
-    // const updateDuration = now - this.lastUpdatedAt
-    // console.log(`Frame Duration: ${updateDuration}`)
-    // console.log(`FPS: ${1000 / updateDuration}`)
-    // this.lastUpdatedAt = now
-
     // Animations
     for (let i = this.animations.length - 1; i >= 0; i--) {
       this.animations[i].update(delta)
@@ -837,14 +831,7 @@ class Game {
   }
   updateArmyTileHighlights() {
     let direction = null
-
-    for (let i = 0; i < 6; i++) {
-      const armyTiles = this.selectedArmyTargetTiles[i]
-
-      for (let j = 0; j < armyTiles.length; j++) {
-        armyTiles[j].removeHoverHexagon()
-      }
-    }
+    this.clearArmyTileHighlights()
 
     if (!this.hoveredTile) return
 
@@ -862,6 +849,14 @@ class Game {
         if (!t || !t.owner || t.owner.id !== this.playerId) continue
         t.addHoverHexagon()
         if (t.building) break
+      }
+    }
+  }
+  clearArmyTileHighlights() {
+    for (let i = 0; i < 6; i++) {
+      const armyTiles = this.selectedArmyTargetTiles[i]
+      for (let j = 0; j < armyTiles.length; j++) {
+        armyTiles[j].removeHoverHexagon()
       }
     }
   }
@@ -892,6 +887,7 @@ class Game {
       }
     }
 
+    this.clearArmyTileHighlights()
     this.unselectArmy()
 
     if (this.hoveredTile) {
@@ -937,19 +933,9 @@ class Game {
     this.selectedArmyTargetTiles = armyTargetTiles
   }
   unselectArmy() {
-    //   if (!store.game || !store.game.selectedArmyTile) return
-    //
     if (this.armyDragArrow) {
       this.armyDragArrow.destroy()
     }
-
-    // if (this.selectedArmy) {
-    //   this.selectedArmy.joinBuilding()
-    // }
-
-    // if (this.hoveredTile !== this.selectedArmy?.tile) {
-    // this.removeHoverHexagon()
-    // }
 
     this.selectedArmy = null
     this.updatePatternPreviews()

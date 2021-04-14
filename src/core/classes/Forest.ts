@@ -110,7 +110,7 @@ class Forest {
       {
         speed: 0.02,
         onFinish: (image) => {
-          destroyImage('tree', image as Sprite)
+          destroyImage(image as Sprite)
         },
       }
     )

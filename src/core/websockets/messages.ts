@@ -26,6 +26,7 @@ export type IncomingMessage =
   | 'destroyArmies'
   | 'destroyActions'
   | 'destroyForests'
+  | 'destroyBuildings'
 
 // Game Client -> Game Server
 export type MessageToSend =

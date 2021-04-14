@@ -188,15 +188,12 @@ class Tile {
     //   this.showHitpoints()
     // }
 
-    // console.log('Start hover!')
-    // console.log(store.game.selectedArmyTile)
-
-    // if (
-    //   (this.getActionType() && !store.game.selectedArmyTile) ||
-    //   (this.building && this.army)
-    // ) {
-    //   this.addHoverHexagon()
-    // }
+    if (
+      (this.getActionType() && !store.game.selectedArmy) ||
+      (this.building && this.building.army)
+    ) {
+      this.addHoverHexagon()
+    }
   }
 
   endHover() {
@@ -440,7 +437,7 @@ class Tile {
               {
                 speed: 0.04,
                 onFinish: (image) => {
-                  destroyImage('pattern', image as Sprite)
+                  destroyImage(image as Sprite)
                 },
               }
             )
@@ -499,7 +496,7 @@ class Tile {
 
         this.imageSet.fog[i] = newImage
       } else if (this.neighbors[i] && image) {
-        destroyImage('fog', image)
+        destroyImage(image)
         this.imageSet.fog[i] = null
       }
     }
@@ -609,7 +606,7 @@ class Tile {
 
         this.imageSet.border[i] = newImage
       } else if (!showBorder && image) {
-        destroyImage('border', image)
+        destroyImage(image)
         this.imageSet.border[i] = null
       }
     }
@@ -770,8 +767,6 @@ class Tile {
 
   createAttentionNotification() {
     if (!store.game || !store.game.pixi) return
-
-    console.log('creating attention notification')
 
     const pixel = getPixelPosition(this.axial)
     const circle = new PIXI.Graphics()

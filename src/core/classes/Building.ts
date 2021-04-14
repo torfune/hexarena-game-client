@@ -39,18 +39,18 @@ class Building {
 
     const pixel = getPixelPosition(tile.axial)
     this.image.x = pixel.x
-    this.image.y = pixel.y // - this.getOffsetY(tile)
-    // this.image.scale.set(0)
-    // this.image.alpha = 0
+    this.image.y = pixel.y
+    this.image.scale.set(0)
+    this.image.alpha = 0
 
-    // new Animation(
-    //   this.image,
-    //   (image, fraction) => {
-    //     image.scale.set(fraction)
-    //     image.alpha = fraction
-    //   },
-    //   { speed: 0.05 }
-    // )
+    new Animation(
+      this.image,
+      (image, fraction) => {
+        image.scale.set(fraction)
+        image.alpha = fraction
+      },
+      { speed: 0.05 }
+    )
 
     if (store.game) {
       store.game.buildings.set(id, this)
@@ -69,23 +69,23 @@ class Building {
     this.type = newType
     this.image.texture = getTexture(this.getTextureName())
   }
-
-  getMaxHp() {
-    if (!store.gsConfig) return
-
-    const { HP } = store.gsConfig
-
-    switch (this.type) {
-      case 'CAPITAL':
-        return HP.CAPITAL
-      case 'CAMP':
-        return HP.CAMP
-      case 'TOWER':
-        return HP.TOWER
-      case 'CASTLE':
-        return HP.CASTLE
-    }
-  }
+  //
+  // getMaxHp() {
+  //   if (!store.gsConfig) return
+  //
+  //   const { HP } = store.gsConfig
+  //
+  //   switch (this.type) {
+  //     case 'CAPITAL':
+  //       return HP.CAPITAL
+  //     case 'CAMP':
+  //       return HP.CAMP
+  //     case 'TOWER':
+  //       return HP.TOWER
+  //     case 'CASTLE':
+  //       return HP.CASTLE
+  //   }
+  // }
 
   // updateHitpoints() {
   //   const { gsConfig } = store
@@ -282,14 +282,6 @@ class Building {
   // }
 
   setArmy(newArmy: Army | null) {
-    // if (
-    //   this.hpVisible &&
-    //   this.building &&
-    //   this.building.hp === gsConfig.HP[this.building.type]
-    // ) {
-    //   this.hideHitpoints()
-    // }
-
     if (this.tile.owner && this.tile.owner?.id === store.game?.playerId) {
       SoundManager.play('ARMY_ARRIVE')
     }
@@ -311,9 +303,15 @@ class Building {
   }
 
   destroy() {
-    if (store.game) {
-      store.game.buildings.delete(this.id)
+    if (!store.game) return
+
+    store.game.buildings.delete(this.id)
+
+    if (this.tile.building === this) {
+      this.tile.building = null
     }
+
+    destroyImage(this.image)
   }
 }
 

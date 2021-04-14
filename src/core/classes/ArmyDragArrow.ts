@@ -85,8 +85,8 @@ class ArmyDragArrow {
   destroy() {
     if (!store.game) return
 
-    destroyImage('army-drag-arrow', this.body)
-    destroyImage('army-drag-arrow', this.head)
+    destroyImage(this.body)
+    destroyImage(this.head)
 
     if (store.game.armyDragArrow === this) {
       store.game.armyDragArrow = null
