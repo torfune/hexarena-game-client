@@ -13,7 +13,7 @@ function getImageZIndex(textureName: string, options: Options = {}) {
   }
 
   if (options.axialZ) {
-    zIndex += 2000 + 256 * options.axialZ
+    zIndex += 5000 + 256 * options.axialZ
   }
 
   return zIndex
