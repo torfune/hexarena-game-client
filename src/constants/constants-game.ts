@@ -49,8 +49,6 @@ export const NEIGHBOR_DIRECTIONS: Axial[] = [
 export const CAMERA_SPEED = 24
 
 // IMAGE OFFSETS
-export const HP_FILL_OFFSET_Y = 10
-export const HP_FILL_OFFSET_X = 26
 export const ARMY_ICON_OFFSET_Y = {
   DEFAULT: 100,
   CAMP: 90,
@@ -59,15 +57,9 @@ export const ARMY_ICON_OFFSET_Y = {
   CAPITAL: 150,
 }
 export const HP_BACKGROUND_OFFSET = {
-  CAPITAL: 135,
-  TOWER: 110,
-  CASTLE: 110,
-}
-export const IMAGE_OFFSET_Y = {
-  CAPITAL: -10,
-  CAMP: 64,
-  CASTLE: 60,
-  TOWER: 60,
+  CAPITAL: 130,
+  TOWER: 108,
+  CASTLE: 108,
 }
 
 // ZOOM
@@ -105,18 +97,6 @@ export const DEBUG_COMMANDS = [
   ['3', 'lose_tile'],
   ['4', 'building'],
   ['5', 'add_bot'],
-  // ['4', 'add_forest'],
-  // ['6', 'add_player'],
-  // ['7', 'send_army'],
-  // ['8', 'add_gold'],
-  // ['c', 'clear'],
-  // ['e', 'add_castle'],
-  // ['g', 'defeat'],
-  // ['t', 'add_village'],
-  // ['v', 'add_camp'],
-  // ['n', 'hp_remove'],
-  // ['m', 'hp_add'],
-  // ['p', 'evaluate_directions'],
-  // ['f', 'dummy_send_army'],
-  // ['r', 'dummy_capture'],
+  ['o', 'remove_hp'],
+  ['p', 'add_hp'],
 ]

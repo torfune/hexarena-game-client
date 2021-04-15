@@ -184,9 +184,9 @@ class Tile {
       return
     }
 
-    // if (this.building && !this.army) {
-    //   this.showHitpoints()
-    // }
+    if (this.building && !this.building.army && !this.building.isCamp()) {
+      this.building.showHitpoints()
+    }
 
     if (
       (this.getActionType() && !store.game.selectedArmy) ||
@@ -200,10 +200,10 @@ class Tile {
     const { gsConfig, game } = store
     if (!gsConfig || !game) return
 
-    // const { building } = this
-    // if (building && building.hp === gsConfig.HP[building.type]) {
-    //   this.hideHitpoints()
-    // }
+    const { building } = this
+    if (building && building.hasFullHp()) {
+      building.hideHitpoints()
+    }
 
     if (game.selectedArmy?.tile !== this) {
       this.removeHoverHexagon()
@@ -252,10 +252,6 @@ class Tile {
         speed: 0.1,
       }
     )
-  }
-
-  addContested() {
-    // this.image.contested.visible = true
   }
 
   removeHoverHexagon() {
@@ -375,17 +371,6 @@ class Tile {
       }
     }
   }
-
-  // removeArmy() {
-  //   if (!this.army || !store.game) return
-  //
-  //   this.army = null
-  //   // this.hideArmyIcon()
-  //
-  //   if (store.game.selectedArmyTile === this) {
-  //     this.unselectArmy()
-  //   }
-  // }
 
   setOwner(newOwner: Player | null) {
     if (!store.game) return
