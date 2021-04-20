@@ -4,26 +4,21 @@ import { ActionType } from '../../../core/classes/Action'
 import { COLOR } from '../../../constants/constants-react'
 import { observer } from 'mobx-react-lite'
 import store from '../../../core/store'
-import GameServerConfig from '../../../types/GameServerConfig'
 import Tile from '../../../core/classes/Tile'
-import attackIcon from '../../../icons/attack.svg'
 import recruitIcon from '../../../icons/recruit.svg'
 import armyIcon from '../../../icons/army.svg'
+import ArmySendManager from '../../../core/classes/ArmySendManager'
 
 const baseImageUrl = process.env.PUBLIC_URL + '/images'
 
 interface Props {
-  actionType: ActionType | 'SEND_ARMY' | 'REPAIR'
+  actionType: ActionType | 'SEND_ARMY' | 'REPAIR_BUILDING'
   tile: Tile
 }
 const ActionPreview = ({ actionType, tile }: Props) => {
   if (!store.game || !store.gsConfig || !store.game.player) return null
 
-  const cost = getActionCost(
-    actionType,
-    store.gsConfig,
-    tile.forest ? tile.forest.treeCount : 0
-  )
+  const cost = getActionCost(actionType, tile)
   const gold = store.game.player.gold
   const enoughGold = gold >= cost
 
@@ -33,7 +28,7 @@ const ActionPreview = ({ actionType, tile }: Props) => {
         <Icon
           src={getActionIcon(actionType)}
           opaque={!enoughGold}
-          dontInvert={actionType === 'REPAIR'}
+          dontInvert={actionType === 'REPAIR_BUILDING'}
         />
       </Circle>
       <Rectangle>
@@ -56,38 +51,42 @@ const ActionPreview = ({ actionType, tile }: Props) => {
   )
 }
 
-const getActionLabel = (actionType: ActionType | 'SEND_ARMY' | 'REPAIR') => {
+const getActionLabel = (
+  actionType: ActionType | 'SEND_ARMY' | 'REPAIR_BUILDING'
+) => {
   switch (actionType) {
-    case 'CAPTURE':
-      return 'Capture Tile'
-    case 'CAMP':
+    case 'BUILD_CAMP':
       return 'Build Camp'
-    case 'TOWER':
+    case 'BUILD_TOWER':
       return 'Build Tower'
-    case 'CASTLE':
+    case 'BUILD_CASTLE':
       return 'Build Castle'
-    case 'RECRUIT':
+    case 'RECRUIT_ARMY':
       return 'Train Army'
-    case 'REPAIR':
+    case 'REBUILD_VILLAGE':
+      return 'Rebuild Village'
+    case 'REPAIR_BUILDING':
       return 'Repair building'
     case 'SEND_ARMY':
       return 'Send army'
   }
 }
 
-const getActionIcon = (actionType: ActionType | 'SEND_ARMY' | 'REPAIR') => {
+const getActionIcon = (
+  actionType: ActionType | 'SEND_ARMY' | 'REPAIR_BUILDING'
+) => {
   switch (actionType) {
-    case 'CAPTURE':
-      return attackIcon
-    case 'CAMP':
+    case 'BUILD_CAMP':
       return `${baseImageUrl}/camp-icon.png`
-    case 'TOWER':
+    case 'BUILD_TOWER':
       return `${baseImageUrl}/tower-icon.png`
-    case 'CASTLE':
+    case 'BUILD_CASTLE':
       return `${baseImageUrl}/castle-icon.png`
-    case 'RECRUIT':
+    case 'RECRUIT_ARMY':
       return recruitIcon
-    case 'REPAIR':
+    case 'REBUILD_VILLAGE':
+      return recruitIcon // TODO: add proper icon
+    case 'REPAIR_BUILDING':
       return `${baseImageUrl}/hp-fill.png`
     case 'SEND_ARMY':
       return armyIcon
@@ -95,35 +94,39 @@ const getActionIcon = (actionType: ActionType | 'SEND_ARMY' | 'REPAIR') => {
 }
 
 const getActionCost = (
-  actionType: ActionType | 'SEND_ARMY' | 'REPAIR',
-  gsConfig: GameServerConfig,
-  treeCount: number
+  actionType: ActionType | 'SEND_ARMY' | 'REPAIR_BUILDING',
+  tile: Tile
 ) => {
+  if (!store.gsConfig) return 0
+
+  const treeCount = tile.forest ? tile.forest.treeCount : 0
+
   switch (actionType) {
-    case 'CAPTURE':
-      if (!store.game || !store.game.hoveredTile) return 1
-      return store.game.hoveredTile.captureCost()
-    case 'CAMP':
-      return gsConfig.CAMP_COST - treeCount
-    case 'TOWER':
-      return gsConfig.TOWER_COST
-    case 'CASTLE':
-      return gsConfig.CASTLE_COST
-    case 'RECRUIT':
-      return gsConfig.RECRUIT_COST
-    case 'REPAIR':
-      return gsConfig.RECRUIT_COST
+    case 'BUILD_CAMP':
+      return store.gsConfig.BUILD_CAMP_COST - treeCount
+    case 'BUILD_TOWER':
+      return store.gsConfig.BUILD_TOWER_COST
+    case 'BUILD_CASTLE':
+      return store.gsConfig.BUILD_CASTLE_COST
+    case 'RECRUIT_ARMY':
+      return store.gsConfig.RECRUIT_ARMY_COST
+    case 'REPAIR_BUILDING':
+      return store.gsConfig.RECRUIT_ARMY_COST
+    case 'REBUILD_VILLAGE':
+      return tile.village
+        ? tile.village.level * store.gsConfig.VILLAGE_HOUSE_VALUE * 2
+        : 0
     case 'SEND_ARMY':
       return 0
   }
 }
 
 const getActionDescription = (
-  actionType: ActionType | 'SEND_ARMY' | 'REPAIR'
+  actionType: ActionType | 'SEND_ARMY' | 'REPAIR_BUILDING'
 ) => {
   if (!store.game) return null
 
-  if (actionType === 'SEND_ARMY' && !store.game.selectedArmy) {
+  if (actionType === 'SEND_ARMY' && !ArmySendManager.active) {
     return 'Drag & drop to send army'
   }
 

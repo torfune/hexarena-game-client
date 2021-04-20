@@ -16,10 +16,15 @@ const getUniqueRandomizedPositions = (
     let position = null
     let iterations = 0
 
+    if (positions.length === 0) {
+      positions.push(basePosition)
+      continue
+    }
+
     do {
       position = getRandomizedPosition(basePosition, offset)
-      iterations++
 
+      iterations++
       if (iterations >= maxIterations) {
         console.warn('Cannot find unique position.')
         break

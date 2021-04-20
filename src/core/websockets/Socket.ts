@@ -114,12 +114,6 @@ class Socket {
       case 'goldAnimation':
         messageHandlers.goldAnimation(messagePayload)
         break
-      case 'incomeAt':
-        messageHandlers.incomeAt(messagePayload)
-        break
-      case 'lastIncomeAt':
-        messageHandlers.lastIncomeAt(messagePayload)
-        break
       case 'attentionNotification':
         messageHandlers.attentionNotification(messagePayload)
         break

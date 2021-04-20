@@ -45,11 +45,11 @@ const messageHandlers = {
 
       if (!id || !type || !tileId || !ownerId) continue
       if (
-        type !== 'CAPTURE' &&
-        type !== 'RECRUIT' &&
-        type !== 'CAMP' &&
-        type !== 'TOWER' &&
-        type !== 'CASTLE'
+        type !== 'RECRUIT_ARMY' &&
+        type !== 'BUILD_CAMP' &&
+        type !== 'BUILD_TOWER' &&
+        type !== 'BUILD_CASTLE' &&
+        type !== 'REBUILD_VILLAGE'
       ) {
         continue
       }
@@ -74,7 +74,7 @@ const messageHandlers = {
     }
 
     // Side effects
-    store.game.updatePatternPreviews()
+    // store.game.updatePatternPreviews()
   },
   allianceRequests: (payload: string) => {
     if (!store.game) return
@@ -253,15 +253,12 @@ const messageHandlers = {
     if (!store.game.camera && store.game.spawnTile) {
       if (isSpectating()) {
         store.game.setCameraToAxial({ x: 0, z: 0 })
-        store.game.targetScale
       } else {
         store.game.setCameraToAxial(store.game.spawnTile.axial)
       }
       store.showLoadingCover = false
     }
-    store.game.updateBlackOverlays()
     store.game.updateBorders()
-    store.game.updatePatternPreviews()
   },
   villages: (payload: string) => {
     if (!store.game) return
@@ -269,44 +266,47 @@ const messageHandlers = {
     const parsed = convertArray(payload, {
       id: 'string',
       tileId: 'string',
-      housesCount: 'number',
+      level: 'number',
       yieldDuration: 'number',
       yieldAt: 'number',
+      raided: 'boolean',
     }) as {
       id: string | null
       tileId: string | null
-      housesCount: number | null
+      level: number | null
       yieldDuration: number | null
       yieldAt: number | null
+      raided: boolean | null
     }[]
 
     for (let i = 0; i < parsed.length; i++) {
       const fields = parsed[i]
-      const { id, tileId, housesCount, yieldAt, yieldDuration } = fields
+      const { id, tileId, level, yieldAt, yieldDuration, raided } = fields
 
-      if (!id || !tileId || housesCount === null) continue
+      if (!id || !tileId || level === null || raided === null) continue
 
       let village = store.game.villages.get(id)
 
       // Create
-      if (!village && housesCount) {
+      if (!village) {
         const tile = store.game.tiles.get(tileId)
         if (!tile) continue
-        village = new Village(id, tile, housesCount)
+        village = new Village(id, tile, raided)
         store.game.villages.set(id, village)
       }
 
       // Update
-      if (village) {
-        if (housesCount !== village.housesCount) {
-          village.setHousesCount(housesCount)
-        }
-        if (yieldAt !== village.yieldAt) {
-          village.setYieldAt(yieldAt)
-        }
-        if (yieldDuration !== village.yieldDuration) {
-          village.setYieldDuration(yieldDuration)
-        }
+      if (level !== village.level) {
+        village.setLevel(level)
+      }
+      if (yieldAt !== village.yieldAt) {
+        village.setYieldAt(yieldAt)
+      }
+      if (yieldDuration !== village.yieldDuration) {
+        village.setYieldDuration(yieldDuration)
+      }
+      if (raided !== village.raided) {
+        village.setRaided(raided)
       }
     }
   },
@@ -360,7 +360,7 @@ const messageHandlers = {
     }
 
     // Side effects
-    store.game.updatePatternPreviews()
+    // store.game.updatePatternPreviews()
   },
   forests: (payload: string) => {
     if (!store.game) return
@@ -476,19 +476,6 @@ const messageHandlers = {
     const tile = store.game.tiles.get(goldAnimation.tileId)
     if (!tile) return
     new GoldAnimation(tile, goldAnimation.count)
-  },
-  incomeAt: (payload: string) => {
-    if (!store.game) return
-    store.game.incomeAt = convert(payload, 'number') as number | null
-
-    if (!store.game.incomeStartedAt) {
-      store.game.incomeStartedAt = Date.now() - (store.game.ping || 0)
-    }
-  },
-  lastIncomeAt: (payload: string) => {
-    if (!store.game) return
-    store.game.lastIncomeAt = convert(payload, 'number') as number | null
-    store.game.incomeStartedAt = Date.now() // - store.ping
   },
   playerId: (payload: string) => {
     if (!store.game) return

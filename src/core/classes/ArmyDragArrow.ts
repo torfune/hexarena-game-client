@@ -57,29 +57,24 @@ class ArmyDragArrow {
     this.head.y = pixel.y + delta.y
     this.head.rotation = angle
 
-    let canSendArmy = false
-    const { hoveredTile, selectedArmy } = store.game
-    if (hoveredTile && selectedArmy) {
-      let index = null
-      for (let i = 0; i < store.game.selectedArmyTargetTiles.length; i++) {
-        if (store.game.selectedArmyTargetTiles[i].includes(hoveredTile)) {
-          index = i
-          break
-        }
-      }
+    // let canSendArmy = false
+    // const { hoveredTile } = store.game
+    // if (hoveredTile && ArmySendManager.active) {
+    //   for (let i = 0; i < store.game.selectedArmyTargetTiles.length; i++) {
+    //     if (store.game.selectedArmyTargetTiles[i].includes(hoveredTile)) {
+    //       canSendArmy = true
+    //       break
+    //     }
+    //   }
+    // }
 
-      if (index !== null) {
-        canSendArmy = true
-      }
-    }
-
-    if (canSendArmy) {
-      this.body.alpha = 0.7
-      this.head.alpha = 0.9
-    } else {
-      this.body.alpha = 0.2
-      this.head.alpha = 0.4
-    }
+    // if (canSendArmy) {
+    //   this.body.alpha = 0.7
+    //   this.head.alpha = 0.9
+    // } else {
+    //   this.body.alpha = 0.2
+    //   this.head.alpha = 0.4
+    // }
   }
 
   destroy() {
@@ -87,10 +82,6 @@ class ArmyDragArrow {
 
     destroyImage(this.body)
     destroyImage(this.head)
-
-    if (store.game.armyDragArrow === this) {
-      store.game.armyDragArrow = null
-    }
   }
 }
 

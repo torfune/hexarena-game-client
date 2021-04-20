@@ -1,16 +1,16 @@
-import Tile from '../Tile'
+import Tile from './Tile'
 import { Sprite } from 'pixi.js'
-import getPixelPosition from '../../functions/getPixelPosition'
-import store from '../../store'
+import getPixelPosition from '../functions/getPixelPosition'
+import store from '../store'
 import {
   ARMY_ICON_OFFSET_Y,
   UNIT_MOVEMENT_SPEED,
-} from '../../../constants/constants-game'
-import { easeOutCubic } from '../../functions/easing'
-import { Pixel } from '../../../types/coordinates'
-import Animation from '../Animation'
-import createImage from '../../functions/createImage'
-import getImageZIndex from '../../functions/getImageZIndex'
+} from '../../constants/constants-game'
+import { easeOutCubic } from '../functions/easing'
+import { Pixel } from '../../types/coordinates'
+import Animation from './Animation'
+import createImage from '../functions/createImage'
+import getImageZIndex from '../functions/getImageZIndex'
 
 class ArmyIcon {
   image: Sprite

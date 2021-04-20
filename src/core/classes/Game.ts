@@ -19,7 +19,7 @@ import getDebugCommand from '../functions/getDebugCommand'
 import getTileByAxial from '../functions/getTileByAxial'
 import Tile from './Tile'
 import { Ticker, Application } from 'pixi.js-legacy'
-import Action from './Action'
+import Action, { ActionType } from './Action'
 import { v4 as uuid } from 'uuid'
 import { makeAutoObservable } from 'mobx'
 import AllianceRequest from './AllianceRequest'
@@ -28,12 +28,11 @@ import Player from './Player'
 import Forest from './Forest'
 import Village from './Village'
 import GameMode from '../../types/GameMode'
-import ArmyDragArrow from './ArmyDragArrow'
 import SoundManager from '../../services/SoundManager'
 import GameStatus from '../../types/GameStatus'
-import { COLOR } from '../../constants/constants-react'
 import isSpectating from '../../utils/isSpectating'
 import Building from './Building'
+import ArmySendManager from './ArmySendManager'
 
 class Game {
   id: string
@@ -48,9 +47,6 @@ class Game {
   actions: Action[] = []
   hoveredTile: Tile | null = null
   startCountdown: number | null = null
-  incomeAt: number | null = null
-  lastIncomeAt: number | null = null
-  incomeStartedAt: number | null = null
   serverTime: number | null = null
   goldAnimation: { tileId: string; count: number } | null = null
   notification: string | null = null
@@ -74,8 +70,6 @@ class Game {
   cameraMove: Pixel = { x: 0, y: 0 }
   cameraDrag: { camera: Pixel; cursor: Pixel } | null = null
   dragged: boolean = false
-  selectedArmyTargetTiles: Tile[][] = []
-  tilesWithPatternPreview: Tile[] = []
   keyDown: { [key: string]: boolean } = {}
   lastUpdatedAt: number = Date.now()
   eventListeners: {
@@ -87,10 +81,7 @@ class Game {
     wheel: (event: any) => void
     resize: (event: any) => void
   } | null = null
-  armyDragArrow: ArmyDragArrow | null = null
   clickedAt: number = 0
-  armySelectedAt: number = 0
-  selectedArmy: Army | null = null
 
   // Getters (computed)
   get player() {
@@ -266,22 +257,19 @@ class Game {
       armies[i].update()
     }
 
-    // Armies
+    // Villages
     const villages = Array.from(this.villages.values())
     for (let i = 0; i < villages.length; i++) {
-      villages[i].updateBar()
+      villages[i].updateBarFill()
     }
 
-    // Army drag arrow
-    if (this.armyDragArrow) {
-      this.armyDragArrow.update()
+    // Army Send Manager
+    if (ArmySendManager.active) {
+      ArmySendManager.update()
     }
 
     // Hovered tile
     this.updateHoveredTile()
-
-    // Income bar
-    this.updateIncomeBar()
   }
   setupEventListeners() {
     this.eventListeners = {
@@ -320,7 +308,7 @@ class Game {
 
     this.pixi.renderer.resize(window.innerWidth, window.innerHeight)
   }
-  selectPattern = (pattern: string) => {
+  selectPattern(pattern: string) {
     if (!store.socket) return
 
     store.socket.send('pattern', pattern)
@@ -368,33 +356,30 @@ class Game {
       return
     }
 
-    const { clientX: x, clientY: y, button } = event
+    const { clientX: x, clientY: y } = event
     const { hoveredTile } = this
 
     this.clickedAt = Date.now()
 
     // Army - select
     if (
-      !this.selectedArmy &&
+      !ArmySendManager.active &&
       hoveredTile &&
-      hoveredTile.owner?.id === this.playerId &&
-      hoveredTile.building?.army?.owner?.id === this.playerId &&
-      button !== 2
+      hoveredTile.building?.army?.owner?.id === this.playerId
     ) {
-      SoundManager.play('ARMY_SELECT')
-      this.selectArmy(hoveredTile.building.army)
+      ArmySendManager.selectArmy(hoveredTile.building.army)
       return
     }
 
     // Army - unselect
-    if (
-      this.selectedArmy &&
-      hoveredTile === this.selectedArmy.tile &&
-      button !== 2
-    ) {
-      this.unselectArmy()
-      return
-    }
+    // if (
+    //   ArmySendManager.active &&
+    //   this.selectedArmy.tile?.isHovered() &&
+    //   button !== 2
+    // ) {
+    //   this.unselectArmy()
+    //   return
+    // }
 
     this.cameraDrag = {
       cursor: { x, y },
@@ -407,7 +392,7 @@ class Game {
   handleMouseUp(event: MouseEvent) {
     if (!this.cursor || !store.socket) return
 
-    const { hoveredTile, playerId } = this
+    const { hoveredTile } = this
 
     let cursorDelta: number = 0
     if (this.cameraDrag) {
@@ -440,44 +425,32 @@ class Game {
         button = 'left'
     }
 
-    // Right mouse button
-    if (button === 'right') return
-
+    // Unselect army
     if (!hoveredTile) {
-      // Unselect army
-      if (this.selectedArmy) {
-        this.unselectArmy()
+      if (ArmySendManager.active) {
+        ArmySendManager.unselectArmy()
       }
       return
     }
-    // if (
-    //   this.selectedArmyTile &&
-    //   this.selectedArmyTile === this.hoveredTile &&
-    //   Date.now() - this.armySelectedAt > MAX_CLICK_DURATION
-    // ) {
-    //   this.selectedArmyTile.unselectArmy()
-    //   return
-    // }
 
-    // Standard click
-    if (cursorDelta < 32 && timeDelta < MAX_CLICK_DURATION) {
-      // Army - send
-      if (this.selectedArmy && hoveredTile !== this.selectedArmy.tile) {
-        this.sendArmy(hoveredTile)
-        return
-      }
+    // Right mouse button cancel
+    if (button === 'right') return
 
-      // Army - select
+    // Army Send Manager
+    if (ArmySendManager.active) {
       if (
-        !this.selectedArmy &&
-        hoveredTile.building?.army?.owner?.id === playerId
+        ArmySendManager.tile === hoveredTile ||
+        ArmySendManager.direction === null
       ) {
-        this.selectArmy(hoveredTile.building.army)
-        return
+        ArmySendManager.unselectArmy()
+      } else {
+        ArmySendManager.sendArmy()
       }
+    }
 
-      // Create action
-      if (hoveredTile.bedrock || this.selectedArmy?.tile === hoveredTile) return
+    // Standard click - Create action
+    else if (cursorDelta < 32 && timeDelta < MAX_CLICK_DURATION) {
+      if (hoveredTile.bedrock) return
 
       if (button && !dragged && this.player) {
         const actionType = hoveredTile.getActionType()
@@ -486,18 +459,8 @@ class Game {
           return
         }
 
-        const action = new Action(uuid(), actionType, hoveredTile, this.player)
-        this.actions.push(action)
-
-        const { x, z } = hoveredTile.axial
-        store.socket.send('action', `${action.id}|${x}|${z}|${actionType}`)
+        this.createAction(hoveredTile, actionType)
       }
-    }
-
-    // Army - drag & drop send
-    else if (this.selectedArmy && this.selectedArmy.tile !== hoveredTile) {
-      this.sendArmy(hoveredTile)
-      return
     }
   }
   handleMouseMove({ clientX: x, clientY: y }: MouseEvent) {
@@ -540,214 +503,6 @@ class Game {
 
     return getTileByAxial(axial)
   }
-  getTilesToCapture(tile: Tile, playerId: string) {
-    if (!store.gsConfig) return []
-
-    const tilesToCapture = []
-    // const actionType = tile.getActionType()
-
-    // Attack hover
-    // if (
-    //   this.playerId === playerId &&
-    //   actionType === 'CAPTURE' &&
-    //   !this.selectedArmy &&
-    //   !tile.bedrock
-    // ) {
-    //   tilesToCapture.push(tile)
-    // }
-
-    // Upgrade hover
-    // if (actionType === 'CASTLE' && !this.selectedArmyTile && !tile.army) {
-    //   for (let i = 0; i < 6; i++) {
-    //     const n = tile.neighbors[i]
-    //     if (n && !tilesToCapture.includes(n) && !n.owner) {
-    //       tilesToCapture.push(n)
-    //     }
-    //   }
-    // }
-
-    // Actions (CAPTURE, CASTLE)
-    // for (let i = 0; i < this.actions.length; i++) {
-    //   const action = this.actions[i]
-    //
-    //   if (
-    //     action.type === 'CAPTURE' &&
-    //     action.owner.id === playerId &&
-    //     !tilesToCapture.includes(action.tile)
-    //   ) {
-    //     tilesToCapture.push(action.tile)
-    //     continue
-    //   }
-    //
-    //   if (action.type === 'CASTLE' && action.owner.id === playerId) {
-    //     for (let j = 0; j < 6; j++) {
-    //       const n = action.tile.neighbors[j]
-    //       if (n && !tilesToCapture.includes(n) && !n.owner) {
-    //         tilesToCapture.push(n)
-    //       }
-    //     }
-    //   }
-    // }
-
-    // Army sending
-    if (
-      this.player &&
-      playerId === this.playerId &&
-      this.selectedArmy &&
-      (!tile.action || tile.action.type !== 'CAPTURE')
-    ) {
-      let direction = null
-
-      for (let i = 0; i < 6; i++) {
-        if (this.selectedArmyTargetTiles[i].includes(tile)) {
-          direction = i
-          break
-        }
-      }
-
-      if (direction !== null) {
-        const targetTiles = this.selectedArmyTargetTiles[direction]
-        for (let i = 0; i < targetTiles.length; i++) {
-          const t = targetTiles[i]
-          if (!t) continue
-
-          // Enemy Mountain
-          if (t.mountain && t.owner && t.owner?.id !== playerId) {
-            break
-          }
-
-          // Owned Building
-          if (t.owner?.id === playerId && t.building) {
-            break
-          }
-
-          // Ally tile
-          if (t.owner?.id && t.owner?.id === this.player.allyId) {
-            break
-          }
-
-          // Enemy structure
-          if (t.owner?.id !== playerId && !t.bedrock) {
-            tilesToCapture.push(t)
-
-            if (t.mountain || t.forest || t.building) {
-              break
-            }
-          }
-        }
-      }
-    }
-
-    // Villages
-    const villageTiles: Tile[] = []
-    for (let i = tilesToCapture.length - 1; i >= 0; i--) {
-      const t: Tile = tilesToCapture[i]
-
-      if (t.village) {
-        villageTiles.push(t)
-      }
-    }
-    while (villageTiles.length > 0) {
-      const t = villageTiles[0]
-      for (let j = 0; j < 6; j++) {
-        const n = t.neighbors[j]
-        if (!n || n.bedrock || tilesToCapture.includes(n)) {
-          continue
-        }
-
-        if (n.owner && n.building) {
-          continue
-        }
-
-        if (n.owner?.id !== playerId && n.owner?.id === t.owner?.id) {
-          tilesToCapture.push(n)
-          if (n.village) {
-            villageTiles.push(n)
-          }
-        }
-      }
-      villageTiles.shift()
-    }
-
-    // Allied tiles
-    if (this.player && this.player.allyId) {
-      for (let i = tilesToCapture.length - 1; i >= 0; i--) {
-        const t = tilesToCapture[i]
-        if (t.owner && t.owner.id === this.player.allyId) {
-          tilesToCapture.splice(i, 1)
-        }
-      }
-    }
-
-    return tilesToCapture
-  }
-  updatePatternPreviews() {
-    const oldTilesWithPatternPreview = this.tilesWithPatternPreview
-    const pattern: { [key: string]: string } = {}
-
-    this.tilesWithPatternPreview = []
-
-    // Actions
-    // for (let i = 0; i < this.actions.length; i++) {
-    //   const action = this.actions[i]
-    //
-    //   if (action.type !== 'CAPTURE' && action.type !== 'CASTLE') continue
-    //
-    //   const tilesToCapture = this.getTilesToCapture(
-    //     action.tile,
-    //     action.owner.id
-    //   )
-    //
-    //   for (let j = 0; j < tilesToCapture.length; j++) {
-    //     const t = tilesToCapture[j]
-    //
-    //     if (this.tilesWithPatternPreview.includes(t)) continue
-    //
-    //     this.tilesWithPatternPreview.push(t)
-    //
-    //     const players = Array.from(this.players.values())
-    //     for (let k = 0; k < players.length; k++) {
-    //       if (players[k].id === action.owner.id) {
-    //         pattern[`${t.axial.x}|${t.axial.z}`] = players[k].getPattern()
-    //         break
-    //       }
-    //     }
-    //   }
-    // }
-
-    // Hovered tile
-    if (this.hoveredTile && this.player && this.player.alive) {
-      const tilesToCapture = this.getTilesToCapture(
-        this.hoveredTile,
-        this.player.id
-      )
-
-      for (let i = 0; i < tilesToCapture.length; i++) {
-        const t = tilesToCapture[i]
-
-        if (this.tilesWithPatternPreview.includes(t)) continue
-
-        this.tilesWithPatternPreview.push(t)
-        pattern[`${t.axial.x}|${t.axial.z}`] = this.player.getPattern()
-      }
-    }
-
-    for (let i = 0; i < oldTilesWithPatternPreview.length; i++) {
-      const t = oldTilesWithPatternPreview[i]
-      if (!this.tilesWithPatternPreview.includes(t)) {
-        t.removePatternPreview()
-      }
-    }
-
-    for (let i = 0; i < this.tilesWithPatternPreview.length; i++) {
-      const t = this.tilesWithPatternPreview[i]
-      if (!oldTilesWithPatternPreview.includes(t)) {
-        t.addPatternPreview(pattern[`${t.axial.x}|${t.axial.z}`])
-      }
-    }
-
-    this.updateBorders()
-  }
   setCameraToAxial(axial: Axial, xOffset: number = 0) {
     if (!this.pixi) return
 
@@ -785,12 +540,6 @@ class Game {
       store.socket.send('request', `create|${receiverId}`)
     }
   }
-  updateBlackOverlays() {
-    const tiles = Array.from(this.tiles)
-    for (let i = tiles.length - 1; i >= 0; i--) {
-      tiles[i][1].updateBlackOverlay()
-    }
-  }
   updateHoveredTile() {
     const newHoveredTile = this.getHoveredTile()
     let changed = false
@@ -822,76 +571,16 @@ class Game {
     }
 
     if (changed) {
-      this.updatePatternPreviews()
+      // this.updatePatternPreviews()
 
-      if (this.selectedArmy) {
-        this.updateArmyTileHighlights()
-      }
-    }
-  }
-  updateArmyTileHighlights() {
-    let direction = null
-    this.clearArmyTileHighlights()
-
-    if (!this.hoveredTile) return
-
-    for (let i = 0; i < 6; i++) {
-      if (this.selectedArmyTargetTiles[i].includes(this.hoveredTile)) {
-        direction = i
-        break
-      }
-    }
-
-    if (direction !== null) {
-      const targetTiles = this.selectedArmyTargetTiles[direction]
-      for (let i = 0; i < targetTiles.length; i++) {
-        const t = targetTiles[i]
-        if (!t || !t.owner || t.owner.id !== this.playerId) continue
-        t.addHoverHexagon()
-        if (t.building) break
-      }
-    }
-  }
-  clearArmyTileHighlights() {
-    for (let i = 0; i < 6; i++) {
-      const armyTiles = this.selectedArmyTargetTiles[i]
-      for (let j = 0; j < armyTiles.length; j++) {
-        armyTiles[j].removeHoverHexagon()
+      if (ArmySendManager.active) {
+        ArmySendManager.onHoveredTileChange(this.hoveredTile)
       }
     }
   }
   surrender() {
     if (store.socket) {
       store.socket.send('surrender')
-    }
-  }
-  sendArmy(tile: Tile) {
-    if (!this.selectedArmy || !store.socket || !this.selectedArmy.building) {
-      return
-    }
-
-    let index = null
-    for (let i = 0; i < 6; i++) {
-      if (this.selectedArmyTargetTiles[i].includes(tile)) {
-        index = i
-        break
-      }
-    }
-
-    if (index !== null && this.selectedArmy.building) {
-      const { x, z } = this.selectedArmy.building.tile.axial
-      store.socket.send('sendArmy', `${x}|${z}|${index}`)
-      SoundManager.play('ARMY_SEND')
-      if (this.armyDragArrow) {
-        this.armyDragArrow.destroy()
-      }
-    }
-
-    this.clearArmyTileHighlights()
-    this.unselectArmy()
-
-    if (this.hoveredTile) {
-      this.hoveredTile.startHover()
     }
   }
   updateStageScale() {
@@ -906,45 +595,6 @@ class Game {
     this.pixi.stage.x = this.camera.x
     this.pixi.stage.y = this.camera.y
   }
-  selectArmy(army: Army) {
-    this.selectedArmy = army
-    this.armySelectedAt = this.clickedAt
-    this.armyDragArrow = new ArmyDragArrow(army.building!.tile)
-
-    const armyTargetTiles: Tile[][] = []
-    for (let i = 0; i < 6; i++) {
-      armyTargetTiles[i] = []
-
-      const nextTile = army.building!.tile.neighbors[i]
-      if (nextTile) {
-        armyTargetTiles[i].push(nextTile)
-      }
-
-      for (let j = 1; j < store.gsConfig!.ARMY_HP; j++) {
-        const lastTile = armyTargetTiles[i][armyTargetTiles[i].length - 1]
-        const nextTile = lastTile.neighbors[i]
-        if (!nextTile) break
-
-        armyTargetTiles[i].push(nextTile)
-      }
-    }
-
-    // army.leaveBuilding()
-    this.selectedArmyTargetTiles = armyTargetTiles
-  }
-  unselectArmy() {
-    if (this.armyDragArrow) {
-      this.armyDragArrow.destroy()
-    }
-
-    this.selectedArmy = null
-    this.updatePatternPreviews()
-  }
-  sendGoldToAlly() {
-    if (store.socket) {
-      store.socket.send('sendGold')
-    }
-  }
   calculateZoomScale(zoomDirection: number) {
     const scale = this.scale + zoomDirection * this.scale * ZOOM_SPEED
     const roundedScale = roundToDecimals(scale, 2)
@@ -954,59 +604,44 @@ class Game {
     }
     return this.scale
   }
-  updateIncomeBar() {
-    const BAR_WIDTH = 200
-    const BAR_HEIGHT = 36
-
-    const { incomeAt, incomeStartedAt } = this
-    const element = document.getElementById('income-bar-fill')
-    const canvas = element as HTMLCanvasElement | null
-
-    if (!canvas) return
-
-    const ctx = canvas.getContext('2d')
-
-    if (!incomeAt || !incomeStartedAt || !ctx) return
-
-    ctx.canvas.width = BAR_WIDTH
-    ctx.canvas.height = BAR_HEIGHT
-
-    ctx.clearRect(0, 0, BAR_WIDTH, BAR_HEIGHT)
-
-    const now = Date.now() - (this.ping || 0)
-    const total = incomeAt - incomeStartedAt
-    const onePercent = total / 100
-    const current = now - incomeStartedAt
-
-    let fraction = roundToDecimals(current / onePercent / 100, 2)
-    if (fraction < 0) {
-      fraction = 0
-    } else if (fraction > 1) {
-      fraction = 1
-    }
-
-    ctx.fillStyle = COLOR.GREY_100
-    ctx.fillRect(0, 0, BAR_WIDTH * fraction, BAR_HEIGHT)
-  }
   showNotEnoughGold(tile: Tile) {
     if (!this.player || !store.gsConfig) return
 
-    const { RECRUIT_COST, CAMP_COST, TOWER_COST, CASTLE_COST } = store.gsConfig
+    const {
+      RECRUIT_ARMY_COST,
+      BUILD_CAMP_COST,
+      BUILD_TOWER_COST,
+      BUILD_CASTLE_COST,
+    } = store.gsConfig
 
     const actionType = tile.getActionType({ ignoreGold: true })
     if (
       !actionType ||
-      // (actionType === 'CAPTURE' && this.player.gold >= tile.captureCost()) ||
-      (actionType === 'TOWER' && this.player.gold >= TOWER_COST) ||
-      (actionType === 'CAMP' && this.player.gold >= CAMP_COST) ||
-      (actionType === 'CASTLE' && this.player.gold >= CASTLE_COST) ||
-      (actionType === 'RECRUIT' && this.player.gold >= RECRUIT_COST)
+      (actionType === 'BUILD_TOWER' && this.player.gold >= BUILD_TOWER_COST) ||
+      (actionType === 'BUILD_CAMP' && this.player.gold >= BUILD_CAMP_COST) ||
+      (actionType === 'BUILD_CASTLE' &&
+        this.player.gold >= BUILD_CASTLE_COST) ||
+      (actionType === 'RECRUIT_ARMY' && this.player.gold >= RECRUIT_ARMY_COST)
     ) {
       return
     }
 
     this.notification = `${Date.now()}|Not enough gold`
     SoundManager.play('ACTION_FAILURE')
+  }
+  createAction(tile: Tile, actionType: ActionType) {
+    if (!store.socket || !this.player) {
+      console.warn('WARN: Cannot create Action.')
+      return
+    }
+
+    const action = new Action(uuid(), actionType, tile, this.player)
+    this.actions.push(action)
+
+    const { x, z } = tile.axial
+    store.socket.send('action', `${action.id}|${x}|${z}|${actionType}`)
+
+    tile.removeHoverHexagon()
   }
 }
 

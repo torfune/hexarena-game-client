@@ -1,18 +1,19 @@
 import Unit from './Unit'
-import getPixelPosition from '../../functions/getPixelPosition'
-import getUniqueRandomizedPositions from '../../functions/getUniqueRandomizedPositions'
-import store from '../../store'
-import Tile from '../Tile'
-import Player from '../Player'
+import getPixelPosition from '../functions/getPixelPosition'
+import getUniqueRandomizedPositions from '../functions/getUniqueRandomizedPositions'
+import store from '../store'
+import Tile from './Tile'
+import Player from './Player'
 import {
   UNIT_COUNT,
   UNIT_RADIUS,
   UNIT_POSITION_OFFSET,
   UNIT_MOVEMENT_SPEED,
   UNIT_DOOR_OFFSET,
-} from '../../../constants/constants-game'
+} from '../../constants/constants-game'
 import ArmyBar from './ArmyIcon'
-import Building from '../Building'
+import Building from './Building'
+import ArmySendManager from './ArmySendManager'
 
 class Army {
   readonly id: string
@@ -96,7 +97,11 @@ class Army {
   }
 
   setTile(newTile: Tile | null) {
-    console.log(`ARMY set TILE: `, newTile?.axial || null)
+    // console.log(`ARMY set TILE: `, newTile?.axial || null)
+
+    if (ArmySendManager.active && ArmySendManager.army === this) {
+      ArmySendManager.unselectArmy()
+    }
 
     if (this.building) {
       this.building.setArmy(null)
@@ -127,7 +132,11 @@ class Army {
   }
 
   setBuilding(newBuilding: Building | null) {
-    console.log(`ARMY set BUILDING: `, newBuilding?.type || null)
+    // console.log(`ARMY set BUILDING: `, newBuilding?.type || null)
+
+    if (ArmySendManager.active && ArmySendManager.army === this) {
+      ArmySendManager.unselectArmy()
+    }
 
     if (this.building) {
       this.building.setArmy(null)
@@ -158,26 +167,6 @@ class Army {
     this.building = newBuilding
     this.building.setArmy(this)
   }
-
-  // leaveBuilding() {
-  //   const { gsConfig, game } = store
-  //   if (!gsConfig || !game) return
-  //
-  //   this.isMoving = true
-  //   this.animationFraction = 0
-  //
-  //   const position = getPixelPosition(this.tile.axial)
-  //   const randomizedPositions = getUniqueRandomizedPositions(
-  //     UNIT_COUNT,
-  //     UNIT_RADIUS,
-  //     position,
-  //     UNIT_POSITION_OFFSET
-  //   )
-  //
-  //   for (let i = 0; i < UNIT_COUNT; i++) {
-  //     this.units[i].moveOn(randomizedPositions[i].x, randomizedPositions[i].y)
-  //   }
-  // }
 
   destroy() {
     this.isDestroying = true

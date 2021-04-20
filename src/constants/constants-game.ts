@@ -3,7 +3,7 @@ import isSpectating from '../utils/isSpectating'
 
 // TILE
 export const TILE_RADIUS = 73.8
-export const FOG_Z_INDEX = 5000
+export const FOG_Z_INDEX = 10000
 export const ATTENTION_NOTIFICATION_Z_INDEX = 4000
 export const ATTENTION_NOTIFICATION_RADIUS = 180
 export const ATTENTION_NOTIFICATION_ALPHA = 0.5
@@ -83,7 +83,7 @@ export const UNIT_MAX_DELAY = 0.4
 
 // COLORS
 export const BORDER_COLOR = '#333'
-export const MOUNTAIN_BACKGROUND = '#eee'
+export const MOUNTAIN_BACKGROUND = '#eaeaea'
 export const BEDROCK_BACKGROUND = '#5D6D7C'
 export const BEDROCK_BORDER = '#333'
 
@@ -99,4 +99,6 @@ export const DEBUG_COMMANDS = [
   ['5', 'add_bot'],
   ['o', 'remove_hp'],
   ['p', 'add_hp'],
+  ['k', 'raid_village'],
+  ['l', 'add_village_level'],
 ]

@@ -2,12 +2,12 @@ import styled, { css } from 'styled-components'
 import ActionPreview from './ActionPreview'
 import { observer } from 'mobx-react-lite'
 import PlayerPreview from './PlayerPreview'
-import VillagePreview from './VillagePreview'
 import store from '../../../core/store'
 import { Pixel } from '../../../types/coordinates'
 import React from 'react'
 import StructurePreview from './StructurePreview'
 import { ActionType } from '../../../core/classes/Action'
+import ArmySendManager from '../../../core/classes/ArmySendManager'
 
 const ContainerCSS = css`
   position: absolute;
@@ -49,7 +49,7 @@ const HoverPreview = () => {
   let actionType:
     | ActionType
     | 'SEND_ARMY'
-    | 'REPAIR'
+    | 'REPAIR_BUILDING'
     | null = hoveredTile.getActionType({ ignoreGold: true })
   const structure = hoveredTile.getStructureName()
 
@@ -61,16 +61,16 @@ const HoverPreview = () => {
     actionType = 'SEND_ARMY'
   }
 
-  if (store.game.selectedArmy) {
+  if (ArmySendManager.active) {
     actionType = null
   }
 
   if (
-    actionType === 'RECRUIT' &&
+    actionType === 'RECRUIT_ARMY' &&
     hoveredTile.building &&
     hoveredTile.building.hp < store.gsConfig.HP[hoveredTile.building.type]
   ) {
-    actionType = 'REPAIR'
+    actionType = 'REPAIR_BUILDING'
   }
 
   if (!actionType) {
@@ -78,7 +78,7 @@ const HoverPreview = () => {
       // const { VILLAGE_BASE_INCOME, HOUSE_INCOME } = store.gsConfig
       // const villageIncome =
       //   VILLAGE_BASE_INCOME +
-      //   (hoveredTile.village.housesCount - 3) * HOUSE_INCOME
+      //   (hoveredTile.village.level - 3) * HOUSE_INCOME
       // return (
       //   <Container cursor={cursor}>
       //     <VillagePreview villageIncome={villageIncome} />

@@ -1,6 +1,11 @@
 import Primitive from '../../types/Primitive'
 
-const convertPrimitive = (payload: string, type: string): Primitive => {
+export type ConvertPrimitiveType = 'string' | 'number' | 'boolean'
+
+const convertPrimitive = (
+  payload: string,
+  type: ConvertPrimitiveType
+): Primitive => {
   // null / false
   if (payload === 'null' || payload === 'undefined' || payload === '') {
     if (type === 'boolean') {

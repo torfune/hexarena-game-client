@@ -89,9 +89,8 @@ class Building {
     if (!this.hpBarImage) {
       this.hpBarImage = new Sprite(this.getHpBarTexture())
       this.hpBarImage.anchor.set(0.5, 0)
-      // this.hpBarImage.y = this.getHpBarOffset() * -1 * 0.5
+      this.hpBarImage.y = -this.getHpBarOffset()
       this.hpBarImage.alpha = 0
-      this.hpBarImage.scale.set(0)
       this.image.addChild(this.hpBarImage)
     } else {
       this.hpBarImage.texture = this.getHpBarTexture()
@@ -125,10 +124,8 @@ class Building {
       this.hpBarImage,
       (image, fraction) => {
         image.alpha = fraction
-        image.scale.set(fraction)
-        image.y = -this.getHpBarOffset() * fraction
       },
-      { speed: 0.05, initialFraction }
+      { initialFraction, speed: 0.2 }
     )
 
     this.hpBarVisible = true
@@ -150,10 +147,8 @@ class Building {
       (image, fraction) => {
         fraction = 1 - fraction
         image.alpha = fraction
-        image.scale.set(fraction)
-        image.y = -this.getHpBarOffset() * fraction
       },
-      { speed: 0.05, initialFraction }
+      { initialFraction, speed: 0.1 }
     )
 
     this.hpBarVisible = false

@@ -1,9 +1,9 @@
 import convertObject from './convertObject'
-import convert from './convert'
+import convert, { ConvertPrimitiveType } from './convert'
 
 const convertArray = (
   payload: string,
-  type: string | { [key: string]: string }
+  type: ConvertPrimitiveType | { [key: string]: ConvertPrimitiveType }
 ) => {
   const items = payload.split('><')
   const array = []

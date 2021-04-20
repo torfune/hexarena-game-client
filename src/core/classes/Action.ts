@@ -15,7 +15,12 @@ import getImageZIndex from '../functions/getImageZIndex'
 
 const ACTION_RADIUS = 50
 
-export type ActionType = 'CAPTURE' | 'RECRUIT' | 'CAMP' | 'TOWER' | 'CASTLE'
+export type ActionType =
+  | 'RECRUIT_ARMY'
+  | 'BUILD_CAMP'
+  | 'BUILD_TOWER'
+  | 'BUILD_CASTLE'
+  | 'REBUILD_VILLAGE'
 export type ActionStatus = 'PENDING' | 'RUNNING' | 'FINISHED'
 
 interface Props {
@@ -157,7 +162,7 @@ class Action {
 
     this.tile.action = null
 
-    if (this.type === 'RECRUIT' && this.owner.id === store.game.playerId) {
+    if (this.type === 'RECRUIT_ARMY' && this.owner.id === store.game.playerId) {
       SoundManager.play('ARMY_CREATE')
     }
 
@@ -180,9 +185,7 @@ class Action {
   }
   getIconTexture() {
     switch (this.type) {
-      case 'CAPTURE':
-        return getTexture('action-icon-attack')
-      case 'RECRUIT':
+      case 'RECRUIT_ARMY':
         if (
           store.gsConfig &&
           this.tile.building &&
@@ -192,12 +195,16 @@ class Action {
         } else {
           return getTexture('action-icon-recruit')
         }
-      case 'CAMP':
+      case 'BUILD_CAMP':
         return getTexture('action-icon-camp')
-      case 'TOWER':
+      case 'BUILD_TOWER':
         return getTexture('action-icon-tower')
-      case 'CASTLE':
+      case 'BUILD_CASTLE':
         return getTexture('action-icon-castle')
+      case 'REBUILD_VILLAGE':
+        return getTexture('action-icon-castle')
+      default:
+        throw Error(`Unsupported action type: ${this.type}`)
     }
   }
 

@@ -19,7 +19,7 @@ import Player from './Player'
 import Animation from './Animation'
 import TileImage from '../../types/TileImage'
 import { Axial } from '../../types/coordinates'
-import Action from './Action'
+import Action, { ActionType } from './Action'
 import TileImageArray from '../../types/TileImageArray'
 import { Sprite } from 'pixi.js-legacy'
 import getRotationBySide from '../functions/getRotationBySide'
@@ -33,6 +33,7 @@ import Building from './Building'
 import isSpectating from '../../utils/isSpectating'
 import * as PIXI from 'pixi.js'
 import { Graphics } from 'pixi.js'
+import ArmySendManager from './ArmySendManager'
 
 class Tile {
   readonly id: string
@@ -70,111 +71,6 @@ class Tile {
     }
   }
 
-  // setProp(key: keyof Props, value: Primitive) {
-  //   if (this.props[key].current === value || !store.game) return
-  //
-  //   this.props[key].previous = this.props[key].current
-  //   this.props[key].current = value
-  //
-  //   switch (key) {
-  //     case 'ownerId': {
-  //       this.updateOwner()
-  //
-  //       const { playerId } = store.game
-  //       const { current, previous } = this.props.ownerId
-  //       if (previous === playerId && current !== playerId) {
-  //         SoundManager.play('TILE_LOSE')
-  //       }
-  //       break
-  //     }
-  //
-  //     case 'camp': {
-  //       if (this.camp && !this.image.camp) {
-  //         const camp = this.addImage('camp')
-  //         camp.anchor.set(0.5, 1)
-  //         camp.y += IMAGE_OFFSET_Y.CAMP
-  //       } else if (!this.camp && this.image.camp) {
-  //         this.removeImage('camp')
-  //       }
-  //       break
-  //     }
-  //
-  //     case 'buildingType': {
-  //       if (value === 'CAPITAL') {
-  //         if (!this.image.capital) {
-  //           const capital = this.addImage('capital')
-  //           capital.y += IMAGE_OFFSET_Y.CAPITAL
-  //         }
-  //       } else if (value === 'CASTLE') {
-  //         if (!this.image.castle) {
-  //           this.removeImage('tower')
-  //           const castle = this.addImage('castle')
-  //           castle.anchor.set(0.5, 1)
-  //           castle.y += IMAGE_OFFSET_Y.CASTLE
-  //         }
-  //       } else if (value === 'TOWER') {
-  //         if (!this.image.tower) {
-  //           const tower = this.addImage('tower')
-  //           tower.anchor.set(0.5, 1)
-  //           tower.y += IMAGE_OFFSET_Y.TOWER
-  //         }
-  //       } else if (value === null) {
-  //         this.removeImage('capital')
-  //         this.removeImage('tower')
-  //         this.removeImage('castle')
-  //       }
-  //       this.updateHitpoints()
-  //       break
-  //     }
-  //
-  //     case 'buildingHp': {
-  //       this.updateHitpoints()
-  //       if (
-  //         this.action &&
-  //         this.action.type === 'RECRUIT' &&
-  //         this.action.status !== 'FINISHED' &&
-  //         this.building &&
-  //         this.building.type !== 'TOWER'
-  //       ) {
-  //         this.action.icon.texture = this.action.getIconTexture()
-  //       }
-  //       break
-  //     }
-  //   }
-  //
-  //   // Sounds
-  //   if (
-  //     this.ownerId === store.game.playerId ||
-  //     (isSpectating() && Date.now() - this.createdAt >= 500)
-  //   ) {
-  //     if (key === 'camp' && this.camp) {
-  //       SoundManager.play('CAMP_CREATE')
-  //     } else if (key === 'buildingType') {
-  //       if (value === 'TOWER') {
-  //         SoundManager.play('TOWER_CREATE')
-  //       } else if (value === 'CASTLE') {
-  //         SoundManager.play('CASTLE_CREATE')
-  //       }
-  //     }
-  //   }
-  // }
-
-  // updateImage(key: keyof TileImage) {
-  //   if (this.props[key].current && !this.image[key]) {
-  //     this.addImage(key)
-  //   } else {
-  //     this.removeImage(key)
-  //   }
-  // }
-
-  updateBlackOverlay() {
-    // if (this.mountain && this.owner) {
-    //   this.image.blackOverlay.visible = true
-    // } else {
-    //   this.image.blackOverlay.visible = false
-    // }
-  }
-
   startHover() {
     if (
       !store.game ||
@@ -189,7 +85,7 @@ class Tile {
     }
 
     if (
-      (this.getActionType() && !store.game.selectedArmy) ||
+      (this.getActionType() && !ArmySendManager.active) ||
       (this.building && this.building.army)
     ) {
       this.addHoverHexagon()
@@ -205,7 +101,7 @@ class Tile {
       building.hideHitpoints()
     }
 
-    if (game.selectedArmy?.tile !== this) {
+    if (!ArmySendManager.active) {
       this.removeHoverHexagon()
     }
   }
@@ -236,7 +132,7 @@ class Tile {
 
     const animation = getImageAnimation(this.image['overlay'])
     let initialFraction: number | undefined = undefined
-    if (animation && animation instanceof Animation) {
+    if (animation) {
       initialFraction = 1 - animation.fraction
       animation.destroy()
     }
@@ -249,7 +145,7 @@ class Tile {
       },
       {
         initialFraction,
-        speed: 0.1,
+        speed: 0.25,
       }
     )
   }
@@ -262,7 +158,7 @@ class Tile {
 
     const animation = getImageAnimation(image)
     let initialFraction
-    if (animation && animation instanceof Animation) {
+    if (animation) {
       initialFraction = 1 - animation.fraction
       animation.destroy()
     }
@@ -287,8 +183,6 @@ class Tile {
   }
 
   addImage(imageName: keyof TileImage, animate = true) {
-    // return new PIXI.Sprite()
-
     if (Date.now() - this.createdAt < 500) {
       animate = false
     }
@@ -546,21 +440,13 @@ class Tile {
       }
 
       // Preview -> Neutral
-      if (
-        store.game.tilesWithPatternPreview.includes(this) &&
-        !n.owner &&
-        !store.game.tilesWithPatternPreview.includes(n)
-      ) {
+      if (this.hasPatternPreview() && !n.owner && !n.hasPatternPreview()) {
         showBorder = true
         patternPreview = true
       }
 
       // Preview -> Owned
-      if (
-        store.game.tilesWithPatternPreview.includes(this) &&
-        n.owner &&
-        !store.game.tilesWithPatternPreview.includes(n)
-      ) {
+      if (this.hasPatternPreview() && n.owner && !n.hasPatternPreview()) {
         showBorder = true
         patternPreview = true
       }
@@ -607,21 +493,29 @@ class Tile {
   }
 
   addPatternPreview(pattern: string) {
+    if (this.hasPatternPreview()) {
+      console.warn('WARN: Cannot add pattern preview.')
+      return
+    }
+
     if (this.image.pattern) {
       this.image.pattern.visible = false
     }
 
     const pixel = getPixelPosition(this.axial)
-
     this.image['pattern-preview'] = createImage('pattern')
     this.image['pattern-preview'].x = pixel.x
     this.image['pattern-preview'].y = pixel.y
     this.image['pattern-preview'].tint = hex(pattern)
     this.image['pattern-preview'].alpha = 0.3
+
+    this.updateNeighborsBorders()
+    this.updateBorders()
   }
 
   removePatternPreview() {
-    if (!this.image['pattern-preview'] || !store.game || !store.game.pixi) {
+    if (!this.hasPatternPreview() || !store.game || !store.game.pixi) {
+      console.warn('WARN: Cannot remove pattern preview.')
       return
     }
 
@@ -629,7 +523,11 @@ class Tile {
       this.image.pattern.visible = true
     }
 
-    store.game.pixi.stage.removeChild(this.image['pattern-preview'])
+    store.game.pixi.stage.removeChild(this.image['pattern-preview']!)
+    this.image['pattern-preview'] = undefined
+
+    this.updateNeighborsBorders()
+    this.updateBorders()
   }
 
   getStructureName() {
@@ -657,7 +555,7 @@ class Tile {
     return 'Plains'
   }
 
-  getActionType(options?: { ignoreGold: boolean }) {
+  getActionType(options?: { ignoreGold: boolean }): ActionType | null {
     const ignoreGold = options ? options.ignoreGold : false
 
     if (!store.game || !store.gsConfig || this.action || !store.game.player) {
@@ -665,10 +563,10 @@ class Tile {
     }
 
     const {
-      RECRUIT_COST,
-      CAMP_COST,
-      TOWER_COST,
-      CASTLE_COST,
+      RECRUIT_ARMY_COST,
+      BUILD_CAMP_COST,
+      BUILD_TOWER_COST,
+      BUILD_CASTLE_COST,
       HP,
     } = store.gsConfig
 
@@ -682,68 +580,54 @@ class Tile {
       }
     }
 
-    // CAPTURE
-    // if (
-    //   isNeighbor &&
-    //   !this.owner &&
-    //   (store.game.player.gold >= this.captureCost() || ignoreGold)
-    // ) {
-    //   return 'CAPTURE'
-    // }
-
     if (this.owner?.id !== store.game.playerId) return null
 
     // CAMP
     const forestGold = this.forest ? this.forest.treeCount : 0
     if (
       (this.isEmpty() || this.forest) &&
-      (store.game.player.gold >= CAMP_COST - forestGold || ignoreGold)
+      (store.game.player.gold >= BUILD_CAMP_COST - forestGold || ignoreGold)
     ) {
-      return 'CAMP'
+      return 'BUILD_CAMP'
     }
 
     // TOWER
     if (
       this.building &&
       this.building.type === 'CAMP' &&
-      (store.game.player.gold >= TOWER_COST || ignoreGold)
+      (store.game.player.gold >= BUILD_TOWER_COST || ignoreGold)
     ) {
-      return 'TOWER'
+      return 'BUILD_TOWER'
     }
 
     // RECRUIT
     if (
       this.building &&
-      (store.game.player.gold >= RECRUIT_COST || ignoreGold) &&
+      (store.game.player.gold >= RECRUIT_ARMY_COST || ignoreGold) &&
       (this.building.type !== 'TOWER' || this.building.hp !== HP.TOWER)
     ) {
-      return 'RECRUIT'
+      return 'RECRUIT_ARMY'
     }
 
     // CASTLE
     if (
       this.building &&
       this.building.type === 'TOWER' &&
-      (store.game.player.gold >= CASTLE_COST || ignoreGold)
+      (store.game.player.gold >= BUILD_CASTLE_COST || ignoreGold)
     ) {
-      return 'CASTLE'
+      return 'BUILD_CASTLE'
+    }
+
+    // REBUILD_VILLAGE
+    if (
+      this.village &&
+      this.village.raided &&
+      (store.game.player.gold >= this.village.getRebuildCost() || ignoreGold)
+    ) {
+      return 'REBUILD_VILLAGE'
     }
 
     return null
-  }
-
-  captureCost() {
-    if (!store.gsConfig) return 1
-
-    const { CAPTURE_COST } = store.gsConfig
-
-    if (this.forest) {
-      return CAPTURE_COST.FOREST
-    } else if (this.mountain) {
-      return CAPTURE_COST.MOUNTAIN
-    } else {
-      return CAPTURE_COST.DEFAULT
-    }
   }
 
   setBuilding(newBuilding: Building) {
@@ -790,6 +674,29 @@ class Tile {
     // const circle = new PIXI.Sprite(texture)
 
     // app.stage.addChild(circle)
+  }
+
+  hasPatternPreview() {
+    return !!this.image['pattern-preview']
+  }
+
+  getNeighbor(direction: number): Tile | null {
+    return this.neighbors[direction] || null
+  }
+
+  ownedByThisPlayer(): boolean {
+    if (!store.game || !store.game.player || !this.owner) return false
+
+    return this.owner.id === store.game.player.id
+  }
+
+  updateNeighborsBorders() {
+    for (let i = 0; i < 6; i++) {
+      const n = this.getNeighbor(i)
+      if (n) {
+        n.updateBorders()
+      }
+    }
   }
 }
 
