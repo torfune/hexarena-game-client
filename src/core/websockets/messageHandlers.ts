@@ -311,7 +311,7 @@ const messageHandlers = {
     }
   },
   players: (payload: string) => {
-    if (!store.game) return
+    if (!store.game || store.game.status === 'finished') return
 
     const parsed = convertArray(payload, {
       id: 'string',
@@ -358,9 +358,6 @@ const messageHandlers = {
       // Update
       updateProps(player, parsed[i])
     }
-
-    // Side effects
-    // store.game.updatePatternPreviews()
   },
   forests: (payload: string) => {
     if (!store.game) return
@@ -533,6 +530,8 @@ const messageHandlers = {
 
   // Clean-up
   destroyVillages: (payload: string) => {
+    if (store.game?.status === 'finished') return
+
     const villagesIds = payload.split('><')
     for (let i = 0; i < villagesIds.length; i++) {
       const village = store.game?.villages.get(villagesIds[i])
@@ -542,6 +541,8 @@ const messageHandlers = {
     }
   },
   destroyArmies: (payload: string) => {
+    if (store.game?.status === 'finished') return
+
     const armiesIds = payload.split('><')
     for (let i = 0; i < armiesIds.length; i++) {
       const army = store.game?.armies.get(armiesIds[i])
@@ -551,6 +552,8 @@ const messageHandlers = {
     }
   },
   destroyForests: (payload: string) => {
+    if (store.game?.status === 'finished') return
+
     const forestsIds = payload.split('><')
     for (let i = 0; i < forestsIds.length; i++) {
       const forest = store.game?.forests.get(forestsIds[i])
@@ -560,6 +563,8 @@ const messageHandlers = {
     }
   },
   destroyActions: (payload: string) => {
+    if (store.game?.status === 'finished') return
+
     const actionsIds = payload.split('><')
     for (let i = 0; i < actionsIds.length; i++) {
       const action = store.game?.actions.find(
@@ -571,6 +576,8 @@ const messageHandlers = {
     }
   },
   destroyBuildings: (payload: string) => {
+    if (store.game?.status === 'finished') return
+
     const buildingsIds = payload.split('><')
     for (let i = 0; i < buildingsIds.length; i++) {
       const building = store.game?.buildings.get(buildingsIds[i])
