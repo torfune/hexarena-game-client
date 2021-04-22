@@ -178,13 +178,7 @@ class Game {
     }
   }
   update(delta: number) {
-    if (
-      !this.camera ||
-      !this.pixi ||
-      store.error ||
-      this.status === 'finished' ||
-      (this.player && (!this.player.alive || this.player.surrendered))
-    ) {
+    if (!this.camera || !this.pixi || store.error) {
       return
     }
 
@@ -490,6 +484,9 @@ class Game {
     for (let i = tiles.length - 1; i >= 0; i--) {
       tiles[i][1].updateBorders()
     }
+    // for (let i = 0; i < tiles.length; i++) {
+    //   tiles[i][1].updateBorders()
+    // }
   }
   getHoveredTile() {
     if (!this.cursor || !this.camera) return null

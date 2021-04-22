@@ -34,6 +34,10 @@ import isSpectating from '../../utils/isSpectating'
 import * as PIXI from 'pixi.js'
 import { Graphics } from 'pixi.js'
 import ArmySendManager from './ArmySendManager'
+import colorFilter from '../../utils/colorFilter'
+
+const PATTERN_ALPHA = 1
+const PATTERN_PREVIEW_ALPHA = 0.2
 
 class Tile {
   readonly id: string
@@ -53,6 +57,7 @@ class Tile {
     border: [],
     fog: [],
   }
+  patternPreviewColor: string | null = null
 
   constructor(id: string, axial: Axial, mountain: boolean, bedrock: boolean) {
     this.id = id
@@ -218,6 +223,10 @@ class Tile {
     image.y = pixel.y
     this.image[imageName] = image
 
+    if (imageName === 'pattern') {
+      image.alpha = PATTERN_ALPHA
+    }
+
     if (animate) {
       image.alpha = 0
       image.scale.set(0)
@@ -225,6 +234,9 @@ class Tile {
         image,
         (image, fraction) => {
           image.alpha = fraction
+          if (imageName === 'pattern') {
+            image.alpha = fraction * PATTERN_ALPHA
+          }
           image.scale.set(fraction)
         },
         {
@@ -269,10 +281,6 @@ class Tile {
   setOwner(newOwner: Player | null) {
     if (!store.game) return
 
-    // const newOwner = this.ownerId
-    //   ? store.game.players.get(this.ownerId) || null
-    //   : null
-
     if (newOwner) {
       if (this.image.pattern) {
         this.removeImage('pattern')
@@ -284,6 +292,7 @@ class Tile {
 
       const image = this.addImage('pattern', false)
       image.tint = hex(newOwner.getPattern())
+      // image.tint = hex(colorFilter(newOwner.getPattern(), 0.75))
 
       if (Date.now() - this.createdAt > 500) {
         image.alpha = 0
@@ -292,7 +301,7 @@ class Tile {
           new Animation(
             image,
             (image, fraction) => {
-              image.alpha = fraction
+              image.alpha = fraction * PATTERN_ALPHA
               image.scale.set(fraction)
             },
             {
@@ -335,10 +344,6 @@ class Tile {
         }
       }
     }
-
-    // if (store.game.selectedArmyTile === this) {
-    //   this.unselectArmy()
-    // }
 
     if (
       !store.game.spawnTile &&
@@ -393,62 +398,66 @@ class Tile {
 
       let showBorder = false
       let patternPreview = false
-      let borderTint = BORDER_COLOR
+      let borderTint: string | null = null
 
       // Bedrock -> !Bedrock
       if (this.bedrock && !n.bedrock) {
         showBorder = true
-        borderTint = BEDROCK_BORDER
+        // borderTint = BEDROCK_BORDER
       }
 
       // !Bedrock -> Bedrock
       if (!this.bedrock && n.bedrock) {
         showBorder = true
-        borderTint = BEDROCK_BORDER
+        // borderTint = BEDROCK_BORDER
       }
 
-      // // Mountain -> !Mountain
-      // if (this.mountain && !n.mountain) {
-      //   showBorder = true
-      //   borderTint = BEDROCK_BORDER
-      // }
-      //
-      // // !Mountain -> Mountain
-      // if (!this.mountain && n.mountain) {
-      //   showBorder = true
-      //   borderTint = BEDROCK_BORDER
-      // }
-
       // Owned -> Neutral
-      if (this.owner && !n.owner) {
+      if (this.owner && this.owner.alive && !n.owner) {
         showBorder = true
+        borderTint = this.owner.pattern
       }
 
       // Neutral -> Owned
-      if (!this.owner && n.owner) {
+      if (!this.owner && n.owner && n.owner.alive) {
         showBorder = true
+        borderTint = n.owner.pattern
       }
 
       // Owned -> Owned
-      if (
-        this.owner &&
-        n.owner &&
-        this.owner.id !== n.owner.id &&
-        this.owner.allyId !== n.owner.id
-      ) {
+      if (this.owner && n.owner && this.owner.id !== n.owner.id) {
         showBorder = true
+
+        if (this.owner.tilesCount > n.owner.tilesCount && this.owner.alive) {
+          borderTint = this.owner.pattern
+        } else if (n.owner.alive) {
+          borderTint = n.owner.pattern
+        }
       }
 
       // Preview -> Neutral
       if (this.hasPatternPreview() && !n.owner && !n.hasPatternPreview()) {
         showBorder = true
         patternPreview = true
+
+        if (this.patternPreviewColor) {
+          borderTint = this.patternPreviewColor
+        }
       }
 
       // Preview -> Owned
       if (this.hasPatternPreview() && n.owner && !n.hasPatternPreview()) {
         showBorder = true
         patternPreview = true
+
+        if (this.patternPreviewColor) {
+          borderTint = this.patternPreviewColor
+        }
+      }
+
+      // Darken the border color
+      if (borderTint) {
+        borderTint = colorFilter(borderTint, -0.5)
       }
 
       const image = this.imageSet.border[i]
@@ -459,7 +468,7 @@ class Tile {
         newImage.x = pixel.x
         newImage.y = pixel.y
         newImage.rotation = getRotationBySide(i)
-        newImage.tint = hex(borderTint)
+        newImage.tint = hex(borderTint || BEDROCK_BORDER)
 
         if (!patternPreview && now - this.createdAt > 500) {
           newImage.alpha = 0
@@ -476,6 +485,8 @@ class Tile {
         }
 
         this.imageSet.border[i] = newImage
+      } else if (showBorder && image) {
+        image.tint = hex(borderTint || BEDROCK_BORDER)
       } else if (!showBorder && image) {
         destroyImage(image)
         this.imageSet.border[i] = null
@@ -507,8 +518,9 @@ class Tile {
     this.image['pattern-preview'].x = pixel.x
     this.image['pattern-preview'].y = pixel.y
     this.image['pattern-preview'].tint = hex(pattern)
-    this.image['pattern-preview'].alpha = 0.3
+    this.image['pattern-preview'].alpha = PATTERN_PREVIEW_ALPHA
 
+    this.patternPreviewColor = pattern
     this.updateNeighborsBorders()
     this.updateBorders()
   }
@@ -526,6 +538,7 @@ class Tile {
     store.game.pixi.stage.removeChild(this.image['pattern-preview']!)
     this.image['pattern-preview'] = undefined
 
+    this.patternPreviewColor = null
     this.updateNeighborsBorders()
     this.updateBorders()
   }

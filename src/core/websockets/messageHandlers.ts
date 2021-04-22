@@ -250,6 +250,7 @@ const messageHandlers = {
     if (sound) {
       SoundManager.play(sound)
     }
+
     if (!store.game.camera && store.game.spawnTile) {
       if (isSpectating()) {
         store.game.setCameraToAxial({ x: 0, z: 0 })
@@ -258,6 +259,7 @@ const messageHandlers = {
       }
       store.showLoadingCover = false
     }
+
     store.game.updateBorders()
   },
   villages: (payload: string) => {
