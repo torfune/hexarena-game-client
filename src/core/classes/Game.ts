@@ -37,6 +37,7 @@ import * as PIXI from 'pixi.js'
 import hex from '../functions/hex'
 import getImageZIndex from '../functions/getImageZIndex'
 import BuildingsConnection from '../../types/BuildingsConnection'
+import findBuildingsConnection from '../functions/findBuildingsConnection'
 
 class Game {
   id: string
@@ -645,14 +646,8 @@ class Game {
   updateBuildingsConnections() {
     if (!this.pixi) return
 
-    // Clear existing Connections
-    for (let i = 0; i < this.buildingsConnections.length; i++) {
-      const { line } = this.buildingsConnections[i]
-      this.pixi.stage.removeChild(line)
-    }
-
     // Prepare new Connections
-    const connections: Building[][] = []
+    const newBuildingsConnections: BuildingsConnection[] = []
     for (const building of Array.from(this.buildings.values())) {
       const { tile } = building
 
@@ -664,17 +659,26 @@ class Game {
 
         for (let j = 0; j < store.gsConfig!.ARMY_HP; j++) {
           if (currentTile.building) {
-            let connectionExists = false
-            for (const connection of connections) {
-              if (
-                connection.includes(building) &&
-                connection.includes(currentTile.building)
-              ) {
-                connectionExists = true
-              }
-            }
+            let connectionExists = !!findBuildingsConnection(
+              newBuildingsConnections,
+              building,
+              currentTile.building
+            )
             if (!connectionExists) {
-              connections.push([building, currentTile.building])
+              const pixelA = getPixelPosition(building.tile.axial)
+              const pixelB = getPixelPosition(currentTile.building.tile.axial)
+
+              const line = new PIXI.Graphics()
+                .lineStyle(4, hex('#000'))
+                .moveTo(pixelA.x, pixelA.y)
+                .lineTo(pixelB.x, pixelB.y)
+
+              line.zIndex = getImageZIndex('building-connection')
+              line.alpha = 0.1
+              newBuildingsConnections.push({
+                buildings: [building, currentTile.building],
+                line,
+              })
             }
             break
           }
@@ -685,25 +689,45 @@ class Game {
       }
     }
 
-    // Create new Connections
-    this.buildingsConnections = []
-    for (let i = 0; i < connections.length; i++) {
-      const [buildingA, buildingB] = connections[i]
-
-      const pixelA = getPixelPosition(buildingA.tile.axial)
-      const pixelB = getPixelPosition(buildingB.tile.axial)
-
-      const line = new PIXI.Graphics()
-        .lineStyle(4, hex('#000'))
-        .moveTo(pixelA.x, pixelA.y)
-        .lineTo(pixelB.x, pixelB.y)
-
-      line.zIndex = getImageZIndex('building-connection')
-      line.alpha = 0.1
-
-      this.pixi?.stage.addChild(line)
-      this.buildingsConnections.push({ buildings: connections[i], line })
+    // Clear existing Connections
+    for (let i = this.buildingsConnections.length - 1; i >= 0; i--) {
+      const connection = this.buildingsConnections[i]
+      const [buildingA, buildingB] = connection.buildings
+      const exists = !!findBuildingsConnection(
+        newBuildingsConnections,
+        buildingA,
+        buildingB
+      )
+      if (!exists) {
+        this.pixi.stage.removeChild(connection.line)
+        this.buildingsConnections.splice(i, 1)
+      }
     }
+
+    // Create new Connections
+    for (let i = 0; i < newBuildingsConnections.length; i++) {
+      const connection = newBuildingsConnections[i]
+      const [buildingA, buildingB] = connection.buildings
+      const exists = !!findBuildingsConnection(
+        this.buildingsConnections,
+        buildingA,
+        buildingB
+      )
+      if (!exists) {
+        this.pixi.stage.addChild(connection.line)
+        this.buildingsConnections.push(connection)
+      }
+    }
+  }
+  getBuildingsConnection(
+    buildingA: Building,
+    buildingB: Building
+  ): BuildingsConnection | null {
+    return findBuildingsConnection(
+      this.buildingsConnections,
+      buildingA,
+      buildingB
+    )
   }
 }
 

@@ -132,7 +132,14 @@ class ArmySendManager {
   }
 
   static addPathHighlights(direction: number) {
-    if (!store.game || !store.game.player) return
+    if (
+      !store.game ||
+      !store.game.player ||
+      !this.tile ||
+      !this.tile.building
+    ) {
+      return
+    }
 
     const { player } = store.game
 
@@ -142,9 +149,17 @@ class ArmySendManager {
 
       // Friendly Tile
       if (t.ownedByThisPlayer()) {
-        t.addHoverHexagon()
-
-        if (t.building) break
+        if (t.building) {
+          t.addHoverHexagon()
+          const connection = store.game.getBuildingsConnection(
+            this.tile.building,
+            t.building
+          )
+          if (connection) {
+            connection.line.alpha = 0.8
+          }
+          break
+        }
       }
 
       // Free Tile
@@ -198,9 +213,24 @@ class ArmySendManager {
   }
 
   static clearPathHighlights(direction: number) {
+    if (!store.game || !this.tile || !this.tile.building) {
+      return
+    }
+
     const path = this.armyPaths[direction]
     for (let i = 0; i < path.length; i++) {
       const tile = path[i]
+
+      if (tile.building) {
+        const connection = store.game.getBuildingsConnection(
+          this.tile.building,
+          tile.building
+        )
+        if (connection) {
+          connection.line.alpha = 0.1
+        }
+      }
+
       if (tile.isHovered() && tile.getActionType()) continue
 
       tile.removeHoverHexagon()
