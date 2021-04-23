@@ -231,7 +231,7 @@ const messageHandlers = {
           tile.owner?.id !== parsed[i].ownerId &&
           playersId.includes(parsed[i].ownerId!))
       ) {
-        if (tile.village) {
+        if (tile.village && !tile.village.raided) {
           sound = 'VILLAGE_CAPTURE'
         } else if (!sound) {
           sound = 'TILE_CAPTURE'
@@ -446,6 +446,8 @@ const messageHandlers = {
         }
       }
     }
+
+    store.game.updateBuildingsConnections()
   },
 
   // - Objects & Primitives -
@@ -578,7 +580,7 @@ const messageHandlers = {
     }
   },
   destroyBuildings: (payload: string) => {
-    if (store.game?.status === 'finished') return
+    if (!store.game || store.game.status === 'finished') return
 
     const buildingsIds = payload.split('><')
     for (let i = 0; i < buildingsIds.length; i++) {
@@ -587,6 +589,8 @@ const messageHandlers = {
         building.destroy()
       }
     }
+
+    store.game.updateBuildingsConnections()
   },
 
   ping: () => {},

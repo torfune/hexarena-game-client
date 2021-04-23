@@ -30,6 +30,7 @@ export const IMAGE_Z_INDEX = [
   'pattern-preview',
   'hover-hexagon',
   'overlay',
+  'building-connection',
   'pattern',
   'background',
 ].reverse()

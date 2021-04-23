@@ -60,7 +60,6 @@ class ArmySendManager {
     }
 
     SoundManager.play('ARMY_SELECT')
-    console.log('army selected')
   }
 
   static unselectArmy() {

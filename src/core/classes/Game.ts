@@ -33,6 +33,10 @@ import GameStatus from '../../types/GameStatus'
 import isSpectating from '../../utils/isSpectating'
 import Building from './Building'
 import ArmySendManager from './ArmySendManager'
+import * as PIXI from 'pixi.js'
+import hex from '../functions/hex'
+import getImageZIndex from '../functions/getImageZIndex'
+import BuildingsConnection from '../../types/BuildingsConnection'
 
 class Game {
   id: string
@@ -66,6 +70,7 @@ class Game {
   pixi: Application | null = null
   pingArray: number[] = []
   animations: Array<Animation | GoldAnimation> = []
+  buildingsConnections: BuildingsConnection[] = []
   camera: Pixel | null = null
   cameraMove: Pixel = { x: 0, y: 0 }
   cameraDrag: { camera: Pixel; cursor: Pixel } | null = null
@@ -484,9 +489,6 @@ class Game {
     for (let i = tiles.length - 1; i >= 0; i--) {
       tiles[i][1].updateBorders()
     }
-    // for (let i = 0; i < tiles.length; i++) {
-    //   tiles[i][1].updateBorders()
-    // }
   }
   getHoveredTile() {
     if (!this.cursor || !this.camera) return null
@@ -639,6 +641,69 @@ class Game {
     store.socket.send('action', `${action.id}|${x}|${z}|${actionType}`)
 
     tile.removeHoverHexagon()
+  }
+  updateBuildingsConnections() {
+    if (!this.pixi) return
+
+    // Clear existing Connections
+    for (let i = 0; i < this.buildingsConnections.length; i++) {
+      const { line } = this.buildingsConnections[i]
+      this.pixi.stage.removeChild(line)
+    }
+
+    // Prepare new Connections
+    const connections: Building[][] = []
+    for (const building of Array.from(this.buildings.values())) {
+      const { tile } = building
+
+      if (!tile.owner || !tile.ownedByThisPlayer()) continue
+
+      for (let i = 0; i < 6; i++) {
+        let currentTile = tile.neighbors[i]
+        if (!currentTile || !currentTile.ownedByThisPlayer()) continue
+
+        for (let j = 0; j < store.gsConfig!.ARMY_HP; j++) {
+          if (currentTile.building) {
+            let connectionExists = false
+            for (const connection of connections) {
+              if (
+                connection.includes(building) &&
+                connection.includes(currentTile.building)
+              ) {
+                connectionExists = true
+              }
+            }
+            if (!connectionExists) {
+              connections.push([building, currentTile.building])
+            }
+            break
+          }
+
+          currentTile = currentTile.neighbors[i]
+          if (!currentTile || !currentTile.ownedByThisPlayer()) break
+        }
+      }
+    }
+
+    // Create new Connections
+    this.buildingsConnections = []
+    for (let i = 0; i < connections.length; i++) {
+      const [buildingA, buildingB] = connections[i]
+
+      const pixelA = getPixelPosition(buildingA.tile.axial)
+      const pixelB = getPixelPosition(buildingB.tile.axial)
+
+      const line = new PIXI.Graphics()
+        .lineStyle(4, hex('#000'))
+        .moveTo(pixelA.x, pixelA.y)
+        .lineTo(pixelB.x, pixelB.y)
+
+      line.zIndex = getImageZIndex('building-connection')
+      line.alpha = 0.1
+
+      this.pixi?.stage.addChild(line)
+      this.buildingsConnections.push({ buildings: connections[i], line })
+    }
   }
 }
 
