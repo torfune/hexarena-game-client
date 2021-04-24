@@ -155,7 +155,11 @@ class Building {
   }
 
   setArmy(newArmy: Army | null) {
-    if (this.tile.owner && this.tile.owner?.id === store.game?.playerId) {
+    if (
+      newArmy &&
+      this.tile.owner &&
+      this.tile.owner?.id === store.game?.playerId
+    ) {
       SoundManager.play('ARMY_ARRIVE')
     }
 

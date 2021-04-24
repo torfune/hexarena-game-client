@@ -15,6 +15,8 @@ import GoldAnimation from '../classes/GoldAnimation'
 import SoundManager from '../../services/SoundManager'
 import isSpectating from '../../utils/isSpectating'
 import Building from '../classes/Building'
+import SupplyLine from '../classes/SupplyLine'
+import RoadManager from '../RoadManager'
 
 // Handlers: Gameserver -> Frontend
 const messageHandlers = {
@@ -166,7 +168,7 @@ const messageHandlers = {
       }
 
       // Destroy
-      if (!tile && !building) {
+      if ((tileId && !tile) || (buildingId && !building)) {
         army.destroy()
         return
       }
@@ -175,7 +177,7 @@ const messageHandlers = {
       if (tileId !== (army.tile?.id || null)) {
         army.setTile(tile)
       }
-      if (buildingId !== army.building?.id) {
+      if (buildingId !== (army.building?.id || null)) {
         army.setBuilding(building)
       }
     }
@@ -447,7 +449,41 @@ const messageHandlers = {
       }
     }
 
-    store.game.updateBuildingsConnections()
+    // Update Roads
+    RoadManager.update()
+  },
+  supplyLines: (payload: string) => {
+    if (!store.game) return
+
+    const parsed = convertArray(payload, {
+      id: 'string',
+      sourceTileId: 'string',
+      targetTileId: 'string',
+    }) as {
+      id: string
+      sourceTileId: string
+      targetTileId: string
+    }[]
+
+    for (let i = 0; i < parsed.length; i++) {
+      const { id, sourceTileId, targetTileId } = parsed[i]
+
+      let supplyLine = store.game.supplyLines.get(id)
+
+      // Create
+      if (!supplyLine) {
+        const sourceTile = store.game.tiles.get(sourceTileId)
+        const targetTile = store.game.tiles.get(targetTileId)
+        if (!sourceTile || !targetTile) continue
+
+        supplyLine = new SupplyLine(id, sourceTile, targetTile)
+      }
+
+      // Update
+      supplyLine.setConfirmed(true)
+    }
+
+    RoadManager.update()
   },
 
   // - Objects & Primitives -
@@ -584,13 +620,28 @@ const messageHandlers = {
 
     const buildingsIds = payload.split('><')
     for (let i = 0; i < buildingsIds.length; i++) {
-      const building = store.game?.buildings.get(buildingsIds[i])
+      const building = store.game.buildings.get(buildingsIds[i])
       if (building) {
         building.destroy()
       }
     }
 
-    store.game.updateBuildingsConnections()
+    // Update Roads
+    RoadManager.update()
+  },
+  destroySupplyLines: (payload: string) => {
+    if (!store.game || store.game.status === 'finished') return
+
+    const supplyLinesIds = payload.split('><')
+    for (let i = 0; i < supplyLinesIds.length; i++) {
+      const supplyLine = store.game.supplyLines.get(supplyLinesIds[i])
+      if (supplyLine) {
+        supplyLine.destroy()
+      }
+    }
+
+    // Update Roads
+    RoadManager.update()
   },
 
   ping: () => {},

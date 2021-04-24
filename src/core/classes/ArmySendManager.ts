@@ -3,6 +3,9 @@ import ArmyDragArrow from './ArmyDragArrow'
 import Tile from './Tile'
 import store from '../store'
 import SoundManager from '../../services/SoundManager'
+import Building from './Building'
+import { v4 as uuid } from 'uuid'
+import RoadManager from '../RoadManager'
 
 class ArmySendManager {
   static active: boolean = false
@@ -11,6 +14,7 @@ class ArmySendManager {
   static armyPaths: Tile[][] = []
   static dragArrow: ArmyDragArrow | null = null
   static direction: number | null = null
+  static targetBuilding: Building | null = null
 
   static update() {
     if (!this.dragArrow) {
@@ -96,6 +100,7 @@ class ArmySendManager {
     this.armyPaths = []
     this.direction = null
     this.dragArrow = null
+    this.targetBuilding = null
   }
 
   static sendArmy() {
@@ -107,6 +112,16 @@ class ArmySendManager {
     const { x, z } = this.tile.axial
     store.socket.send('sendArmy', `${x}|${z}|${this.direction}`)
     SoundManager.play('ARMY_SEND')
+
+    if (this.targetBuilding && store.game?.supplyLinesEditModeActive) {
+      const supplyLineId = uuid()
+
+      store.socket.send(
+        'createSupplyLine',
+        `${supplyLineId}|${this.tile.id}|${this.targetBuilding.tile.id}`
+      )
+      console.log('supply line create sent')
+    }
 
     this.unselectArmy()
   }
@@ -148,16 +163,14 @@ class ArmySendManager {
       const t = path[i]
 
       // Friendly Tile
-      if (t.ownedByThisPlayer()) {
+      if (t.isOwnedByThisPlayer()) {
         if (t.building) {
           t.addHoverHexagon()
-          const connection = store.game.getBuildingsConnection(
-            this.tile.building,
-            t.building
-          )
-          if (connection) {
-            connection.line.alpha = 0.8
+          const road = RoadManager.findRoad(this.tile.building, t.building)
+          if (road) {
+            RoadManager.setHighlightedRoad(road)
           }
+          this.targetBuilding = t.building
           break
         }
       }
@@ -222,12 +235,9 @@ class ArmySendManager {
       const tile = path[i]
 
       if (tile.building) {
-        const connection = store.game.getBuildingsConnection(
-          this.tile.building,
-          tile.building
-        )
-        if (connection) {
-          connection.line.alpha = 0.1
+        const road = RoadManager.findRoad(this.tile.building, tile.building)
+        if (road) {
+          RoadManager.setHighlightedRoad(null)
         }
       }
 

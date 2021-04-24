@@ -16,7 +16,14 @@ interface Props {
   tile: Tile
 }
 const ActionPreview = ({ actionType, tile }: Props) => {
-  if (!store.game || !store.gsConfig || !store.game.player) return null
+  if (
+    !store.game ||
+    !store.gsConfig ||
+    !store.game.player ||
+    store.game.supplyLinesEditModeActive
+  ) {
+    return null
+  }
 
   const cost = getActionCost(actionType, tile)
   const gold = store.game.player.gold

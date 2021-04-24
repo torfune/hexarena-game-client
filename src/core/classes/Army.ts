@@ -57,11 +57,11 @@ class Army {
     }
   }
 
-  update() {
+  update(delta: number) {
     if (!store.game) return
 
     if (this.isDestroying) {
-      this.alpha -= 0.02
+      this.alpha -= 0.02 * delta
 
       for (let i = 0; i < UNIT_COUNT; i++) {
         this.units[i].setAlpha(this.alpha)
@@ -97,7 +97,10 @@ class Army {
   }
 
   setTile(newTile: Tile | null) {
-    // console.log(`ARMY set TILE: `, newTile?.axial || null)
+    console.log(
+      `ARMY [${this.getAxialString()}] set TILE: `,
+      newTile?.axial || null
+    )
 
     if (ArmySendManager.active && ArmySendManager.army === this) {
       ArmySendManager.unselectArmy()
@@ -132,18 +135,21 @@ class Army {
   }
 
   setBuilding(newBuilding: Building | null) {
-    // console.log(`ARMY set BUILDING: `, newBuilding?.type || null)
+    console.log(
+      `ARMY [${this.getAxialString()}] set BUILDING: `,
+      newBuilding?.type || null
+    )
 
     if (ArmySendManager.active && ArmySendManager.army === this) {
       ArmySendManager.unselectArmy()
     }
 
-    if (this.building) {
+    if (this.building && this.building.army === this) {
       this.building.setArmy(null)
     }
 
     if (!newBuilding) {
-      if (this.building && this.building.army?.id === this.id) {
+      if (this.building && this.building.army === this) {
         this.building.setArmy(null)
       }
       this.building = null
@@ -166,6 +172,16 @@ class Army {
 
     this.building = newBuilding
     this.building.setArmy(this)
+  }
+
+  getAxialString() {
+    if (this.tile) {
+      return `${this.tile.axial.x}|${this.tile.axial.z}`
+    } else if (this.building) {
+      return `${this.building.tile.axial.x}|${this.building.tile.axial.z}`
+    }
+
+    return `#|#`
   }
 
   destroy() {

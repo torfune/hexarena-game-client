@@ -33,11 +33,9 @@ import GameStatus from '../../types/GameStatus'
 import isSpectating from '../../utils/isSpectating'
 import Building from './Building'
 import ArmySendManager from './ArmySendManager'
-import * as PIXI from 'pixi.js'
-import hex from '../functions/hex'
-import getImageZIndex from '../functions/getImageZIndex'
-import BuildingsConnection from '../../types/BuildingsConnection'
-import findBuildingsConnection from '../functions/findBuildingsConnection'
+import BuildingsConnection from '../../types/Road'
+import SupplyLine from './SupplyLine'
+import RoadManager from '../RoadManager'
 
 class Game {
   id: string
@@ -49,6 +47,7 @@ class Game {
   villages: Map<string, Village> = new Map()
   tiles: Map<string, Tile> = new Map()
   buildings: Map<string, Building> = new Map()
+  supplyLines: Map<string, SupplyLine> = new Map()
   actions: Action[] = []
   hoveredTile: Tile | null = null
   startCountdown: number | null = null
@@ -88,6 +87,7 @@ class Game {
     resize: (event: any) => void
   } | null = null
   clickedAt: number = 0
+  supplyLinesEditModeActive = false
 
   // Getters (computed)
   get player() {
@@ -254,7 +254,7 @@ class Game {
     // Armies
     const armies = Array.from(this.armies.values())
     for (let i = 0; i < armies.length; i++) {
-      armies[i].update()
+      armies[i].update(delta)
     }
 
     // Villages
@@ -267,6 +267,9 @@ class Game {
     if (ArmySendManager.active) {
       ArmySendManager.update()
     }
+
+    // Animate Supply Lines
+    RoadManager.draw()
 
     // Hovered tile
     this.updateHoveredTile()
@@ -326,6 +329,12 @@ class Game {
       return
     }
 
+    if (key === ' ') {
+      if (!this.supplyLinesEditModeActive) {
+        this.startSupplyLinesEditMode()
+      }
+    }
+
     const tile = this.hoveredTile
     const command = getDebugCommand(key)
 
@@ -340,6 +349,12 @@ class Game {
 
     this.keyDown[key] = false
     this.updateCameraMove()
+
+    if (key === ' ') {
+      if (this.supplyLinesEditModeActive) {
+        this.endSupplyLinesEditMode()
+      }
+    }
 
     if (key === 'e' || key === 'q') {
       const zoomDirection = key === 'e' ? -1 : 1
@@ -371,15 +386,20 @@ class Game {
       return
     }
 
-    // Army - unselect
-    // if (
-    //   ArmySendManager.active &&
-    //   this.selectedArmy.tile?.isHovered() &&
-    //   button !== 2
-    // ) {
-    //   this.unselectArmy()
-    //   return
-    // }
+    // Destroy Supply Line
+    if (
+      this.supplyLinesEditModeActive &&
+      this.hoveredTile &&
+      this.hoveredTile.building
+    ) {
+      const supplyLine = this.getSupplyLineBySourceBuilding(
+        this.hoveredTile.building
+      )
+      if (supplyLine && store.socket) {
+        store.socket.send('destroySupplyLine', supplyLine.id)
+        return
+      }
+    }
 
     this.cameraDrag = {
       cursor: { x, y },
@@ -433,34 +453,50 @@ class Game {
       return
     }
 
-    // Right mouse button cancel
-    if (button === 'right') return
-
     // Army Send Manager
     if (ArmySendManager.active) {
       if (
         ArmySendManager.tile === hoveredTile ||
         ArmySendManager.direction === null
       ) {
+        if (
+          this.supplyLinesEditModeActive &&
+          ArmySendManager.tile &&
+          ArmySendManager.tile.building
+        ) {
+          const supplyLine = this.getSupplyLineBySourceBuilding(
+            ArmySendManager.tile.building
+          )
+          if (supplyLine) {
+            console.log('destroy sent')
+            store.socket.send('destroySupplyLine', supplyLine.id)
+          }
+        }
+
         ArmySendManager.unselectArmy()
-      } else {
+      } else if (button !== 'right') {
         ArmySendManager.sendArmy()
       }
     }
 
     // Standard click - Create action
     else if (cursorDelta < 32 && timeDelta < MAX_CLICK_DURATION) {
-      if (hoveredTile.bedrock) return
-
-      if (button && !dragged && this.player) {
-        const actionType = hoveredTile.getActionType()
-        if (!actionType) {
-          this.showNotEnoughGold(hoveredTile)
-          return
-        }
-
-        this.createAction(hoveredTile, actionType)
+      if (
+        hoveredTile.bedrock ||
+        !button ||
+        dragged ||
+        this.supplyLinesEditModeActive
+      ) {
+        return
       }
+
+      const actionType = hoveredTile.getActionType()
+      if (!actionType) {
+        this.showNotEnoughGold(hoveredTile)
+        return
+      }
+
+      this.createAction(hoveredTile, actionType)
     }
   }
   handleMouseMove({ clientX: x, clientY: y }: MouseEvent) {
@@ -643,91 +679,32 @@ class Game {
 
     tile.removeHoverHexagon()
   }
-  updateBuildingsConnections() {
-    if (!this.pixi) return
+  startSupplyLinesEditMode() {
+    this.supplyLinesEditModeActive = true
 
-    // Prepare new Connections
-    const newBuildingsConnections: BuildingsConnection[] = []
-    for (const building of Array.from(this.buildings.values())) {
-      const { tile } = building
-
-      if (!tile.owner || !tile.ownedByThisPlayer()) continue
-
-      for (let i = 0; i < 6; i++) {
-        let currentTile = tile.neighbors[i]
-        if (!currentTile || !currentTile.ownedByThisPlayer()) continue
-
-        for (let j = 0; j < store.gsConfig!.ARMY_HP; j++) {
-          if (currentTile.building) {
-            let connectionExists = !!findBuildingsConnection(
-              newBuildingsConnections,
-              building,
-              currentTile.building
-            )
-            if (!connectionExists) {
-              const pixelA = getPixelPosition(building.tile.axial)
-              const pixelB = getPixelPosition(currentTile.building.tile.axial)
-
-              const line = new PIXI.Graphics()
-                .lineStyle(4, hex('#000'))
-                .moveTo(pixelA.x, pixelA.y)
-                .lineTo(pixelB.x, pixelB.y)
-
-              line.zIndex = getImageZIndex('building-connection')
-              line.alpha = 0.1
-              newBuildingsConnections.push({
-                buildings: [building, currentTile.building],
-                line,
-              })
-            }
-            break
-          }
-
-          currentTile = currentTile.neighbors[i]
-          if (!currentTile || !currentTile.ownedByThisPlayer()) break
-        }
-      }
+    if (this.hoveredTile && !this.hoveredTile.building) {
+      this.hoveredTile.removeHoverHexagon()
     }
+  }
+  endSupplyLinesEditMode() {
+    this.supplyLinesEditModeActive = false
 
-    // Clear existing Connections
-    for (let i = this.buildingsConnections.length - 1; i >= 0; i--) {
-      const connection = this.buildingsConnections[i]
-      const [buildingA, buildingB] = connection.buildings
-      const exists = !!findBuildingsConnection(
-        newBuildingsConnections,
-        buildingA,
-        buildingB
-      )
-      if (!exists) {
-        this.pixi.stage.removeChild(connection.line)
-        this.buildingsConnections.splice(i, 1)
-      }
-    }
-
-    // Create new Connections
-    for (let i = 0; i < newBuildingsConnections.length; i++) {
-      const connection = newBuildingsConnections[i]
-      const [buildingA, buildingB] = connection.buildings
-      const exists = !!findBuildingsConnection(
-        this.buildingsConnections,
-        buildingA,
-        buildingB
-      )
-      if (!exists) {
-        this.pixi.stage.addChild(connection.line)
-        this.buildingsConnections.push(connection)
+    if (this.hoveredTile) {
+      if (this.hoveredTile.getActionType() && !ArmySendManager.active) {
+        this.hoveredTile.addHoverHexagon()
       }
     }
   }
-  getBuildingsConnection(
-    buildingA: Building,
-    buildingB: Building
-  ): BuildingsConnection | null {
-    return findBuildingsConnection(
-      this.buildingsConnections,
-      buildingA,
-      buildingB
-    )
+  getSupplyLineBySourceBuilding(sourceBuilding: Building): SupplyLine | null {
+    const supplyLines = Array.from(this.supplyLines.values())
+    for (let i = 0; i < supplyLines.length; i++) {
+      const supplyLine = supplyLines[i]
+      if (supplyLine.sourceTile.building === sourceBuilding) {
+        return supplyLine
+      }
+    }
+
+    return null
   }
 }
 

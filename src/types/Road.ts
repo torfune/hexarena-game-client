@@ -1,9 +1,9 @@
 import Building from '../core/classes/Building'
 import { Graphics } from 'pixi.js'
 
-interface BuildingsConnection {
+interface Road {
   buildings: Building[]
   line: Graphics
 }
 
-export default BuildingsConnection
+export default Road

@@ -1,6 +1,6 @@
 import store from '../store'
 import messageHandlers from './messageHandlers'
-import { IncomingMessage } from './messages'
+import { IncomingMessage, MessageToSend } from './messages'
 import GameMode from '../../types/GameMode'
 import GameStatus from '../../types/GameStatus'
 import isSpectating from '../../utils/isSpectating'
@@ -108,6 +108,9 @@ class Socket {
       case 'forests':
         messageHandlers.forests(messagePayload)
         break
+      case 'supplyLines':
+        messageHandlers.supplyLines(messagePayload)
+        break
       case 'gameTime':
         messageHandlers.gameTime(messagePayload)
         break
@@ -159,6 +162,9 @@ class Socket {
       case 'destroyBuildings':
         messageHandlers.destroyBuildings(messagePayload)
         break
+      case 'destroySupplyLines':
+        messageHandlers.destroySupplyLines(messagePayload)
+        break
       case 'ping':
         messageHandlers.ping()
         break
@@ -197,7 +203,7 @@ class Socket {
     }
   }
 
-  send(message: string, payload: string = '') {
+  send(message: MessageToSend, payload: string = '') {
     const data = `${message}//${payload}`
 
     if (this.reconnecting) {

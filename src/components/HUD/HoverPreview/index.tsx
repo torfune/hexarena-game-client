@@ -85,7 +85,10 @@ const HoverPreview = () => {
       //   </Container>
       // )
       return null
-    } else if (structure !== 'Plains') {
+    } else if (
+      structure !== 'Plains' &&
+      !store.game.supplyLinesEditModeActive
+    ) {
       return (
         <Container cursor={cursor}>
           <StructurePreview structure={structure} />

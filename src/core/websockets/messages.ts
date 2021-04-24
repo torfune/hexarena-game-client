@@ -22,11 +22,13 @@ export type IncomingMessage =
   | 'villages'
   | 'spectators'
   | 'ping'
+  | 'supplyLines'
   | 'destroyVillages'
   | 'destroyArmies'
   | 'destroyActions'
   | 'destroyForests'
   | 'destroyBuildings'
+  | 'destroySupplyLines'
 
 // Game Client -> Game Server
 export type MessageToSend =
@@ -48,3 +50,6 @@ export type MessageToSend =
   | 'acceptMatch'
   | 'declineMatch'
   | 'spectators'
+  | 'destroySupplyLine'
+  | 'createSupplyLine'
+  | 'play'

@@ -89,11 +89,25 @@ class Tile {
       this.building.showHitpoints()
     }
 
-    if (
-      (this.getActionType() && !ArmySendManager.active) ||
-      (this.building && this.building.army)
-    ) {
-      this.addHoverHexagon()
+    if (!this.isOwnedByThisPlayer()) return
+
+    const { supplyLinesEditModeActive } = store.game
+
+    // Supply Lines edit mode
+    if (supplyLinesEditModeActive) {
+      if (this.building) {
+        this.addHoverHexagon()
+      }
+    } else {
+      // Create Action
+      if (this.getActionType() && !ArmySendManager.active) {
+        this.addHoverHexagon()
+      }
+
+      // Send Army
+      else if (this.building && this.building.army) {
+        this.addHoverHexagon()
+      }
     }
   }
 
@@ -496,7 +510,7 @@ class Tile {
 
   isHovered() {
     if (!store.game) return false
-    return store.game.hoveredTile && store.game.hoveredTile.id === this.id
+    return !!store.game.hoveredTile && store.game.hoveredTile.id === this.id
   }
 
   isEmpty() {
@@ -697,7 +711,7 @@ class Tile {
     return this.neighbors[direction] || null
   }
 
-  ownedByThisPlayer(): boolean {
+  isOwnedByThisPlayer(): boolean {
     if (!store.game || !store.game.player || !this.owner) return false
 
     return this.owner.id === store.game.player.id
