@@ -4,7 +4,6 @@ import Tile from './Tile'
 import store from '../store'
 import SoundManager from '../../services/SoundManager'
 import Building from './Building'
-import { v4 as uuid } from 'uuid'
 import RoadManager from '../RoadManager'
 
 class ArmySendManager {
@@ -104,7 +103,13 @@ class ArmySendManager {
   }
 
   static sendArmy() {
-    if (!this.army || !store.socket || !this.tile || this.direction === null) {
+    if (
+      !this.army ||
+      !store.socket ||
+      !this.tile ||
+      this.direction === null ||
+      !store.game
+    ) {
       console.warn('WARN: Cannot send Army.')
       return
     }
@@ -114,13 +119,7 @@ class ArmySendManager {
     SoundManager.play('ARMY_SEND')
 
     if (this.targetBuilding && store.game?.supplyLinesEditModeActive) {
-      const supplyLineId = uuid()
-
-      store.socket.send(
-        'createSupplyLine',
-        `${supplyLineId}|${this.tile.id}|${this.targetBuilding.tile.id}`
-      )
-      console.log('supply line create sent')
+      store.game.createSupplyLine(this.tile, this.targetBuilding.tile)
     }
 
     this.unselectArmy()

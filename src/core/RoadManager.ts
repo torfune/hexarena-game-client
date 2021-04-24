@@ -185,6 +185,16 @@ class RoadManager {
         )
       }
 
+      // Highlighted other Send Path
+      else if (
+        ArmySendManager.targetBuilding &&
+        ArmySendManager.tile &&
+        supplyLine &&
+        supplyLine.sourceTile === ArmySendManager.tile
+      ) {
+        this.drawBasicLine(road.line, buildingA, buildingB, highlighted)
+      }
+
       // Existing Supply Line
       else if (supplyLine) {
         this.drawSupplyLine(

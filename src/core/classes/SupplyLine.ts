@@ -21,6 +21,10 @@ class SupplyLine {
         this.destroy()
       }
     }, 1000)
+
+    if (store.game) {
+      store.game.supplyLines.set(this.id, this)
+    }
   }
 
   setConfirmed(newConfirmed: boolean) {

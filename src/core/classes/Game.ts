@@ -679,6 +679,16 @@ class Game {
 
     tile.removeHoverHexagon()
   }
+  createSupplyLine(sourceTile: Tile, targetTile: Tile) {
+    const supplyLine = new SupplyLine(uuid(), sourceTile, targetTile)
+
+    if (store.socket) {
+      store.socket.send(
+        'createSupplyLine',
+        `${supplyLine.id}|${sourceTile.id}|${targetTile.id}`
+      )
+    }
+  }
   startSupplyLinesEditMode() {
     this.supplyLinesEditModeActive = true
 
