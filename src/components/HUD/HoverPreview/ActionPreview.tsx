@@ -32,11 +32,7 @@ const ActionPreview = ({ actionType, tile }: Props) => {
   return (
     <Container>
       <Circle>
-        <Icon
-          src={getActionIcon(actionType)}
-          opaque={!enoughGold}
-          dontInvert={actionType === 'REPAIR_BUILDING'}
-        />
+        <Icon src={getActionIcon(actionType)} opaque={!enoughGold} />
       </Circle>
       <Rectangle>
         <MainSection>
@@ -92,9 +88,9 @@ const getActionIcon = (
     case 'RECRUIT_ARMY':
       return recruitIcon
     case 'REBUILD_VILLAGE':
-      return recruitIcon // TODO: add proper icon
+      return `${baseImageUrl}/repair-icon.png`
     case 'REPAIR_BUILDING':
-      return `${baseImageUrl}/hp-fill.png`
+      return `${baseImageUrl}/repair-icon.png`
     case 'SEND_ARMY':
       return armyIcon
   }
@@ -205,7 +201,7 @@ const NotEnoughGold = styled.div`
 `
 const Icon = styled.img<{ opaque: boolean; dontInvert?: boolean }>`
   height: 34px;
-  filter: ${(props) => (props.dontInvert ? null : 'invert(1)')};
+  filter: invert(1);
   opacity: ${(props) => (props.opaque ? '0.6' : 1)};
 `
 const Label = styled.p`

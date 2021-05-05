@@ -35,6 +35,7 @@ import * as PIXI from 'pixi.js'
 import { Graphics } from 'pixi.js'
 import ArmySendManager from './ArmySendManager'
 import colorFilter from '../../utils/colorFilter'
+import { v4 as uuid } from 'uuid'
 
 const PATTERN_ALPHA = 1
 const PATTERN_PREVIEW_ALPHA = 0.2
@@ -85,9 +86,9 @@ class Tile {
       return
     }
 
-    if (this.building && !this.building.army && !this.building.isCamp()) {
-      this.building.showHitpoints()
-    }
+    // if (this.building && !this.building.army && !this.building.isCamp()) {
+    //   this.building.showHitpoints()
+    // }
 
     if (!this.isOwnedByThisPlayer()) return
 
@@ -100,8 +101,15 @@ class Tile {
       }
     } else {
       // Create Action
-      if (this.getActionType() && !ArmySendManager.active) {
-        this.addHoverHexagon()
+      const actionType = this.getActionType()
+      if (
+        actionType &&
+        !ArmySendManager.active &&
+        !this.action &&
+        (!this.building || !this.building.army)
+      ) {
+        new Action(uuid(), actionType, 'PREVIEW', this, store.game.player)
+        // this.addHoverHexagon()
       }
 
       // Send Army
@@ -121,24 +129,15 @@ class Tile {
     }
 
     if (!ArmySendManager.active) {
+      if (this.action && this.action.status === 'PREVIEW') {
+        this.action.destroy()
+      }
       this.removeHoverHexagon()
     }
   }
 
   addHoverHexagon() {
     if (this.bedrock || this.image['overlay']) return
-
-    // console.log('addHoverHexagon')
-
-    // if (
-    //   !this.owner ||
-    //   !store.game ||
-    //   store.game.player?.alive ||
-    //   store.game.player?.surrendered ||
-    //   !this.image.pattern
-    // ) {
-    //   return
-    // }
 
     const pixel = getPixelPosition(this.axial)
     const image = createImage('overlay')
@@ -585,7 +584,7 @@ class Tile {
   getActionType(options?: { ignoreGold: boolean }): ActionType | null {
     const ignoreGold = options ? options.ignoreGold : false
 
-    if (!store.game || !store.gsConfig || this.action || !store.game.player) {
+    if (!store.game || !store.gsConfig || !store.game.player) {
       return null
     }
 

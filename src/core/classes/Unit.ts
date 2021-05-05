@@ -5,7 +5,7 @@ import {
 import roundToDecimals from '../functions/roundToDecimals'
 import { Pixel } from '../../types/coordinates'
 import { Sprite } from 'pixi.js-legacy'
-import { easeOutCubic } from '../functions/easing'
+import { easeInCubic, easeOutCubic } from '../functions/easing'
 import createImage from '../functions/createImage'
 import store from '../store'
 

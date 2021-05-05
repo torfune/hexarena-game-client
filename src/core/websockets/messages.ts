@@ -53,3 +53,4 @@ export type MessageToSend =
   | 'destroySupplyLine'
   | 'createSupplyLine'
   | 'play'
+  | 'actionSetInfiniteMode'

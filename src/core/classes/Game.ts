@@ -19,7 +19,7 @@ import getDebugCommand from '../functions/getDebugCommand'
 import getTileByAxial from '../functions/getTileByAxial'
 import Tile from './Tile'
 import { Ticker, Application } from 'pixi.js-legacy'
-import Action, { ActionType } from './Action'
+import Action from './Action'
 import { v4 as uuid } from 'uuid'
 import { makeAutoObservable } from 'mobx'
 import AllianceRequest from './AllianceRequest'
@@ -248,7 +248,10 @@ class Game {
 
     // Actions
     for (let i = 0; i < this.actions.length; i++) {
-      this.actions[i].update()
+      const action = this.actions[i]
+      if (action.status === 'RUNNING') {
+        action.update()
+      }
     }
 
     // Armies
@@ -479,7 +482,7 @@ class Game {
       }
     }
 
-    // Standard click - Create action
+    // Standard click
     else if (cursorDelta < 32 && timeDelta < MAX_CLICK_DURATION) {
       if (
         hoveredTile.bedrock ||
@@ -490,13 +493,25 @@ class Game {
         return
       }
 
+      // Create Action
       const actionType = hoveredTile.getActionType()
       if (!actionType) {
         this.showNotEnoughGold(hoveredTile)
         return
       }
+      if (hoveredTile.action && hoveredTile.action.status === 'PREVIEW') {
+        hoveredTile.action.confirm()
+        return
+      }
 
-      this.createAction(hoveredTile, actionType)
+      // Toggle Action's infinite mode
+      if (
+        hoveredTile.action &&
+        hoveredTile.action.type === 'RECRUIT_ARMY' &&
+        hoveredTile.action.status !== 'PREVIEW'
+      ) {
+        hoveredTile.action.toggleInfiniteMode()
+      }
     }
   }
   handleMouseMove({ clientX: x, clientY: y }: MouseEvent) {
@@ -665,20 +680,19 @@ class Game {
     this.notification = `${Date.now()}|Not enough gold`
     SoundManager.play('ACTION_FAILURE')
   }
-  createAction(tile: Tile, actionType: ActionType) {
-    if (!store.socket || !this.player) {
-      console.warn('WARN: Cannot create Action.')
-      return
-    }
-
-    const action = new Action(uuid(), actionType, tile, this.player)
-    this.actions.push(action)
-
-    const { x, z } = tile.axial
-    store.socket.send('action', `${action.id}|${x}|${z}|${actionType}`)
-
-    tile.removeHoverHexagon()
-  }
+  // createAction(tile: Tile, actionType: ActionType) {
+  //   if (!store.socket || !this.player) {
+  //     console.warn('WARN: Cannot create Action.')
+  //     return
+  //   }
+  //
+  //   // const action = new Action(uuid(), actionType, tile, this.player)
+  //   // this.actions.push(action)
+  //
+  //
+  //
+  //   // tile.removeHoverHexagon()
+  // }
   createSupplyLine(sourceTile: Tile, targetTile: Tile) {
     const supplyLine = new SupplyLine(uuid(), sourceTile, targetTile)
 

@@ -11,7 +11,7 @@ import {
   UNIT_MOVEMENT_SPEED,
   UNIT_DOOR_OFFSET,
 } from '../../constants/constants-game'
-import ArmyBar from './ArmyIcon'
+import ArmyIcon from './ArmyIcon'
 import Building from './Building'
 import ArmySendManager from './ArmySendManager'
 
@@ -25,7 +25,7 @@ class Army {
   isDestroying: boolean = false
   isMoving: boolean = false
   units: Unit[] = []
-  bar: ArmyBar
+  icon: ArmyIcon
 
   constructor(
     id: string,
@@ -36,7 +36,7 @@ class Army {
     this.id = id
     this.tile = tile
     this.owner = owner
-    this.bar = new ArmyBar(tile || building!.tile)
+    this.icon = new ArmyIcon(tile || building!.tile)
 
     const position = getPixelPosition((tile || building!.tile).axial)
     const randomizedPositions = getUniqueRandomizedPositions(
@@ -77,14 +77,16 @@ class Army {
       }
     }
 
+    if (this.icon.animationFraction !== null) {
+      this.icon.update()
+    }
+
     if (!this.isMoving || this.animationFraction === null) return
 
     this.animationFraction += UNIT_MOVEMENT_SPEED
     if (this.animationFraction > 1) {
       this.animationFraction = 1
     }
-
-    this.bar.update()
 
     for (let i = 0; i < UNIT_COUNT; i++) {
       this.units[i].update(this.animationFraction)
@@ -106,7 +108,7 @@ class Army {
       ArmySendManager.unselectArmy()
     }
 
-    if (this.building) {
+    if (this.building && this.building.army === this) {
       this.building.setArmy(null)
     }
 
@@ -126,7 +128,7 @@ class Army {
       UNIT_POSITION_OFFSET
     )
 
-    this.bar.moveOn(newTile)
+    this.icon.moveOn(newTile)
     for (let i = 0; i < UNIT_COUNT; i++) {
       this.units[i].moveOn(unitPositions[i].x, unitPositions[i].y)
     }
@@ -165,7 +167,7 @@ class Army {
       y: position.y + UNIT_DOOR_OFFSET,
     }
 
-    this.bar.moveOn(newBuilding.tile)
+    this.icon.moveOn(newBuilding.tile)
     for (let i = 0; i < UNIT_COUNT; i++) {
       this.units[i].moveOn(doorPosition.x, doorPosition.y)
     }
@@ -184,11 +186,19 @@ class Army {
     return `#|#`
   }
 
+  updateBarY() {
+    const tile = this.tile || this.building?.tile
+    if (!tile) return
+
+    console.log('icon move on')
+    this.icon.moveOn(tile)
+  }
+
   destroy() {
     this.isDestroying = true
-    this.bar.destroy()
+    this.icon.destroy()
 
-    if (this.building && this.building.army?.id === this.id) {
+    if (this.building && this.building.army === this) {
       this.building.setArmy(null)
     }
   }

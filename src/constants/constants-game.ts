@@ -11,6 +11,7 @@ export const IMAGE_Z_INDEX = [
   'gold',
   'fog',
   'arrow',
+  'progress-bar',
   'action',
   'castle',
   'tower',
@@ -25,6 +26,7 @@ export const IMAGE_Z_INDEX = [
   'army-icon',
   'tree',
   'army',
+  'action-building-preview',
   'village-bar',
   'border',
   'pattern-preview',
@@ -52,10 +54,10 @@ export const CAMERA_SPEED = 24
 // IMAGE OFFSETS
 export const ARMY_ICON_OFFSET_Y = {
   DEFAULT: 100,
-  CAMP: 90,
-  TOWER: 125,
-  CASTLE: 125,
-  CAPITAL: 150,
+  CAMP: 95,
+  TOWER: 112,
+  CASTLE: 112,
+  CAPITAL: 135,
 }
 export const HP_BACKGROUND_OFFSET = {
   CAPITAL: 130,
@@ -76,7 +78,7 @@ export const DEFAULT_SCALE = isSpectating()
 // ARMIES
 export const UNIT_COUNT = 16
 export const UNIT_POSITION_OFFSET = 70
-export const UNIT_MOVEMENT_SPEED = 0.02
+export const UNIT_MOVEMENT_SPEED = 0.022
 export const UNIT_RADIUS = 12
 export const UNIT_IMAGE_SCALE = 0.6
 export const UNIT_DOOR_OFFSET = 32
@@ -102,4 +104,5 @@ export const DEBUG_COMMANDS = [
   ['p', 'add_hp'],
   ['k', 'raid_village'],
   ['l', 'add_village_level'],
+  ['6', 'add_10_gold'],
 ]

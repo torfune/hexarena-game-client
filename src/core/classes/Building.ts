@@ -32,7 +32,6 @@ class Building {
     const pixel = getPixelPosition(tile.axial)
     this.image.x = pixel.x
     this.image.y = pixel.y
-    this.image.scale.set(0)
     this.image.alpha = 0
 
     // HP Image
@@ -43,7 +42,6 @@ class Building {
     new Animation(
       this.image,
       (image, fraction) => {
-        image.scale.set(fraction)
         image.alpha = fraction
       },
       { speed: 0.05 }
@@ -62,6 +60,10 @@ class Building {
   setType(newType: BuildingType) {
     this.type = newType
     this.image.texture = getTexture(this.getTextureName())
+
+    if (this.army) {
+      this.army.updateBarY()
+    }
   }
 
   getMaxHp() {
@@ -163,7 +165,12 @@ class Building {
       SoundManager.play('ARMY_ARRIVE')
     }
 
+    if (this.tile.action && this.tile.action.isPreview()) {
+      this.tile.action.destroy()
+    }
+
     this.army = newArmy
+    console.log(`army (${newArmy?.id}) set to building (${this.type})`)
     this.hideHitpoints()
   }
 

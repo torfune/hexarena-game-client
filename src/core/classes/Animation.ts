@@ -67,6 +67,10 @@ class Animation {
     if (index !== -1) {
       store.game.animations.splice(index, 1)
     }
+
+    if (this.onFinish) {
+      this.onFinish(this.image, this.context)
+    }
   }
 }
 

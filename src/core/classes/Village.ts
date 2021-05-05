@@ -97,12 +97,10 @@ class Village {
       this.barImage = createImage('village-bar', { axialZ: this.tile.axial.z })
       this.barImage.x = pixel.x
       this.barImage.y = this.getBarY()
-      // this.barImage.scale.set(0)
-      // this.barImage.alpha = 0
 
       this.barFillMask = new PIXI.Sprite(PIXI.Texture.WHITE)
       this.barFillMask.anchor.set(0, 0.5)
-      this.barFillMask.y = 0
+      this.barFillMask.y = -4
       this.barFillMask.x = -70
       this.barFillMask.tint = hex('#ff0000') // for easier debug
       this.barFillMask.height = 16
@@ -111,18 +109,10 @@ class Village {
       this.barFillImage = new Sprite(getTexture('village-bar-fill'))
       this.barFillImage.anchor.set(0.5, 0.5)
       this.barFillImage.mask = this.barFillMask
+      this.barFillImage.y = -4
 
       this.barImage.addChild(this.barFillImage)
       this.barImage.addChild(this.barFillMask)
-
-      // new Animation(
-      //   this.barImage,
-      //   (image, fraction) => {
-      //     image.scale.set(fraction)
-      //     image.alpha = fraction
-      //   },
-      //   { speed: 0.05 }
-      // )
 
       this.animateBarY()
       this.updateBarFill()

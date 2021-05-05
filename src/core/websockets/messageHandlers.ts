@@ -2,7 +2,7 @@ import store from '../store'
 import convert from './convert'
 import convertObject from './convertObject'
 import convertArray from './convertArray'
-import Action from '../classes/Action'
+import Action, { ActionStatus } from '../classes/Action'
 import getItemById from '../../utils/getItemById'
 import Tile from '../classes/Tile'
 import Player from '../classes/Player'
@@ -43,7 +43,15 @@ const messageHandlers = {
     }[]
 
     for (let i = 0; i < parsed.length; i++) {
-      const { id, type, tileId, ownerId, status } = parsed[i]
+      const {
+        id,
+        type,
+        tileId,
+        ownerId,
+        status,
+        duration,
+        finishedAt,
+      } = parsed[i]
 
       if (!id || !type || !tileId || !ownerId) continue
       if (
@@ -66,17 +74,28 @@ const messageHandlers = {
           const tile = store.game.tiles.get(tileId) || null
           const owner = store.game.players.get(ownerId) || null
           if (!tile || !owner) continue
-          action = new Action(id, type, tile, owner)
+          action = new Action(id, type, status as any, tile, owner)
         }
-        store.game.actions.push(action)
+      }
+
+      // Destroy
+      if (status === 'FINISHED') {
+        action.destroy()
+        return
       }
 
       // Update
-      updateProps(action, parsed[i])
+      if (status && status !== action.status) {
+        action.setStatus(status as ActionStatus)
+      }
+      if (duration && duration !== action.duration) {
+        action.setDuration(duration)
+      }
+      if (finishedAt && finishedAt !== action.finishedAt) {
+        action.setFinishedAt(finishedAt)
+        console.log('action set finished at: ' + finishedAt)
+      }
     }
-
-    // Side effects
-    // store.game.updatePatternPreviews()
   },
   allianceRequests: (payload: string) => {
     if (!store.game) return
