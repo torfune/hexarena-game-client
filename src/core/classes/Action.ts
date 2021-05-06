@@ -19,12 +19,12 @@ const FILL_MASK_HEIGHT = 100
 const BUILDING_PREVIEW_ALPHA = 0.25
 const PREVIEW_ICON_ALPHA = 0.8
 const DESTROY_ANIMATION_SPEED = 0.08
-const PAUSED_ALPHA = 0.8
-const PAUSED_OFFSET_Y = {
-  CAMP: 122,
-  TOWER: 140,
-  CASTLE: 140,
-  CAPITAL: 140,
+const ARMY_MODE_ALPHA = 0.75
+const ARMY_MODE_OFFSET_Y = {
+  CAMP: 102,
+  TOWER: 120, // 126, // 120
+  CASTLE: 120, // 126, // 120
+  CAPITAL: 120, // 126, // 120
 }
 
 export type ActionType =
@@ -374,9 +374,9 @@ class Action {
     )
   }
 
-  getPausedOffsetY() {
+  getArmyModeOffsetY() {
     if (this.tile.building) {
-      return PAUSED_OFFSET_Y[this.tile.building.type]
+      return ARMY_MODE_OFFSET_Y[this.tile.building.type]
     }
 
     return 0
@@ -408,13 +408,13 @@ class Action {
       this.backgroundImage,
       (image, fraction, context) => {
         image.y = context.baseY - context.offsetY * fraction
-        image.alpha = PAUSED_ALPHA * fraction
+        image.alpha = ARMY_MODE_ALPHA * fraction
       },
       {
         ease: easeOutCubic,
         initialFraction,
         speed: 0.05,
-        context: { baseY: this.baseY, offsetY: this.getPausedOffsetY() },
+        context: { baseY: this.baseY, offsetY: this.getArmyModeOffsetY() },
       }
     )
 
@@ -441,13 +441,13 @@ class Action {
       this.backgroundImage,
       (image, fraction, context) => {
         image.y = context.baseY - context.offsetY * (1 - fraction)
-        image.alpha = 1 - PAUSED_ALPHA + PAUSED_ALPHA * fraction
+        image.alpha = 1 - ARMY_MODE_ALPHA + ARMY_MODE_ALPHA * fraction
       },
       {
         initialFraction,
         ease: easeOutCubic,
         speed: 0.05,
-        context: { baseY: this.baseY, offsetY: this.getPausedOffsetY() },
+        context: { baseY: this.baseY, offsetY: this.getArmyModeOffsetY() },
       }
     )
 
