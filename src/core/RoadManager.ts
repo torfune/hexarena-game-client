@@ -15,7 +15,7 @@ const ANIMATION_SPEED = 500
 const BASIC_LINE = {
   WIDTH: 4,
   ALPHA: 0.1,
-  EDIT_MODE_ALPHA: 0.8,
+  EDIT_MODE_ALPHA: 0.1,
   HIGHLIGHT_ALPHA: 1,
 }
 
@@ -168,7 +168,7 @@ class RoadManager {
     if (store.game.supplyLinesEditModeActive) {
       // Supply Line Cancel Preview
       if (supplyLine && supplyLine.sourceTile.isHovered()) {
-        this.drawBasicLine(road.line, buildingA, buildingB, highlighted)
+        this.drawBasicLine(road.line, buildingA, buildingB, true)
       }
 
       // Highlighted Send Path
@@ -240,9 +240,9 @@ class RoadManager {
       alpha = BASIC_LINE.HIGHLIGHT_ALPHA
     }
 
-    if (store.game?.supplyLinesEditModeActive && !ArmySendManager.active) {
-      alpha = BASIC_LINE.EDIT_MODE_ALPHA
-    }
+    // if (store.game?.supplyLinesEditModeActive && !ArmySendManager.active) {
+    //   alpha = BASIC_LINE.EDIT_MODE_ALPHA
+    // }
 
     g.lineStyle(BASIC_LINE.WIDTH, hex('#000'), alpha)
     g.moveTo(pixelA.x, pixelA.y)

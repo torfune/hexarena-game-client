@@ -708,16 +708,21 @@ class Game {
   startSupplyLinesEditMode() {
     this.supplyLinesEditModeActive = true
 
-    if (this.hoveredTile && !this.hoveredTile.building) {
-      this.hoveredTile.removeHoverHexagon()
+    if (
+      this.hoveredTile &&
+      this.hoveredTile.action &&
+      this.hoveredTile.action.status === 'PREVIEW'
+    ) {
+      this.hoveredTile.action.destroy()
     }
   }
   endSupplyLinesEditMode() {
     this.supplyLinesEditModeActive = false
 
-    if (this.hoveredTile) {
-      if (this.hoveredTile.getActionType() && !ArmySendManager.active) {
-        this.hoveredTile.addHoverHexagon()
+    if (this.hoveredTile && this.player) {
+      const actionType = this.hoveredTile.getActionType()
+      if (actionType && !ArmySendManager.active) {
+        new Action(uuid(), actionType, 'PREVIEW', this.hoveredTile, this.player)
       }
     }
   }

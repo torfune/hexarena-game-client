@@ -22,9 +22,9 @@ const DESTROY_ANIMATION_SPEED = 0.08
 const ARMY_MODE_ALPHA = 0.75
 const ARMY_MODE_OFFSET_Y = {
   CAMP: 102,
-  TOWER: 120, // 126, // 120
-  CASTLE: 120, // 126, // 120
-  CAPITAL: 120, // 126, // 120
+  TOWER: 120,
+  CASTLE: 120,
+  CAPITAL: 120,
 }
 
 export type ActionType =

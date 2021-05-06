@@ -109,7 +109,6 @@ class Tile {
         (!this.building || !this.building.army)
       ) {
         new Action(uuid(), actionType, 'PREVIEW', this, store.game.player)
-        // this.addHoverHexagon()
       }
 
       // Send Army
@@ -630,7 +629,8 @@ class Tile {
     if (
       this.building &&
       (store.game.player.gold >= RECRUIT_ARMY_COST || ignoreGold) &&
-      (this.building.type !== 'TOWER' || this.building.hp !== HP.TOWER)
+      (this.building.type === 'CAPITAL' || this.building.type === 'CASTLE') &&
+      !this.building.army
     ) {
       return 'RECRUIT_ARMY'
     }
