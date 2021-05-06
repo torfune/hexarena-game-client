@@ -493,6 +493,17 @@ class Game {
         return
       }
 
+      // Toggle Action's automation
+      if (
+        hoveredTile.action &&
+        hoveredTile.action.type === 'RECRUIT_ARMY' &&
+        (hoveredTile.action.status === 'RUNNING' ||
+          hoveredTile.action.status === 'QUEUED')
+      ) {
+        hoveredTile.action.toggleAutomated()
+        return
+      }
+
       // Create Action
       const actionType = hoveredTile.getActionType()
       if (!actionType) {
@@ -502,15 +513,6 @@ class Game {
       if (hoveredTile.action && hoveredTile.action.status === 'PREVIEW') {
         hoveredTile.action.confirm()
         return
-      }
-
-      // Toggle Action's infinite mode
-      if (
-        hoveredTile.action &&
-        hoveredTile.action.type === 'RECRUIT_ARMY' &&
-        hoveredTile.action.status !== 'PREVIEW'
-      ) {
-        hoveredTile.action.toggleInfiniteMode()
       }
     }
   }

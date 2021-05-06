@@ -39,6 +39,7 @@ export type ActionStatus =
   | 'RUNNING'
   | 'PAUSED'
   | 'FINISHED'
+  | 'QUEUED'
 
 class Action {
   readonly id: string
@@ -48,7 +49,7 @@ class Action {
   duration = 0
   finishedAt = 0
   status: ActionStatus
-  infiniteMode = false
+  automated = false
   backgroundImage: Sprite = new Sprite()
   fillImage: Sprite = new Sprite()
   fillImageMask: Sprite = new Sprite()
@@ -57,14 +58,14 @@ class Action {
   barFillImage: Sprite | null = null
   barFillImageMask: Sprite | null = null
   buildingPreviewImage: Sprite | null = null
-  infiniteModeImage: Sprite | null = null
+  automatedImage: Sprite | null = null
   baseY: number
-  pauseModeActive = false
+  armyModeActive = false
 
   constructor(
     id: string,
     type: ActionType,
-    status: 'PREVIEW' | 'RUNNING' | 'PAUSED',
+    status: 'PREVIEW' | 'RUNNING' | 'PAUSED' | 'QUEUED',
     tile: Tile,
     owner: Player
   ) {
@@ -89,7 +90,11 @@ class Action {
     this.backgroundImage.y = this.baseY
     this.backgroundImage.alpha = 0
 
-    this.iconImage = new Sprite(getTexture(this.getTextureName()))
+    const textureName =
+      this.status === 'PAUSED' || this.status === 'QUEUED'
+        ? 'action-icon-pause'
+        : this.getTextureName()
+    this.iconImage = new Sprite(getTexture(textureName))
     this.iconImage.alpha = 1
     this.iconImage.anchor.set(0.5, 0.5)
 
@@ -104,10 +109,11 @@ class Action {
       this.createBuildingPreviewImage(type)
     }
 
-    if (this.status === 'RUNNING') {
-      this.createBarImage()
-      this.createFillImage()
-    } else if (this.status === 'PAUSED') {
+    if (
+      this.status === 'RUNNING' ||
+      this.status === 'PAUSED' ||
+      this.status === 'QUEUED'
+    ) {
       this.createBarImage()
       this.createFillImage()
     }
@@ -116,23 +122,18 @@ class Action {
       SoundManager.play('ACTION_CREATE')
     }
 
-    if (this.status !== 'PAUSED') {
-      new Animation(
-        this.backgroundImage,
-        (image, fraction) => {
-          image.scale.set(fraction)
-          image.alpha = fraction * this.getAlpha()
-          this.fillImage.alpha = fraction * this.getAlpha()
-        },
-        {
-          speed: 0.1,
-          ease: easeOutQuad,
-        }
-      )
-    } else {
-      // this.activatePauseMode({ skipAnimation: true })
-      this.activatePauseMode()
-    }
+    new Animation(
+      this.backgroundImage,
+      (image, fraction) => {
+        image.scale.set(fraction)
+        image.alpha = fraction * this.getAlpha()
+        this.fillImage.alpha = fraction * this.getAlpha()
+      },
+      {
+        speed: 0.1,
+        ease: easeOutQuad,
+      }
+    )
 
     this.tile.action = this
     if (store.game) {
@@ -141,9 +142,6 @@ class Action {
   }
 
   update() {
-    // console.log(`finishedAt: ${this.finishedAt}`)
-    // console.log(`duration: ${this.duration}`)
-
     if (!this.finishedAt || !this.duration) return
 
     if (
@@ -164,6 +162,10 @@ class Action {
     }
 
     if (fraction < 0) {
+      fraction = 0
+    }
+
+    if (this.status !== 'RUNNING' && this.status !== 'PAUSED') {
       fraction = 0
     }
 
@@ -234,17 +236,20 @@ class Action {
   }
 
   setStatus(newStatus: ActionStatus) {
-    // Pause
-    if (newStatus === 'PAUSED' && !this.pauseModeActive) {
-      this.activatePauseMode()
-    }
-
-    // Unpause
-    else if (this.status === 'PAUSED' && this.pauseModeActive) {
-      this.deactivatePauseMode()
+    if (newStatus === 'PAUSED' || newStatus === 'QUEUED') {
+      this.iconImage.texture = getTexture('action-icon-pause')
+      if (this.barImage) {
+        this.barImage.visible = false
+      }
+    } else {
+      this.iconImage.texture = getTexture(this.getTextureName())
+      if (this.barImage) {
+        this.barImage.visible = true
+      }
     }
 
     this.status = newStatus
+    this.update()
   }
 
   setDuration(newDuration: number) {
@@ -255,25 +260,22 @@ class Action {
     this.finishedAt = newFinishedAt
   }
 
-  setInfiniteMode(newInfiniteMode: boolean) {
-    this.infiniteMode = newInfiniteMode
+  setAutomated(newAutomated: boolean) {
+    this.automated = newAutomated
 
     // Create image
-    if (this.infiniteMode && !this.infiniteModeImage) {
+    if (this.automated && !this.automatedImage) {
+      this.automatedImage = new Sprite(getTexture('action-automated'))
+      this.automatedImage.anchor.set(0.5)
+      this.automatedImage.y = -56
+      this.backgroundImage.addChild(this.automatedImage)
     }
 
     // Destroy image
-    else if (!this.infiniteMode && this.infiniteModeImage) {
+    else if (!this.automated && this.automatedImage) {
+      this.backgroundImage.removeChild(this.automatedImage)
+      this.automatedImage = null
     }
-
-    // const pixel = getPixelPosition(this.tile.axial)
-    // this.iconImage = createImage(this.getTextureName(), {
-    //   axialZ: tile.axial.z,
-    //   zIndex: IMAGE_Z_INDEX.indexOf('action'),
-    // })
-    // this.iconImage.x = pixel.x
-    // this.iconImage.y = pixel.y - this.getImageOffsetY()
-    // this.iconImage.alpha = 0
   }
 
   getAlpha() {
@@ -380,18 +382,20 @@ class Action {
     return 0
   }
 
-  toggleInfiniteMode() {
-    if (this.status !== 'PREVIEW' || !store.socket) return
+  toggleAutomated() {
+    if (!store.socket) return
 
-    this.setInfiniteMode(!this.infiniteMode)
-    store.socket.send(
-      'actionSetInfiniteMode',
-      `${this.id}|${this.infiniteMode}`
-    )
+    this.setAutomated(!this.automated)
+
+    if (this.automated) {
+      store.socket.send('actionStartAutomation', `${this.tile.id}`)
+    } else {
+      store.socket.send('actionCancelAutomation', `${this.tile.id}`)
+    }
   }
 
-  activatePauseMode(options?: { skipAnimation: boolean }) {
-    this.iconImage.texture = getTexture('action-icon-pause')
+  activateArmyMode() {
+    if (this.armyModeActive) return
 
     let initialFraction: number | undefined = undefined
     const animation = getImageAnimation(this.backgroundImage)
@@ -400,24 +404,19 @@ class Action {
       animation.destroy()
     }
 
-    if (options?.skipAnimation) {
-      this.backgroundImage.y = this.baseY - this.getPausedOffsetY()
-      this.backgroundImage.alpha = PAUSED_ALPHA
-    } else {
-      new Animation(
-        this.backgroundImage,
-        (image, fraction, context) => {
-          image.y = context.baseY - context.offsetY * fraction
-          image.alpha = PAUSED_ALPHA * fraction
-        },
-        {
-          ease: easeOutCubic,
-          initialFraction,
-          speed: 0.05,
-          context: { baseY: this.baseY, offsetY: this.getPausedOffsetY() },
-        }
-      )
-    }
+    new Animation(
+      this.backgroundImage,
+      (image, fraction, context) => {
+        image.y = context.baseY - context.offsetY * fraction
+        image.alpha = PAUSED_ALPHA * fraction
+      },
+      {
+        ease: easeOutCubic,
+        initialFraction,
+        speed: 0.05,
+        context: { baseY: this.baseY, offsetY: this.getPausedOffsetY() },
+      }
+    )
 
     this.backgroundImage.zIndex -= 100
 
@@ -425,11 +424,18 @@ class Action {
       this.barImage.visible = false
     }
 
-    this.pauseModeActive = true
+    this.armyModeActive = true
   }
 
-  deactivatePauseMode() {
-    this.iconImage.texture = getTexture(this.getTextureName())
+  deactivateArmyMode() {
+    if (!this.armyModeActive) return
+
+    let initialFraction: number | undefined = undefined
+    const animation = getImageAnimation(this.backgroundImage)
+    if (animation) {
+      initialFraction = 1 - animation.fraction
+      animation.destroy()
+    }
 
     new Animation(
       this.backgroundImage,
@@ -438,6 +444,7 @@ class Action {
         image.alpha = 1 - PAUSED_ALPHA + PAUSED_ALPHA * fraction
       },
       {
+        initialFraction,
         ease: easeOutCubic,
         speed: 0.05,
         context: { baseY: this.baseY, offsetY: this.getPausedOffsetY() },
@@ -446,11 +453,12 @@ class Action {
 
     this.backgroundImage.zIndex += 100
 
-    if (this.barImage) {
+    if (this.barImage && this.status === 'RUNNING') {
       this.barImage.visible = true
     }
 
-    this.pauseModeActive = false
+    this.armyModeActive = false
+    this.update()
   }
 
   isPreview(): boolean {

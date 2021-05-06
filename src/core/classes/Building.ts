@@ -169,8 +169,15 @@ class Building {
       this.tile.action.destroy()
     }
 
+    if (this.tile.action) {
+      if (newArmy) {
+        this.tile.action.activateArmyMode()
+      } else {
+        this.tile.action.deactivateArmyMode()
+      }
+    }
+
     this.army = newArmy
-    console.log(`army (${newArmy?.id}) set to building (${this.type})`)
     this.hideHitpoints()
   }
 

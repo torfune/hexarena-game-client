@@ -32,14 +32,16 @@ const messageHandlers = {
       status: 'string',
       duration: 'number',
       finishedAt: 'number',
+      automated: 'boolean',
     }) as {
-      id: string | null
-      type: string | null
-      tileId: string | null
-      ownerId: string | null
-      status: string | null
+      id: string
+      type: string
+      tileId: string
+      ownerId: string
+      status: string
       duration: number | null
       finishedAt: number | null
+      automated: boolean
     }[]
 
     for (let i = 0; i < parsed.length; i++) {
@@ -51,6 +53,7 @@ const messageHandlers = {
         status,
         duration,
         finishedAt,
+        automated,
       } = parsed[i]
 
       if (!id || !type || !tileId || !ownerId) continue
@@ -85,7 +88,7 @@ const messageHandlers = {
       }
 
       // Update
-      if (status && status !== action.status) {
+      if (status !== action.status) {
         action.setStatus(status as ActionStatus)
       }
       if (duration && duration !== action.duration) {
@@ -93,7 +96,9 @@ const messageHandlers = {
       }
       if (finishedAt && finishedAt !== action.finishedAt) {
         action.setFinishedAt(finishedAt)
-        console.log('action set finished at: ' + finishedAt)
+      }
+      if (automated !== action.automated) {
+        action.setAutomated(automated)
       }
     }
   },
