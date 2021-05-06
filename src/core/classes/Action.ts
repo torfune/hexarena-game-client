@@ -118,10 +118,6 @@ class Action {
       this.createFillImage()
     }
 
-    if (owner.id === store.game?.playerId) {
-      SoundManager.play('ACTION_CREATE')
-    }
-
     new Animation(
       this.backgroundImage,
       (image, fraction) => {
@@ -227,6 +223,8 @@ class Action {
     this.backgroundImage.alpha = 1
     this.createBarImage()
     this.createFillImage()
+
+    SoundManager.play('ACTION_CREATE')
 
     setTimeout(() => {
       if (this.status === 'PENDING') {
@@ -475,7 +473,11 @@ class Action {
 
     this.tile.action = null
 
-    if (this.type === 'RECRUIT_ARMY' && this.owner.id === store.game.playerId) {
+    if (
+      this.status !== 'PREVIEW' &&
+      this.type === 'RECRUIT_ARMY' &&
+      this.owner.id === store.game.playerId
+    ) {
       SoundManager.play('ARMY_CREATE')
     }
 

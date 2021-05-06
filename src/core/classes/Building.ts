@@ -34,9 +34,14 @@ class Building {
     this.image.y = pixel.y
     this.image.alpha = 0
 
-    // HP Image
+    // HP image
     if (this.type !== 'CAMP') {
       this.updateHpBar()
+    }
+
+    // Camp sound
+    else if (tile.owner?.id === store.game?.playerId) {
+      SoundManager.play('CAMP_CREATE')
     }
 
     new Animation(
@@ -58,6 +63,14 @@ class Building {
   }
 
   setType(newType: BuildingType) {
+    if (this.type) {
+      if (newType === 'TOWER') {
+        SoundManager.play('TOWER_CREATE')
+      } else if (newType === 'CASTLE') {
+        SoundManager.play('CASTLE_CREATE')
+      }
+    }
+
     this.type = newType
     this.image.texture = getTexture(this.getTextureName())
 

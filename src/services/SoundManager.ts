@@ -56,7 +56,7 @@ const SOUNDS = {
   },
   CAMP_CREATE: {
     url: `${baseUrl}/camp-create.mp3`,
-    volume: 0.6,
+    volume: 0.3,
     offset: 0,
     playInSpectate: true,
   },
@@ -72,12 +72,12 @@ const SOUNDS = {
     offset: 0,
     playInSpectate: false,
   },
-  GAME_START: {
-    url: `${baseUrl}/game-start.mp3`,
-    volume: 0.1,
-    offset: 0,
-    playInSpectate: false,
-  },
+  // GAME_START: {
+  //   url: `${baseUrl}/game-start.mp3`,
+  //   volume: 0.1,
+  //   offset: 0,
+  //   playInSpectate: false,
+  // },
   INCOME: {
     url: `${baseUrl}/income.mp3`,
     volume: 0.2,
@@ -158,7 +158,14 @@ class SoundManager {
   }
 
   static play(soundKey: keyof typeof SOUNDS) {
-    if (!store.settings.sound || !this.context || this.playing[soundKey]) {
+    const now = Date.now()
+    if (
+      !store.settings.sound ||
+      !this.context ||
+      this.playing[soundKey] ||
+      !store.game ||
+      now - store.game.startedAt < 500
+    ) {
       return
     }
 

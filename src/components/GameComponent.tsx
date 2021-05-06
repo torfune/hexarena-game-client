@@ -130,11 +130,11 @@ const GameComponent = observer(() => {
     }
   }, [])
 
-  useEffect(() => {
-    if (!store.showLoadingCover) {
-      SoundManager.play('GAME_START')
-    }
-  }, [store.showLoadingCover])
+  // useEffect(() => {
+  //   if (!store.showLoadingCover) {
+  //     SoundManager.play('GAME_START')
+  //   }
+  // }, [store.showLoadingCover])
 
   const handleResize = () => {
     refresh(Date.now())

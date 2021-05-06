@@ -87,6 +87,7 @@ class Game {
     resize: (event: any) => void
   } | null = null
   clickedAt: number = 0
+  startedAt: number = 0
   supplyLinesEditModeActive = false
 
   // Getters (computed)
@@ -141,17 +142,11 @@ class Game {
     if (!this.pixi) {
       this.pixi = createPixiApp()
       this.pixi.stage.sortableChildren = true
-
-      // for (let i = 0; i < TILE_IMAGES.length; i++) {
-      //   const container = new Container()
-      //   this.stage.set(TILE_IMAGES[i], container)
-      //   this.pixi.stage.addChild(container)
-      // }
-
       this.pixi.view.id = this.id
     }
 
     canvas.appendChild(this.pixi.view)
+    this.startedAt = Date.now()
   }
   destroy() {
     // for (let i = 0; i < TILE_IMAGES.length; i++) {
