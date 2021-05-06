@@ -49,14 +49,21 @@ class RoadManager {
 
       for (let i = 0; i < 6; i++) {
         let currentTile = tile.neighbors[i]
-        if (!currentTile) {
+        if (
+          !currentTile ||
+          ((currentTile.mountain || currentTile.forest) &&
+            !currentTile.isOwnedByThisPlayer())
+        ) {
           continue
         }
 
         for (let j = 0; j < store.gsConfig!.ARMY_HP; j++) {
           if (currentTile.building) {
             let road = this.findRoad(building, currentTile.building, newRoads)
-            if (!road) {
+            if (
+              !road &&
+              (!currentTile.owner || currentTile.isOwnedByThisPlayer())
+            ) {
               road = {
                 buildings: [building, currentTile.building],
                 line: new PIXI.Graphics(),
@@ -68,7 +75,13 @@ class RoadManager {
           }
 
           currentTile = currentTile.neighbors[i]
-          if (!currentTile) break
+          if (
+            !currentTile ||
+            ((currentTile.mountain || currentTile.forest) &&
+              !currentTile.isOwnedByThisPlayer())
+          ) {
+            break
+          }
         }
       }
     }

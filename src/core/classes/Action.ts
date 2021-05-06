@@ -475,6 +475,7 @@ class Action {
 
     if (
       this.status !== 'PREVIEW' &&
+      this.status !== 'QUEUED' &&
       this.type === 'RECRUIT_ARMY' &&
       this.owner.id === store.game.playerId
     ) {
