@@ -49,7 +49,7 @@ class RoadManager {
 
       for (let i = 0; i < 6; i++) {
         let currentTile = tile.neighbors[i]
-        if (!currentTile || !currentTile.isOwnedByThisPlayer()) {
+        if (!currentTile) {
           continue
         }
 
@@ -68,7 +68,7 @@ class RoadManager {
           }
 
           currentTile = currentTile.neighbors[i]
-          if (!currentTile || !currentTile.isOwnedByThisPlayer()) break
+          if (!currentTile) break
         }
       }
     }
@@ -165,6 +165,7 @@ class RoadManager {
 
     road.line.clear()
 
+    // Edit Mode
     if (store.game.supplyLinesEditModeActive) {
       // Supply Line Cancel Preview
       if (supplyLine && supplyLine.sourceTile.isHovered()) {
@@ -209,7 +210,10 @@ class RoadManager {
       else {
         this.drawBasicLine(road.line, buildingA, buildingB, highlighted)
       }
-    } else {
+    }
+
+    // Default Mode
+    else {
       if (supplyLine) {
         this.drawSupplyLine(
           road.line,
