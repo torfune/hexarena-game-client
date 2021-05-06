@@ -5,6 +5,9 @@ import createProp from '../../utils/createProp'
 import { makeAutoObservable } from 'mobx'
 import hex from '../functions/hex'
 import SoundManager from '../../services/SoundManager'
+import ArmySendManager from './ArmySendManager'
+import Action from './Action'
+import { v4 as uuid } from 'uuid'
 
 interface Props {
   [key: string]: Prop<Primitive>
@@ -80,6 +83,20 @@ class Player {
           this.props[key].previous + 1 === this.gold
         ) {
           SoundManager.play('INCOME')
+        }
+
+        const { hoveredTile } = store.game
+        if (hoveredTile && !hoveredTile.action && store.game.player) {
+          const actionType = hoveredTile.getActionType()
+          if (actionType && !ArmySendManager.active) {
+            new Action(
+              uuid(),
+              actionType,
+              'PREVIEW',
+              hoveredTile,
+              store.game.player
+            )
+          }
         }
       }
     }

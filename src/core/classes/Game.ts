@@ -714,7 +714,7 @@ class Game {
   endSupplyLinesEditMode() {
     this.supplyLinesEditModeActive = false
 
-    if (this.hoveredTile && this.player) {
+    if (this.hoveredTile && !this.hoveredTile.action && this.player) {
       const actionType = this.hoveredTile.getActionType()
       if (actionType && !ArmySendManager.active) {
         new Action(uuid(), actionType, 'PREVIEW', this.hoveredTile, this.player)
