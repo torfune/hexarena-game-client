@@ -78,17 +78,20 @@ class Player {
       }
 
       case 'gold': {
-        if (
-          this.id === store.game.playerId &&
-          this.props[key].previous + 1 === this.gold
-        ) {
+        if (this.id !== store.game.playerId) return
+
+        if (this.props[key].previous + 1 === this.gold) {
           SoundManager.play('INCOME')
         }
 
         const { hoveredTile } = store.game
         if (hoveredTile && !hoveredTile.action && store.game.player) {
           const actionType = hoveredTile.getActionType()
-          if (actionType && !ArmySendManager.active) {
+          if (
+            actionType &&
+            !hoveredTile.building?.army &&
+            !ArmySendManager.active
+          ) {
             new Action(
               uuid(),
               actionType,
