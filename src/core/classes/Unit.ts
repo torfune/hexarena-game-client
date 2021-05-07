@@ -4,7 +4,7 @@ import {
 } from '../../constants/constants-game'
 import roundToDecimals from '../functions/roundToDecimals'
 import { Pixel } from '../../types/coordinates'
-import { Sprite } from 'pixi.js-legacy'
+import { Sprite } from 'pixi.js'
 import { easeInCubic, easeOutCubic } from '../functions/easing'
 import createImage from '../functions/createImage'
 import store from '../store'

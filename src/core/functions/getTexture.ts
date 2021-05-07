@@ -1,9 +1,10 @@
-import { Loader } from 'pixi.js-legacy'
-
-const loader = Loader.shared
+import store from '../store'
+import { Loader } from 'pixi.js'
 
 function getTexture(textureName: string) {
-  const sheet = loader.resources['spritesheet'].spritesheet
+  if (!store.game) throw Error('Game does not exist.')
+
+  const sheet = Loader.shared.resources['spritesheet'].spritesheet
   if (!sheet) throw Error('Sheet not found')
 
   const texture = sheet.textures[textureName + '.png']

@@ -1,18 +1,17 @@
 import hex from './hex'
-import { Application } from 'pixi.js-legacy'
+import { Application } from 'pixi.js'
 
 const createPixiApp = () => {
   try {
-    const pixi = new Application({
-      resolution: window.devicePixelRatio,
+    const pixiApp = new Application({
+      width: window.innerWidth,
+      height: window.innerHeight,
+      resolution: window.devicePixelRatio || 1,
+      backgroundColor: hex('#fff'),
       autoDensity: true,
     })
 
-    pixi.renderer.backgroundColor = hex('#fff')
-    pixi.renderer.autoDensity = true
-    pixi.renderer.resize(window.innerWidth, window.innerHeight)
-
-    return pixi
+    return pixiApp
   } catch (error) {
     alert(
       'WebGL is not supported in this browser. The game cannot run without WebGL. I am sorry. You may try different browser.'

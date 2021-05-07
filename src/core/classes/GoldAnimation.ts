@@ -1,7 +1,7 @@
 import createImage from '../functions/createImage'
 import getPixelPosition from '../functions/getPixelPosition'
 import Tile from './Tile'
-import { Sprite } from 'pixi.js-legacy'
+import { Sprite } from 'pixi.js'
 import store from '../store'
 import SoundManager from '../../services/SoundManager'
 

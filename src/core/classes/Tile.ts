@@ -20,7 +20,7 @@ import TileImage from '../../types/TileImage'
 import { Axial } from '../../types/coordinates'
 import Action, { ActionType } from './Action'
 import TileImageArray from '../../types/TileImageArray'
-import { Sprite } from 'pixi.js-legacy'
+import { Sprite } from 'pixi.js'
 import getRotationBySide from '../functions/getRotationBySide'
 import destroyImage from '../functions/destroyImage'
 import axialInDirection from '../../utils/axialInDirection'
@@ -591,7 +591,6 @@ class Tile {
       BUILD_TOWER_COST,
       BUILD_CASTLE_COST,
       REBUILD_VILLAGE_COST,
-      HP,
     } = store.gsConfig
 
     // Neighbor check

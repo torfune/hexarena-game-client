@@ -1,4 +1,4 @@
-import { Text, TextStyle } from 'pixi.js-legacy'
+import { Text, TextStyle } from 'pixi.js'
 import store from '../store'
 
 const createText = (content: string) => {

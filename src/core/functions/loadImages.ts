@@ -1,11 +1,12 @@
-import { Loader } from 'pixi.js-legacy'
+import { Loader } from 'pixi.js'
 
-const loader = Loader.shared
-const baseUrl = process.env.PUBLIC_URL + '/images'
+const BASE_URL = process.env.PUBLIC_URL + '/images'
 
-const loadImages = () => {
-  return new Promise((resolve) => {
-    loader.add('spritesheet', `${baseUrl}/spritesheet.json`).load(resolve)
+async function loadImages() {
+  return new Promise<void>((resolve) => {
+    Loader.shared
+      .add('spritesheet', `${BASE_URL}/spritesheet.json`)
+      .load(resolve)
   })
 }
 

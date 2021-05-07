@@ -1,4 +1,4 @@
-import { Sprite } from 'pixi.js-legacy'
+import { Sprite } from 'pixi.js'
 import hex from './hex'
 import store from '../store'
 import getTexture from './getTexture'

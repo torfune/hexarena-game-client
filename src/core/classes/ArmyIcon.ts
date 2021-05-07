@@ -6,12 +6,7 @@ import {
   ARMY_ICON_OFFSET_Y,
   UNIT_MOVEMENT_SPEED,
 } from '../../constants/constants-game'
-import {
-  easeInOutQuad,
-  easeInOutQuart,
-  easeInOutQuint,
-  easeOutCubic,
-} from '../functions/easing'
+import { easeOutCubic } from '../functions/easing'
 import { Pixel } from '../../types/coordinates'
 import Animation from './Animation'
 import createImage from '../functions/createImage'

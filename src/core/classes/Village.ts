@@ -1,5 +1,5 @@
 import Tile from './Tile'
-import { Sprite } from 'pixi.js-legacy'
+import { Sprite } from 'pixi.js'
 import createImage from '../functions/createImage'
 import getPixelPosition from '../functions/getPixelPosition'
 import destroyImage from '../functions/destroyImage'
@@ -197,12 +197,6 @@ class Village {
     }
 
     return highestHouseY - BAR_OFFSET_Y
-  }
-
-  getRebuildCost() {
-    if (!store.gsConfig) return 0
-
-    return store.gsConfig.VILLAGE_HOUSE_VALUE * this.level
   }
 
   destroy() {

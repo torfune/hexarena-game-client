@@ -34,7 +34,7 @@ const GameComponent = observer(() => {
   const connect = async () => {
     console.log('Connecting to Game Server ...')
 
-    const canvas = document.getElementById('game-canvas')
+    const canvas = document.getElementById('game-container')
     if (!canvas) throw new Error('Cannot find canvas.')
 
     const { gameId, accessKey, gameServerHost } = qs.parse(
@@ -90,11 +90,11 @@ const GameComponent = observer(() => {
     // Set global game configuration
     store.gsConfig = configResponse.data
 
-    // Load images
-    await loadImages()
-
     // Load sounds
     SoundManager.init()
+
+    // Load images
+    await loadImages()
 
     // Connect Socket
     store.socket = new Socket(
@@ -115,8 +115,8 @@ const GameComponent = observer(() => {
     }
 
     // Create Game instance
-    store.game = new Game(gameId, gameMode, gameStatus)
-    store.game.render(canvas)
+    store.game = new Game(gameId, gameMode, gameStatus, canvas)
+    // store.game.render()
 
     // Done
     store.loading = false
@@ -167,8 +167,8 @@ const GameComponent = observer(() => {
         </LoadingCover>
       )}
 
-      <GameCanvas
-        id="game-canvas"
+      <GameContainer
+        id="game-container"
         visible={
           !!store.game &&
           (gameStatus === 'running' || gameStatus === 'finished')
@@ -224,10 +224,10 @@ const HudContainer = styled.div`
   height: 100%;
 `
 
-interface GameCanvasProps {
+interface GameContainerProps {
   visible: boolean
 }
-const GameCanvas = styled.div<GameCanvasProps>`
+const GameContainer = styled.div<GameContainerProps>`
   visibility: ${(props) => (props.visible ? 'visible' : 'hidden')};
 `
 const LoadingCover = styled.div`

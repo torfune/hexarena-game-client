@@ -7,7 +7,6 @@ import {
   CAMERA_SPEED,
   MAX_CLICK_DURATION,
 } from '../../constants/constants-game'
-import createGameLoop from '../functions/createGameLoop'
 import createPixiApp from '../functions/createPixiApp'
 import store from '../store'
 import { Pixel, Axial } from '../../types/coordinates'
@@ -18,7 +17,7 @@ import roundToDecimals from '../functions/roundToDecimals'
 import getDebugCommand from '../functions/getDebugCommand'
 import getTileByAxial from '../functions/getTileByAxial'
 import Tile from './Tile'
-import { Ticker, Application } from 'pixi.js-legacy'
+import { Application } from 'pixi.js'
 import Action from './Action'
 import { v4 as uuid } from 'uuid'
 import { makeAutoObservable } from 'mobx'
@@ -66,8 +65,7 @@ class Game {
   spectators: number | null = 0
   scale: number = DEFAULT_SCALE
   targetScale: number = DEFAULT_SCALE
-  loop: Ticker | null = null
-  pixi: Application | null = null
+  pixi: Application
   pingArray: number[] = []
   animations: Array<Animation | GoldAnimation> = []
   buildingsConnections: BuildingsConnection[] = []
@@ -107,10 +105,16 @@ class Game {
     this.time = time
   }
 
-  constructor(id: string, mode: GameMode, status: GameStatus) {
+  constructor(
+    id: string,
+    mode: GameMode,
+    status: GameStatus,
+    container: HTMLElement
+  ) {
     this.id = id
     this.mode = mode
     this.status = status
+    this.startedAt = Date.now()
 
     // Leaving warning
     window.onbeforeunload = () => {
@@ -127,47 +131,33 @@ class Game {
       }
     }
 
-    // Listeners and Images
+    // Event Listeners
     this.setupEventListeners()
+
+    // Pixi Application
+    this.pixi = createPixiApp()
+    this.pixi.view.id = this.id
+    this.pixi.ticker.add(this.update.bind(this))
+    this.pixi.stage.sortableChildren = true
+    container.appendChild(this.pixi.view)
 
     // Global debug reference
     ;(window as any).game = this
 
     makeAutoObservable(this)
   }
-  render(canvas: HTMLElement) {
-    if (!this.loop) {
-      this.loop = createGameLoop(this.update, this)
-    }
 
-    if (!this.pixi) {
-      this.pixi = createPixiApp()
-      this.pixi.stage.sortableChildren = true
-      this.pixi.view.id = this.id
-    }
-
-    canvas.appendChild(this.pixi.view)
-    this.startedAt = Date.now()
-  }
   destroy() {
-    // for (let i = 0; i < TILE_IMAGES.length; i++) {
-    //   const stage = this.stage.get(TILE_IMAGES[i])
-    //   if (stage) {
-    //   }
+    // if (this.loop) {
+    //   this.loop.destroy()
+    //   this.loop = null
     // }
 
-    if (this.pixi) {
-      this.pixi.stage.removeChildren()
-      this.pixi.destroy()
-      this.pixi = null
-    }
-
-    if (this.loop) {
-      this.loop.destroy()
-      this.loop = null
-    }
-
     this.clearEventListeners()
+
+    if (store.game === this) {
+      store.game = null
+    }
 
     // Remove canvas element
     const canvas = document.getElementById(this.id)
@@ -175,9 +165,8 @@ class Game {
       canvas.remove()
     }
 
-    if (store.game === this) {
-      store.game = null
-    }
+    this.pixi.stage.removeChildren()
+    this.pixi.destroy()
   }
   update(delta: number) {
     if (!this.camera || !this.pixi || store.error) {
