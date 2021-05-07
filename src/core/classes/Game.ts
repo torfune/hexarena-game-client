@@ -89,6 +89,7 @@ class Game {
   clickedAt: number = 0
   startedAt: number = 0
   supplyLinesEditModeActive = false
+  updateDurations: number[] = []
 
   // Getters (computed)
   get player() {
@@ -183,6 +184,8 @@ class Game {
       return
     }
 
+    const startedAt = Date.now()
+
     // Animations
     for (let i = this.animations.length - 1; i >= 0; i--) {
       this.animations[i].update(delta)
@@ -271,6 +274,16 @@ class Game {
 
     // Hovered tile
     this.updateHoveredTile()
+
+    // Measure the performance
+    const duration = Date.now() - startedAt
+    if (duration >= 5) {
+      console.log(`update took ${duration}ms`)
+    }
+    // this.updateDurations.push(duration)
+    // if (this.updateDurations.length > 64) {
+    //   this.updateDurations.shift()
+    // }
   }
   setupEventListeners() {
     this.eventListeners = {
@@ -466,7 +479,6 @@ class Game {
             ArmySendManager.tile.building
           )
           if (supplyLine) {
-            console.log('destroy sent')
             store.socket.send('destroySupplyLine', supplyLine.id)
           }
         }
@@ -719,6 +731,14 @@ class Game {
     }
 
     return null
+  }
+  getAverageUpdateDuration() {
+    let sum = 0
+    for (const duration of this.updateDurations) {
+      sum += duration
+    }
+
+    return Math.round(sum / this.updateDurations.length)
   }
 }
 

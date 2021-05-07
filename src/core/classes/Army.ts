@@ -99,10 +99,10 @@ class Army {
   }
 
   setTile(newTile: Tile | null) {
-    console.log(
-      `ARMY [${this.getAxialString()}] set TILE: `,
-      newTile?.axial || null
-    )
+    // console.log(
+    //   `ARMY [${this.getAxialString()}] set TILE: `,
+    //   newTile?.axial || null
+    // )
 
     if (ArmySendManager.active && ArmySendManager.army === this) {
       ArmySendManager.unselectArmy()
@@ -137,10 +137,10 @@ class Army {
   }
 
   setBuilding(newBuilding: Building | null) {
-    console.log(
-      `ARMY [${this.getAxialString()}] set BUILDING: `,
-      newBuilding?.type || null
-    )
+    // console.log(
+    //   `ARMY [${this.getAxialString()}] set BUILDING: `,
+    //   newBuilding?.type || null
+    // )
 
     if (ArmySendManager.active && ArmySendManager.army === this) {
       ArmySendManager.unselectArmy()
@@ -190,7 +190,6 @@ class Army {
     const tile = this.tile || this.building?.tile
     if (!tile) return
 
-    console.log('icon move on')
     this.icon.moveOn(tile)
   }
 
