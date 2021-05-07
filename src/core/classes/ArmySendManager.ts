@@ -100,6 +100,10 @@ class ArmySendManager {
     this.direction = null
     this.dragArrow = null
     this.targetBuilding = null
+
+    if (store.game?.hoveredTile) {
+      store.game.hoveredTile.showActionPreviewIfPossible()
+    }
   }
 
   static sendArmy() {

@@ -101,18 +101,10 @@ class Tile {
       }
     } else {
       // Create Action
-      const actionType = this.getActionType()
-      if (
-        actionType &&
-        !ArmySendManager.active &&
-        !this.action &&
-        (!this.building || !this.building.army)
-      ) {
-        new Action(uuid(), actionType, 'PREVIEW', this, store.game.player)
-      }
+      this.showActionPreviewIfPossible()
 
       // Send Army
-      else if (this.building && this.building.army) {
+      if (this.building && this.building.army) {
         this.addHoverHexagon()
       }
     }
@@ -293,6 +285,7 @@ class Tile {
   setOwner(newOwner: Player | null) {
     if (!store.game) return
 
+    // Tile turned owned
     if (newOwner) {
       if (this.image.pattern) {
         this.removeImage('pattern')
@@ -304,7 +297,6 @@ class Tile {
 
       const image = this.addImage('pattern', false)
       image.tint = hex(newOwner.getPattern())
-      // image.tint = hex(colorFilter(newOwner.getPattern(), 0.75))
 
       if (Date.now() - this.createdAt > 500) {
         image.alpha = 0
@@ -323,7 +315,10 @@ class Tile {
           )
         }, Math.round(Math.random() * 100))
       }
-    } else {
+    }
+
+    // Tile turned neutral
+    else {
       if (this.image.pattern) {
         const patternImage = this.image.pattern
         setTimeout(() => {
@@ -365,6 +360,10 @@ class Tile {
     }
 
     this.owner = newOwner
+
+    if (this.isHovered() && this.isOwnedByThisPlayer()) {
+      this.showActionPreviewIfPossible()
+    }
   }
 
   updateNeighbors() {
@@ -722,6 +721,21 @@ class Tile {
       if (n) {
         n.updateBorders()
       }
+    }
+  }
+
+  showActionPreviewIfPossible() {
+    if (!store.game || !store.game.player) return
+
+    if (this.action || (this.building && this.building.army)) return
+
+    const actionType = this.getActionType()
+    if (
+      actionType &&
+      !ArmySendManager.active &&
+      !store.game.supplyLinesEditModeActive
+    ) {
+      new Action(uuid(), actionType, 'PREVIEW', this, store.game.player)
     }
   }
 }

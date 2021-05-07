@@ -677,19 +677,6 @@ class Game {
     this.notification = `${Date.now()}|Not enough gold`
     SoundManager.play('ACTION_FAILURE')
   }
-  // createAction(tile: Tile, actionType: ActionType) {
-  //   if (!store.socket || !this.player) {
-  //     console.warn('WARN: Cannot create Action.')
-  //     return
-  //   }
-  //
-  //   // const action = new Action(uuid(), actionType, tile, this.player)
-  //   // this.actions.push(action)
-  //
-  //
-  //
-  //   // tile.removeHoverHexagon()
-  // }
   createSupplyLine(sourceTile: Tile, targetTile: Tile) {
     const supplyLine = new SupplyLine(uuid(), sourceTile, targetTile)
 
@@ -714,11 +701,8 @@ class Game {
   endSupplyLinesEditMode() {
     this.supplyLinesEditModeActive = false
 
-    if (this.hoveredTile && !this.hoveredTile.action && this.player) {
-      const actionType = this.hoveredTile.getActionType()
-      if (actionType && !ArmySendManager.active) {
-        new Action(uuid(), actionType, 'PREVIEW', this.hoveredTile, this.player)
-      }
+    if (this.hoveredTile) {
+      this.hoveredTile.showActionPreviewIfPossible()
     }
   }
   getSupplyLineBySourceBuilding(sourceBuilding: Building): SupplyLine | null {
