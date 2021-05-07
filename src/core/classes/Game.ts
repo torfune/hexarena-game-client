@@ -660,6 +660,7 @@ class Game {
       BUILD_CAMP_COST,
       BUILD_TOWER_COST,
       BUILD_CASTLE_COST,
+      REBUILD_VILLAGE_COST,
     } = store.gsConfig
 
     const actionType = tile.getActionType({ ignoreGold: true })
@@ -669,7 +670,10 @@ class Game {
       (actionType === 'BUILD_CAMP' && this.player.gold >= BUILD_CAMP_COST) ||
       (actionType === 'BUILD_CASTLE' &&
         this.player.gold >= BUILD_CASTLE_COST) ||
-      (actionType === 'RECRUIT_ARMY' && this.player.gold >= RECRUIT_ARMY_COST)
+      (actionType === 'RECRUIT_ARMY' &&
+        this.player.gold >= RECRUIT_ARMY_COST) ||
+      (actionType === 'REBUILD_VILLAGE' &&
+        this.player.gold >= REBUILD_VILLAGE_COST)
     ) {
       return
     }

@@ -85,10 +85,9 @@ export const UNIT_DOOR_OFFSET = 32
 export const UNIT_MAX_DELAY = 0.4
 
 // COLORS
-export const BORDER_COLOR = '#333'
 export const MOUNTAIN_BACKGROUND = '#eaeaea'
 export const BEDROCK_BACKGROUND = '#5D6D7C'
-export const BEDROCK_BORDER = '#333'
+export const BEDROCK_BORDER = '#fff'
 
 // MISC
 export const MAX_CLICK_DURATION = 500

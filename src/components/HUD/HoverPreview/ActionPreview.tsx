@@ -123,9 +123,7 @@ const getActionCost = (
     case 'REPAIR_BUILDING':
       return store.gsConfig.RECRUIT_ARMY_COST
     case 'REBUILD_VILLAGE':
-      return tile.village
-        ? tile.village.level * store.gsConfig.VILLAGE_HOUSE_VALUE * 2
-        : 0
+      return store.gsConfig.REBUILD_VILLAGE_COST
     case 'SEND_ARMY':
       return 0
   }

@@ -411,16 +411,16 @@ class Tile {
       let borderTint: string | null = null
 
       // Bedrock -> !Bedrock
-      if (this.bedrock && !n.bedrock) {
-        showBorder = true
-        // borderTint = BEDROCK_BORDER
-      }
+      // if (this.bedrock && !n.bedrock) {
+      //   showBorder = true
+      //   // borderTint = BEDROCK_BORDER
+      // }
 
       // !Bedrock -> Bedrock
-      if (!this.bedrock && n.bedrock) {
-        showBorder = true
-        // borderTint = BEDROCK_BORDER
-      }
+      // if (!this.bedrock && n.bedrock) {
+      //   showBorder = true
+      //   // borderTint = BEDROCK_BORDER
+      // }
 
       // Owned -> Neutral
       if (this.owner && this.owner.alive && !n.owner) {
@@ -590,6 +590,7 @@ class Tile {
       BUILD_CAMP_COST,
       BUILD_TOWER_COST,
       BUILD_CASTLE_COST,
+      REBUILD_VILLAGE_COST,
       HP,
     } = store.gsConfig
 
@@ -646,7 +647,7 @@ class Tile {
     if (
       this.village &&
       this.village.raided &&
-      (store.game.player.gold >= this.village.getRebuildCost() || ignoreGold)
+      (store.game.player.gold >= REBUILD_VILLAGE_COST || ignoreGold)
     ) {
       return 'REBUILD_VILLAGE'
     }

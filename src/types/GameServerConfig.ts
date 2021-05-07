@@ -5,6 +5,7 @@ interface GameServerConfig {
   BUILD_CAMP_COST: number
   BUILD_TOWER_COST: number
   BUILD_CASTLE_COST: number
+  REBUILD_VILLAGE_COST: number
   HP: {
     CAPITAL: number
     CAMP: number
