@@ -25,6 +25,13 @@ const ActionPreview = ({ actionType, tile }: Props) => {
     return null
   }
 
+  if (
+    (!tile.action || tile.action.status !== 'PREVIEW') &&
+    actionType !== 'SEND_ARMY'
+  ) {
+    return null
+  }
+
   const cost = getActionCost(actionType, tile)
   const gold = store.game.player.gold
   const enoughGold = gold >= cost
