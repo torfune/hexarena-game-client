@@ -195,8 +195,6 @@ class Tile {
     }
 
     let texture: string = imageName
-    let zIndex: number | undefined = undefined
-    let axialZ: number | undefined = undefined
     let alpha = 1
     let group: any = 'objects'
 
@@ -204,17 +202,6 @@ class Tile {
       texture = this.bedrock ? 'overlay' : 'pattern'
     } else if (imageName === 'mountain') {
       texture = `mountain-${Math.floor(Math.random() * 5 + 1)}`
-      // zIndex = IMAGE_Z_INDEX.indexOf('mountain')
-    }
-
-    if (
-      imageName === 'castle' ||
-      imageName === 'capital' ||
-      imageName === 'tower' ||
-      imageName === 'camp' ||
-      imageName === 'mountain'
-    ) {
-      axialZ = this.axial.z
     }
 
     if (imageName === 'pattern') {
@@ -385,10 +372,7 @@ class Tile {
 
       if (!this.neighbors[i] && !image) {
         const pixel = getPixelPosition(this.axial)
-        const newImage = createImage('fog', {
-          group: 'fogs',
-          // zIndex: FOG_Z_INDEX
-        })
+        const newImage = createImage('fog', { group: 'fogs' })
         ;(newImage as any).parentGroup = store.game.fogsGroup
 
         newImage.x = pixel.x
@@ -674,7 +658,6 @@ class Tile {
 
     const pixel = getPixelPosition(this.axial)
     const circle = new PIXI.Graphics()
-    // circle.zIndex = ATTENTION_NOTIFICATION_Z_INDEX
 
     new Animation(
       circle,

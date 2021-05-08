@@ -3,13 +3,12 @@ import store from './store'
 import getPixelPosition from './functions/getPixelPosition'
 import * as PIXI from 'pixi.js'
 import hex from './functions/hex'
-import getImageZIndex from './functions/getImageZIndex'
 import Building from './classes/Building'
 import SupplyLine from './classes/SupplyLine'
 import { Graphics } from 'pixi.js'
 import Tile from './classes/Tile'
 import ArmySendManager from './classes/ArmySendManager'
-import { ROAD_OFFSET_Y, TILE_RADIUS } from '../constants/constants-game'
+import { ROAD_OFFSET_Y } from '../constants/constants-game'
 
 const ANIMATION_SPEED = 500
 
@@ -241,8 +240,6 @@ class RoadManager {
     }
 
     ;(road.line as any).parentGroup = store.game.roadsGroup
-
-    // road.line.zIndex = getImageZIndex('building-road')
   }
 
   static drawBasicLine(

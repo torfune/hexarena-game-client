@@ -17,7 +17,6 @@ class ArmyIcon {
   targetPosition: Pixel | null = null
   originalPosition: Pixel | null = null
   animationFraction: number | null = null
-  zIndexSwapped: boolean = false
 
   constructor(tile: Tile) {
     this.tile = tile
@@ -66,14 +65,6 @@ class ArmyIcon {
     this.image.x = this.originalPosition.x + delta.x * easedFraction
     this.image.y = this.originalPosition.y + delta.y * easedFraction
 
-    // Update image z-index
-    if (this.animationFraction >= 0.5 && !this.zIndexSwapped) {
-      // this.image.zIndex = getImageZIndex('army-icon', {
-      //   axialZ: this.tile.axial.z,
-      // })
-      this.zIndexSwapped = true
-    }
-
     if (this.animationFraction === 1) {
       this.animationFraction = null
     }
@@ -93,7 +84,6 @@ class ArmyIcon {
     }
 
     this.animationFraction = 0
-    this.zIndexSwapped = false
     this.tile = tile
   }
 

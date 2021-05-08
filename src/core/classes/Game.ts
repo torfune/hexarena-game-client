@@ -97,10 +97,9 @@ class Game {
   roadsGroup = new Group(3, false)
   overlayGroup = new Group(4, false)
   dragArrowsGroup = new Group(5, false)
-  objectsGroup = new Group(6, true) // buildings,  forests, mountains, villages
+  objectsGroup = new Group(6, true) // buildings,  forests, mountains, villages, armies
   actionsGroup = new Group(7, false)
-  armiesGroup = new Group(8, true)
-  fogsGroup = new Group(9, false)
+  fogsGroup = new Group(8, false)
 
   // Getters (computed)
   get player() {
@@ -157,9 +156,6 @@ class Game {
     this.objectsGroup.on('sort', (sprite: any) => {
       sprite.zOrder = sprite.y
     })
-    this.armiesGroup.on('sort', (sprite: any) => {
-      sprite.zOrder = sprite.y
-    })
 
     this.pixi.stage.addChild(new Layer(this.backgroundGroup))
     this.pixi.stage.addChild(new Layer(this.patternsGroup))
@@ -169,7 +165,6 @@ class Game {
     this.pixi.stage.addChild(new Layer(this.dragArrowsGroup))
     this.pixi.stage.addChild(new Layer(this.objectsGroup))
     this.pixi.stage.addChild(new Layer(this.actionsGroup))
-    this.pixi.stage.addChild(new Layer(this.armiesGroup))
     this.pixi.stage.addChild(new Layer(this.fogsGroup))
 
     // Global debug reference

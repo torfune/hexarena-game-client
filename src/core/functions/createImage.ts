@@ -2,9 +2,6 @@ import { Sprite } from 'pixi.js'
 import hex from './hex'
 import store from '../store'
 import getTexture from './getTexture'
-import { IMAGE_Z_INDEX } from '../../constants/constants-game'
-import getImageZIndex from './getImageZIndex'
-import { Group, Layer } from '../../pixi-layers'
 
 interface Options {
   tint?: string
@@ -17,14 +14,12 @@ interface Options {
     | 'fogs'
     | 'dragArrows'
     | 'overlay'
-    | 'armies'
 }
 
 const createImage = (textureName: string, options: Options = {}) => {
   if (!store.game || !store.game.pixi) return new Sprite()
 
   const image = new Sprite(getTexture(textureName))
-
   image.anchor.set(0.5, 1)
 
   if (options.group) {
@@ -53,9 +48,6 @@ const createImage = (textureName: string, options: Options = {}) => {
         break
       case 'overlay':
         group = store.game.overlayGroup
-        break
-      case 'armies':
-        group = store.game.armiesGroup
         break
       default:
         throw Error(`Unsupported group: ${options.group}`)

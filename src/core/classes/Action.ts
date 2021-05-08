@@ -20,14 +20,16 @@ import {
 
 const BAR_MASK_WIDTH = 140
 const FILL_MASK_HEIGHT = 100
+const BACKGROUND_MASK_HEIGHT = 140
+const BACKGROUND_MASK_HEIGHT_ARMY_MODE = 97
 const BUILDING_PREVIEW_ALPHA = 0.25
-const PREVIEW_ICON_ALPHA = 0.8
+const PREVIEW_ICON_ALPHA = 0.5
 const DESTROY_ANIMATION_SPEED = 0.08
 const ARMY_MODE_ALPHA = 0.75
 const ARMY_MODE_OFFSET_Y = {
-  CAMP: 102,
-  TOWER: 120,
-  CASTLE: 120,
+  CAMP: 93,
+  TOWER: 116,
+  CASTLE: 116,
   CAPITAL: 120,
 }
 
@@ -55,6 +57,7 @@ class Action {
   status: ActionStatus
   automated = false
   backgroundImage: Sprite = new Sprite()
+  backgroundImageMask: Sprite = new Sprite()
   fillImage: Sprite = new Sprite()
   fillImageMask: Sprite = new Sprite()
   iconImage: Sprite = new Sprite()
@@ -93,6 +96,14 @@ class Action {
     this.backgroundImage.y = this.baseY
     this.backgroundImage.alpha = 0
 
+    this.backgroundImageMask = new Sprite(Texture.WHITE)
+    this.backgroundImageMask.anchor.set(0.5, 0)
+    this.backgroundImageMask.y = -BACKGROUND_MASK_HEIGHT
+    this.backgroundImageMask.tint = hex('#ff0000') // for easier debug
+    this.backgroundImageMask.width = 140
+    this.backgroundImageMask.height = BACKGROUND_MASK_HEIGHT
+    this.backgroundImage.mask = this.backgroundImageMask
+
     const textureName =
       this.status === 'PAUSED' || this.status === 'QUEUED'
         ? 'action-icon-pause'
@@ -104,6 +115,7 @@ class Action {
     ;(this.iconImage as any).parentGroup = store.game?.actionsGroup
 
     this.backgroundImage.addChild(this.iconImage)
+    this.backgroundImage.addChild(this.backgroundImageMask)
 
     if (
       status === 'PREVIEW' &&
@@ -269,8 +281,8 @@ class Action {
     // Create image
     if (this.automated && !this.automatedImage) {
       this.automatedImage = new Sprite(getTexture('action-automated'))
-      this.automatedImage.anchor.set(0.5)
-      this.automatedImage.y = -56
+      this.automatedImage.anchor.set(0.5, 1)
+      this.automatedImage.y = -101
       this.backgroundImage.addChild(this.automatedImage)
     }
 
@@ -363,12 +375,6 @@ class Action {
     this.buildingPreviewImage.x = pixel.x
     this.buildingPreviewImage.y = pixel.y - offsetY
     this.buildingPreviewImage.alpha = 0
-    // this.buildingPreviewImage.zIndex = getImageZIndex(
-    //   'action-building-preview',
-    //   {
-    //     axialZ: this.tile.axial.z,
-    //   }
-    // )
 
     new Animation(
       this.buildingPreviewImage,
@@ -418,16 +424,23 @@ class Action {
       (image, fraction, context) => {
         image.y = context.baseY - context.offsetY * fraction
         image.alpha = ARMY_MODE_ALPHA * fraction
+
+        const maskDelta =
+          BACKGROUND_MASK_HEIGHT - BACKGROUND_MASK_HEIGHT_ARMY_MODE
+        context.action.backgroundImageMask.height =
+          BACKGROUND_MASK_HEIGHT_ARMY_MODE + maskDelta * (1 - fraction)
       },
       {
         ease: easeOutCubic,
         initialFraction,
         speed: 0.05,
-        context: { baseY: this.baseY, offsetY: this.getArmyModeOffsetY() },
+        context: {
+          baseY: this.baseY,
+          offsetY: this.getArmyModeOffsetY(),
+          action: this,
+        },
       }
     )
-
-    // this.backgroundImage.zIndex -= 100
 
     if (this.barImage) {
       this.barImage.visible = false
@@ -460,14 +473,12 @@ class Action {
       }
     )
 
-    // this.backgroundImage.zIndex += 100
-
     if (this.barImage && this.status === 'RUNNING') {
       this.barImage.visible = true
     }
 
+    this.backgroundImageMask.height = BACKGROUND_MASK_HEIGHT
     this.armyModeActive = false
-    this.update()
   }
 
   isPreview(): boolean {

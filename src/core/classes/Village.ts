@@ -60,7 +60,6 @@ class Village {
     }
 
     const newHousesCount = newLevel - this.level
-    // const pixel = getPixelPosition(this.tile.axial)
 
     for (let i = 0; i < newHousesCount; i++) {
       const housePosition = this.housesPositions[this.houses.length]
@@ -71,11 +70,8 @@ class Village {
       image.x = housePosition.x
       image.y = housePosition.y + HOUSE_MARGIN_Y - VILLAGE_OFFSET_Y
       image.anchor.set(0.5, 1)
-      // const zIndexOffset = housePosition.y - pixel.y + HOUSE_OFFSET
-      // image.zIndex += zIndexOffset
 
       const scale = 1
-      // if (animate) {
       image.scale.x = 0
       image.scale.y = 0
       new Animation(
@@ -85,9 +81,6 @@ class Village {
         },
         { speed: 0.04 }
       )
-      // } else {
-      //   image.scale.set(scale)
-      // }
 
       this.houses.push(image)
     }
