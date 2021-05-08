@@ -9,6 +9,7 @@ import { Graphics } from 'pixi.js'
 import Tile from './classes/Tile'
 import ArmySendManager from './classes/ArmySendManager'
 import { ROAD_OFFSET_Y } from '../constants/constants-game'
+import isSpectating from '../utils/isSpectating'
 
 const ANIMATION_SPEED = 500
 
@@ -34,7 +35,7 @@ class RoadManager {
   static highlightedRoad: Road | null = null
 
   static update() {
-    if (!store.game || !store.game.pixi) return
+    if (!store.game) return
 
     const buildings = Array.from(store.game.buildings.values())
 
@@ -43,7 +44,7 @@ class RoadManager {
     for (const building of buildings) {
       const { tile } = building
 
-      if (!tile.owner || !tile.isOwnedByThisPlayer()) {
+      if (!tile.owner || (!tile.isOwnedByThisPlayer() && !isSpectating())) {
         continue
       }
 
@@ -52,7 +53,7 @@ class RoadManager {
         if (
           !currentTile ||
           ((currentTile.mountain || currentTile.forest) &&
-            !currentTile.isOwnedByThisPlayer())
+            tile.owner.id !== currentTile.owner?.id)
         ) {
           continue
         }
@@ -62,7 +63,9 @@ class RoadManager {
             let road = this.findRoad(building, currentTile.building, newRoads)
             if (
               !road &&
-              (!currentTile.owner || currentTile.isOwnedByThisPlayer())
+              (!currentTile.owner ||
+                currentTile.isOwnedByThisPlayer() ||
+                isSpectating())
             ) {
               road = {
                 buildings: [building, currentTile.building],
@@ -78,7 +81,7 @@ class RoadManager {
           if (
             !currentTile ||
             ((currentTile.mountain || currentTile.forest) &&
-              !currentTile.isOwnedByThisPlayer())
+              tile.owner.id !== currentTile.owner?.id)
           ) {
             break
           }
