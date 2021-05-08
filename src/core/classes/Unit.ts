@@ -1,4 +1,5 @@
 import {
+  ARMY_UNIT_OFFSET_Y,
   UNIT_IMAGE_SCALE,
   UNIT_MAX_DELAY,
 } from '../../constants/constants-game'
@@ -10,14 +11,14 @@ import createImage from '../functions/createImage'
 import store from '../store'
 
 class Unit {
-  image: Sprite = createImage('army')
+  image: Sprite = createImage('army', { group: 'objects' })
   targetPosition: Pixel | null = null
   originalPosition: Pixel | null = null
   delay: number | null = null
 
   constructor(x: number, y: number) {
     this.image.x = x
-    this.image.y = y
+    this.image.y = y - ARMY_UNIT_OFFSET_Y
 
     this.image.scale.x = UNIT_IMAGE_SCALE
     this.image.scale.y = UNIT_IMAGE_SCALE
@@ -42,7 +43,7 @@ class Unit {
   }
 
   moveOn(x: number, y: number) {
-    this.targetPosition = { x, y }
+    this.targetPosition = { x, y: y - ARMY_UNIT_OFFSET_Y }
     this.originalPosition = {
       x: this.image.x,
       y: this.image.y,

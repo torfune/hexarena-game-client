@@ -1,5 +1,6 @@
 import hex from './hex'
 import { Application } from 'pixi.js'
+import { Stage } from '../../pixi-layers'
 
 const createPixiApp = () => {
   try {
@@ -10,7 +11,7 @@ const createPixiApp = () => {
       backgroundColor: hex('#fff'),
       autoDensity: true,
     })
-
+    pixiApp.stage = new Stage()
     return pixiApp
   } catch (error) {
     alert(

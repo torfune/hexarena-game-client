@@ -11,12 +11,16 @@ import * as PIXI from 'pixi.js'
 import hex from '../functions/hex'
 import getImageAnimation from '../functions/getImageAnimation'
 import getTexture from '../functions/getTexture'
+import {
+  VILLAGE_BAR_FILL_OFFSET_Y,
+  VILLAGE_BAR_OFFSET_Y,
+  VILLAGE_OFFSET_Y,
+} from '../../constants/constants-game'
 
 const HOUSE_MARGIN_Y = 35
 const HOUSE_RADIUS = 25
 const HOUSE_OFFSET = 75
 const BAR_MASK_WIDTH = 140
-const BAR_OFFSET_Y = 50
 
 class Village {
   readonly id: string
@@ -56,17 +60,19 @@ class Village {
     }
 
     const newHousesCount = newLevel - this.level
-    const pixel = getPixelPosition(this.tile.axial)
+    // const pixel = getPixelPosition(this.tile.axial)
 
     for (let i = 0; i < newHousesCount; i++) {
       const housePosition = this.housesPositions[this.houses.length]
 
-      const image = createImage(this.raided ? 'house-ruins' : 'house')
+      const image = createImage(this.raided ? 'house-ruins' : 'house', {
+        group: 'objects',
+      })
       image.x = housePosition.x
-      image.y = housePosition.y + HOUSE_MARGIN_Y
+      image.y = housePosition.y + HOUSE_MARGIN_Y - VILLAGE_OFFSET_Y
       image.anchor.set(0.5, 1)
-      const zIndexOffset = housePosition.y - pixel.y + HOUSE_OFFSET
-      image.zIndex += zIndexOffset
+      // const zIndexOffset = housePosition.y - pixel.y + HOUSE_OFFSET
+      // image.zIndex += zIndexOffset
 
       const scale = 1
       // if (animate) {
@@ -94,13 +100,13 @@ class Village {
     if (!this.barImage && newYieldAt) {
       const pixel = getPixelPosition(this.tile.axial)
 
-      this.barImage = createImage('village-bar', { axialZ: this.tile.axial.z })
+      this.barImage = createImage('village-bar', { group: 'objects' })
       this.barImage.x = pixel.x
       this.barImage.y = this.getBarY()
 
       this.barFillMask = new PIXI.Sprite(PIXI.Texture.WHITE)
       this.barFillMask.anchor.set(0, 0.5)
-      this.barFillMask.y = -4
+      this.barFillMask.y = -VILLAGE_BAR_FILL_OFFSET_Y
       this.barFillMask.x = -70
       this.barFillMask.tint = hex('#ff0000') // for easier debug
       this.barFillMask.height = 16
@@ -109,7 +115,7 @@ class Village {
       this.barFillImage = new Sprite(getTexture('village-bar-fill'))
       this.barFillImage.anchor.set(0.5, 0.5)
       this.barFillImage.mask = this.barFillMask
-      this.barFillImage.y = -4
+      this.barFillImage.y = -VILLAGE_BAR_FILL_OFFSET_Y
 
       this.barImage.addChild(this.barFillImage)
       this.barImage.addChild(this.barFillMask)
@@ -196,7 +202,7 @@ class Village {
       highestHouseY = Math.min(highestHouseY, housePosition.y)
     }
 
-    return highestHouseY - BAR_OFFSET_Y
+    return highestHouseY - VILLAGE_BAR_OFFSET_Y
   }
 
   destroy() {

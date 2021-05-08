@@ -4,6 +4,10 @@ import Tile from './Tile'
 import { Sprite } from 'pixi.js'
 import store from '../store'
 import SoundManager from '../../services/SoundManager'
+import {
+  GOLD_ANIMATION_OFFSET_Y,
+  TILE_RADIUS,
+} from '../../constants/constants-game'
 
 const SCALE = 0.2
 const SPEED = 0.6
@@ -65,7 +69,7 @@ class GoldAnimation {
 }
 
 class Coin {
-  capitalOffsetY: number = 0
+  baseOffsetY: number = 0
   speed: number = 0
   image: Sprite
   destroyed: boolean = false
@@ -75,16 +79,16 @@ class Coin {
     readonly offsetX: number,
     private offsetY: number
   ) {
-    this.capitalOffsetY = offsetY
+    this.baseOffsetY = offsetY
     this.speed = SPEED + Math.random() * SPEED
-    this.image = createImage('gold')
+    this.image = createImage('gold', { group: 'objects' })
     this.destroyed = false
   }
   update() {
     this.offsetY += this.speed
     this.updatePosition()
 
-    if (this.offsetY - this.capitalOffsetY > 32) {
+    if (this.offsetY - this.baseOffsetY > 32) {
       this.image.alpha -= 0.04
 
       if (this.image.alpha < 0) {
@@ -100,10 +104,10 @@ class Coin {
     this.image.scale.y = SCALE
   }
   updatePosition() {
-    const position = getPixelPosition(this.tile.axial)
+    const pixel = getPixelPosition(this.tile.axial)
 
-    this.image.x = position.x + this.offsetX
-    this.image.y = position.y - this.offsetY
+    this.image.x = pixel.x + this.offsetX
+    this.image.y = pixel.y - this.offsetY - GOLD_ANIMATION_OFFSET_Y
   }
   destroy() {
     if (!store.game) return

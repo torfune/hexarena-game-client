@@ -35,6 +35,7 @@ import ArmySendManager from './ArmySendManager'
 import BuildingsConnection from '../../types/Road'
 import SupplyLine from './SupplyLine'
 import RoadManager from '../RoadManager'
+import { Group, Layer } from '../../pixi-layers'
 
 class Game {
   id: string
@@ -89,6 +90,18 @@ class Game {
   supplyLinesEditModeActive = false
   updateDurations: number[] = []
 
+  // PIXI Groups
+  backgroundGroup = new Group(0, false)
+  patternsGroup = new Group(1, false)
+  bordersGroup = new Group(2, false)
+  roadsGroup = new Group(3, false)
+  overlayGroup = new Group(4, false)
+  dragArrowsGroup = new Group(5, false)
+  objectsGroup = new Group(6, true) // buildings,  forests, mountains, villages
+  actionsGroup = new Group(7, false)
+  armiesGroup = new Group(8, true)
+  fogsGroup = new Group(9, false)
+
   // Getters (computed)
   get player() {
     return this.playerId ? this.players.get(this.playerId) || null : null
@@ -138,8 +151,26 @@ class Game {
     this.pixi = createPixiApp()
     this.pixi.view.id = this.id
     this.pixi.ticker.add(this.update.bind(this))
-    this.pixi.stage.sortableChildren = true
     container.appendChild(this.pixi.view)
+
+    // Pixi Groups
+    this.objectsGroup.on('sort', (sprite: any) => {
+      sprite.zOrder = sprite.y
+    })
+    this.armiesGroup.on('sort', (sprite: any) => {
+      sprite.zOrder = sprite.y
+    })
+
+    this.pixi.stage.addChild(new Layer(this.backgroundGroup))
+    this.pixi.stage.addChild(new Layer(this.patternsGroup))
+    this.pixi.stage.addChild(new Layer(this.roadsGroup))
+    this.pixi.stage.addChild(new Layer(this.overlayGroup))
+    this.pixi.stage.addChild(new Layer(this.bordersGroup))
+    this.pixi.stage.addChild(new Layer(this.dragArrowsGroup))
+    this.pixi.stage.addChild(new Layer(this.objectsGroup))
+    this.pixi.stage.addChild(new Layer(this.actionsGroup))
+    this.pixi.stage.addChild(new Layer(this.armiesGroup))
+    this.pixi.stage.addChild(new Layer(this.fogsGroup))
 
     // Global debug reference
     ;(window as any).game = this
@@ -148,11 +179,6 @@ class Game {
   }
 
   destroy() {
-    // if (this.loop) {
-    //   this.loop.destroy()
-    //   this.loop = null
-    // }
-
     this.clearEventListeners()
 
     if (store.game === this) {
@@ -165,7 +191,6 @@ class Game {
       canvas.remove()
     }
 
-    this.pixi.stage.removeChildren()
     this.pixi.destroy()
   }
   update(delta: number) {

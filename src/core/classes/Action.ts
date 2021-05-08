@@ -9,12 +9,16 @@ import SoundManager from '../../services/SoundManager'
 import createImage from '../functions/createImage'
 import getImageAnimation from '../functions/getImageAnimation'
 import getTexture from '../functions/getTexture'
-import { IMAGE_Z_INDEX } from '../../constants/constants-game'
 import hex from '../functions/hex'
-import getImageZIndex from '../functions/getImageZIndex'
+import {
+  ACTION_BAR_FILL_OFFSET_Y,
+  ACTION_BAR_OFFSET_Y,
+  ACTION_FILL_OFFSET_Y,
+  ACTION_OFFSET_Y,
+  BUILDING_OFFSET_Y,
+} from '../../constants/constants-game'
 
 const BAR_MASK_WIDTH = 140
-const BAR_OFFSET_Y = 36
 const FILL_MASK_HEIGHT = 100
 const BUILDING_PREVIEW_ALPHA = 0.25
 const PREVIEW_ICON_ALPHA = 0.8
@@ -83,8 +87,7 @@ class Action {
     this.baseY = pixel.y - this.getImageOffsetY()
 
     this.backgroundImage = createImage('action-background', {
-      axialZ: tile.axial.z,
-      zIndex: IMAGE_Z_INDEX.indexOf('action'),
+      group: 'actions',
     })
     this.backgroundImage.x = pixel.x
     this.backgroundImage.y = this.baseY
@@ -97,6 +100,8 @@ class Action {
     this.iconImage = new Sprite(getTexture(textureName))
     this.iconImage.alpha = 1
     this.iconImage.anchor.set(0.5, 0.5)
+    this.iconImage.y = -68
+    ;(this.iconImage as any).parentGroup = store.game?.actionsGroup
 
     this.backgroundImage.addChild(this.iconImage)
 
@@ -198,18 +203,18 @@ class Action {
     switch (this.type) {
       case 'RECRUIT_ARMY':
         if (this.tile.building?.type === 'CAPITAL') {
-          return 145
+          return ACTION_OFFSET_Y.CAPITAL
         } else {
-          return 122
+          return ACTION_OFFSET_Y.CASTLE
         }
       case 'BUILD_CAMP':
-        return 105
+        return ACTION_OFFSET_Y.CAMP
       case 'BUILD_TOWER':
-        return 122
+        return ACTION_OFFSET_Y.TOWER
       case 'BUILD_CASTLE':
-        return 122
+        return ACTION_OFFSET_Y.CASTLE
       case 'REBUILD_VILLAGE':
-        return 65
+        return ACTION_OFFSET_Y.VILLAGE
     }
   }
 
@@ -287,13 +292,13 @@ class Action {
   createBarImage() {
     const pixel = getPixelPosition(this.tile.axial)
 
-    this.barImage = createImage('progress-bar', { axialZ: this.tile.axial.z })
+    this.barImage = createImage('progress-bar', { group: 'actions' })
     this.barImage.x = pixel.x
-    this.barImage.y = pixel.y - this.getImageOffsetY() + BAR_OFFSET_Y
+    this.barImage.y = pixel.y - this.getImageOffsetY() - ACTION_BAR_OFFSET_Y
 
     this.barFillImageMask = new Sprite(Texture.WHITE)
     this.barFillImageMask.anchor.set(0, 0.5)
-    this.barFillImageMask.y = 0
+    this.barFillImageMask.y = -ACTION_BAR_FILL_OFFSET_Y
     this.barFillImageMask.x = -70
     this.barFillImageMask.tint = hex('#ff0000') // for easier debug
     this.barFillImageMask.height = 16
@@ -301,6 +306,7 @@ class Action {
 
     this.barFillImage = new Sprite(getTexture('progress-bar-fill'))
     this.barFillImage.anchor.set(0.5, 0.5)
+    this.barFillImage.y = -ACTION_BAR_FILL_OFFSET_Y
     this.barFillImage.mask = this.barFillImageMask
 
     this.barImage.addChild(this.barFillImage)
@@ -310,13 +316,14 @@ class Action {
   createFillImage() {
     this.fillImageMask = new Sprite(Texture.WHITE)
     this.fillImageMask.anchor.set(0.5, 1)
-    this.fillImageMask.y = 50
+    this.fillImageMask.y = -ACTION_FILL_OFFSET_Y
     this.fillImageMask.tint = hex('#ff0000') // for easier debug
     this.fillImageMask.width = 100
     this.fillImageMask.height = 0
 
     this.fillImage = new Sprite(getTexture('action-fill'))
-    this.fillImage.anchor.set(0.5, 0.5)
+    this.fillImage.anchor.set(0.5, 1)
+    this.fillImage.y = -ACTION_FILL_OFFSET_Y
     this.fillImage.mask = this.fillImageMask
 
     this.backgroundImage.addChildAt(this.fillImage, 0)
@@ -327,16 +334,20 @@ class Action {
     type: 'BUILD_CAMP' | 'BUILD_TOWER' | 'BUILD_CASTLE'
   ) {
     let textureName = ''
+    let offsetY = 0
 
     switch (type) {
       case 'BUILD_CAMP':
         textureName = 'camp-icon'
+        offsetY = BUILDING_OFFSET_Y.CAMP + 10
         break
       case 'BUILD_TOWER':
         textureName = 'tower-icon'
+        offsetY = BUILDING_OFFSET_Y.TOWER + 10
         break
       case 'BUILD_CASTLE':
         textureName = 'castle-icon'
+        offsetY = BUILDING_OFFSET_Y.CASTLE + 10
         break
     }
 
@@ -348,16 +359,16 @@ class Action {
     }
 
     const pixel = getPixelPosition(this.tile.axial)
-    this.buildingPreviewImage = createImage(textureName)
+    this.buildingPreviewImage = createImage(textureName, { group: 'actions' })
     this.buildingPreviewImage.x = pixel.x
-    this.buildingPreviewImage.y = pixel.y
+    this.buildingPreviewImage.y = pixel.y - offsetY
     this.buildingPreviewImage.alpha = 0
-    this.buildingPreviewImage.zIndex = getImageZIndex(
-      'action-building-preview',
-      {
-        axialZ: this.tile.axial.z,
-      }
-    )
+    // this.buildingPreviewImage.zIndex = getImageZIndex(
+    //   'action-building-preview',
+    //   {
+    //     axialZ: this.tile.axial.z,
+    //   }
+    // )
 
     new Animation(
       this.buildingPreviewImage,
@@ -416,7 +427,7 @@ class Action {
       }
     )
 
-    this.backgroundImage.zIndex -= 100
+    // this.backgroundImage.zIndex -= 100
 
     if (this.barImage) {
       this.barImage.visible = false
@@ -449,7 +460,7 @@ class Action {
       }
     )
 
-    this.backgroundImage.zIndex += 100
+    // this.backgroundImage.zIndex += 100
 
     if (this.barImage && this.status === 'RUNNING') {
       this.barImage.visible = true

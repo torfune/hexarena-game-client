@@ -6,12 +6,11 @@ import {
   BEDROCK_BORDER,
   BEDROCK_BACKGROUND,
   HOVER_HEXAGON_OPACITY,
-  IMAGE_Z_INDEX,
-  FOG_Z_INDEX,
   MOUNTAIN_BACKGROUND,
-  ATTENTION_NOTIFICATION_Z_INDEX,
   ATTENTION_NOTIFICATION_RADIUS,
   ATTENTION_NOTIFICATION_ALPHA,
+  TILE_RADIUS,
+  MOUNTAIN_OFFSET_Y,
 } from '../../constants/constants-game'
 import getImageAnimation from '../functions/getImageAnimation'
 import Player from './Player'
@@ -67,8 +66,8 @@ class Tile {
     this.createdAt = Date.now()
 
     if (mountain) {
-      const image = this.addImage('mountain')
-      image.y -= 16
+      const mountainImage = this.addImage('mountain')
+      mountainImage.y -= MOUNTAIN_OFFSET_Y
     }
 
     if (store.game) {
@@ -130,7 +129,7 @@ class Tile {
     if (this.bedrock || this.image['overlay']) return
 
     const pixel = getPixelPosition(this.axial)
-    const image = createImage('overlay')
+    const image = createImage('overlay', { group: 'overlay' })
 
     image.x = pixel.x
     image.y = pixel.y
@@ -198,12 +197,14 @@ class Tile {
     let texture: string = imageName
     let zIndex: number | undefined = undefined
     let axialZ: number | undefined = undefined
+    let alpha = 1
+    let group: any = 'objects'
 
     if (imageName === 'background') {
       texture = this.bedrock ? 'overlay' : 'pattern'
     } else if (imageName === 'mountain') {
       texture = `mountain-${Math.floor(Math.random() * 5 + 1)}`
-      zIndex = IMAGE_Z_INDEX.indexOf('mountain')
+      // zIndex = IMAGE_Z_INDEX.indexOf('mountain')
     }
 
     if (
@@ -216,19 +217,18 @@ class Tile {
       axialZ = this.axial.z
     }
 
+    if (imageName === 'pattern') {
+      alpha = PATTERN_ALPHA
+      group = 'patterns'
+    }
+
     const pixel = getPixelPosition(this.axial)
-    const image = createImage(texture, {
-      zIndex,
-      axialZ,
-    })
+    const image = createImage(texture, { group })
 
     image.x = pixel.x
     image.y = pixel.y
+    image.alpha = alpha
     this.image[imageName] = image
-
-    if (imageName === 'pattern') {
-      image.alpha = PATTERN_ALPHA
-    }
 
     if (animate) {
       image.alpha = 0
@@ -342,6 +342,7 @@ class Tile {
       // Create Background
       if (!this.image.background) {
         const image = this.addImage('background')
+        ;(image as any).parentGroup = store.game.backgroundGroup
 
         if (this.bedrock) {
           image.tint = hex(BEDROCK_BACKGROUND)
@@ -377,15 +378,22 @@ class Tile {
   }
 
   updateFogs() {
+    if (!store.game) return
+
     for (let i = 0; i < 6; i++) {
       const image = this.imageSet.fog[i]
 
       if (!this.neighbors[i] && !image) {
         const pixel = getPixelPosition(this.axial)
-        const newImage = createImage('fog', { zIndex: FOG_Z_INDEX })
+        const newImage = createImage('fog', {
+          group: 'fogs',
+          // zIndex: FOG_Z_INDEX
+        })
+        ;(newImage as any).parentGroup = store.game.fogsGroup
 
         newImage.x = pixel.x
-        newImage.y = pixel.y
+        newImage.y = pixel.y - TILE_RADIUS * 2
+        newImage.anchor.set(0.5, 0.5)
         newImage.rotation = getRotationBySide(i)
 
         this.imageSet.fog[i] = newImage
@@ -473,10 +481,11 @@ class Tile {
       const image = this.imageSet.border[i]
       if (showBorder && !image) {
         const pixel = getPixelPosition(this.axial)
-        const newImage = createImage('border')
+        const newImage = createImage('border', { group: 'borders' })
 
         newImage.x = pixel.x
-        newImage.y = pixel.y
+        newImage.y = pixel.y - TILE_RADIUS * 2
+        newImage.anchor.set(0.5, 0.5)
         newImage.rotation = getRotationBySide(i)
         newImage.tint = hex(borderTint || BEDROCK_BORDER)
 
@@ -524,7 +533,9 @@ class Tile {
     }
 
     const pixel = getPixelPosition(this.axial)
-    this.image['pattern-preview'] = createImage('pattern')
+    this.image['pattern-preview'] = createImage('pattern', {
+      group: 'patterns',
+    })
     this.image['pattern-preview'].x = pixel.x
     this.image['pattern-preview'].y = pixel.y
     this.image['pattern-preview'].tint = hex(pattern)
@@ -663,7 +674,7 @@ class Tile {
 
     const pixel = getPixelPosition(this.axial)
     const circle = new PIXI.Graphics()
-    circle.zIndex = ATTENTION_NOTIFICATION_Z_INDEX
+    // circle.zIndex = ATTENTION_NOTIFICATION_Z_INDEX
 
     new Animation(
       circle,

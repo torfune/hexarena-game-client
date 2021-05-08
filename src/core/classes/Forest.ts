@@ -10,6 +10,7 @@ import destroyImage from '../functions/destroyImage'
 import store from '../store'
 import Animation from './Animation'
 import chance from '../../utils/chance'
+import { FOREST_OFFSET_Y } from '../../constants/constants-game'
 
 const TREE_MARGIN_X = 70
 const TREE_MARGIN_Y = 60
@@ -44,10 +45,11 @@ class Forest {
     const treePosition = shuffle(TREE_POSITION)
     const now = Date.now()
     for (let i = 0; i < treeCount; i++) {
-      const image = createImage('tree', { axialZ: tile.axial.z })
+      const image = createImage('tree', {
+        group: 'objects',
+      })
       image.x = pixel.x + treePosition[i].x
-      image.y = pixel.y + treePosition[i].y
-      image.anchor.set(0.5, 1)
+      image.y = pixel.y + treePosition[i].y - FOREST_OFFSET_Y
 
       if (now - this.tile.createdAt > 200) {
         image.scale.set(0)

@@ -10,7 +10,6 @@ import { easeOutCubic } from '../functions/easing'
 import { Pixel } from '../../types/coordinates'
 import Animation from './Animation'
 import createImage from '../functions/createImage'
-import getImageZIndex from '../functions/getImageZIndex'
 
 class ArmyIcon {
   image: Sprite
@@ -22,7 +21,7 @@ class ArmyIcon {
 
   constructor(tile: Tile) {
     this.tile = tile
-    this.image = createImage('army-icon', { axialZ: tile.axial.z })
+    this.image = createImage('army-icon', { group: 'objects' })
 
     const pixel = getPixelPosition(tile.axial)
     this.image.x = pixel.x
@@ -69,9 +68,9 @@ class ArmyIcon {
 
     // Update image z-index
     if (this.animationFraction >= 0.5 && !this.zIndexSwapped) {
-      this.image.zIndex = getImageZIndex('army-icon', {
-        axialZ: this.tile.axial.z,
-      })
+      // this.image.zIndex = getImageZIndex('army-icon', {
+      //   axialZ: this.tile.axial.z,
+      // })
       this.zIndexSwapped = true
     }
 

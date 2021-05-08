@@ -4,11 +4,12 @@ import Tile from './Tile'
 import getPixelPosition from '../functions/getPixelPosition'
 import store from '../store'
 import destroyImage from '../functions/destroyImage'
+import { TILE_RADIUS } from '../../constants/constants-game'
 
 class ArmyDragArrow {
   tile: Tile
-  body: Sprite = createImage('army-drag-arrow-body')
-  head: Sprite = createImage('army-drag-arrow-head')
+  body: Sprite = createImage('army-drag-arrow-body', { group: 'dragArrows' })
+  head: Sprite = createImage('army-drag-arrow-head', { group: 'dragArrows' })
 
   constructor(tile: Tile) {
     this.tile = tile
@@ -25,18 +26,16 @@ class ArmyDragArrow {
   update() {
     if (!store.game) return
 
-    const pixel = getPixelPosition(this.tile.axial)
-    // pixel.y += 40
-
     const { cursor, camera, scale } = store.game
-
     if (!cursor || !camera) return
+
+    const pixel = getPixelPosition(this.tile.axial)
+    pixel.y -= TILE_RADIUS * 2
 
     const pixelCursor = {
       x: (cursor.x - camera.x) / scale,
       y: (cursor.y - camera.y) / scale,
     }
-
     const delta = {
       x: pixelCursor.x - pixel.x,
       y: pixelCursor.y - pixel.y,
@@ -56,25 +55,6 @@ class ArmyDragArrow {
     this.head.x = pixel.x + delta.x
     this.head.y = pixel.y + delta.y
     this.head.rotation = angle
-
-    // let canSendArmy = false
-    // const { hoveredTile } = store.game
-    // if (hoveredTile && ArmySendManager.active) {
-    //   for (let i = 0; i < store.game.selectedArmyTargetTiles.length; i++) {
-    //     if (store.game.selectedArmyTargetTiles[i].includes(hoveredTile)) {
-    //       canSendArmy = true
-    //       break
-    //     }
-    //   }
-    // }
-
-    // if (canSendArmy) {
-    //   this.body.alpha = 0.7
-    //   this.head.alpha = 0.9
-    // } else {
-    //   this.body.alpha = 0.2
-    //   this.head.alpha = 0.4
-    // }
   }
 
   destroy() {

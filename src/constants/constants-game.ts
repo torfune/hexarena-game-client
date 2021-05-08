@@ -9,32 +9,44 @@ export const ATTENTION_NOTIFICATION_RADIUS = 180
 export const ATTENTION_NOTIFICATION_ALPHA = 0.5
 export const IMAGE_Z_INDEX = [
   'gold',
-  'fog',
-  'arrow',
-  'progress-bar',
-  'action',
-  'castle',
-  'tower',
-  'capital',
+  'fog', // fogs
+  'arrow', // dragArrows
+
+  // objects ----
+  'progress-bar', // objects
+  'castle', // objects
+  'tower', // objects
+  'capital', // objects
+  // ----
+
   'hp-background',
   'hp-fill',
-  'camp',
-  'house',
+
+  // objects ----
+  'camp', // objects
+  'house', // objects
   'army-drag-arrow-body',
   'army-drag-arrow-head',
-  'mountain',
-  'army-icon',
-  'tree',
-  'army',
-  'action-building-preview',
-  'village-bar',
-  'border',
-  'pattern-preview',
-  'hover-hexagon',
-  'overlay',
-  'building-road',
-  'pattern',
-  'background',
+  'mountain', // objects
+  'army-icon', // objects
+  'tree', // objects
+  'army', // objects
+  // ----
+
+  // actions ----
+  'action', // actions
+  'action-building-preview', // actions
+  // ----
+
+  'village-bar', // objects
+  'border', // borders
+  'pattern-preview', // patterns
+  'hover-hexagon', // overlay
+  'overlay', // overlay
+  'building-road', // roads
+  'pattern', // patterns
+
+  'background', // background
 ].reverse()
 
 export const HOVER_HEXAGON_OPACITY = 0.1
@@ -52,17 +64,41 @@ export const NEIGHBOR_DIRECTIONS: Axial[] = [
 export const CAMERA_SPEED = 24
 
 // IMAGE OFFSETS
+export const FOREST_OFFSET_Y = 150
+export const MOUNTAIN_OFFSET_Y = 70
+export const VILLAGE_OFFSET_Y = 150
+export const VILLAGE_BAR_OFFSET_Y = 170
+export const VILLAGE_BAR_FILL_OFFSET_Y = 30
+export const ROAD_OFFSET_Y = TILE_RADIUS * 2
+export const GOLD_ANIMATION_OFFSET_Y = TILE_RADIUS * 2
+export const ACTION_BAR_OFFSET_Y = 8
+export const ACTION_BAR_FILL_OFFSET_Y = 22
+export const ACTION_FILL_OFFSET_Y = 22
+export const BUILDING_OFFSET_Y = {
+  CAMP: 90,
+  TOWER: 80,
+  CASTLE: 80,
+  CAPITAL: 70,
+}
+export const ARMY_UNIT_OFFSET_Y = 140
 export const ARMY_ICON_OFFSET_Y = {
   DEFAULT: 100,
-  CAMP: 95,
-  TOWER: 112,
-  CASTLE: 112,
-  CAPITAL: 135,
+  CAMP: 120,
+  TOWER: 144,
+  CASTLE: 144,
+  CAPITAL: 180,
 }
 export const HP_BACKGROUND_OFFSET = {
   CAPITAL: 130,
   TOWER: 108,
   CASTLE: 108,
+}
+export const ACTION_OFFSET_Y = {
+  CAPITAL: 162 + TILE_RADIUS,
+  CAMP: 105 + TILE_RADIUS,
+  TOWER: 203,
+  CASTLE: 203,
+  VILLAGE: 65 + TILE_RADIUS,
 }
 
 // ZOOM

@@ -6,7 +6,10 @@ import destroyImage from '../functions/destroyImage'
 import store from '../store'
 import Animation from './Animation'
 import BuildingType from '../../types/BuildingType'
-import { HP_BACKGROUND_OFFSET } from '../../constants/constants-game'
+import {
+  BUILDING_OFFSET_Y,
+  HP_BACKGROUND_OFFSET,
+} from '../../constants/constants-game'
 import getTexture from '../functions/getTexture'
 import getImageAnimation from '../functions/getImageAnimation'
 import Army from './Army'
@@ -27,11 +30,11 @@ class Building {
     this.tile = tile
     this.type = type
     this.hp = hp
-    this.image = createImage(this.getTextureName(), { axialZ: tile.axial.z })
+    this.image = createImage(this.getTextureName(), { group: 'objects' })
 
     const pixel = getPixelPosition(tile.axial)
     this.image.x = pixel.x
-    this.image.y = pixel.y
+    this.image.y = pixel.y - BUILDING_OFFSET_Y[this.type]
     this.image.alpha = 0
 
     // HP image
@@ -73,6 +76,9 @@ class Building {
 
     this.type = newType
     this.image.texture = getTexture(this.getTextureName())
+
+    const pixel = getPixelPosition(this.tile.axial)
+    this.image.y = pixel.y - BUILDING_OFFSET_Y[this.type]
 
     if (this.army) {
       this.army.updateBarY()

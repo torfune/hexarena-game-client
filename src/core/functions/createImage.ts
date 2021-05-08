@@ -4,11 +4,20 @@ import store from '../store'
 import getTexture from './getTexture'
 import { IMAGE_Z_INDEX } from '../../constants/constants-game'
 import getImageZIndex from './getImageZIndex'
+import { Group, Layer } from '../../pixi-layers'
 
 interface Options {
   tint?: string
-  zIndex?: number
-  axialZ?: number
+  group?:
+    | 'background'
+    | 'patterns'
+    | 'borders'
+    | 'actions'
+    | 'objects'
+    | 'fogs'
+    | 'dragArrows'
+    | 'overlay'
+    | 'armies'
 }
 
 const createImage = (textureName: string, options: Options = {}) => {
@@ -16,11 +25,45 @@ const createImage = (textureName: string, options: Options = {}) => {
 
   const image = new Sprite(getTexture(textureName))
 
-  image.anchor.set(0.5, 0.5)
-  image.zIndex = getImageZIndex(textureName, {
-    zIndex: options.zIndex,
-    axialZ: options.axialZ,
-  })
+  image.anchor.set(0.5, 1)
+
+  if (options.group) {
+    let group
+    switch (options.group) {
+      case 'background':
+        group = store.game.backgroundGroup
+        break
+      case 'patterns':
+        group = store.game.patternsGroup
+        break
+      case 'borders':
+        group = store.game.bordersGroup
+        break
+      case 'actions':
+        group = store.game.actionsGroup
+        break
+      case 'objects':
+        group = store.game.objectsGroup
+        break
+      case 'fogs':
+        group = store.game.fogsGroup
+        break
+      case 'dragArrows':
+        group = store.game.dragArrowsGroup
+        break
+      case 'overlay':
+        group = store.game.overlayGroup
+        break
+      case 'armies':
+        group = store.game.armiesGroup
+        break
+      default:
+        throw Error(`Unsupported group: ${options.group}`)
+    }
+    ;(image as any).parentGroup = group
+  } else {
+    console.log(`Image ${textureName} has no group!`)
+  }
 
   if (options.tint) {
     image.tint = hex(options.tint)

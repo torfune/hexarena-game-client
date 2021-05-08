@@ -9,6 +9,7 @@ import SupplyLine from './classes/SupplyLine'
 import { Graphics } from 'pixi.js'
 import Tile from './classes/Tile'
 import ArmySendManager from './classes/ArmySendManager'
+import { ROAD_OFFSET_Y, TILE_RADIUS } from '../constants/constants-game'
 
 const ANIMATION_SPEED = 500
 
@@ -239,7 +240,9 @@ class RoadManager {
       }
     }
 
-    road.line.zIndex = getImageZIndex('building-road')
+    ;(road.line as any).parentGroup = store.game.roadsGroup
+
+    // road.line.zIndex = getImageZIndex('building-road')
   }
 
   static drawBasicLine(
@@ -252,18 +255,13 @@ class RoadManager {
     const pixelB = getPixelPosition(buildingB.tile.axial)
 
     let alpha = BASIC_LINE.ALPHA
-
     if (highlighted) {
       alpha = BASIC_LINE.HIGHLIGHT_ALPHA
     }
 
-    // if (store.game?.supplyLinesEditModeActive && !ArmySendManager.active) {
-    //   alpha = BASIC_LINE.EDIT_MODE_ALPHA
-    // }
-
     g.lineStyle(BASIC_LINE.WIDTH, hex('#000'), alpha)
-    g.moveTo(pixelA.x, pixelA.y)
-    g.lineTo(pixelB.x, pixelB.y)
+    g.moveTo(pixelA.x, pixelA.y - ROAD_OFFSET_Y)
+    g.lineTo(pixelB.x, pixelB.y - ROAD_OFFSET_Y)
   }
 
   static drawSupplyLine(
@@ -286,6 +284,9 @@ class RoadManager {
 
     const pixelA = getPixelPosition(targetTile.axial)
     const pixelB = getPixelPosition(sourceTile.axial)
+
+    pixelA.y -= ROAD_OFFSET_Y
+    pixelB.y -= ROAD_OFFSET_Y
 
     let gapLeft = 0
     let dashLeft = 0
