@@ -481,7 +481,7 @@ class Game {
     }
 
     // Army Send Manager
-    if (ArmySendManager.active) {
+    if (event.button === 0 && ArmySendManager.active) {
       if (
         ArmySendManager.tile === hoveredTile ||
         ArmySendManager.direction === null
@@ -500,13 +500,17 @@ class Game {
         }
 
         ArmySendManager.unselectArmy()
-      } else if (event.button === 0) {
+      } else {
         ArmySendManager.sendArmy()
       }
     }
 
     // Standard click
-    else if (cursorDelta < 32 && timeDelta < MAX_CLICK_DURATION) {
+    else if (
+      event.button === 0 &&
+      cursorDelta < 32 &&
+      timeDelta < MAX_CLICK_DURATION
+    ) {
       if (hoveredTile.bedrock || dragged || this.supplyLinesEditModeActive) {
         return
       }
