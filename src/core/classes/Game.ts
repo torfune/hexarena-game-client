@@ -105,6 +105,7 @@ class Game {
   get player() {
     return this.playerId ? this.players.get(this.playerId) || null : null
   }
+
   get gold() {
     return this.player ? this.player.gold : 0
   }
@@ -113,6 +114,7 @@ class Game {
   setCursor(cursor: Pixel) {
     this.cursor = cursor
   }
+
   setTime(time: number) {
     this.time = time
   }
@@ -188,6 +190,7 @@ class Game {
 
     this.pixi.destroy()
   }
+
   update(delta: number) {
     if (!this.camera || !this.pixi || store.error) {
       return
@@ -273,6 +276,12 @@ class Game {
       villages[i].updateBarFill()
     }
 
+    // Buildings
+    const buildings = Array.from(this.buildings.values())
+    for (let i = 0; i < buildings.length; i++) {
+      buildings[i].updateHpRepairBarFill()
+    }
+
     // Army Send Manager
     if (ArmySendManager.active) {
       ArmySendManager.update()
@@ -294,6 +303,7 @@ class Game {
     //   this.updateDurations.shift()
     // }
   }
+
   setupEventListeners() {
     this.eventListeners = {
       mousemove: this.handleMouseMove.bind(this),
@@ -314,6 +324,7 @@ class Game {
     document.addEventListener('wheel', this.eventListeners.wheel)
     window.addEventListener('resize', this.eventListeners.resize)
   }
+
   clearEventListeners() {
     if (!this.eventListeners) return
 
@@ -326,16 +337,19 @@ class Game {
     document.removeEventListener('wheel', this.eventListeners.wheel)
     window.removeEventListener('resize', this.eventListeners.resize)
   }
+
   updateScreenSize() {
     if (!this.pixi) return
 
     this.pixi.renderer.resize(window.innerWidth, window.innerHeight)
   }
+
   selectPattern(pattern: string) {
     if (!store.socket) return
 
     store.socket.send('pattern', pattern)
   }
+
   handleKeyDown({ key }: KeyboardEvent) {
     if (this.status !== 'running' || !store.socket) {
       return
@@ -362,6 +376,7 @@ class Game {
 
     store.socket.send('debug', `${command}|${tile.axial.x}|${tile.axial.z}`)
   }
+
   handleKeyUp({ key }: KeyboardEvent) {
     if (this.status !== 'running' || !store.gsConfig) {
       return
@@ -381,6 +396,7 @@ class Game {
       this.targetScale = this.calculateZoomScale(zoomDirection)
     }
   }
+
   handleMouseDown(event: MouseEvent) {
     if (
       this.status !== 'running' ||
@@ -396,28 +412,32 @@ class Game {
 
     this.clickedAt = Date.now()
 
-    // Army - select
-    if (
-      !ArmySendManager.active &&
-      hoveredTile &&
-      hoveredTile.building?.army?.owner?.id === this.playerId
-    ) {
-      ArmySendManager.selectArmy(hoveredTile.building.army)
-      return
-    }
+    // Left mouse button
+    if (event.button === 0) {
+      // Army - select
 
-    // Destroy Supply Line
-    if (
-      this.supplyLinesEditModeActive &&
-      this.hoveredTile &&
-      this.hoveredTile.building
-    ) {
-      const supplyLine = this.getSupplyLineBySourceBuilding(
-        this.hoveredTile.building
-      )
-      if (supplyLine && store.socket) {
-        store.socket.send('destroySupplyLine', supplyLine.id)
+      if (
+        !ArmySendManager.active &&
+        hoveredTile &&
+        hoveredTile.building?.army?.owner?.id === this.playerId
+      ) {
+        ArmySendManager.selectArmy(hoveredTile.building.army)
         return
+      }
+
+      // Destroy Supply Line
+      if (
+        this.supplyLinesEditModeActive &&
+        this.hoveredTile &&
+        this.hoveredTile.building
+      ) {
+        const supplyLine = this.getSupplyLineBySourceBuilding(
+          this.hoveredTile.building
+        )
+        if (supplyLine && store.socket) {
+          store.socket.send('destroySupplyLine', supplyLine.id)
+          return
+        }
       }
     }
 
@@ -429,6 +449,7 @@ class Game {
       },
     }
   }
+
   handleMouseUp(event: MouseEvent) {
     if (!this.cursor || !store.socket) return
 
@@ -450,20 +471,6 @@ class Game {
     // Clear dragged
     const dragged = this.dragged
     this.dragged = false
-
-    let button
-    switch (event.button) {
-      case 0:
-        button = 'left'
-        break
-
-      case 2:
-        button = 'right'
-        break
-
-      default:
-        button = 'left'
-    }
 
     // Unselect army
     if (!hoveredTile) {
@@ -493,19 +500,14 @@ class Game {
         }
 
         ArmySendManager.unselectArmy()
-      } else if (button !== 'right') {
+      } else if (event.button === 0) {
         ArmySendManager.sendArmy()
       }
     }
 
     // Standard click
     else if (cursorDelta < 32 && timeDelta < MAX_CLICK_DURATION) {
-      if (
-        hoveredTile.bedrock ||
-        !button ||
-        dragged ||
-        this.supplyLinesEditModeActive
-      ) {
+      if (hoveredTile.bedrock || dragged || this.supplyLinesEditModeActive) {
         return
       }
 
@@ -532,6 +534,7 @@ class Game {
       }
     }
   }
+
   handleMouseMove({ clientX: x, clientY: y }: MouseEvent) {
     this.setCursor({ x, y })
 
@@ -543,6 +546,7 @@ class Game {
       }
     }
   }
+
   handleWheelMove({ deltaY, detail }: WheelEvent) {
     if (!this.player?.alive && !isSpectating()) return
 
@@ -551,15 +555,18 @@ class Game {
 
     this.targetScale = this.calculateZoomScale(zoomDirection)
   }
+
   handleContextMenu(event: Event) {
     event.preventDefault()
   }
+
   updateBorders() {
     const tiles = Array.from(this.tiles)
     for (let i = tiles.length - 1; i >= 0; i--) {
       tiles[i][1].updateBorders()
     }
   }
+
   getHoveredTile() {
     if (!this.cursor || !this.camera) return null
 
@@ -572,6 +579,7 @@ class Game {
 
     return getTileByAxial(axial)
   }
+
   setCameraToAxial(axial: Axial, xOffset: number = 0) {
     if (!this.pixi) return
 
@@ -585,6 +593,7 @@ class Game {
     this.updateStageScale()
     this.updateStagePosition()
   }
+
   updateCameraMove() {
     this.cameraMove = { x: 0, y: 0 }
 
@@ -604,11 +613,13 @@ class Game {
     //   this.cameraMove.y++
     // }
   }
+
   createRequest(receiverId: string) {
     if (store.socket) {
       store.socket.send('request', `create|${receiverId}`)
     }
   }
+
   updateHoveredTile() {
     const newHoveredTile = this.getHoveredTile()
     let changed = false
@@ -647,23 +658,27 @@ class Game {
       }
     }
   }
+
   surrender() {
     if (store.socket) {
       store.socket.send('surrender')
     }
   }
+
   updateStageScale() {
     if (!this.pixi) return
 
     this.pixi.stage.scale.x = this.scale
     this.pixi.stage.scale.y = this.scale
   }
+
   updateStagePosition() {
     if (!this.pixi || !this.camera) return
 
     this.pixi.stage.x = this.camera.x
     this.pixi.stage.y = this.camera.y
   }
+
   calculateZoomScale(zoomDirection: number) {
     const scale = this.scale + zoomDirection * this.scale * ZOOM_SPEED
     const roundedScale = roundToDecimals(scale, 2)
@@ -673,6 +688,7 @@ class Game {
     }
     return this.scale
   }
+
   showNotEnoughGold(tile: Tile) {
     if (!this.player || !store.gsConfig) return
 
@@ -702,6 +718,7 @@ class Game {
     this.notification = `${Date.now()}|Not enough gold`
     SoundManager.play('ACTION_FAILURE')
   }
+
   createSupplyLine(sourceTile: Tile, targetTile: Tile) {
     const supplyLine = new SupplyLine(uuid(), sourceTile, targetTile)
 
@@ -712,6 +729,7 @@ class Game {
       )
     }
   }
+
   startSupplyLinesEditMode() {
     this.supplyLinesEditModeActive = true
 
@@ -723,6 +741,7 @@ class Game {
       this.hoveredTile.action.destroy()
     }
   }
+
   endSupplyLinesEditMode() {
     this.supplyLinesEditModeActive = false
 
@@ -730,6 +749,7 @@ class Game {
       this.hoveredTile.showActionPreviewIfPossible()
     }
   }
+
   getSupplyLineBySourceBuilding(sourceBuilding: Building): SupplyLine | null {
     const supplyLines = Array.from(this.supplyLines.values())
     for (let i = 0; i < supplyLines.length; i++) {
@@ -741,6 +761,7 @@ class Game {
 
     return null
   }
+
   getAverageUpdateDuration() {
     let sum = 0
     for (const duration of this.updateDurations) {

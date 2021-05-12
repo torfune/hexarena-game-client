@@ -13,6 +13,7 @@ import getImageAnimation from '../functions/getImageAnimation'
 import getTexture from '../functions/getTexture'
 import {
   VILLAGE_BAR_FILL_OFFSET_Y,
+  VILLAGE_BAR_FILL_WIDTH,
   VILLAGE_BAR_OFFSET_Y,
   VILLAGE_OFFSET_Y,
 } from '../../constants/constants-game'
@@ -20,7 +21,6 @@ import {
 const HOUSE_MARGIN_Y = 35
 const HOUSE_RADIUS = 25
 const HOUSE_OFFSET = 75
-const BAR_MASK_WIDTH = 140
 
 class Village {
   readonly id: string
@@ -100,7 +100,7 @@ class Village {
       this.barFillMask = new PIXI.Sprite(PIXI.Texture.WHITE)
       this.barFillMask.anchor.set(0, 0.5)
       this.barFillMask.y = -VILLAGE_BAR_FILL_OFFSET_Y
-      this.barFillMask.x = -70
+      this.barFillMask.x = -VILLAGE_BAR_FILL_WIDTH / 2
       this.barFillMask.tint = hex('#ff0000') // for easier debug
       this.barFillMask.height = 16
       this.barFillMask.width = 0
@@ -157,7 +157,7 @@ class Village {
       fraction = 0
     }
 
-    this.barFillMask.width = fraction * BAR_MASK_WIDTH
+    this.barFillMask.width = fraction * VILLAGE_BAR_FILL_WIDTH
   }
 
   animateBarY() {

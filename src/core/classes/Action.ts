@@ -12,6 +12,7 @@ import getTexture from '../functions/getTexture'
 import hex from '../functions/hex'
 import {
   ACTION_BAR_FILL_OFFSET_Y,
+  ACTION_BAR_FILL_WIDTH,
   ACTION_BAR_OFFSET_Y,
   ACTION_FILL_OFFSET_Y,
   ACTION_OFFSET_Y,
@@ -311,7 +312,7 @@ class Action {
     this.barFillImageMask = new Sprite(Texture.WHITE)
     this.barFillImageMask.anchor.set(0, 0.5)
     this.barFillImageMask.y = -ACTION_BAR_FILL_OFFSET_Y
-    this.barFillImageMask.x = -70
+    this.barFillImageMask.x = -ACTION_BAR_FILL_WIDTH / 2
     this.barFillImageMask.tint = hex('#ff0000') // for easier debug
     this.barFillImageMask.height = 16
     this.barFillImageMask.width = 0

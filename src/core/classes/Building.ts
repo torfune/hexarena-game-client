@@ -1,5 +1,5 @@
 import Tile from './Tile'
-import { Sprite } from 'pixi.js'
+import { Sprite, Texture } from 'pixi.js'
 import createImage from '../functions/createImage'
 import getPixelPosition from '../functions/getPixelPosition'
 import destroyImage from '../functions/destroyImage'
@@ -8,12 +8,18 @@ import Animation from './Animation'
 import BuildingType from '../../types/BuildingType'
 import {
   BUILDING_OFFSET_Y,
+  BUILDING_REPAIR_BAR_FILL_OFFSET_Y,
+  BUILDING_REPAIR_BAR_FILL_WIDTH,
   HP_BACKGROUND_OFFSET,
+  HP_BAR_HIDE_DELAY,
+  VILLAGE_BAR_FILL_WIDTH,
 } from '../../constants/constants-game'
 import getTexture from '../functions/getTexture'
 import getImageAnimation from '../functions/getImageAnimation'
 import Army from './Army'
 import SoundManager from '../../services/SoundManager'
+import isSpectating from '../../utils/isSpectating'
+import hex from '../functions/hex'
 
 class Building {
   readonly id: string
@@ -23,7 +29,10 @@ class Building {
   army: Army | null = null
   image: Sprite
   hpBarImage: Sprite | null = null
+  hpRepairBarFillImage: Sprite | null = null
+  hpRepairBarFillMask: Sprite | null = null
   hpBarVisible: boolean = false
+  repairTime = 0
 
   constructor(id: string, tile: Tile, type: BuildingType, hp: number) {
     this.id = id
@@ -61,12 +70,23 @@ class Building {
   }
 
   setHp(newHp: number) {
+    if (newHp < this.hp && this.tile.action && this.tile.action.isPreview()) {
+      this.tile.action.destroy()
+    }
+
     this.hp = newHp
     this.updateHpBar()
+
+    if (this.hasFullHp() && this.tile.isHovered()) {
+      this.tile.showActionPreviewIfPossible()
+    }
   }
 
   setType(newType: BuildingType) {
-    if (this.type) {
+    if (
+      this.type &&
+      (this.tile.owner?.id === store.game?.playerId || isSpectating())
+    ) {
       if (newType === 'TOWER') {
         SoundManager.play('TOWER_CREATE')
       } else if (newType === 'CASTLE') {
@@ -83,6 +103,10 @@ class Building {
     if (this.army) {
       this.army.updateBarY()
     }
+  }
+
+  setRepairTime(newRepairTime: number) {
+    this.repairTime = newRepairTime
   }
 
   getMaxHp() {
@@ -113,6 +137,21 @@ class Building {
       this.hpBarImage.y = -this.getHpBarOffset()
       this.hpBarImage.alpha = 0
       this.image.addChild(this.hpBarImage)
+
+      this.hpRepairBarFillMask = new Sprite(Texture.WHITE)
+      this.hpRepairBarFillMask.anchor.set(0, 0.5)
+      this.hpRepairBarFillMask.y = BUILDING_REPAIR_BAR_FILL_OFFSET_Y
+      this.hpRepairBarFillMask.x = -BUILDING_REPAIR_BAR_FILL_WIDTH / 2
+      this.hpRepairBarFillMask.tint = hex('#ff0000') // for easier debug
+      this.hpRepairBarFillMask.height = 16
+      this.hpRepairBarFillMask.width = 0
+      this.hpBarImage.addChild(this.hpRepairBarFillMask)
+
+      this.hpRepairBarFillImage = new Sprite(getTexture('hp-bar-repair-fill'))
+      this.hpRepairBarFillImage.anchor.set(0.5, 0.5)
+      this.hpRepairBarFillImage.y = BUILDING_REPAIR_BAR_FILL_OFFSET_Y
+      this.hpRepairBarFillImage.mask = this.hpRepairBarFillMask
+      this.hpBarImage.addChild(this.hpRepairBarFillImage)
     } else {
       this.hpBarImage.texture = this.getHpBarTexture()
     }
@@ -121,12 +160,12 @@ class Building {
       this.showHitpoints()
     }
 
-    if (this.hasFullHp() && !this.tile.isHovered()) {
+    if (this.hasFullHp()) {
       setTimeout(() => {
-        if (this.hasFullHp() && !this.tile.isHovered()) {
+        if (this.hasFullHp()) {
           this.hideHitpoints()
         }
-      }, 500)
+      }, HP_BAR_HIDE_DELAY)
     }
   }
 
@@ -233,6 +272,32 @@ class Building {
 
   isCamp() {
     return this.type === 'CAMP'
+  }
+
+  updateHpRepairBarFill() {
+    if (
+      !this.hpRepairBarFillImage ||
+      !this.hpRepairBarFillMask ||
+      !this.repairTime
+    ) {
+      return
+    }
+
+    const timeDelta = this.repairTime + store.game!.ping! - Date.now()
+    let fraction =
+      Math.round(
+        (1 - timeDelta / store.gsConfig!.REPAIR_BUILDING_DURATION) * 100
+      ) / 100
+
+    if (fraction > 1) {
+      fraction = 1
+    }
+
+    if (fraction < 0) {
+      fraction = 0
+    }
+
+    this.hpRepairBarFillMask.width = fraction * BUILDING_REPAIR_BAR_FILL_WIDTH
   }
 
   destroy() {

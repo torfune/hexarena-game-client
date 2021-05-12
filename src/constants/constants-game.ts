@@ -73,6 +73,10 @@ export const ROAD_OFFSET_Y = TILE_RADIUS * 2
 export const GOLD_ANIMATION_OFFSET_Y = TILE_RADIUS * 2
 export const ACTION_BAR_OFFSET_Y = 8
 export const ACTION_BAR_FILL_OFFSET_Y = 22
+export const ACTION_BAR_FILL_WIDTH = 140
+export const VILLAGE_BAR_FILL_WIDTH = 140
+export const BUILDING_REPAIR_BAR_FILL_OFFSET_Y = 18
+export const BUILDING_REPAIR_BAR_FILL_WIDTH = 140
 export const ACTION_FILL_OFFSET_Y = 22
 export const BUILDING_OFFSET_Y = {
   CAMP: 90,
@@ -89,9 +93,9 @@ export const ARMY_ICON_OFFSET_Y = {
   CAPITAL: 180,
 }
 export const HP_BACKGROUND_OFFSET = {
-  CAPITAL: 130,
-  TOWER: 108,
-  CASTLE: 108,
+  CAPITAL: 232,
+  TOWER: 188,
+  CASTLE: 188,
 }
 export const ACTION_OFFSET_Y = {
   CAPITAL: 162 + TILE_RADIUS,
@@ -127,6 +131,7 @@ export const BEDROCK_BORDER = '#fff'
 
 // MISC
 export const MAX_CLICK_DURATION = 500
+export const HP_BAR_HIDE_DELAY = 200
 
 // DEBUG COMMANDS
 export const DEBUG_COMMANDS = [

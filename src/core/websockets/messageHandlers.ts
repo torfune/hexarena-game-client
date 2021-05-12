@@ -430,18 +430,18 @@ const messageHandlers = {
       tileId: 'string',
       type: 'string',
       hp: 'number',
+      repairTime: 'number',
     }) as {
-      id: string | null
-      tileId: string | null
-      type: string | null
-      hp: number | null
+      id: string
+      tileId: string
+      type: string
+      hp: number
+      repairTime: number
     }[]
 
     for (let i = 0; i < parsed.length; i++) {
       const fields = parsed[i]
-      const { id, tileId, type, hp } = fields
-
-      if (!id || !tileId || !type || hp === null) continue
+      const { id, tileId, type, hp, repairTime } = fields
 
       if (
         type !== 'CAPITAL' &&
@@ -458,7 +458,8 @@ const messageHandlers = {
       if (!building) {
         const tile = store.game.tiles.get(tileId)
         if (!tile) continue
-        tile.setBuilding(new Building(id, tile, type, hp))
+        building = new Building(id, tile, type, hp)
+        tile.setBuilding(building)
       }
 
       // Update
@@ -470,6 +471,9 @@ const messageHandlers = {
         if (hp !== building.hp) {
           building.setHp(hp)
         }
+      }
+      if (repairTime !== building.repairTime) {
+        building.setRepairTime(repairTime)
       }
     }
 

@@ -14,6 +14,7 @@ interface GameServerConfig {
   }
   PATTERNS: string[]
   VILLAGE_HOUSE_VALUE: number
+  REPAIR_BUILDING_DURATION: number
 }
 
 export default GameServerConfig

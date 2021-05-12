@@ -598,7 +598,11 @@ class Tile {
       }
     }
 
-    if (this.owner?.id !== store.game.playerId) return null
+    // Not owned by this player
+    if (!this.isOwnedByThisPlayer()) return null
+
+    // Damaged building
+    if (this.building && !this.building.hasFullHp()) return null
 
     // CAMP
     const forestGold = this.forest ? this.forest.treeCount : 0
