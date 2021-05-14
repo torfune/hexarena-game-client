@@ -726,7 +726,7 @@ class Tile {
 
     if (this.action || (this.building && this.building.army)) return
 
-    const actionType = this.getActionType()
+    const actionType = this.getActionType({ ignoreGold: true })
     if (
       actionType &&
       !ArmySendManager.active &&
