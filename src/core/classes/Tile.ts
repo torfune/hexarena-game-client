@@ -11,6 +11,7 @@ import {
   ATTENTION_NOTIFICATION_ALPHA,
   TILE_RADIUS,
   MOUNTAIN_OFFSET_Y,
+  ATTENTION_NOTIFICATION_OFFSET_Y,
 } from '../../constants/constants-game'
 import getImageAnimation from '../functions/getImageAnimation'
 import Player from './Player'
@@ -669,7 +670,7 @@ class Tile {
         image.lineStyle(0)
         image.drawCircle(
           pixel.x,
-          pixel.y,
+          pixel.y - ATTENTION_NOTIFICATION_OFFSET_Y,
           ATTENTION_NOTIFICATION_RADIUS * fraction
         )
         image.endFill()

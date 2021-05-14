@@ -3,54 +3,7 @@ import isSpectating from '../utils/isSpectating'
 
 // TILE
 export const TILE_RADIUS = 73.8
-export const FOG_Z_INDEX = 10000
-export const ATTENTION_NOTIFICATION_Z_INDEX = 4000
-export const ATTENTION_NOTIFICATION_RADIUS = 180
-export const ATTENTION_NOTIFICATION_ALPHA = 0.5
-export const IMAGE_Z_INDEX = [
-  'gold',
-  'fog', // fogs
-  'arrow', // dragArrows
-
-  // objects ----
-  'progress-bar', // objects
-  'castle', // objects
-  'tower', // objects
-  'capital', // objects
-  // ----
-
-  'hp-background',
-  'hp-fill',
-
-  // objects ----
-  'camp', // objects
-  'house', // objects
-  'army-drag-arrow-body',
-  'army-drag-arrow-head',
-  'mountain', // objects
-  'army-icon', // objects
-  'tree', // objects
-  'army', // objects
-  // ----
-
-  // actions ----
-  'action', // actions
-  'action-building-preview', // actions
-  // ----
-
-  'village-bar', // objects
-  'border', // borders
-  'pattern-preview', // patterns
-  'hover-hexagon', // overlay
-  'overlay', // overlay
-  'building-road', // roads
-  'pattern', // patterns
-
-  'background', // background
-].reverse()
-
 export const HOVER_HEXAGON_OPACITY = 0.1
-
 export const NEIGHBOR_DIRECTIONS: Axial[] = [
   { x: 1, z: -1 },
   { x: 1, z: 0 },
@@ -104,6 +57,11 @@ export const ACTION_OFFSET_Y = {
   CASTLE: 203,
   VILLAGE: 65 + TILE_RADIUS,
 }
+
+// ATTENTION NOTIFICATION
+export const ATTENTION_NOTIFICATION_RADIUS = 180
+export const ATTENTION_NOTIFICATION_ALPHA = 0.5
+export const ATTENTION_NOTIFICATION_OFFSET_Y = TILE_RADIUS * 2
 
 // ZOOM
 export const ZOOM_SPEED = 0.2

@@ -204,10 +204,6 @@ class ArmySendManager {
       else if (t.building) {
         t.addPatternPreview(player.pattern)
 
-        // if (!t.building.isCamp() || !t.owner) {
-        //   break
-        // }
-
         if (!t.owner) {
           t.addHoverHexagon()
           const road = RoadManager.findRoad(this.tile.building, t.building)
