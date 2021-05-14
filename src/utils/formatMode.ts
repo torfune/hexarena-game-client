@@ -5,6 +5,8 @@ function formatMode(mode: GameMode) {
     case '1v1':
     case 'AI_1v1':
       return '1 vs 1'
+    case 'AI_ONLY_1v1':
+      return '1 vs 1'
     case '2v2':
       return '2 vs 2'
     case 'FFA-3':
