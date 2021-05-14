@@ -6,12 +6,11 @@ import Economy from './HUD/Economy'
 import Lobby from './Lobby'
 import loadImages from '../core/functions/loadImages'
 import LocalStorageService from '../services/LocalStorageService'
-import GameTime from './HUD/GameTime'
 import Spectators from './HUD/SpectatorCount'
 import Leaderboard from './HUD/Leaderboard'
 import NotificationManager from './HUD/NotificationManager'
 import EndModal from './EndModal'
-import Surrender from './HUD/Surrender'
+import GameInfo from './HUD/GameInfo'
 import GameMode from '../types/GameMode'
 import Flasher from './HUD/Flasher'
 import Game from '../core/classes/Game'
@@ -27,6 +26,7 @@ import { COLOR, Z_INDEX } from '../constants/constants-react'
 import Spinner from './Spinner'
 import GameServerApi from '../services/GameServerApi'
 import ReconnectingOverlay from './ReconnectingOverlay'
+import Gold from './HUD/Gold'
 
 const GameComponent = observer(() => {
   const [_, refresh] = useState(Date.now())
@@ -172,14 +172,14 @@ const GameComponent = observer(() => {
 
           {(gameStatus === 'running' || gameStatus === 'finished') && (
             <HudContainer>
-              <GameTime />
               <Leaderboard />
               <Economy />
               <Spectators />
+              <GameInfo />
 
               {store.game.player && store.game.player.alive && (
                 <>
-                  <Surrender />
+                  <Gold />
                   <Flasher />
                   <NotificationManager />
                 </>
