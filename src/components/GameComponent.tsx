@@ -42,16 +42,16 @@ const GameComponent = observer(() => {
     )
 
     if (!gameId || typeof gameId !== 'string') {
-      store.error = { message: 'Connection failed' }
+      store.error = 'Game not found.'
       throw new Error('Missing Game ID in URL.')
     } else if (!gameServerHost || typeof gameServerHost !== 'string') {
-      store.error = { message: 'Connection failed' }
+      store.error = 'Game not found.'
       throw new Error('Missing Game Server Host in URL.')
     } else if (
       !isSpectating() &&
       (!accessKey || typeof accessKey !== 'string')
     ) {
-      store.error = { message: 'Connection failed' }
+      store.error = 'Connection failed.'
       throw new Error('Missing Access Key in URL.')
     }
 
@@ -65,7 +65,7 @@ const GameComponent = observer(() => {
     } catch (error) {
       console.error(error)
       store.loading = false
-      store.error = { message: 'Connection failed' }
+      store.error = 'Connection failed.'
       return
     }
     const [configResponse, statusResponse] = responses
@@ -79,9 +79,7 @@ const GameComponent = observer(() => {
         LocalStorageService.set('lastVersionReloaded', clientVersion)
         window.location.reload()
       } else {
-        store.error = {
-          message: `Version mismatch. Client: ${version}. Server: ${statusResponse.data.version}`,
-        }
+        store.error = `Version mismatch. Client: ${version}. Server: ${statusResponse.data.version}.`
       }
       console.error('Version mismatch')
       return
@@ -110,13 +108,12 @@ const GameComponent = observer(() => {
       gameStatus = result.gameStatus
     } catch (error) {
       console.error(error)
-      store.error = { message: error.message }
+      store.error = error.message
       return
     }
 
     // Create Game instance
     store.game = new Game(gameId, gameMode, gameStatus, canvas)
-    // store.game.render()
 
     // Done
     store.loading = false
@@ -129,12 +126,6 @@ const GameComponent = observer(() => {
       window.removeEventListener('resize', handleResize)
     }
   }, [])
-
-  // useEffect(() => {
-  //   if (!store.showLoadingCover) {
-  //     SoundManager.play('GAME_START')
-  //   }
-  // }, [store.showLoadingCover])
 
   const handleResize = () => {
     refresh(Date.now())
@@ -152,7 +143,7 @@ const GameComponent = observer(() => {
     }
 
     if (store.error) {
-      return <ErrorModal message={store.error.message} />
+      return <ErrorModal message={store.error} />
     }
   }
 

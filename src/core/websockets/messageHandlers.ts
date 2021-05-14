@@ -673,6 +673,11 @@ const messageHandlers = {
   },
 
   ping: () => {},
+
+  error: (errorMessage: string) => {
+    console.log(`error from gameserver: ${errorMessage}`)
+    store.error = errorMessage
+  },
 }
 
 export default messageHandlers

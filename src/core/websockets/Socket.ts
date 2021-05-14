@@ -169,6 +169,9 @@ class Socket {
       case 'ping':
         messageHandlers.ping()
         break
+      case 'error':
+        messageHandlers.error(messagePayload)
+        break
       default:
         console.warn(`Unhandled WebSocket message: ${messageName}`)
     }
@@ -199,7 +202,7 @@ class Socket {
       }
     } else {
       if (!store.error) {
-        store.error = { message: 'Disconnected' }
+        store.error = 'Disconnected.'
       }
     }
   }

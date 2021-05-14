@@ -22,6 +22,7 @@ export type IncomingMessage =
   | 'villages'
   | 'spectators'
   | 'ping'
+  | 'error'
   | 'supplyLines'
   | 'destroyVillages'
   | 'destroyArmies'

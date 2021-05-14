@@ -14,9 +14,7 @@ class Store {
   } = {
     sound: true,
   }
-  error?: {
-    message: string
-  }
+  error?: string
   showLoadingCover: boolean = true
 
   constructor() {

@@ -6,7 +6,7 @@ function getGameServerUrl() {
   const { gameServerHost } = qs.parse(query)
   if (!gameServerHost) {
     console.error('ERROR: Missing game server host in query-string.')
-    store.error = { message: 'Connection failed' }
+    store.error = 'Connection failed.'
     return
   }
 
