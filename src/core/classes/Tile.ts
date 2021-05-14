@@ -653,10 +653,6 @@ class Tile {
     return null
   }
 
-  setBuilding(newBuilding: Building) {
-    this.building = newBuilding
-  }
-
   createAttentionNotification() {
     if (!store.game || !store.game.pixi) return
 

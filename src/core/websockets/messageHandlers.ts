@@ -459,7 +459,6 @@ const messageHandlers = {
         const tile = store.game.tiles.get(tileId)
         if (!tile) continue
         building = new Building(id, tile, type, hp)
-        tile.setBuilding(building)
       }
 
       // Update

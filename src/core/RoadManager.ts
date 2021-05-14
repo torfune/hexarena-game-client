@@ -113,6 +113,11 @@ class RoadManager {
         this.drawRoad(existingRoad)
       }
     }
+
+    // Refresh Army Send Manager
+    if (ArmySendManager.active) {
+      ArmySendManager.refresh()
+    }
   }
 
   static draw() {

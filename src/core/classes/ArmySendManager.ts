@@ -15,6 +15,13 @@ class ArmySendManager {
   static direction: number | null = null
   static targetBuilding: Building | null = null
 
+  static refresh() {
+    if (this.direction === null) return
+
+    this.clearPathHighlights(this.direction)
+    this.addPathHighlights(this.direction)
+  }
+
   static update() {
     if (!this.dragArrow) {
       console.warn(
@@ -197,7 +204,19 @@ class ArmySendManager {
       else if (t.building) {
         t.addPatternPreview(player.pattern)
 
-        if (!t.building.isCamp() || !t.owner) {
+        // if (!t.building.isCamp() || !t.owner) {
+        //   break
+        // }
+
+        if (!t.owner) {
+          t.addHoverHexagon()
+          const road = RoadManager.findRoad(this.tile.building, t.building)
+          if (road) {
+            RoadManager.setHighlightedRoad(road)
+          }
+          this.targetBuilding = t.building
+          break
+        } else if (!t.building.isCamp()) {
           break
         }
       }

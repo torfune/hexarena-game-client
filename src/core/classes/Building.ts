@@ -20,6 +20,8 @@ import Army from './Army'
 import SoundManager from '../../services/SoundManager'
 import isSpectating from '../../utils/isSpectating'
 import hex from '../functions/hex'
+import ArmySendManager from './ArmySendManager'
+import RoadManager from '../RoadManager'
 
 class Building {
   readonly id: string
@@ -37,11 +39,12 @@ class Building {
   constructor(id: string, tile: Tile, type: BuildingType, hp: number) {
     this.id = id
     this.tile = tile
+    this.tile.building = this
     this.type = type
     this.hp = hp
-    this.image = createImage(this.getTextureName(), { group: 'objects' })
 
     const pixel = getPixelPosition(tile.axial)
+    this.image = createImage(this.getTextureName(), { group: 'objects' })
     this.image.x = pixel.x
     this.image.y = pixel.y - BUILDING_OFFSET_Y[this.type]
     this.image.alpha = 0
@@ -52,7 +55,7 @@ class Building {
     }
 
     // Camp sound
-    else if (tile.owner?.id === store.game?.playerId) {
+    else if (tile.isOwnedByThisPlayer() || isSpectating()) {
       SoundManager.play('CAMP_CREATE')
     }
 
@@ -67,6 +70,11 @@ class Building {
     if (store.game) {
       store.game.buildings.set(id, this)
     }
+
+    // Update target Building for Supply Line
+    // if (tile.isOwnedByThisPlayer()) {
+    //   RoadManager.update()
+    // }
   }
 
   setHp(newHp: number) {
@@ -218,7 +226,7 @@ class Building {
     if (
       newArmy &&
       this.tile.owner &&
-      this.tile.owner?.id === store.game?.playerId
+      (this.tile.owner?.id === store.game?.playerId || isSpectating())
     ) {
       SoundManager.play('ARMY_ARRIVE')
     }
