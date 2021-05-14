@@ -413,9 +413,8 @@ class Game {
     this.clickedAt = Date.now()
 
     // Left mouse button
-    if (event.button === 0) {
+    if (event.button === 0 && !this.keyDown['Shift']) {
       // Army - select
-
       if (
         !ArmySendManager.active &&
         hoveredTile &&
@@ -441,12 +440,14 @@ class Game {
       }
     }
 
-    this.cameraDrag = {
-      cursor: { x, y },
-      camera: {
-        x: this.camera.x,
-        y: this.camera.y,
-      },
+    if (!this.keyDown['Shift']) {
+      this.cameraDrag = {
+        cursor: { x, y },
+        camera: {
+          x: this.camera.x,
+          y: this.camera.y,
+        },
+      }
     }
   }
 
@@ -507,7 +508,7 @@ class Game {
 
     // Standard click
     else if (
-      event.button === 0 &&
+      (event.button === 0 || this.keyDown['Shift']) &&
       cursorDelta < 32 &&
       timeDelta < MAX_CLICK_DURATION
     ) {
@@ -520,7 +521,8 @@ class Game {
         hoveredTile.action &&
         hoveredTile.action.type === 'RECRUIT_ARMY' &&
         (hoveredTile.action.status === 'RUNNING' ||
-          hoveredTile.action.status === 'QUEUED')
+          hoveredTile.action.status === 'QUEUED' ||
+          hoveredTile.action.status === 'PAUSED')
       ) {
         hoveredTile.action.toggleAutomated()
         return
