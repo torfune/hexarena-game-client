@@ -264,6 +264,10 @@ class Action {
       }
     }
 
+    if (this.tile.isHovered()) {
+      this.startHover()
+    }
+
     this.status = newStatus
     this.update()
   }
@@ -280,11 +284,12 @@ class Action {
     this.automated = newAutomated
 
     // Create image
-    if (this.automated && !this.automatedImage) {
-      this.automatedImage = new Sprite(getTexture('action-automated'))
-      this.automatedImage.anchor.set(0.5, 1)
-      this.automatedImage.y = -101
-      this.backgroundImage.addChild(this.automatedImage)
+    if (this.automated) {
+      if (!this.automatedImage) {
+        this.createAutomatedImage('action-automated')
+      } else {
+        this.automatedImage.texture = getTexture('action-automated')
+      }
     }
 
     // Destroy image
@@ -292,6 +297,53 @@ class Action {
       this.backgroundImage.removeChild(this.automatedImage)
       this.automatedImage = null
     }
+
+    // Hover
+    if (this.tile.isHovered()) {
+      this.startHover()
+    }
+  }
+
+  startHover() {
+    const shiftDown = !!store.game?.keyDown['Shift']
+
+    if (this.type === 'RECRUIT_ARMY' && this.status !== 'PREVIEW') {
+      if (!this.tile.building?.army || shiftDown) {
+        // Cancel
+        if (this.automated && this.automatedImage) {
+          this.automatedImage.texture = getTexture('action-automated-cancel')
+        }
+
+        // Preview
+        else if (!this.automated && !this.automatedImage) {
+          this.createAutomatedImage('action-automated-preview')
+        }
+      }
+    }
+  }
+
+  endHover() {
+    if (this.type === 'RECRUIT_ARMY') {
+      // Cancel
+      if (this.automated && this.automatedImage) {
+        this.automatedImage.texture = getTexture('action-automated')
+      }
+
+      // Preview
+      else if (!this.automated && this.automatedImage) {
+        this.backgroundImage.removeChild(this.automatedImage)
+        this.automatedImage = null
+      }
+    }
+  }
+
+  createAutomatedImage(textureName: string) {
+    if (this.automatedImage) return
+
+    this.automatedImage = new Sprite(getTexture(textureName))
+    this.automatedImage.anchor.set(0.5, 1)
+    this.automatedImage.y = -101
+    this.backgroundImage.addChild(this.automatedImage)
   }
 
   getAlpha() {

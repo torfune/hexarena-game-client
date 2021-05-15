@@ -86,16 +86,10 @@ class Tile {
       return
     }
 
-    // if (this.building && !this.building.army && !this.building.isCamp()) {
-    //   this.building.showHitpoints()
-    // }
-
     if (!this.isOwnedByThisPlayer()) return
 
-    const { supplyLinesEditModeActive } = store.game
-
     // Supply Lines edit mode
-    if (supplyLinesEditModeActive) {
+    if (store.game.supplyLinesEditModeActive) {
       if (this.building) {
         this.addHoverHexagon()
       }
@@ -106,6 +100,11 @@ class Tile {
       // Send Army
       if (this.building && this.building.army) {
         this.addHoverHexagon()
+      }
+
+      // Action Hover
+      if (this.action) {
+        this.action.startHover()
       }
     }
   }
@@ -124,6 +123,11 @@ class Tile {
         this.action.destroy()
       }
       this.removeHoverHexagon()
+    }
+
+    // Action Hover
+    if (this.action) {
+      this.action.endHover()
     }
   }
 

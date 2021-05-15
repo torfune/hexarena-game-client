@@ -370,9 +370,14 @@ class Game {
     }
 
     const tile = this.hoveredTile
-    const command = getDebugCommand(key)
+    if (!tile) return
 
-    if (!tile || !command) return
+    if (key === 'Shift' && tile.action) {
+      tile.action.startHover()
+    }
+
+    const command = getDebugCommand(key)
+    if (!command) return
 
     store.socket.send('debug', `${command}|${tile.axial.x}|${tile.axial.z}`)
   }
@@ -389,6 +394,11 @@ class Game {
       if (this.supplyLinesEditModeActive) {
         this.endSupplyLinesEditMode()
       }
+    }
+
+    const tile = this.hoveredTile
+    if (key === 'Shift' && tile && tile.action && tile.building?.army) {
+      tile.action.endHover()
     }
 
     if (key === 'e' || key === 'q') {
