@@ -35,6 +35,7 @@ import { Graphics } from 'pixi.js'
 import ArmySendManager from './ArmySendManager'
 import colorFilter from '../../utils/colorFilter'
 import { v4 as uuid } from 'uuid'
+import RoadManager from '../RoadManager'
 
 const PATTERN_ALPHA = 1
 const PATTERN_PREVIEW_ALPHA = 0.2
@@ -272,7 +273,7 @@ class Tile {
   setOwner(newOwner: Player | null) {
     if (!store.game) return
 
-    // Tile turned owned
+    // Neutral -> Owned
     if (newOwner) {
       if (this.image.pattern) {
         this.removeImage('pattern')
@@ -304,7 +305,7 @@ class Tile {
       }
     }
 
-    // Tile turned neutral
+    // Owned -> Neutral
     else {
       if (this.image.pattern) {
         const patternImage = this.image.pattern
@@ -347,10 +348,20 @@ class Tile {
       store.game.spawnTile = this
     }
 
+    const oldOwner = this.owner
     this.owner = newOwner
 
+    // Action preview
     if (this.isHovered() && this.isOwnedByThisPlayer()) {
       this.showActionPreviewIfPossible()
+    }
+
+    // Update Roads
+    if (
+      (this.forest || this.mountain) &&
+      (this.isOwnedByThisPlayer() || oldOwner?.id === store.game.playerId)
+    ) {
+      RoadManager.update()
     }
   }
 
