@@ -227,7 +227,7 @@ class ArmySendManager {
             n &&
             !n.hasPatternPreview() &&
             n.owner === t.owner &&
-            (!n.building || (n.building.isCamp() && !n.building.army)) &&
+            !n.building &&
             (!n.village || n.village.raided) &&
             !n.bedrock
           ) {
