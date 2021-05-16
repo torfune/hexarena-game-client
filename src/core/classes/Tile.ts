@@ -363,7 +363,9 @@ class Tile {
     // Update Roads
     if (
       (this.forest || this.mountain) &&
-      (this.isOwnedByThisPlayer() || oldOwner?.id === store.game.playerId)
+      (this.isOwnedByThisPlayer() ||
+        oldOwner?.id === store.game.playerId ||
+        isSpectating())
     ) {
       RoadManager.update()
     }
