@@ -6,6 +6,8 @@ type GameMode =
   | 'AI_1v1'
   | 'AI_ONLY_1v1'
   | 'AI_FFA-3'
+  | 'AI_ONLY_FFA-3'
   | 'AI_FFA-6'
+  | 'AI_ONLY_FFA-6'
 
 export default GameMode

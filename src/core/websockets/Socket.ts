@@ -59,6 +59,8 @@ class Socket {
               gameMode !== 'FFA-6' &&
               gameMode !== 'AI_1v1' &&
               gameMode !== 'AI_ONLY_1v1' &&
+              gameMode !== 'AI_ONLY_FFA-3' &&
+              gameMode !== 'AI_ONLY_FFA-6' &&
               gameMode !== 'AI_FFA-3' &&
               gameMode !== 'AI_FFA-6'
             ) {
