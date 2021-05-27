@@ -228,7 +228,7 @@ const messageHandlers = {
     let sound: 'VILLAGE_CAPTURE' | 'TILE_CAPTURE' | null = null
     for (let i = 0; i < parsed.length; i++) {
       const fields = parsed[i]
-      const { id, x, z, mountain, bedrock } = fields
+      const { id, x, z, mountain } = fields
 
       if (!id || x === null || z === null) continue
 
@@ -236,7 +236,7 @@ const messageHandlers = {
 
       // Create
       if (!tile) {
-        tile = new Tile(id, { x, z }, mountain, bedrock)
+        tile = new Tile(id, { x, z }, mountain)
         tile.updateNeighbors()
         for (let i = 0; i < 6; i++) {
           const n = tile.neighbors[i]

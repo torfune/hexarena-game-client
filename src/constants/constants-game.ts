@@ -1,5 +1,6 @@
 import { Axial } from '../types/coordinates'
 import isSpectating from '../utils/isSpectating'
+import { COLOR } from './constants-react'
 
 // TILE
 export const TILE_RADIUS = 73.8
@@ -84,8 +85,8 @@ export const UNIT_MAX_DELAY = 0.4
 
 // COLORS
 export const MOUNTAIN_BACKGROUND = '#eaeaea'
-export const BEDROCK_BACKGROUND = '#5D6D7C'
-export const BEDROCK_BORDER = '#fff'
+export const WORLD_EDGE_BORDER_COLOR = COLOR.GREY_800
+export const BACKGROUND_COLOR = COLOR.GREY_400
 
 // MISC
 export const MAX_CLICK_DURATION = 500

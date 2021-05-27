@@ -3,8 +3,7 @@ import store from '../store'
 import createImage from '../functions/createImage'
 import hex from '../functions/hex'
 import {
-  BEDROCK_BORDER,
-  BEDROCK_BACKGROUND,
+  WORLD_EDGE_BORDER_COLOR,
   HOVER_HEXAGON_OPACITY,
   MOUNTAIN_BACKGROUND,
   ATTENTION_NOTIFICATION_RADIUS,
@@ -12,6 +11,7 @@ import {
   TILE_RADIUS,
   MOUNTAIN_OFFSET_Y,
   ATTENTION_NOTIFICATION_OFFSET_Y,
+  BACKGROUND_COLOR,
 } from '../../constants/constants-game'
 import getImageAnimation from '../functions/getImageAnimation'
 import Player from './Player'
@@ -36,6 +36,7 @@ import ArmySendManager from './ArmySendManager'
 import colorFilter from '../../utils/colorFilter'
 import { v4 as uuid } from 'uuid'
 import RoadManager from '../RoadManager'
+import doesAxialExist from '../functions/doesAxialExist'
 
 const PATTERN_ALPHA = 1
 const PATTERN_PREVIEW_ALPHA = 0.2
@@ -43,7 +44,6 @@ const PATTERN_PREVIEW_ALPHA = 0.2
 class Tile {
   readonly id: string
   readonly axial: Axial
-  readonly bedrock: boolean
   readonly mountain: boolean
   readonly createdAt: number
   forest: Forest | null = null
@@ -60,10 +60,9 @@ class Tile {
   }
   patternPreviewColor: string | null = null
 
-  constructor(id: string, axial: Axial, mountain: boolean, bedrock: boolean) {
+  constructor(id: string, axial: Axial, mountain: boolean) {
     this.id = id
     this.axial = axial
-    this.bedrock = bedrock
     this.mountain = mountain
     this.createdAt = Date.now()
 
@@ -132,7 +131,7 @@ class Tile {
   }
 
   addHoverHexagon() {
-    if (this.bedrock || this.image['overlay']) return
+    if (this.image['overlay']) return
 
     const pixel = getPixelPosition(this.axial)
     const image = createImage('overlay', { group: 'overlay' })
@@ -205,7 +204,7 @@ class Tile {
     let group: any = 'objects'
 
     if (imageName === 'background') {
-      texture = this.bedrock ? 'overlay' : 'pattern'
+      texture = 'pattern'
     } else if (imageName === 'mountain') {
       texture = `mountain-${Math.floor(Math.random() * 5 + 1)}`
     }
@@ -337,9 +336,7 @@ class Tile {
         const image = this.addImage('background')
         ;(image as any).parentGroup = store.game.backgroundGroup
 
-        if (this.bedrock) {
-          image.tint = hex(BEDROCK_BACKGROUND)
-        } else if (this.mountain) {
+        if (this.mountain) {
           image.tint = hex(MOUNTAIN_BACKGROUND)
         }
       }
@@ -387,8 +384,13 @@ class Tile {
 
     for (let i = 0; i < 6; i++) {
       const image = this.imageSet.fog[i]
+      const axial = axialInDirection(this.axial, i, 1)
 
-      if (!this.neighbors[i] && !image) {
+      if (
+        !this.neighbors[i] &&
+        !image &&
+        doesAxialExist(axial, store.game.worldSize)
+      ) {
         const pixel = getPixelPosition(this.axial)
         const newImage = createImage('fog', { group: 'fogs' })
         ;(newImage as any).parentGroup = store.game.fogsGroup
@@ -397,6 +399,7 @@ class Tile {
         newImage.y = pixel.y - TILE_RADIUS * 2
         newImage.anchor.set(0.5, 0.5)
         newImage.rotation = getRotationBySide(i)
+        newImage.tint = hex(BACKGROUND_COLOR)
 
         this.imageSet.fog[i] = newImage
       } else if (this.neighbors[i] && image) {
@@ -414,38 +417,42 @@ class Tile {
     for (let i = 0; i < 6; i++) {
       const n = this.neighbors[i]
 
-      if (!n) continue
-
       let showBorder = false
       let patternPreview = false
       let borderTint: string | null = null
 
+      // Edge of the map
+      if (!n) {
+        showBorder = true
+        borderTint = WORLD_EDGE_BORDER_COLOR
+      }
+
       // Bedrock -> !Bedrock
       // if (this.bedrock && !n.bedrock) {
       //   showBorder = true
-      //   // borderTint = BEDROCK_BORDER
+      //   // borderTint = WORLD_EDGE_BORDER_COLOR
       // }
 
       // !Bedrock -> Bedrock
       // if (!this.bedrock && n.bedrock) {
       //   showBorder = true
-      //   // borderTint = BEDROCK_BORDER
+      //   // borderTint = WORLD_EDGE_BORDER_COLOR
       // }
 
       // Owned -> Neutral
-      if (this.owner && this.owner.alive && !n.owner) {
+      else if (this.owner && this.owner.alive && !n.owner) {
         showBorder = true
         borderTint = this.owner.pattern
       }
 
       // Neutral -> Owned
-      if (!this.owner && n.owner && n.owner.alive) {
+      else if (!this.owner && n.owner && n.owner.alive) {
         showBorder = true
         borderTint = n.owner.pattern
       }
 
       // Owned -> Owned
-      if (this.owner && n.owner && this.owner.id !== n.owner.id) {
+      else if (this.owner && n.owner && this.owner.id !== n.owner.id) {
         showBorder = true
 
         if (this.owner.tilesCount > n.owner.tilesCount && this.owner.alive) {
@@ -456,7 +463,7 @@ class Tile {
       }
 
       // Preview -> Neutral
-      if (this.hasPatternPreview() && !n.owner && !n.hasPatternPreview()) {
+      else if (this.hasPatternPreview() && !n.owner && !n.hasPatternPreview()) {
         showBorder = true
         patternPreview = true
 
@@ -466,7 +473,7 @@ class Tile {
       }
 
       // Preview -> Owned
-      if (this.hasPatternPreview() && n.owner && !n.hasPatternPreview()) {
+      else if (this.hasPatternPreview() && n.owner && !n.hasPatternPreview()) {
         showBorder = true
         patternPreview = true
 
@@ -489,7 +496,7 @@ class Tile {
         newImage.y = pixel.y - TILE_RADIUS * 2
         newImage.anchor.set(0.5, 0.5)
         newImage.rotation = getRotationBySide(i)
-        newImage.tint = hex(borderTint || BEDROCK_BORDER)
+        newImage.tint = hex(borderTint || WORLD_EDGE_BORDER_COLOR)
 
         if (!patternPreview && now - this.createdAt > 500) {
           newImage.alpha = 0
@@ -507,7 +514,7 @@ class Tile {
 
         this.imageSet.border[i] = newImage
       } else if (showBorder && image) {
-        image.tint = hex(borderTint || BEDROCK_BORDER)
+        image.tint = hex(borderTint || WORLD_EDGE_BORDER_COLOR)
       } else if (!showBorder && image) {
         destroyImage(image)
         this.imageSet.border[i] = null
@@ -567,9 +574,7 @@ class Tile {
   }
 
   getStructureName() {
-    if (this.bedrock) {
-      return 'Edge of the World'
-    } else if (this.mountain) {
+    if (this.mountain) {
       return 'Mountains'
     } else if (this.forest) {
       return 'Forest'

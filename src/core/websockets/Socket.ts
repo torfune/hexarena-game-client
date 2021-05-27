@@ -25,7 +25,11 @@ class Socket {
     makeAutoObservable(this)
   }
 
-  connect(): Promise<{ gameMode: GameMode; gameStatus: GameStatus }> {
+  connect(): Promise<{
+    gameMode: GameMode
+    gameStatus: GameStatus
+    worldSize: number
+  }> {
     console.log('Connecting Socket ...')
 
     return new Promise((resolve, reject) => {
@@ -50,7 +54,7 @@ class Socket {
           const [messageName, messagePayload] = data.split('//')
 
           if (messageName === 'game') {
-            const [gameMode, gameStatus] = messagePayload.split('|')
+            const [gameMode, gameStatus, worldSize] = messagePayload.split('|')
 
             if (
               gameMode !== '1v1' &&
@@ -72,6 +76,8 @@ class Socket {
               gameStatus !== 'aborted'
             ) {
               throw new Error(`Invalid Game Status: ${gameStatus}`)
+            } else if (isNaN(Number(worldSize))) {
+              throw new Error(`Invalid World Size: ${worldSize}`)
             }
 
             console.log(`Connected to Game Instance [${this.gameId}]`)
@@ -82,7 +88,7 @@ class Socket {
             }
             this.messageQueue = []
 
-            resolve({ gameMode, gameStatus })
+            resolve({ gameMode, gameStatus, worldSize: Number(worldSize) })
           } else if (messageName === 'error') {
             reject(new Error(messagePayload || 'Connection failed.'))
           }

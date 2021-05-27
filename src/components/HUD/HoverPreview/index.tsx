@@ -32,7 +32,7 @@ const HoverPreview = () => {
 
   const { hoveredTile, player, cursor } = store.game
 
-  if (!cursor || !hoveredTile || hoveredTile.bedrock) return null
+  if (!cursor || !hoveredTile) return null
 
   if (
     hoveredTile &&
@@ -46,11 +46,8 @@ const HoverPreview = () => {
     )
   }
 
-  let actionType:
-    | ActionType
-    | 'SEND_ARMY'
-    | 'REPAIR_BUILDING'
-    | null = hoveredTile.getActionType({ ignoreGold: true })
+  let actionType: ActionType | 'SEND_ARMY' | 'REPAIR_BUILDING' | null =
+    hoveredTile.getActionType({ ignoreGold: true })
   const structure = hoveredTile.getStructureName()
 
   if (

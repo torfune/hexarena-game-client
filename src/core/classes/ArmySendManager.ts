@@ -62,6 +62,8 @@ class ArmySendManager {
 
       for (let j = 1; j < store.gsConfig!.ARMY_HP; j++) {
         const lastTile = this.armyPaths[i][this.armyPaths[i].length - 1]
+        if (!lastTile) break
+
         const nextTile = lastTile.neighbors[i]
         if (!nextTile) break
 
@@ -190,7 +192,7 @@ class ArmySendManager {
       }
 
       // Block
-      else if (t.mountain || t.bedrock) {
+      else if (t.mountain) {
         break
       }
 
@@ -228,8 +230,7 @@ class ArmySendManager {
             !n.hasPatternPreview() &&
             n.owner === t.owner &&
             !n.building &&
-            (!n.village || n.village.raided) &&
-            !n.bedrock
+            (!n.village || n.village.raided)
           ) {
             n.addPatternPreview(player.pattern)
           }

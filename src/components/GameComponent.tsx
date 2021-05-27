@@ -102,10 +102,12 @@ const GameComponent = observer(() => {
     )
     let gameMode: GameMode
     let gameStatus: GameStatus
+    let worldSize: number
     try {
       const result = await store.socket.connect()
       gameMode = result.gameMode
       gameStatus = result.gameStatus
+      worldSize = result.worldSize
     } catch (error) {
       console.error(error)
       store.error = error.message
@@ -113,7 +115,7 @@ const GameComponent = observer(() => {
     }
 
     // Create Game instance
-    store.game = new Game(gameId, gameMode, gameStatus, canvas)
+    store.game = new Game(gameId, gameMode, gameStatus, worldSize, canvas)
 
     // Done
     store.loading = false

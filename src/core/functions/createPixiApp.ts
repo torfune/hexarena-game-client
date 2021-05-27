@@ -1,6 +1,7 @@
 import hex from './hex'
 import { Application } from 'pixi.js'
 import { Stage } from '../../pixi-layers'
+import { BACKGROUND_COLOR } from '../../constants/constants-game'
 
 const createPixiApp = () => {
   try {
@@ -8,7 +9,7 @@ const createPixiApp = () => {
       width: window.innerWidth,
       height: window.innerHeight,
       resolution: window.devicePixelRatio || 1,
-      backgroundColor: hex('#fff'),
+      backgroundColor: hex(BACKGROUND_COLOR),
       autoDensity: true,
     })
     pixiApp.stage = new Stage()

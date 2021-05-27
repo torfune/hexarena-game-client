@@ -88,7 +88,7 @@ class Game {
   clickedAt: number = 0
   startedAt: number = 0
   supplyLinesEditModeActive = false
-  updateDurations: number[] = []
+  worldSize: number = 0
 
   // PIXI Groups
   backgroundGroup = new Group(0, false)
@@ -123,11 +123,13 @@ class Game {
     id: string,
     mode: GameMode,
     status: GameStatus,
+    worldSize: number,
     container: HTMLElement
   ) {
     this.id = id
     this.mode = mode
     this.status = status
+    this.worldSize = worldSize
     this.startedAt = Date.now()
 
     // Leaving warning
@@ -522,7 +524,7 @@ class Game {
       cursorDelta < 32 &&
       timeDelta < MAX_CLICK_DURATION
     ) {
-      if (hoveredTile.bedrock || dragged || this.supplyLinesEditModeActive) {
+      if (dragged || this.supplyLinesEditModeActive) {
         return
       }
 
@@ -778,14 +780,14 @@ class Game {
     return null
   }
 
-  getAverageUpdateDuration() {
-    let sum = 0
-    for (const duration of this.updateDurations) {
-      sum += duration
-    }
-
-    return Math.round(sum / this.updateDurations.length)
-  }
+  // getAverageUpdateDuration() {
+  //   let sum = 0
+  //   for (const duration of this.updateDurations) {
+  //     sum += duration
+  //   }
+  //
+  //   return Math.round(sum / this.updateDurations.length)
+  // }
 }
 
 export default Game
