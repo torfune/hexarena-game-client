@@ -19,7 +19,7 @@ interface Props {
   alive: Prop<boolean>
   killerName: Prop<string | null>
   surrendered: Prop<boolean>
-  ffaPlace: Prop<number | null>
+  place: Prop<number | null>
   afkKicked: Prop<boolean>
 }
 
@@ -33,7 +33,7 @@ class Player {
     alive: createProp(true),
     killerName: createProp(''),
     surrendered: createProp(false),
-    ffaPlace: createProp(null),
+    place: createProp(null),
     afkKicked: createProp(false),
   }
 
@@ -138,8 +138,8 @@ class Player {
   get surrendered() {
     return this.props.surrendered.current
   }
-  get ffaPlace() {
-    return this.props.ffaPlace.current
+  get place() {
+    return this.props.place.current
   }
   get afkKicked() {
     return this.props.afkKicked.current

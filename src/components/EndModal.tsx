@@ -18,13 +18,13 @@ const EndModal = () => {
     if (isSpectating() || !game) return
 
     if (game.mode === 'FFA-6') {
-      if (game.player!.ffaPlace! <= 3) {
+      if (game.player!.place! <= 3) {
         SoundManager.play('VICTORY')
       } else {
         SoundManager.play('DEFEAT')
       }
     } else if (game.mode === 'FFA-3') {
-      if (game.player!.ffaPlace! <= 2) {
+      if (game.player!.place! <= 2) {
         SoundManager.play('VICTORY')
       } else {
         SoundManager.play('DEFEAT')
@@ -41,7 +41,7 @@ const EndModal = () => {
   if (
     !game ||
     game.time === null ||
-    (game.mode.includes('FFA') && !game.player?.ffaPlace && !isSpectating())
+    (game.mode.includes('FFA') && !game.player?.place && !isSpectating())
   ) {
     return null
   }
@@ -57,16 +57,16 @@ const EndModal = () => {
     // FFA
     if (game.mode.includes('FFA')) {
       if (game.player.surrendered) {
-        result = getPlacementMessage(game.player.ffaPlace!)
+        result = getPlacementMessage(game.player.place!)
         reason = 'You have surrendered.'
       } else if (game.time === 0 && game.player.alive) {
-        result = getPlacementMessage(game.player.ffaPlace!)
+        result = getPlacementMessage(game.player.place!)
         reason = `Time's up.`
       } else if (!game.player.alive) {
-        result = getPlacementMessage(game.player.ffaPlace!)
+        result = getPlacementMessage(game.player.place!)
         reason = 'You have lost your capital.'
       } else {
-        result = getPlacementMessage(game.player.ffaPlace!)
+        result = getPlacementMessage(game.player.place!)
         reason = 'All enemies have been eliminated.'
       }
     }
@@ -76,9 +76,20 @@ const EndModal = () => {
       if (game.player.surrendered) {
         result = 'DEFEAT'
         reason = 'You have surrendered.'
-      } else if (game.time === 0 && game.player.alive) {
-        result = 'DRAW'
-        reason = `Time's up.`
+      } else if (
+        game.time === 0 &&
+        game.player.alive &&
+        game.player.place === 1
+      ) {
+        result = 'VICTORY'
+        reason = `Time's up. You have more tiles than your opponent.`
+      } else if (
+        game.time === 0 &&
+        game.player.alive &&
+        game.player.place === 2
+      ) {
+        result = 'DEFEAT'
+        reason = `Time's up. Your opponent has more tiles.`
       } else if (!game.player.alive) {
         result = 'DEFEAT'
         reason = 'You have lost your capital.'

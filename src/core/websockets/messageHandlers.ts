@@ -352,7 +352,7 @@ const messageHandlers = {
       alive: 'boolean',
       killerName: 'string',
       surrendered: 'boolean',
-      ffaPlace: 'number',
+      place: 'number',
       afkKicked: 'boolean',
     }) as {
       id: string | null
@@ -365,7 +365,7 @@ const messageHandlers = {
       alive: boolean
       killerName: string | null
       surrendered: boolean
-      ffaPlace: number | null
+      place: number | null
       afkKicked: boolean
     }[]
 

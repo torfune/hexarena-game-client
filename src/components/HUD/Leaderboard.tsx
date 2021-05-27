@@ -35,8 +35,8 @@ const Leaderboard = observer(() => {
     let newDefeatedPlayers: Player[] = []
     for (let i = 0; i < defeatedPlayers.length; i++) {
       const player = defeatedPlayers[i]
-      if (player.ffaPlace) {
-        newDefeatedPlayers[player.ffaPlace] = player
+      if (player.place) {
+        newDefeatedPlayers[player.place] = player
       }
     }
     defeatedPlayers = newDefeatedPlayers
@@ -54,7 +54,7 @@ const Leaderboard = observer(() => {
       {alivePlayers.concat(defeatedPlayers).map((player, index) => (
         <PlayerRow key={player.id} opacity={player.alive ? 1 : 0.5}>
           <Row>
-            <PlayerPlace>{player.ffaPlace || index + 1}.</PlayerPlace>
+            <PlayerPlace>{player.place || index + 1}.</PlayerPlace>
 
             {player.surrendered && player.alive ? (
               <PlayerIcon src={botIcon} />
