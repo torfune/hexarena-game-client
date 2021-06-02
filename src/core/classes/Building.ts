@@ -223,28 +223,37 @@ class Building {
   }
 
   setArmy(newArmy: Army | null) {
-    if (
-      newArmy &&
-      this.tile.owner &&
-      (this.tile.owner?.id === store.game?.playerId || isSpectating())
-    ) {
-      SoundManager.play('ARMY_ARRIVE')
-    }
+    this.army = newArmy
+    this.hideHitpoints()
 
-    if (this.tile.action && this.tile.action.isPreview()) {
-      this.tile.action.destroy()
-    }
+    // Army arrived
+    if (newArmy) {
+      if (
+        this.tile.owner &&
+        (this.tile.owner?.id === store.game?.playerId || isSpectating())
+      ) {
+        SoundManager.play('ARMY_ARRIVE')
+      }
 
-    if (this.tile.action) {
-      if (newArmy) {
+      if (this.tile.action && this.tile.action.isPreview()) {
+        this.tile.action.destroy()
+      }
+
+      if (this.tile.action) {
         this.tile.action.activateArmyMode()
-      } else {
-        this.tile.action.deactivateArmyMode()
       }
     }
 
-    this.army = newArmy
-    this.hideHitpoints()
+    // Army left
+    else {
+      if (!this.tile.action && this.tile.isHovered()) {
+        this.tile.showActionPreviewIfPossible()
+      }
+
+      if (this.tile.action) {
+        this.tile.action.deactivateArmyMode()
+      }
+    }
   }
 
   getTextureName() {
