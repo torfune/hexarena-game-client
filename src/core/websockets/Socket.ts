@@ -188,31 +188,35 @@ class Socket {
   handleError(event: Event) {
     console.error(`Socket error!`)
     console.error(event)
+
+    if (!store.error) {
+      store.error = 'Disconnected.'
+    }
   }
 
   handleClose(event: CloseEvent) {
     this.connected = false
 
-    if (
-      (event.code === 4000 || event.code === 1006 || !event.wasClean) &&
-      store.game?.status === 'running' &&
-      !isSpectating()
-    ) {
-      console.log('Reconnecting ...')
-      this.reconnecting = true
-
-      if (this.reconnecting) {
-        setTimeout(() => {
-          this.connect()
-        }, RECONNECT_RATE)
-      } else {
-        this.connect()
-      }
-    } else {
-      if (!store.error) {
-        store.error = 'Disconnected.'
-      }
+    // if (
+    //   (event.code === 4000 || event.code === 1006 || !event.wasClean) &&
+    //   store.game?.status === 'running' &&
+    //   !isSpectating()
+    // ) {
+    //   console.log('Reconnecting ...')
+    //   this.reconnecting = true
+    //
+    //   if (this.reconnecting) {
+    //     setTimeout(() => {
+    //       this.connect()
+    //     }, RECONNECT_RATE)
+    //   } else {
+    //     this.connect()
+    //   }
+    // } else {
+    if (!store.error) {
+      store.error = 'Disconnected.'
     }
+    // }
   }
 
   send(message: MessageToSend, payload: string = '') {
