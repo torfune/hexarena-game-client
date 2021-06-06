@@ -6,6 +6,7 @@ import {
   MAX_SCALE,
   CAMERA_SPEED,
   MAX_CLICK_DURATION,
+  MAX_TOLERATED_UPDATE_DURATION,
 } from '../../constants/constants-game'
 import createPixiApp from '../functions/createPixiApp'
 import store from '../store'
@@ -36,6 +37,7 @@ import BuildingsConnection from '../../types/Road'
 import SupplyLine from './SupplyLine'
 import RoadManager from '../RoadManager'
 import { Group, Layer } from '../../pixi-layers'
+import * as Sentry from '@sentry/browser'
 
 class Game {
   id: string
@@ -297,8 +299,15 @@ class Game {
 
     // Measure the performance
     const duration = Date.now() - startedAt
-    if (duration >= 5) {
-      console.log(`update took ${duration}ms`)
+    if (duration > MAX_TOLERATED_UPDATE_DURATION) {
+      const message = `Update took ${duration}ms`
+      console.log(message)
+
+      const client = Sentry.getCurrentHub().getClient()
+      if (client) {
+        Sentry.captureMessage(message)
+        console.log('Update too long message sent to Sentry.')
+      }
     }
     // this.updateDurations.push(duration)
     // if (this.updateDurations.length > 64) {

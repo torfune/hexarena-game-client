@@ -91,6 +91,7 @@ export const BACKGROUND_COLOR = COLOR.GREY_400
 // MISC
 export const MAX_CLICK_DURATION = 500
 export const HP_BAR_HIDE_DELAY = 200
+export const MAX_TOLERATED_UPDATE_DURATION = 9
 
 // DEBUG COMMANDS
 export const DEBUG_COMMANDS = [

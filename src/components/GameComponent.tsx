@@ -1,5 +1,4 @@
 import HoverPreview from './HUD/HoverPreview'
-import SoundManager from '../services/SoundManager'
 import GameStatus from '../types/GameStatus'
 import { observer } from 'mobx-react-lite'
 import Economy from './HUD/Economy'
@@ -105,9 +104,9 @@ const GameComponent = observer(() => {
       gameMode = result.gameMode
       gameStatus = result.gameStatus
       worldSize = result.worldSize
-    } catch (error) {
-      console.error(error)
-      store.error = error.message
+    } catch (message) {
+      console.error(message)
+      store.error = message
       return
     }
 
