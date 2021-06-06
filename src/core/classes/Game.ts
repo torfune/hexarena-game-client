@@ -419,6 +419,11 @@ class Game {
       return
     }
 
+    // Start sounds
+    if (!SoundManager.initialized) {
+      SoundManager.init()
+    }
+
     const { clientX: x, clientY: y } = event
     const { hoveredTile } = this
 
@@ -567,6 +572,11 @@ class Game {
 
   handleWheelMove({ deltaY, detail }: WheelEvent) {
     if (!this.player?.alive && !isSpectating()) return
+
+    // Start sounds
+    if (!SoundManager.initialized) {
+      SoundManager.init()
+    }
 
     const delta = deltaY || detail
     const zoomDirection = (delta < 0 ? -1 : 1) * -1

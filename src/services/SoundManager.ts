@@ -72,12 +72,6 @@ const SOUNDS = {
     offset: 0,
     playInSpectate: false,
   },
-  // GAME_START: {
-  //   url: `${baseUrl}/game-start.mp3`,
-  //   volume: 0.1,
-  //   offset: 0,
-  //   playInSpectate: false,
-  // },
   INCOME: {
     url: `${baseUrl}/income.mp3`,
     volume: 0.2,
@@ -129,6 +123,7 @@ const SOUNDS = {
 }
 
 class SoundManager {
+  static initialized = false
   static supported = isSupported()
   static context: AudioContext | null = null
   static buffers: { [key: string]: AudioBuffer } = {}
@@ -139,9 +134,13 @@ class SoundManager {
   > = {}
 
   static init() {
-    if (!this.supported) return
+    if (!this.supported || this.initialized) return
 
     this.context = new AudioContext() as AudioContext
+    if (this.context.state === 'suspended') {
+      console.warn('Sound auto-play suspended.')
+      return
+    }
 
     for (const [key, sound] of Object.entries(SOUNDS)) {
       const request = new XMLHttpRequest()
@@ -155,16 +154,17 @@ class SoundManager {
       }
       request.send()
     }
+
+    this.initialized = true
   }
 
   static play(soundKey: keyof typeof SOUNDS) {
-    const now = Date.now()
     if (
+      !this.initialized ||
       !store.settings.sound ||
       !this.context ||
       this.playing[soundKey] ||
-      !store.game ||
-      now - store.game.startedAt < 500
+      !store.game
     ) {
       return
     }
@@ -172,7 +172,9 @@ class SoundManager {
     const sound = SOUNDS[soundKey]
     const buffer = this.buffers[soundKey]
 
-    if (!sound || !buffer || (isSpectating() && !sound.playInSpectate)) return
+    if (!sound || !buffer || (isSpectating() && !sound.playInSpectate)) {
+      return
+    }
 
     const source = this.context.createBufferSource()
     source.buffer = buffer

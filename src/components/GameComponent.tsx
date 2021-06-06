@@ -88,9 +88,6 @@ const GameComponent = observer(() => {
     // Set global game configuration
     store.gsConfig = configResponse.data
 
-    // Load sounds
-    SoundManager.init()
-
     // Load images
     await loadImages()
 
