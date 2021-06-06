@@ -41,23 +41,22 @@
     ></script>
 
     <script>
-      const getEnvironment = () => {
-        switch (window.location.hostname) {
-          case 'localhost':
-            return 'local'
-          case 'dev.hexarena.io':
-            return 'development'
-          case 'hexarena.io':
-            return 'production'
-          default:
-            return 'unknown-environment'
-        }
+      let environment = null
+      switch (window.location.hostname) {
+        case 'test.hexarena.io':
+          environment = 'test'
+          break
+        case 'hexarena.io':
+          environment = 'production'
+          break
       }
 
-      Sentry.init({
-        dsn: 'https://28bb77120c0b45a991f6c251a58ffa63@sentry.io/1438180',
-        environment: getEnvironment(),
-      })
+      if (environment) {
+        Sentry.init({
+          dsn: 'https://28bb77120c0b45a991f6c251a58ffa63@sentry.io/1438180',
+          environment,
+        })
+      }
     </script>
 
     <script

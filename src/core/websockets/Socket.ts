@@ -90,7 +90,7 @@ class Socket {
 
             resolve({ gameMode, gameStatus, worldSize: Number(worldSize) })
           } else if (messageName === 'error') {
-            reject(new Error(messagePayload || 'Connection failed.'))
+            reject(messagePayload || 'Connection failed.')
           }
         })
       })
