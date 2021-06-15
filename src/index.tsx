@@ -19,7 +19,9 @@ if (environment) {
     environment,
   })
 } else {
-  console.log(`Sentry initialization skipped. Valid environment not found.`)
+  console.log(
+    `Sentry initialization skipped. Valid environment not found for hostname ${window.location.hostname}.`
+  )
 }
 
 ReactDOM.render(
