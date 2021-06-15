@@ -5,10 +5,10 @@ import * as Sentry from '@sentry/browser'
 
 let environment = null
 switch (window.location.hostname) {
-  case 'test.hexarena.io':
+  case 'game.test.hexarena.io':
     environment = 'test'
     break
-  case 'hexarena.io':
+  case 'game.hexarena.io':
     environment = 'production'
     break
 }
