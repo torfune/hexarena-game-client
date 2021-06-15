@@ -13,10 +13,13 @@ switch (window.location.hostname) {
     break
 }
 if (environment) {
+  console.log(`Initializing Sentry for ${environment} environment.`)
   Sentry.init({
     dsn: 'https://28bb77120c0b45a991f6c251a58ffa63@sentry.io/1438180',
     environment,
   })
+} else {
+  console.log(`Sentry initialization skipped. Valid environment not found.`)
 }
 
 ReactDOM.render(
