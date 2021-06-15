@@ -166,7 +166,7 @@ const GameComponent = observer(() => {
 
       {store.game && (
         <>
-          {gameStatus === 'starting' && <Lobby />}
+          {(gameStatus === 'starting' || gameStatus === 'pending') && <Lobby />}
 
           {(gameStatus === 'running' || gameStatus === 'finished') && (
             <HudContainer>

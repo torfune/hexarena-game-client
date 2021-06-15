@@ -566,14 +566,17 @@ const messageHandlers = {
     if (!store.game) return
     const status = convert(payload, 'string') as string | null
     if (
-      status !== 'starting' &&
-      status !== 'running' &&
-      status !== 'finished' &&
-      status !== 'aborted'
+      status === 'pending' ||
+      status === 'aborted' ||
+      status === 'starting' ||
+      status === 'running' ||
+      status === 'finished'
     ) {
-      store.game.status = null
-    } else {
       store.game.status = status
+
+      if (status === 'aborted') {
+        store.error = 'Game aborted.'
+      }
     }
   },
   spectators: (payload: string) => {

@@ -73,7 +73,8 @@ class Socket {
               gameStatus !== 'running' &&
               gameStatus !== 'starting' &&
               gameStatus !== 'finished' &&
-              gameStatus !== 'aborted'
+              gameStatus !== 'aborted' &&
+              gameStatus !== 'pending'
             ) {
               throw new Error(`Invalid Game Status: ${gameStatus}`)
             } else if (isNaN(Number(worldSize))) {
