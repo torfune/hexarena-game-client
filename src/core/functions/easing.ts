@@ -40,3 +40,15 @@ export const easeOutQuint = (t: number) => 1 + --t * t * t * t * t
 // acceleration until halfway, then deceleration
 export const easeInOutQuint = (t: number) =>
   t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t
+
+export const easeOutElastic =
+  (force = 1) =>
+  (x: number): number => {
+    const c4 = (force * Math.PI) / 3
+
+    return x === 0
+      ? 0
+      : x === 1
+      ? 1
+      : Math.pow(2, -10 * x) * Math.sin((x * 10 - 0.75) * c4) + 1
+  }

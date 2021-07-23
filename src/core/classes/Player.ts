@@ -5,7 +5,7 @@ import createProp from '../../utils/createProp'
 import { makeAutoObservable } from 'mobx'
 import hex from '../functions/hex'
 import SoundManager from '../../services/SoundManager'
-import ArmySendManager from './ArmySendManager'
+import ArmyDragManager from './ArmyDragManager'
 import Action from './Action'
 import { v4 as uuid } from 'uuid'
 
@@ -85,12 +85,17 @@ class Player {
         }
 
         const { hoveredTile } = store.game
-        if (hoveredTile && !hoveredTile.action && store.game.player) {
+        if (
+          hoveredTile &&
+          !hoveredTile.action &&
+          store.game.player &&
+          !store.game.supplyLinesEditModeActive
+        ) {
           const actionType = hoveredTile.getActionType()
           if (
             actionType &&
             !hoveredTile.building?.army &&
-            !ArmySendManager.active
+            !ArmyDragManager.active
           ) {
             new Action(
               uuid(),

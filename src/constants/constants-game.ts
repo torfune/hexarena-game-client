@@ -4,7 +4,8 @@ import { COLOR } from './constants-react'
 
 // TILE
 export const TILE_RADIUS = 73.8
-export const HOVER_HEXAGON_OPACITY = 0.1
+export const BUILDING_HIGHLIGHT_ALPHA = 0.25
+export const BUILDING_HIGHLIGHT_SCALE = 0.8
 export const NEIGHBOR_DIRECTIONS: Axial[] = [
   { x: 1, z: -1 },
   { x: 1, z: 0 },

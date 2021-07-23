@@ -7,7 +7,7 @@ import { Pixel } from '../../../types/coordinates'
 import React from 'react'
 import StructurePreview from './StructurePreview'
 import { ActionType } from '../../../core/classes/Action'
-import ArmySendManager from '../../../core/classes/ArmySendManager'
+import ArmyDragManager from '../../../core/classes/ArmyDragManager'
 
 const ContainerCSS = css`
   position: absolute;
@@ -58,7 +58,7 @@ const HoverPreview = () => {
     actionType = 'SEND_ARMY'
   }
 
-  if (ArmySendManager.active) {
+  if (ArmyDragManager.active) {
     actionType = null
   }
 

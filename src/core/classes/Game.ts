@@ -32,12 +32,13 @@ import SoundManager from '../../services/SoundManager'
 import GameStatus from '../../types/GameStatus'
 import isSpectating from '../../utils/isSpectating'
 import Building from './Building'
-import ArmySendManager from './ArmySendManager'
+import ArmyDragManager from './ArmyDragManager'
 import BuildingsConnection from '../../types/Road'
 import SupplyLine from './SupplyLine'
 import RoadManager from '../RoadManager'
 import { Group, Layer } from '../../pixi-layers'
 import * as Sentry from '@sentry/browser'
+import ArmyDragArrow from './ArmyDragArrow'
 
 class Game {
   id: string
@@ -287,8 +288,8 @@ class Game {
     }
 
     // Army Send Manager
-    if (ArmySendManager.active) {
-      ArmySendManager.update()
+    if (ArmyDragManager.active) {
+      ArmyDragManager.update()
     }
 
     // Animate Supply Lines
@@ -309,10 +310,6 @@ class Game {
         console.log('Update too long message sent to Sentry.')
       }
     }
-    // this.updateDurations.push(duration)
-    // if (this.updateDurations.length > 64) {
-    //   this.updateDurations.shift()
-    // }
   }
 
   setupEventListeners() {
@@ -440,30 +437,34 @@ class Game {
 
     // Left mouse button
     if (event.button === 0 && !this.keyDown['Shift']) {
-      // Army - select
       if (
-        !ArmySendManager.active &&
+        !ArmyDragManager.active &&
         hoveredTile &&
-        hoveredTile.building?.army?.owner?.id === this.playerId
+        hoveredTile.isOwnedByThisPlayer() &&
+        hoveredTile.building
       ) {
-        ArmySendManager.selectArmy(hoveredTile.building.army)
-        return
-      }
-
-      // Destroy Supply Line
-      if (
-        this.supplyLinesEditModeActive &&
-        this.hoveredTile &&
-        this.hoveredTile.building
-      ) {
-        const supplyLine = this.getSupplyLineBySourceBuilding(
-          this.hoveredTile.building
-        )
-        if (supplyLine && store.socket) {
-          store.socket.send('destroySupplyLine', supplyLine.id)
+        // Activate Army Drag Manager
+        if (hoveredTile.building?.army || this.supplyLinesEditModeActive) {
+          ArmyDragManager.startDrag(hoveredTile.building)
           return
         }
       }
+
+      if (!ArmyDragArrow)
+        if (
+          this.supplyLinesEditModeActive &&
+          this.hoveredTile &&
+          this.hoveredTile.building
+        ) {
+          // Destroy Supply Line
+          const supplyLine = this.getSupplyLineBySourceBuilding(
+            this.hoveredTile.building
+          )
+          if (supplyLine && store.socket) {
+            store.socket.send('destroySupplyLine', supplyLine.id)
+            return
+          }
+        }
     }
 
     if (!this.keyDown['Shift']) {
@@ -501,34 +502,40 @@ class Game {
 
     // Unselect army
     if (!hoveredTile) {
-      if (ArmySendManager.active) {
-        ArmySendManager.unselectArmy()
+      if (ArmyDragManager.active) {
+        ArmyDragManager.deactivate()
       }
       return
     }
 
     // Army Send Manager
-    if (event.button === 0 && ArmySendManager.active) {
+    if (event.button === 0 && ArmyDragManager.active) {
       if (
-        ArmySendManager.tile === hoveredTile ||
-        ArmySendManager.direction === null
+        ArmyDragManager.tile === hoveredTile ||
+        ArmyDragManager.direction === null
       ) {
         if (
           this.supplyLinesEditModeActive &&
-          ArmySendManager.tile &&
-          ArmySendManager.tile.building
+          ArmyDragManager.tile &&
+          ArmyDragManager.tile.building
         ) {
           const supplyLine = this.getSupplyLineBySourceBuilding(
-            ArmySendManager.tile.building
+            ArmyDragManager.tile.building
           )
           if (supplyLine) {
             store.socket.send('destroySupplyLine', supplyLine.id)
           }
         }
 
-        ArmySendManager.unselectArmy()
+        ArmyDragManager.deactivate()
       } else {
-        ArmySendManager.sendArmy()
+        if (ArmyDragManager.army) {
+          ArmyDragManager.sendArmy()
+        } else if (ArmyDragManager.targetBuilding) {
+          ArmyDragManager.createSupplyLine()
+        } else {
+          ArmyDragManager.deactivate()
+        }
       }
     }
 
@@ -690,8 +697,8 @@ class Game {
     if (changed) {
       // this.updatePatternPreviews()
 
-      if (ArmySendManager.active) {
-        ArmySendManager.onHoveredTileChange(this.hoveredTile)
+      if (ArmyDragManager.active) {
+        ArmyDragManager.onHoveredTileChange(this.hoveredTile)
       }
     }
   }
@@ -770,12 +777,19 @@ class Game {
   startSupplyLinesEditMode() {
     this.supplyLinesEditModeActive = true
 
-    if (
-      this.hoveredTile &&
-      this.hoveredTile.action &&
-      this.hoveredTile.action.status === 'PREVIEW'
-    ) {
-      this.hoveredTile.action.destroy()
+    if (this.hoveredTile) {
+      // Destroy preview Action
+      if (
+        this.hoveredTile.action &&
+        this.hoveredTile.action.status === 'PREVIEW'
+      ) {
+        this.hoveredTile.action.destroy()
+      }
+
+      // Highlight Building Tile
+      if (this.hoveredTile.building && this.hoveredTile.isOwnedByThisPlayer()) {
+        this.hoveredTile.building.showHighlight()
+      }
     }
   }
 
@@ -784,6 +798,14 @@ class Game {
 
     if (this.hoveredTile) {
       this.hoveredTile.showActionPreviewIfPossible()
+
+      if (this.hoveredTile.building && !this.hoveredTile.building.army) {
+        this.hoveredTile.building.hideHighlight()
+      }
+    }
+
+    if (ArmyDragManager.active && !ArmyDragManager.army) {
+      ArmyDragManager.deactivate()
     }
   }
 
@@ -798,15 +820,6 @@ class Game {
 
     return null
   }
-
-  // getAverageUpdateDuration() {
-  //   let sum = 0
-  //   for (const duration of this.updateDurations) {
-  //     sum += duration
-  //   }
-  //
-  //   return Math.round(sum / this.updateDurations.length)
-  // }
 }
 
 export default Game

@@ -7,21 +7,21 @@ import Building from './classes/Building'
 import SupplyLine from './classes/SupplyLine'
 import { Graphics } from 'pixi.js'
 import Tile from './classes/Tile'
-import ArmySendManager from './classes/ArmySendManager'
+import ArmyDragManager from './classes/ArmyDragManager'
 import { ROAD_OFFSET_Y } from '../constants/constants-game'
 import isSpectating from '../utils/isSpectating'
 
 const ANIMATION_SPEED = 500
 
 const BASIC_LINE = {
-  WIDTH: 4,
+  WIDTH: 8,
   ALPHA: 0.1,
   EDIT_MODE_ALPHA: 0.1,
   HIGHLIGHT_ALPHA: 1,
 }
 
 const SUPPLY_LINE = {
-  WIDTH: 8,
+  WIDTH: 12,
   ALPHA: 0.2,
   EDIT_MODE_ALPHA: 0.8,
   HIGHLIGHT_ALPHA: 1,
@@ -115,8 +115,8 @@ class RoadManager {
     }
 
     // Refresh Army Send Manager
-    if (ArmySendManager.active) {
-      ArmySendManager.refresh()
+    if (ArmyDragManager.active) {
+      ArmyDragManager.refresh()
     }
   }
 
@@ -196,23 +196,23 @@ class RoadManager {
       // Highlighted Send Path
       else if (
         highlighted &&
-        ArmySendManager.targetBuilding &&
-        ArmySendManager.tile
+        ArmyDragManager.targetBuilding &&
+        ArmyDragManager.tile
       ) {
         this.drawSupplyLine(
           road.line,
-          ArmySendManager.tile,
-          ArmySendManager.targetBuilding.tile,
+          ArmyDragManager.tile,
+          ArmyDragManager.targetBuilding.tile,
           highlighted
         )
       }
 
       // Highlighted other Send Path
       else if (
-        ArmySendManager.targetBuilding &&
-        ArmySendManager.tile &&
+        ArmyDragManager.targetBuilding &&
+        ArmyDragManager.tile &&
         supplyLine &&
-        supplyLine.sourceTile === ArmySendManager.tile
+        supplyLine.sourceTile === ArmyDragManager.tile
       ) {
         this.drawBasicLine(road.line, buildingA, buildingB, highlighted)
       }
@@ -277,7 +277,7 @@ class RoadManager {
   ) {
     let alpha = SUPPLY_LINE.ALPHA
 
-    if (store.game?.supplyLinesEditModeActive && !ArmySendManager.active) {
+    if (store.game?.supplyLinesEditModeActive && !ArmyDragManager.active) {
       alpha = SUPPLY_LINE.EDIT_MODE_ALPHA
     }
 

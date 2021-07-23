@@ -6,6 +6,9 @@ import store from '../store'
 import destroyImage from '../functions/destroyImage'
 import { TILE_RADIUS } from '../../constants/constants-game'
 
+const HEAD_OFFSET = 4
+const ALPHA = 0.5
+
 class ArmyDragArrow {
   tile: Tile
   body: Sprite = createImage('army-drag-arrow-body', { group: 'dragArrows' })
@@ -16,9 +19,11 @@ class ArmyDragArrow {
 
     this.body.anchor.set(0, 0.5)
     this.body.scale.y = 2.5
-    this.head.anchor.set(0, 0.5)
+    this.body.alpha = ALPHA
 
-    this.head.scale.set(2)
+    this.head.anchor.set(0, 0.5)
+    this.head.scale.set(2.2)
+    this.head.alpha = ALPHA
 
     this.update()
   }
@@ -54,6 +59,19 @@ class ArmyDragArrow {
 
     this.head.x = pixel.x + delta.x
     this.head.y = pixel.y + delta.y
+
+    // Head offset
+    if (delta.y < 0) {
+      this.head.y += HEAD_OFFSET
+    } else {
+      this.head.y -= HEAD_OFFSET
+    }
+    if (delta.x < 0) {
+      this.head.x += HEAD_OFFSET
+    } else {
+      this.head.x -= HEAD_OFFSET
+    }
+
     this.head.rotation = angle
   }
 

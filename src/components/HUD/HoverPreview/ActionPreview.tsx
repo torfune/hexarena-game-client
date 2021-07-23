@@ -7,7 +7,7 @@ import store from '../../../core/store'
 import Tile from '../../../core/classes/Tile'
 import recruitIcon from '../../../icons/recruit.svg'
 import armyIcon from '../../../icons/army.svg'
-import ArmySendManager from '../../../core/classes/ArmySendManager'
+import ArmyDragManager from '../../../core/classes/ArmyDragManager'
 
 const baseImageUrl = process.env.PUBLIC_URL + '/images'
 
@@ -134,7 +134,7 @@ const getActionDescription = (
 ) => {
   if (!store.game) return null
 
-  if (actionType === 'SEND_ARMY' && !ArmySendManager.active) {
+  if (actionType === 'SEND_ARMY' && !ArmyDragManager.active) {
     return 'Drag & drop to send army'
   }
 

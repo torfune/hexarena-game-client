@@ -4,7 +4,6 @@ import createImage from '../functions/createImage'
 import hex from '../functions/hex'
 import {
   WORLD_EDGE_BORDER_COLOR,
-  HOVER_HEXAGON_OPACITY,
   MOUNTAIN_BACKGROUND,
   ATTENTION_NOTIFICATION_RADIUS,
   ATTENTION_NOTIFICATION_ALPHA,
@@ -13,7 +12,6 @@ import {
   ATTENTION_NOTIFICATION_OFFSET_Y,
   BACKGROUND_COLOR,
 } from '../../constants/constants-game'
-import getImageAnimation from '../functions/getImageAnimation'
 import Player from './Player'
 import Animation from './Animation'
 import TileImage from '../../types/TileImage'
@@ -27,16 +25,17 @@ import axialInDirection from '../../utils/axialInDirection'
 import getTileByAxial from '../functions/getTileByAxial'
 import Forest from './Forest'
 import Village from './Village'
-import { easeInQuad, easeOutQuad } from '../functions/easing'
+import { easeInQuad, easeOutQuad, easeOutQuart } from '../functions/easing'
 import Building from './Building'
 import isSpectating from '../../utils/isSpectating'
 import * as PIXI from 'pixi.js'
 import { Graphics } from 'pixi.js'
-import ArmySendManager from './ArmySendManager'
+import ArmyDragManager from './ArmyDragManager'
 import colorFilter from '../../utils/colorFilter'
 import { v4 as uuid } from 'uuid'
 import RoadManager from '../RoadManager'
 import doesAxialExist from '../functions/doesAxialExist'
+import getImageAnimation from '../functions/getImageAnimation'
 
 const PATTERN_ALPHA = 1
 const PATTERN_PREVIEW_ALPHA = 0.2
@@ -90,7 +89,7 @@ class Tile {
     // Supply Lines edit mode
     if (store.game.supplyLinesEditModeActive) {
       if (this.building) {
-        this.addHoverHexagon()
+        this.building.showHighlight()
       }
     } else {
       // Create Action
@@ -98,7 +97,7 @@ class Tile {
 
       // Send Army
       if (this.building && this.building.army) {
-        this.addHoverHexagon()
+        this.building.showHighlight()
       }
 
       // Action Hover
@@ -117,81 +116,20 @@ class Tile {
       building.hideHitpoints()
     }
 
-    if (!ArmySendManager.active) {
+    if (!ArmyDragManager.active) {
       if (this.action && this.action.status === 'PREVIEW') {
         this.action.destroy()
       }
-      this.removeHoverHexagon()
+
+      if (building) {
+        building.hideHighlight()
+      }
     }
 
     // Action Hover
     if (this.action) {
       this.action.endHover()
     }
-  }
-
-  addHoverHexagon() {
-    if (this.image['overlay']) return
-
-    const pixel = getPixelPosition(this.axial)
-    const image = createImage('overlay', { group: 'overlay' })
-
-    image.x = pixel.x
-    image.y = pixel.y
-    image.scale.set(0)
-    image.tint = hex('#000')
-    this.image['overlay'] = image
-
-    const animation = getImageAnimation(this.image['overlay'])
-    let initialFraction: number | undefined = undefined
-    if (animation) {
-      initialFraction = 1 - animation.fraction
-      animation.destroy()
-    }
-
-    new Animation(
-      this.image['overlay'],
-      (image, fraction) => {
-        image.alpha = fraction * HOVER_HEXAGON_OPACITY
-        image.scale.set(fraction)
-      },
-      {
-        initialFraction,
-        speed: 0.25,
-      }
-    )
-  }
-
-  removeHoverHexagon() {
-    const image = this.image['overlay']
-    if (!image || !store.game) return
-
-    delete this.image['overlay']
-
-    const animation = getImageAnimation(image)
-    let initialFraction
-    if (animation) {
-      initialFraction = 1 - animation.fraction
-      animation.destroy()
-    }
-
-    new Animation(
-      image,
-      (image, fraction) => {
-        fraction = 1 - fraction
-        image.alpha = fraction * HOVER_HEXAGON_OPACITY
-        image.scale.set(fraction)
-      },
-      {
-        initialFraction,
-        speed: 0.1,
-        onFinish: (image) => {
-          if (store.game && store.game.pixi) {
-            store.game.pixi.stage.removeChild(image)
-          }
-        },
-      }
-    )
   }
 
   addImage(imageName: keyof TileImage, animate = true) {
@@ -206,7 +144,7 @@ class Tile {
     if (imageName === 'background') {
       texture = 'pattern'
     } else if (imageName === 'mountain') {
-      texture = `mountain-${Math.floor(Math.random() * 5 + 1)}`
+      texture = `mountain-${Math.floor(Math.random() * 2 + 1)}`
     }
 
     if (imageName === 'pattern') {
@@ -251,6 +189,11 @@ class Tile {
     delete this.image[key]
 
     if (animate) {
+      const animation = getImageAnimation(image)
+      if (animation) {
+        animation.destroy()
+      }
+
       new Animation(
         image,
         (image, fraction) => {
@@ -276,6 +219,11 @@ class Tile {
   setOwner(newOwner: Player | null) {
     if (!store.game) return
 
+    // Deactivate Army Drag Manager
+    if (ArmyDragManager.active && ArmyDragManager.tile === this) {
+      ArmyDragManager.deactivate()
+    }
+
     // Neutral -> Owned
     if (newOwner) {
       if (this.image.pattern) {
@@ -288,23 +236,32 @@ class Tile {
 
       const image = this.addImage('pattern', false)
       image.tint = hex(newOwner.getPattern())
+      image.anchor.set(0.5, 0.5)
+      image.y -= TILE_RADIUS * 2
 
       if (Date.now() - this.createdAt > 500) {
         image.alpha = 0
         image.scale.set(0)
+
+        const animation = getImageAnimation(image)
+        if (animation) {
+          animation.destroy()
+        }
+
         setTimeout(() => {
           new Animation(
             image,
             (image, fraction) => {
-              image.alpha = fraction * PATTERN_ALPHA
+              image.alpha = fraction
               image.scale.set(fraction)
             },
             {
-              initialFraction: 0.6,
+              initialFraction: 0.5,
               speed: 0.02,
+              ease: easeInQuad,
             }
           )
-        }, Math.round(Math.random() * 100))
+        }, Math.round(Math.random() * 200))
       }
     }
 
@@ -312,6 +269,11 @@ class Tile {
     else {
       if (this.image.pattern) {
         const patternImage = this.image.pattern
+        const animation = getImageAnimation(patternImage)
+        if (animation) {
+          animation.destroy()
+        }
+
         setTimeout(() => {
           if (this.image.pattern === patternImage) {
             new Animation(
@@ -321,14 +283,16 @@ class Tile {
                 image.scale.set(1 - fraction)
               },
               {
-                speed: 0.04,
+                speed: 0.01,
+                ease: easeOutQuad,
                 onFinish: (image) => {
                   destroyImage(image as Sprite)
                 },
               }
             )
+            delete this.image.pattern
           }
-        }, Math.round(Math.random() * 100))
+        }, Math.round(Math.random() * 200))
       }
 
       // Create Background
@@ -393,7 +357,6 @@ class Tile {
       ) {
         const pixel = getPixelPosition(this.axial)
         const newImage = createImage('fog', { group: 'fogs' })
-        ;(newImage as any).parentGroup = store.game.fogsGroup
 
         newImage.x = pixel.x
         newImage.y = pixel.y - TILE_RADIUS * 2
@@ -426,18 +389,6 @@ class Tile {
         showBorder = true
         borderTint = WORLD_EDGE_BORDER_COLOR
       }
-
-      // Bedrock -> !Bedrock
-      // if (this.bedrock && !n.bedrock) {
-      //   showBorder = true
-      //   // borderTint = WORLD_EDGE_BORDER_COLOR
-      // }
-
-      // !Bedrock -> Bedrock
-      // if (!this.bedrock && n.bedrock) {
-      //   showBorder = true
-      //   // borderTint = WORLD_EDGE_BORDER_COLOR
-      // }
 
       // Owned -> Neutral
       else if (this.owner && this.owner.alive && !n.owner) {
@@ -537,18 +488,32 @@ class Tile {
       return
     }
 
-    if (this.image.pattern) {
-      this.image.pattern.visible = false
-    }
-
     const pixel = getPixelPosition(this.axial)
     this.image['pattern-preview'] = createImage('pattern', {
       group: 'patterns',
     })
     this.image['pattern-preview'].x = pixel.x
-    this.image['pattern-preview'].y = pixel.y
+    this.image['pattern-preview'].y = pixel.y - TILE_RADIUS * 2
     this.image['pattern-preview'].tint = hex(pattern)
     this.image['pattern-preview'].alpha = PATTERN_PREVIEW_ALPHA
+    this.image['pattern-preview'].scale.set(0)
+    this.image['pattern-preview'].anchor.set(0.5, 0.5)
+
+    if (this.image.pattern) {
+      this.image.pattern.visible = false
+      this.image['pattern-preview'].alpha *= 3
+    }
+
+    new Animation(
+      this.image['pattern-preview'],
+      (image, fraction) => {
+        image.scale.set(fraction)
+      },
+      {
+        speed: 0.02,
+        ease: easeOutQuart,
+      }
+    )
 
     this.patternPreviewColor = pattern
     this.updateNeighborsBorders()
@@ -556,17 +521,48 @@ class Tile {
   }
 
   removePatternPreview() {
-    if (!this.hasPatternPreview() || !store.game || !store.game.pixi) {
+    const image = this.image['pattern-preview']
+
+    if (
+      !this.hasPatternPreview() ||
+      !store.game ||
+      !store.game.pixi ||
+      !image
+    ) {
       console.warn('WARN: Cannot remove pattern preview.')
       return
     }
 
+    const animation = getImageAnimation(image)
+    if (animation) {
+      animation.destroy()
+    }
+
+    new Animation(
+      image,
+      (image, fraction, context) => {
+        fraction = 1 - fraction
+        image.scale.set(context.initialScale * fraction)
+      },
+      {
+        context: {
+          initialScale: image.scale.x,
+        },
+        speed: 0.05,
+        onFinish: (image) => {
+          if (store.game && store.game.pixi) {
+            store.game.pixi.stage.removeChild(image)
+            if (this.image['pattern-preview'] === image) {
+              delete this.image['pattern-preview']
+            }
+          }
+        },
+      }
+    )
+
     if (this.image.pattern) {
       this.image.pattern.visible = true
     }
-
-    store.game.pixi.stage.removeChild(this.image['pattern-preview']!)
-    this.image['pattern-preview'] = undefined
 
     this.patternPreviewColor = null
     this.updateNeighborsBorders()
@@ -718,7 +714,7 @@ class Tile {
   }
 
   hasPatternPreview() {
-    return !!this.image['pattern-preview']
+    return !!this.patternPreviewColor
   }
 
   getNeighbor(direction: number): Tile | null {
@@ -748,7 +744,7 @@ class Tile {
     const actionType = this.getActionType({ ignoreGold: true })
     if (
       actionType &&
-      !ArmySendManager.active &&
+      !ArmyDragManager.active &&
       !store.game.supplyLinesEditModeActive
     ) {
       new Action(uuid(), actionType, 'PREVIEW', this, store.game.player)

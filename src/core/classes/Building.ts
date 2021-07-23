@@ -10,9 +10,11 @@ import {
   BUILDING_OFFSET_Y,
   BUILDING_REPAIR_BAR_FILL_OFFSET_Y,
   BUILDING_REPAIR_BAR_FILL_WIDTH,
+  BUILDING_HIGHLIGHT_ALPHA,
   HP_BACKGROUND_OFFSET,
   HP_BAR_HIDE_DELAY,
-  VILLAGE_BAR_FILL_WIDTH,
+  BUILDING_HIGHLIGHT_SCALE,
+  TILE_RADIUS,
 } from '../../constants/constants-game'
 import getTexture from '../functions/getTexture'
 import getImageAnimation from '../functions/getImageAnimation'
@@ -20,8 +22,8 @@ import Army from './Army'
 import SoundManager from '../../services/SoundManager'
 import isSpectating from '../../utils/isSpectating'
 import hex from '../functions/hex'
-import ArmySendManager from './ArmySendManager'
-import RoadManager from '../RoadManager'
+import ArmyDragManager from './ArmyDragManager'
+import { easeOutElastic } from '../functions/easing'
 
 class Building {
   readonly id: string
@@ -30,6 +32,7 @@ class Building {
   type: BuildingType
   army: Army | null = null
   image: Sprite
+  hightlightImage: Sprite | null = null
   hpBarImage: Sprite | null = null
   hpRepairBarFillImage: Sprite | null = null
   hpRepairBarFillMask: Sprite | null = null
@@ -242,6 +245,10 @@ class Building {
       if (this.tile.action) {
         this.tile.action.activateArmyMode()
       }
+
+      if (this.tile.isHovered()) {
+        this.showHighlight()
+      }
     }
 
     // Army left
@@ -252,6 +259,10 @@ class Building {
 
       if (this.tile.action) {
         this.tile.action.deactivateArmyMode()
+      }
+
+      if (!ArmyDragManager.active && !store.game?.supplyLinesEditModeActive) {
+        this.hideHighlight()
       }
     }
   }
@@ -317,6 +328,66 @@ class Building {
     this.hpRepairBarFillMask.width = fraction * BUILDING_REPAIR_BAR_FILL_WIDTH
   }
 
+  showHighlight() {
+    if (this.hightlightImage) return
+
+    const pixel = getPixelPosition(this.tile.axial)
+
+    this.hightlightImage = createImage('building-highlight', {
+      group: 'overlay',
+    })
+    this.hightlightImage.x = pixel.x
+    this.hightlightImage.y = pixel.y - TILE_RADIUS * 2
+    this.hightlightImage.scale.set(0)
+    this.hightlightImage.anchor.set(0.5, 0.5)
+    this.hightlightImage.tint = hex('#000')
+
+    new Animation(
+      this.hightlightImage,
+      (image, fraction) => {
+        image.alpha = fraction * BUILDING_HIGHLIGHT_ALPHA
+        image.scale.set(fraction * BUILDING_HIGHLIGHT_SCALE)
+      },
+      {
+        speed: 0.02,
+        ease: easeOutElastic(),
+      }
+    )
+  }
+
+  hideHighlight() {
+    const image = this.hightlightImage
+    if (!image || !store.game) return
+
+    this.hightlightImage = null
+
+    const animation = getImageAnimation(image)
+    if (animation) {
+      animation.destroy()
+    }
+
+    new Animation(
+      image,
+      (image, fraction, context) => {
+        fraction = 1 - fraction
+        image.alpha = context.initialAlpha * fraction
+        image.scale.set(context.initialScale * fraction)
+      },
+      {
+        context: {
+          initialScale: image.scale.x,
+          initialAlpha: image.alpha,
+        },
+        speed: 0.05,
+        onFinish: (image) => {
+          if (store.game && store.game.pixi) {
+            store.game.pixi.stage.removeChild(image)
+          }
+        },
+      }
+    )
+  }
+
   destroy() {
     if (!store.game) return
 
@@ -327,6 +398,10 @@ class Building {
     }
 
     destroyImage(this.image)
+
+    if (this.hightlightImage) {
+      destroyImage(this.hightlightImage)
+    }
   }
 }
 

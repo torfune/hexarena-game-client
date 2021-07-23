@@ -13,7 +13,7 @@ import {
 } from '../../constants/constants-game'
 import ArmyIcon from './ArmyIcon'
 import Building from './Building'
-import ArmySendManager from './ArmySendManager'
+import ArmyDragManager from './ArmyDragManager'
 
 class Army {
   readonly id: string
@@ -104,8 +104,8 @@ class Army {
     //   newTile?.axial || null
     // )
 
-    if (ArmySendManager.active && ArmySendManager.army === this) {
-      ArmySendManager.unselectArmy()
+    if (ArmyDragManager.active && ArmyDragManager.army === this) {
+      ArmyDragManager.deactivate()
     }
 
     if (this.building && this.building.army === this) {
@@ -142,8 +142,8 @@ class Army {
     //   newBuilding?.type || null
     // )
 
-    if (ArmySendManager.active && ArmySendManager.army === this) {
-      ArmySendManager.unselectArmy()
+    if (ArmyDragManager.active && ArmyDragManager.army === this) {
+      ArmyDragManager.deactivate()
     }
 
     if (this.building && this.building.army === this) {

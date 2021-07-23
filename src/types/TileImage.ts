@@ -17,7 +17,6 @@ interface TileImage {
   'tower'?: Sprite
   'camp'?: Sprite
   'village'?: Sprite
-  'overlay'?: Sprite
 }
 
 export default TileImage

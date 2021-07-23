@@ -1,4 +1,3 @@
-import Army from './Army'
 import ArmyDragArrow from './ArmyDragArrow'
 import Tile from './Tile'
 import store from '../store'
@@ -6,9 +5,8 @@ import SoundManager from '../../services/SoundManager'
 import Building from './Building'
 import RoadManager from '../RoadManager'
 
-class ArmySendManager {
+class ArmyDragManager {
   static active: boolean = false
-  static army: Army | null = null
   static tile: Tile | null = null
   static armyPaths: Tile[][] = []
   static dragArrow: ArmyDragArrow | null = null
@@ -18,6 +16,7 @@ class ArmySendManager {
   static refresh() {
     if (this.direction === null) return
 
+    this.updateTargetBuilding(this.direction)
     this.clearPathHighlights(this.direction)
     this.addPathHighlights(this.direction)
   }
@@ -25,7 +24,7 @@ class ArmySendManager {
   static update() {
     if (!this.dragArrow) {
       console.warn(
-        'WARN: Cannot update ArmySendManager because dragArrow is null.'
+        'WARN: Cannot update ArmyDragManager because dragArrow is null.'
       )
       return
     }
@@ -33,29 +32,62 @@ class ArmySendManager {
     this.dragArrow.update()
   }
 
-  static selectArmy(army: Army) {
-    if (!army.building) {
-      console.warn('WARN: Cannot select Army with null Building.')
+  static deactivate() {
+    if (!this.active) {
+      console.warn(
+        'WARN: Cannot unselect Army because ArmyDragManager is not active.'
+      )
       return
     }
 
+    if (!this.tile) {
+      console.warn('WARN: Cannot unselect with null Tile.')
+      return
+    }
+
+    this.targetBuilding = null
+
+    if (this.dragArrow) {
+      this.dragArrow.destroy()
+    }
+
+    if (this.direction !== null) {
+      this.clearPathHighlights(this.direction)
+    }
+
+    if (!this.tile.isHovered() && this.tile.building) {
+      this.tile.building.hideHighlight()
+    }
+
+    this.active = false
+    this.tile = null
+    this.armyPaths = []
+    this.direction = null
+    this.dragArrow = null
+    this.targetBuilding = null
+
+    if (store.game?.hoveredTile) {
+      store.game.hoveredTile.showActionPreviewIfPossible()
+    }
+  }
+
+  static startDrag(building: Building) {
     if (this.active) {
       console.warn(
-        'WARN: Cannot select Army because ArmySendManager is already active.'
+        'WARN: Cannot select Army because ArmyDragManager is already active.'
       )
       return
     }
 
     this.active = true
-    this.army = army
-    this.tile = army.building.tile
+    this.tile = building.tile
     this.dragArrow = new ArmyDragArrow(this.tile)
 
     this.armyPaths = []
     for (let i = 0; i < 6; i++) {
       this.armyPaths[i] = []
 
-      const nextTile = army.building!.tile.neighbors[i]
+      const nextTile = building.tile.neighbors[i]
       if (nextTile) {
         this.armyPaths[i].push(nextTile)
       }
@@ -72,47 +104,6 @@ class ArmySendManager {
     }
 
     SoundManager.play('ARMY_SELECT')
-  }
-
-  static unselectArmy() {
-    if (!this.active) {
-      console.warn(
-        'WARN: Cannot unselect Army because ArmySendManager is not active.'
-      )
-      return
-    }
-
-    if (!this.army) {
-      console.warn('WARN: Cannot unselect null Army.')
-      return
-    }
-
-    if (!this.tile) {
-      console.warn('WARN: Cannot unselect with null Tile.')
-      return
-    }
-
-    if (this.dragArrow) {
-      this.dragArrow.destroy()
-    }
-
-    if (this.direction !== null) {
-      this.clearPathHighlights(this.direction)
-    } else if (!this.tile.isHovered) {
-      this.tile.removeHoverHexagon()
-    }
-
-    this.active = false
-    this.army = null
-    this.tile = null
-    this.armyPaths = []
-    this.direction = null
-    this.dragArrow = null
-    this.targetBuilding = null
-
-    if (store.game?.hoveredTile) {
-      store.game.hoveredTile.showActionPreviewIfPossible()
-    }
   }
 
   static sendArmy() {
@@ -135,11 +126,26 @@ class ArmySendManager {
       store.game.createSupplyLine(this.tile, this.targetBuilding.tile)
     }
 
-    this.unselectArmy()
+    if (this.tile.building) {
+      this.tile.building.hideHighlight()
+    }
+
+    this.deactivate()
+  }
+
+  static createSupplyLine() {
+    if (!this.targetBuilding || !this.tile || !store.game) {
+      console.warn('WARN: Cannot create Supply Line.')
+      return
+    }
+
+    store.game.createSupplyLine(this.tile, this.targetBuilding.tile)
+    this.deactivate()
   }
 
   static onHoveredTileChange(newHoveredTile: Tile | null) {
     const newDirection = this.getDirection(newHoveredTile)
+    this.updateTargetBuilding(newDirection)
 
     if (newDirection === null) {
       if (this.direction !== null) {
@@ -148,8 +154,6 @@ class ArmySendManager {
     } else if (newDirection !== this.direction) {
       if (this.direction !== null) {
         this.clearPathHighlights(this.direction)
-      } else {
-        this.tile?.removeHoverHexagon()
       }
 
       this.addPathHighlights(newDirection)
@@ -177,18 +181,17 @@ class ArmySendManager {
       // Friendly Tile
       if (t.isOwnedByThisPlayer()) {
         if (t.building) {
-          t.addHoverHexagon()
+          t.building.showHighlight()
           const road = RoadManager.findRoad(this.tile.building, t.building)
           if (road) {
             RoadManager.setHighlightedRoad(road)
           }
-          this.targetBuilding = t.building
           break
         }
       }
 
-      // Free Tile
-      else if (t.hasPatternPreview()) {
+      // Already has Pattern Preview or there is no Army selected
+      else if (t.hasPatternPreview() || !this.army) {
       }
 
       // Block
@@ -207,7 +210,7 @@ class ArmySendManager {
         t.addPatternPreview(player.pattern)
 
         if (!t.owner) {
-          t.addHoverHexagon()
+          t.building.showHighlight()
           const road = RoadManager.findRoad(this.tile.building, t.building)
           if (road) {
             RoadManager.setHighlightedRoad(road)
@@ -244,6 +247,26 @@ class ArmySendManager {
     }
   }
 
+  static updateTargetBuilding(direction: number | null) {
+    if (direction === null) {
+      this.targetBuilding = null
+      return
+    }
+
+    const path = this.armyPaths[direction]
+    for (let i = 0; i < path.length; i++) {
+      const t = path[i]
+
+      // Friendly Tile
+      if (t.isOwnedByThisPlayer() && t.building) {
+        this.targetBuilding = t.building
+        return
+      }
+    }
+
+    this.targetBuilding = null
+  }
+
   static clearPathHighlights(direction: number) {
     if (!store.game || !this.tile || !this.tile.building) {
       return
@@ -258,11 +281,13 @@ class ArmySendManager {
         if (road) {
           RoadManager.setHighlightedRoad(null)
         }
+
+        if (this.targetBuilding !== tile.building) {
+          tile.building.hideHighlight()
+        }
       }
 
       if (tile.isHovered() && tile.getActionType()) continue
-
-      tile.removeHoverHexagon()
 
       if (tile.hasPatternPreview()) {
         for (let j = 0; j < 6; j++) {
@@ -290,6 +315,12 @@ class ArmySendManager {
 
     return direction
   }
+
+  static get army() {
+    if (!this.tile) return null
+
+    return this.tile.building ? this.tile.building.army : null
+  }
 }
 
-export default ArmySendManager
+export default ArmyDragManager

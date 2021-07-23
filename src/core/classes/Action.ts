@@ -4,7 +4,7 @@ import Tile from './Tile'
 import Player from './Player'
 import { Sprite, Texture } from 'pixi.js'
 import Animation from './Animation'
-import { easeOutCubic, easeOutQuad } from '../functions/easing'
+import { easeOutCubic, easeOutElastic, easeOutQuad } from '../functions/easing'
 import SoundManager from '../../services/SoundManager'
 import createImage from '../functions/createImage'
 import getImageAnimation from '../functions/getImageAnimation'
@@ -144,8 +144,8 @@ class Action {
         this.fillImage.alpha = fraction * this.getAlpha()
       },
       {
-        speed: 0.1,
-        ease: easeOutQuad,
+        speed: 0.02,
+        ease: easeOutElastic(0.5),
       }
     )
 
