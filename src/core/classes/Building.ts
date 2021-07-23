@@ -1,5 +1,5 @@
 import Tile from './Tile'
-import { Sprite, Texture } from 'pixi.js'
+import { Graphics, Sprite } from 'pixi.js'
 import createImage from '../functions/createImage'
 import getPixelPosition from '../functions/getPixelPosition'
 import destroyImage from '../functions/destroyImage'
@@ -35,7 +35,7 @@ class Building {
   hightlightImage: Sprite | null = null
   hpBarImage: Sprite | null = null
   hpRepairBarFillImage: Sprite | null = null
-  hpRepairBarFillMask: Sprite | null = null
+  hpRepairBarFillMask: Graphics | null = null
   hpBarVisible: boolean = false
   repairTime = 0
 
@@ -149,13 +149,9 @@ class Building {
       this.hpBarImage.alpha = 0
       this.image.addChild(this.hpBarImage)
 
-      this.hpRepairBarFillMask = new Sprite(Texture.WHITE)
-      this.hpRepairBarFillMask.anchor.set(0, 0.5)
-      this.hpRepairBarFillMask.y = BUILDING_REPAIR_BAR_FILL_OFFSET_Y
+      this.hpRepairBarFillMask = new Graphics()
+      this.hpRepairBarFillMask.y = BUILDING_REPAIR_BAR_FILL_OFFSET_Y - 8
       this.hpRepairBarFillMask.x = -BUILDING_REPAIR_BAR_FILL_WIDTH / 2
-      this.hpRepairBarFillMask.tint = hex('#ff0000') // for easier debug
-      this.hpRepairBarFillMask.height = 16
-      this.hpRepairBarFillMask.width = 0
       this.hpBarImage.addChild(this.hpRepairBarFillMask)
 
       this.hpRepairBarFillImage = new Sprite(getTexture('hp-bar-repair-fill'))
@@ -325,7 +321,14 @@ class Building {
       fraction = 0
     }
 
-    this.hpRepairBarFillMask.width = fraction * BUILDING_REPAIR_BAR_FILL_WIDTH
+    this.hpRepairBarFillMask.clear()
+    this.hpRepairBarFillMask.beginFill(hex('#ff0000'))
+    this.hpRepairBarFillMask.drawRect(
+      0,
+      0,
+      fraction * BUILDING_REPAIR_BAR_FILL_WIDTH,
+      16
+    )
   }
 
   showHighlight() {

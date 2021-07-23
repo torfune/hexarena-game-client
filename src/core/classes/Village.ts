@@ -1,5 +1,5 @@
 import Tile from './Tile'
-import { Sprite } from 'pixi.js'
+import { Graphics, Sprite } from 'pixi.js'
 import createImage from '../functions/createImage'
 import getPixelPosition from '../functions/getPixelPosition'
 import destroyImage from '../functions/destroyImage'
@@ -7,8 +7,6 @@ import store from '../store'
 import Animation from './Animation'
 import getUniqueRandomizedPositions from '../functions/getUniqueRandomizedPositions'
 import { Pixel } from '../../types/coordinates'
-import * as PIXI from 'pixi.js'
-import hex from '../functions/hex'
 import getImageAnimation from '../functions/getImageAnimation'
 import getTexture from '../functions/getTexture'
 import {
@@ -17,6 +15,7 @@ import {
   VILLAGE_BAR_OFFSET_Y,
   VILLAGE_OFFSET_Y,
 } from '../../constants/constants-game'
+import hex from '../functions/hex'
 
 const HOUSE_MARGIN_Y = 35
 const HOUSE_RADIUS = 25
@@ -30,7 +29,7 @@ class Village {
   housesPositions: Pixel[] = []
   barImage: Sprite | null = null
   barFillImage: Sprite | null = null
-  barFillMask: Sprite | null = null
+  barFillMask: Graphics | null = null
   barTargetY: number = 0
   barPreviousY: number = 0
   yieldDuration: number | null = null
@@ -97,13 +96,9 @@ class Village {
       this.barImage.x = pixel.x
       this.barImage.y = this.getBarY()
 
-      this.barFillMask = new PIXI.Sprite(PIXI.Texture.WHITE)
-      this.barFillMask.anchor.set(0, 0.5)
-      this.barFillMask.y = -VILLAGE_BAR_FILL_OFFSET_Y
+      this.barFillMask = new Graphics()
+      this.barFillMask.y = -VILLAGE_BAR_FILL_OFFSET_Y - 8
       this.barFillMask.x = -VILLAGE_BAR_FILL_WIDTH / 2
-      this.barFillMask.tint = hex('#ff0000') // for easier debug
-      this.barFillMask.height = 16
-      this.barFillMask.width = 0
 
       this.barFillImage = new Sprite(getTexture('village-bar-fill'))
       this.barFillImage.anchor.set(0.5, 0.5)
@@ -157,7 +152,9 @@ class Village {
       fraction = 0
     }
 
-    this.barFillMask.width = fraction * VILLAGE_BAR_FILL_WIDTH
+    this.barFillMask.clear()
+    this.barFillMask.beginFill(hex('#ff0000'))
+    this.barFillMask.drawRect(0, 0, fraction * VILLAGE_BAR_FILL_WIDTH, 16)
   }
 
   animateBarY() {

@@ -39,6 +39,7 @@ import RoadManager from '../RoadManager'
 import { Group, Layer } from '../../pixi-layers'
 import * as Sentry from '@sentry/browser'
 import ArmyDragArrow from './ArmyDragArrow'
+import { printSceneGraph } from '../functions/printSceneGraph'
 
 class Game {
   id: string
@@ -361,6 +362,10 @@ class Game {
   handleKeyDown({ key }: KeyboardEvent) {
     if (this.status !== 'running' || !store.socket) {
       return
+    }
+
+    if (key === 'p') {
+      printSceneGraph(this.pixi.stage.children)
     }
 
     this.keyDown[key] = true

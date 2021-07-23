@@ -2,7 +2,7 @@ import getPixelPosition from '../functions/getPixelPosition'
 import store from '../store'
 import Tile from './Tile'
 import Player from './Player'
-import { Sprite, Texture } from 'pixi.js'
+import { Graphics, Sprite } from 'pixi.js'
 import Animation from './Animation'
 import { easeOutCubic, easeOutElastic, easeOutQuad } from '../functions/easing'
 import SoundManager from '../../services/SoundManager'
@@ -58,13 +58,13 @@ class Action {
   status: ActionStatus
   automated = false
   backgroundImage: Sprite = new Sprite()
-  backgroundImageMask: Sprite = new Sprite()
+  backgroundImageMask: Graphics = new Graphics()
   fillImage: Sprite = new Sprite()
-  fillImageMask: Sprite = new Sprite()
+  fillImageMask: Graphics = new Graphics()
   iconImage: Sprite = new Sprite()
   barImage: Sprite | null = null
   barFillImage: Sprite | null = null
-  barFillImageMask: Sprite | null = null
+  barFillImageMask: Graphics | null = null
   buildingPreviewImage: Sprite | null = null
   automatedImage: Sprite | null = null
   baseY: number
@@ -97,12 +97,11 @@ class Action {
     this.backgroundImage.y = this.baseY
     this.backgroundImage.alpha = 0
 
-    this.backgroundImageMask = new Sprite(Texture.WHITE)
-    this.backgroundImageMask.anchor.set(0.5, 0)
+    this.backgroundImageMask = new Graphics()
+    this.backgroundImageMask.x = -70
     this.backgroundImageMask.y = -BACKGROUND_MASK_HEIGHT
-    this.backgroundImageMask.tint = hex('#ff0000') // for easier debug
-    this.backgroundImageMask.width = 140
-    this.backgroundImageMask.height = BACKGROUND_MASK_HEIGHT
+    this.backgroundImageMask.beginFill(hex('#ff0000'))
+    this.backgroundImageMask.drawRect(0, 0, 140, BACKGROUND_MASK_HEIGHT)
     this.backgroundImage.mask = this.backgroundImageMask
 
     const textureName =
@@ -183,8 +182,14 @@ class Action {
       fraction = 0
     }
 
-    this.barFillImageMask.width = fraction * BAR_MASK_WIDTH
-    this.fillImageMask.height = fraction * FILL_MASK_HEIGHT
+    this.barFillImageMask.clear()
+    this.barFillImageMask.beginFill(hex('#ff0000'))
+    this.barFillImageMask.drawRect(0, 0, fraction * BAR_MASK_WIDTH, 16)
+
+    const height = fraction * FILL_MASK_HEIGHT
+    this.fillImageMask.clear()
+    this.fillImageMask.beginFill(hex('#ff0000'))
+    this.fillImageMask.drawRect(0, FILL_MASK_HEIGHT - height, 100, height)
   }
 
   getTextureName() {
@@ -361,13 +366,9 @@ class Action {
     this.barImage.x = pixel.x
     this.barImage.y = pixel.y - this.getImageOffsetY() - ACTION_BAR_OFFSET_Y
 
-    this.barFillImageMask = new Sprite(Texture.WHITE)
-    this.barFillImageMask.anchor.set(0, 0.5)
-    this.barFillImageMask.y = -ACTION_BAR_FILL_OFFSET_Y
+    this.barFillImageMask = new Graphics()
+    this.barFillImageMask.y = -ACTION_BAR_FILL_OFFSET_Y - 8
     this.barFillImageMask.x = -ACTION_BAR_FILL_WIDTH / 2
-    this.barFillImageMask.tint = hex('#ff0000') // for easier debug
-    this.barFillImageMask.height = 16
-    this.barFillImageMask.width = 0
 
     this.barFillImage = new Sprite(getTexture('progress-bar-fill'))
     this.barFillImage.anchor.set(0.5, 0.5)
@@ -379,12 +380,9 @@ class Action {
   }
 
   createFillImage() {
-    this.fillImageMask = new Sprite(Texture.WHITE)
-    this.fillImageMask.anchor.set(0.5, 1)
-    this.fillImageMask.y = -ACTION_FILL_OFFSET_Y
-    this.fillImageMask.tint = hex('#ff0000') // for easier debug
-    this.fillImageMask.width = 100
-    this.fillImageMask.height = 0
+    this.fillImageMask = new Graphics()
+    this.fillImageMask.x = -50
+    this.fillImageMask.y = -ACTION_FILL_OFFSET_Y - FILL_MASK_HEIGHT
 
     this.fillImage = new Sprite(getTexture('action-fill'))
     this.fillImage.anchor.set(0.5, 1)
@@ -480,8 +478,15 @@ class Action {
 
         const maskDelta =
           BACKGROUND_MASK_HEIGHT - BACKGROUND_MASK_HEIGHT_ARMY_MODE
-        context.action.backgroundImageMask.height =
+
+        context.action.backgroundImageMask.clear()
+        context.action.backgroundImageMask.beginFill(hex('#ff0000'))
+        context.action.backgroundImageMask.drawRect(
+          0,
+          0,
+          140,
           BACKGROUND_MASK_HEIGHT_ARMY_MODE + maskDelta * (1 - fraction)
+        )
       },
       {
         ease: easeOutCubic,
@@ -530,7 +535,10 @@ class Action {
       this.barImage.visible = true
     }
 
-    this.backgroundImageMask.height = BACKGROUND_MASK_HEIGHT
+    this.backgroundImageMask.clear()
+    this.backgroundImageMask.beginFill(hex('#ff0000'))
+    this.backgroundImageMask.drawRect(0, 0, 140, BACKGROUND_MASK_HEIGHT)
+
     this.armyModeActive = false
   }
 
