@@ -6,7 +6,12 @@ import {
   ARMY_ICON_OFFSET_Y,
   UNIT_MOVEMENT_SPEED,
 } from '../../constants/constants-game'
-import { easeOutCubic } from '../functions/easing'
+import {
+  easeInBack,
+  easeInElastic,
+  easeOutCubic,
+  easeOutElastic,
+} from '../functions/easing'
 import { Pixel } from '../../types/coordinates'
 import Animation from './Animation'
 import createImage from '../functions/createImage'
@@ -34,7 +39,10 @@ class ArmyIcon {
         image.scale.set(fraction)
         image.alpha = fraction
       },
-      { speed: 0.05 }
+      {
+        speed: 0.02,
+        ease: easeOutElastic(0.8),
+      }
     )
 
     if (store.game && store.game.pixi) {
@@ -101,9 +109,11 @@ class ArmyIcon {
         this.image,
         (image, fraction) => {
           image.alpha = 1 - fraction
+          image.scale.set(1 - fraction)
         },
         {
-          speed: 0.05,
+          speed: 0.025,
+          ease: easeInBack,
           onFinish: (image) => {
             if (!store.game || !store.game.pixi) return
 
@@ -111,7 +121,7 @@ class ArmyIcon {
           },
         }
       )
-    }, 500)
+    }, 200)
   }
 }
 

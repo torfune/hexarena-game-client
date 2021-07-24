@@ -62,13 +62,7 @@ class Building {
       SoundManager.play('CAMP_CREATE')
     }
 
-    new Animation(
-      this.image,
-      (image, fraction) => {
-        image.alpha = fraction
-      },
-      { speed: 0.05 }
-    )
+    this.animatePopUp()
 
     if (store.game) {
       store.game.buildings.set(id, this)
@@ -106,6 +100,7 @@ class Building {
     }
 
     this.type = newType
+    this.image.alpha = 0
     this.image.texture = getTexture(this.getTextureName())
 
     const pixel = getPixelPosition(this.tile.axial)
@@ -114,6 +109,8 @@ class Building {
     if (this.army) {
       this.army.updateBarY()
     }
+
+    this.animatePopUp()
   }
 
   setRepairTime(newRepairTime: number) {
@@ -387,6 +384,20 @@ class Building {
             store.game.pixi.stage.removeChild(image)
           }
         },
+      }
+    )
+  }
+
+  animatePopUp() {
+    new Animation(
+      this.image,
+      (image, fraction) => {
+        image.alpha = fraction
+        image.scale.set(fraction)
+      },
+      {
+        speed: 0.015,
+        ease: easeOutElastic(0.8),
       }
     )
   }
