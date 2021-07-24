@@ -17,6 +17,7 @@ import isSpectating from '../../utils/isSpectating'
 import Building from '../classes/Building'
 import SupplyLine from '../classes/SupplyLine'
 import RoadManager from '../RoadManager'
+import { getInitialCameraAxial } from '../functions/getInitialCameraAxial'
 
 // Handlers: Gameserver -> Frontend
 const messageHandlers = {
@@ -281,7 +282,9 @@ const messageHandlers = {
       if (isSpectating()) {
         store.game.setCameraToAxial({ x: 0, z: 0 })
       } else {
-        store.game.setCameraToAxial(store.game.spawnTile.axial)
+        store.game.setCameraToAxial(
+          getInitialCameraAxial(store.game.spawnTile.axial)
+        )
       }
       store.showLoadingCover = false
     }

@@ -128,7 +128,7 @@ class Game {
     mode: GameMode,
     status: GameStatus,
     worldSize: number,
-    container: HTMLElement
+    htmlContainer: HTMLElement
   ) {
     this.id = id
     this.mode = mode
@@ -158,7 +158,7 @@ class Game {
     this.pixi = createPixiApp()
     this.pixi.view.id = this.id
     this.pixi.ticker.add(this.update.bind(this))
-    container.appendChild(this.pixi.view)
+    htmlContainer.appendChild(this.pixi.view)
 
     // Pixi Groups
     this.objectsGroup.on('sort', (sprite: any) => {
