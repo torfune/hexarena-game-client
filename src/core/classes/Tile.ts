@@ -603,14 +603,6 @@ class Tile {
       return null
     }
 
-    const {
-      RECRUIT_ARMY_COST,
-      BUILD_CAMP_COST,
-      BUILD_TOWER_COST,
-      BUILD_CASTLE_COST,
-      REBUILD_VILLAGE_COST,
-    } = store.gsConfig
-
     // Neighbor check
     let isNeighbor = false
     for (let i = 0; i < 6; i++) {
@@ -628,10 +620,9 @@ class Tile {
     if (this.building && !this.building.hasFullHp()) return null
 
     // CAMP
-    const forestGold = this.forest ? this.forest.treeCount : 0
     if (
       (this.isEmpty() || this.forest) &&
-      (store.game.player.gold >= BUILD_CAMP_COST - forestGold || ignoreGold)
+      (ignoreGold || store.game.player.gold >= this.getActionCost('BUILD_CAMP'))
     ) {
       return 'BUILD_CAMP'
     }
@@ -640,7 +631,8 @@ class Tile {
     if (
       this.building &&
       this.building.type === 'CAMP' &&
-      (store.game.player.gold >= BUILD_TOWER_COST || ignoreGold)
+      (ignoreGold ||
+        store.game.player.gold >= this.getActionCost('BUILD_TOWER'))
     ) {
       return 'BUILD_TOWER'
     }
@@ -648,9 +640,10 @@ class Tile {
     // RECRUIT
     if (
       this.building &&
-      (store.game.player.gold >= RECRUIT_ARMY_COST || ignoreGold) &&
       (this.building.type === 'CAPITAL' || this.building.type === 'CASTLE') &&
-      !this.building.army
+      !this.building.army &&
+      (ignoreGold ||
+        store.game.player.gold >= this.getActionCost('RECRUIT_ARMY'))
     ) {
       return 'RECRUIT_ARMY'
     }
@@ -659,7 +652,8 @@ class Tile {
     if (
       this.building &&
       this.building.type === 'TOWER' &&
-      (store.game.player.gold >= BUILD_CASTLE_COST || ignoreGold)
+      (ignoreGold ||
+        store.game.player.gold >= this.getActionCost('BUILD_TOWER'))
     ) {
       return 'BUILD_CASTLE'
     }
@@ -668,12 +662,44 @@ class Tile {
     if (
       this.village &&
       this.village.raided &&
-      (store.game.player.gold >= REBUILD_VILLAGE_COST || ignoreGold)
+      (ignoreGold ||
+        store.game.player.gold >= this.getActionCost('REBUILD_VILLAGE'))
     ) {
       return 'REBUILD_VILLAGE'
     }
 
     return null
+  }
+
+  getActionCost(actionType: ActionType): number {
+    if (!this.owner || !store.gsConfig) return 0
+
+    const {
+      RECRUIT_ARMY_COST,
+      BUILD_CAMP_COST,
+      BUILD_TOWER_COST,
+      BUILD_CASTLE_COST,
+      REBUILD_VILLAGE_COST,
+    } = store.gsConfig
+
+    switch (actionType) {
+      case 'RECRUIT_ARMY':
+        return RECRUIT_ARMY_COST
+      case 'BUILD_CAMP':
+        if (this.forest) {
+          return BUILD_CAMP_COST / 2
+        } else {
+          return BUILD_CAMP_COST
+        }
+      case 'BUILD_TOWER':
+        return BUILD_TOWER_COST * this.owner.getTowerCount()
+      case 'BUILD_CASTLE':
+        return BUILD_CASTLE_COST * this.owner.getCastleCount()
+      case 'REBUILD_VILLAGE':
+        return REBUILD_VILLAGE_COST
+    }
+
+    throw Error("Unsupported 'actionType' value: " + actionType)
   }
 
   createAttentionNotification() {

@@ -118,6 +118,72 @@ class Player {
     }
   }
 
+  getCampCount() {
+    if (!store.game) return 0
+
+    let count = 0
+
+    const buildings = Array.from(store.game.buildings.values())
+    for (const building of buildings) {
+      if (building.tile.isOwnedByThisPlayer() && building.isCamp()) {
+        count++
+      }
+    }
+
+    const actions = Array.from(store.game.actions.values())
+    for (const action of actions) {
+      if (action.tile.isOwnedByThisPlayer() && action.type === 'BUILD_CAMP') {
+        count++
+      }
+    }
+
+    return count
+  }
+
+  getTowerCount() {
+    if (!store.game) return 0
+
+    let count = 0
+
+    const buildings = Array.from(store.game.buildings.values())
+    for (const building of buildings) {
+      if (building.tile.isOwnedByThisPlayer() && building.isTower()) {
+        count++
+      }
+    }
+
+    const actions = Array.from(store.game.actions.values())
+    for (const action of actions) {
+      if (action.tile.isOwnedByThisPlayer() && action.type === 'BUILD_TOWER') {
+        count++
+      }
+    }
+
+    return count
+  }
+
+  getCastleCount() {
+    if (!store.game) return 0
+
+    let count = 0
+
+    const buildings = Array.from(store.game.buildings.values())
+    for (const building of buildings) {
+      if (building.tile.isOwnedByThisPlayer() && building.isCastle()) {
+        count++
+      }
+    }
+
+    const actions = Array.from(store.game.actions.values())
+    for (const action of actions) {
+      if (action.tile.isOwnedByThisPlayer() && action.type === 'BUILD_CASTLE') {
+        count++
+      }
+    }
+
+    return count
+  }
+
   // Prop getters
   get pattern() {
     return this.props.pattern.current

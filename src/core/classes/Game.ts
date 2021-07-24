@@ -204,14 +204,6 @@ class Game {
 
     const startedAt = Date.now()
 
-    // Animations
-    for (let i = this.animations.length - 1; i >= 0; i--) {
-      this.animations[i].update(delta)
-      if (this.animations[i].finished) {
-        this.animations.splice(i, 1)
-      }
-    }
-
     // Camera
     if (this.cameraDrag && this.cursor !== null) {
       const { camera, cursor } = this.cameraDrag
@@ -298,6 +290,14 @@ class Game {
 
     // Hovered tile
     this.updateHoveredTile()
+
+    // Animations
+    for (let i = this.animations.length - 1; i >= 0; i--) {
+      this.animations[i].update(delta)
+      if (this.animations[i].finished) {
+        this.animations.splice(i, 1)
+      }
+    }
 
     // Measure the performance
     const duration = Date.now() - startedAt
@@ -739,30 +739,13 @@ class Game {
   }
 
   showNotEnoughGold(tile: Tile) {
-    if (!this.player || !store.gsConfig) return
-
-    const {
-      RECRUIT_ARMY_COST,
-      BUILD_CAMP_COST,
-      BUILD_TOWER_COST,
-      BUILD_CASTLE_COST,
-      REBUILD_VILLAGE_COST,
-    } = store.gsConfig
+    if (!this.player) return
 
     const actionType = tile.getActionType({ ignoreGold: true })
-    if (
-      !actionType ||
-      (actionType === 'BUILD_TOWER' && this.player.gold >= BUILD_TOWER_COST) ||
-      (actionType === 'BUILD_CAMP' && this.player.gold >= BUILD_CAMP_COST) ||
-      (actionType === 'BUILD_CASTLE' &&
-        this.player.gold >= BUILD_CASTLE_COST) ||
-      (actionType === 'RECRUIT_ARMY' &&
-        this.player.gold >= RECRUIT_ARMY_COST) ||
-      (actionType === 'REBUILD_VILLAGE' &&
-        this.player.gold >= REBUILD_VILLAGE_COST)
-    ) {
-      return
-    }
+    if (!actionType) return
+
+    const actionCost = tile.getActionCost(actionType)
+    if (this.player.gold >= actionCost) return
 
     this.notification = `${Date.now()}|Not enough gold`
     SoundManager.play('ACTION_FAILURE')

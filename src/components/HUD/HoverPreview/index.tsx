@@ -46,8 +46,9 @@ const HoverPreview = () => {
     )
   }
 
-  let actionType: ActionType | 'SEND_ARMY' | 'REPAIR_BUILDING' | null =
-    hoveredTile.getActionType({ ignoreGold: true })
+  let actionType: ActionType | 'SEND_ARMY' | null = hoveredTile.getActionType({
+    ignoreGold: true,
+  })
   const structure = hoveredTile.getStructureName()
 
   if (
@@ -62,25 +63,8 @@ const HoverPreview = () => {
     actionType = null
   }
 
-  if (
-    actionType === 'RECRUIT_ARMY' &&
-    hoveredTile.building &&
-    hoveredTile.building.hp < store.gsConfig.HP[hoveredTile.building.type]
-  ) {
-    actionType = 'REPAIR_BUILDING'
-  }
-
   if (!actionType) {
     if (hoveredTile.village) {
-      // const { VILLAGE_BASE_INCOME, HOUSE_INCOME } = store.gsConfig
-      // const villageIncome =
-      //   VILLAGE_BASE_INCOME +
-      //   (hoveredTile.village.level - 3) * HOUSE_INCOME
-      // return (
-      //   <Container cursor={cursor}>
-      //     <VillagePreview villageIncome={villageIncome} />
-      //   </Container>
-      // )
       return null
     } else if (
       structure !== 'Plains' &&

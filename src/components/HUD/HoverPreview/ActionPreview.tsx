@@ -12,7 +12,7 @@ import ArmyDragManager from '../../../core/classes/ArmyDragManager'
 const baseImageUrl = process.env.PUBLIC_URL + '/images'
 
 interface Props {
-  actionType: ActionType | 'SEND_ARMY' | 'REPAIR_BUILDING'
+  actionType: ActionType | 'SEND_ARMY'
   tile: Tile
 }
 const ActionPreview = ({ actionType, tile }: Props) => {
@@ -32,7 +32,7 @@ const ActionPreview = ({ actionType, tile }: Props) => {
     return null
   }
 
-  const cost = getActionCost(actionType, tile)
+  const cost = actionType !== 'SEND_ARMY' ? tile.getActionCost(actionType) : 0
   const gold = store.game.player.gold
   const enoughGold = gold >= cost
 
@@ -100,32 +100,6 @@ const getActionIcon = (
       return `${baseImageUrl}/repair-icon.png`
     case 'SEND_ARMY':
       return armyIcon
-  }
-}
-
-const getActionCost = (
-  actionType: ActionType | 'SEND_ARMY' | 'REPAIR_BUILDING',
-  tile: Tile
-) => {
-  if (!store.gsConfig) return 0
-
-  const treeCount = tile.forest ? tile.forest.treeCount : 0
-
-  switch (actionType) {
-    case 'BUILD_CAMP':
-      return store.gsConfig.BUILD_CAMP_COST - treeCount
-    case 'BUILD_TOWER':
-      return store.gsConfig.BUILD_TOWER_COST
-    case 'BUILD_CASTLE':
-      return store.gsConfig.BUILD_CASTLE_COST
-    case 'RECRUIT_ARMY':
-      return store.gsConfig.RECRUIT_ARMY_COST
-    case 'REPAIR_BUILDING':
-      return store.gsConfig.RECRUIT_ARMY_COST
-    case 'REBUILD_VILLAGE':
-      return store.gsConfig.REBUILD_VILLAGE_COST
-    case 'SEND_ARMY':
-      return 0
   }
 }
 

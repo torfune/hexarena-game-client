@@ -295,6 +295,14 @@ class Building {
     return this.type === 'CAMP'
   }
 
+  isTower() {
+    return this.type === 'TOWER'
+  }
+
+  isCastle() {
+    return this.type === 'CASTLE'
+  }
+
   updateHpRepairBarFill() {
     if (
       !this.hpRepairBarFillImage ||
