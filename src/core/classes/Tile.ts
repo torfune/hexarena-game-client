@@ -500,17 +500,17 @@ class Tile {
     this.image['pattern-preview'].anchor.set(0.5, 0.5)
 
     if (this.image.pattern) {
-      this.image.pattern.visible = false
-      this.image['pattern-preview'].alpha *= 3
+      this.image.pattern.tint = hex('#eeeeee')
     }
 
     new Animation(
       this.image['pattern-preview'],
       (image, fraction) => {
         image.scale.set(fraction)
+        image.alpha = PATTERN_PREVIEW_ALPHA * fraction
       },
       {
-        speed: 0.02,
+        speed: 0.05,
         ease: easeOutQuart,
       }
     )
@@ -543,12 +543,13 @@ class Tile {
       (image, fraction, context) => {
         fraction = 1 - fraction
         image.scale.set(context.initialScale * fraction)
+        image.alpha = PATTERN_PREVIEW_ALPHA * fraction
       },
       {
         context: {
           initialScale: image.scale.x,
         },
-        speed: 0.05,
+        speed: 0.08,
         onFinish: (image) => {
           if (store.game && store.game.pixi) {
             store.game.pixi.stage.removeChild(image)
@@ -562,6 +563,9 @@ class Tile {
 
     if (this.image.pattern) {
       this.image.pattern.visible = true
+      if (this.owner) {
+        this.image.pattern.tint = hex(this.owner.getPattern())
+      }
     }
 
     this.patternPreviewColor = null

@@ -17,7 +17,7 @@ class ArmyDragManager {
     if (this.direction === null) return
 
     this.updateTargetBuilding(this.direction)
-    this.clearPathHighlights(this.direction)
+    // this.clearPathHighlights(this.direction)
     this.addPathHighlights(this.direction)
   }
 
