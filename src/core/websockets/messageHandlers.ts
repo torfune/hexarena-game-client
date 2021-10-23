@@ -216,14 +216,12 @@ const messageHandlers = {
       z: 'number',
       ownerId: 'string',
       mountain: 'boolean',
-      bedrock: 'boolean',
     }) as {
       id: string | null
       x: number | null
       z: number | null
       ownerId: string | null
       mountain: boolean
-      bedrock: boolean
     }[]
 
     let sound: 'VILLAGE_CAPTURE' | 'TILE_CAPTURE' | null = null
