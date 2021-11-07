@@ -62,11 +62,11 @@ class Socket {
               gameMode !== 'FFA-3' &&
               gameMode !== 'FFA-6' &&
               gameMode !== 'AI_1v1' &&
+              gameMode !== 'AI_1v3' &&
+              gameMode !== 'AI_1v6' &&
               gameMode !== 'AI_ONLY_1v1' &&
               gameMode !== 'AI_ONLY_FFA-3' &&
-              gameMode !== 'AI_ONLY_FFA-6' &&
-              gameMode !== 'AI_FFA-3' &&
-              gameMode !== 'AI_FFA-6'
+              gameMode !== 'AI_ONLY_FFA-6'
             ) {
               throw new Error(`Invalid Game Mode: ${gameMode}`)
             } else if (
