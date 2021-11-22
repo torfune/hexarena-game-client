@@ -71,6 +71,34 @@ const EndModal = () => {
       }
     }
 
+    // 2v2
+    if (game.mode === '2v2') {
+      if (game.player.surrendered) {
+        result = 'DEFEAT'
+        reason = 'You have surrendered.'
+      } else if (
+        game.time === 0 &&
+        game.player.alive &&
+        game.player.place === 1
+      ) {
+        result = 'VICTORY'
+        reason = `Time's up. Your team has more tiles.`
+      } else if (
+        game.time === 0 &&
+        game.player.alive &&
+        game.player.place === 2
+      ) {
+        result = 'DEFEAT'
+        reason = `Time's up. Enemy team has more tiles.`
+      } else if (!game.player.alive) {
+        result = 'DEFEAT'
+        reason = 'You have lost your capital.'
+      } else {
+        result = 'VICTORY'
+        reason = 'All enemies have been eliminated.'
+      }
+    }
+
     // 1v1
     else {
       if (game.player.surrendered) {

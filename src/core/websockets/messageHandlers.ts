@@ -346,7 +346,7 @@ const messageHandlers = {
       id: 'string',
       name: 'string',
       pattern: 'string',
-      allyId: 'string',
+      team: 'number',
       tilesCount: 'number',
       gold: 'number',
       economy: 'number',
@@ -359,7 +359,7 @@ const messageHandlers = {
       id: string | null
       name: string | null
       pattern: string | null
-      allyId: string | null
+      team: number
       tilesCount: number | null
       gold: number | null
       economy: number | null
@@ -371,16 +371,14 @@ const messageHandlers = {
     }[]
 
     for (let i = 0; i < parsed.length; i++) {
-      const fields = parsed[i]
-      const { id, name, pattern } = fields
-
+      const { id, name, pattern, team } = parsed[i]
       if (!id || !name || !pattern) continue
 
       let player = store.game.players.get(id)
 
       // Create
       if (!player) {
-        player = new Player(id, name, pattern)
+        player = new Player(id, name, pattern, team)
         store.game.players.set(id, player)
       }
 

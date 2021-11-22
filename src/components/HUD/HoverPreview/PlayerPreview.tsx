@@ -10,7 +10,7 @@ interface Props {
   player: Player
 }
 const PlayerPreview: React.FC<Props> = ({ player }) => {
-  const ally = store.game && store.game.playerId === player.allyId
+  const isAlly = store.game?.player?.team === player.team
 
   return (
     <Container>
@@ -21,8 +21,8 @@ const PlayerPreview: React.FC<Props> = ({ player }) => {
       )}
       <Name>{player.name}</Name>
       {!isSpectating() && (
-        <AllyOrEnemy background={ally ? COLOR.BLUE : COLOR.RED}>
-          {ally ? 'ALLY' : 'ENEMY'}
+        <AllyOrEnemy background={isAlly ? COLOR.BLUE : COLOR.RED}>
+          {isAlly ? 'ALLY' : 'ENEMY'}
         </AllyOrEnemy>
       )}
     </Container>

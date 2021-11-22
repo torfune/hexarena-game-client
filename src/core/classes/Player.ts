@@ -12,7 +12,6 @@ import { v4 as uuid } from 'uuid'
 interface Props {
   [key: string]: Prop<Primitive>
   pattern: Prop<string>
-  allyId: Prop<string | null>
   tilesCount: Prop<number>
   gold: Prop<number>
   economy: Prop<number>
@@ -26,7 +25,6 @@ interface Props {
 class Player {
   props: Props = {
     pattern: createProp(''),
-    allyId: createProp(null),
     tilesCount: createProp(0),
     gold: createProp(0),
     economy: createProp(0),
@@ -35,15 +33,17 @@ class Player {
     surrendered: createProp(false),
     place: createProp(null),
     afkKicked: createProp(false),
+    team: createProp(0),
   }
 
   id: string
   name: string
-  ally: Player | null = null
+  team: number
 
-  constructor(id: string, name: string, pattern: string) {
+  constructor(id: string, name: string, pattern: string, team: number) {
     this.id = id
     this.name = name
+    this.team = team
     this.props.pattern = createProp(pattern)
 
     makeAutoObservable(this)
@@ -66,13 +66,6 @@ class Player {
               tile.image.pattern.tint = hex('#ccc')
             }
           }
-        }
-        break
-      }
-
-      case 'allyId': {
-        if (this.allyId) {
-          this.ally = store.game.players.get(this.allyId) || null
         }
         break
       }
