@@ -72,7 +72,7 @@ const EndModal = () => {
     }
 
     // 2v2
-    if (game.mode === '2v2') {
+    else if (game.mode === '2v2') {
       if (game.player.surrendered) {
         result = 'DEFEAT'
         reason = 'You have surrendered.'
