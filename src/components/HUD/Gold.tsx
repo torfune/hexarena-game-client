@@ -3,8 +3,7 @@ import { observer } from 'mobx-react-lite'
 import store from '../../core/store'
 import React from 'react'
 import { COLOR } from '../../constants/constants-react'
-import getHudScale from '../../utils/getHudScale'
-import Label from './Economy/Label'
+import goldIcon from '../../icons/gold.svg'
 
 const Gold = observer(() => {
   if (!store.game || !store.game.player) return null
@@ -12,7 +11,7 @@ const Gold = observer(() => {
   return (
     <Container>
       <Content>
-        <Label>Gold</Label>
+        <GoldIcon src={goldIcon} />
         <Value>{store.game.player.gold}</Value>
       </Content>
     </Container>
@@ -27,25 +26,28 @@ const Container = styled.div`
 `
 const Content = styled.div`
   margin: 0 auto;
-  background: ${COLOR.GREY_600};
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
+  background: ${COLOR.GREY_600}ee;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
   border: 1px solid ${COLOR.GREY_800};
   border-top: none;
-  padding: 6px;
-  text-align: center;
   user-select: none;
-  width: 128px;
-  transition: 200ms;
-  font-weight: bold;
-
-  /* Resolution scaling */
-  transform-origin: center top;
-  transform: scale(${getHudScale()});
+  width: 116px;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+`
+const GoldIcon = styled.img`
+  height: 40px;
+  margin-left: 14px;
 `
 const Value = styled.p`
   color: #fff;
-  font-size: 32px;
+  font-size: 28px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-align: center;
+  width: 50px;
 `
 
 export default Gold

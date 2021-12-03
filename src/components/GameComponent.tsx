@@ -1,11 +1,9 @@
 import HoverPreview from './HUD/HoverPreview'
 import GameStatus from '../types/GameStatus'
 import { observer } from 'mobx-react-lite'
-import Economy from './HUD/Economy'
 import Lobby from './Lobby'
 import loadImages from '../core/functions/loadImages'
 import LocalStorageService from '../services/LocalStorageService'
-import Spectators from './HUD/SpectatorCount'
 import Leaderboard from './HUD/Leaderboard'
 import NotificationManager from './HUD/NotificationManager'
 import EndModal from './EndModal'
@@ -26,6 +24,7 @@ import Spinner from './Spinner'
 import GameServerApi from '../services/GameServerApi'
 import ReconnectingOverlay from './ReconnectingOverlay'
 import Gold from './HUD/Gold'
+import Charts from './HUD/Charts'
 
 const GameComponent = observer(() => {
   const [_, refresh] = useState(Date.now())
@@ -151,7 +150,7 @@ const GameComponent = observer(() => {
     <Container>
       {store.showLoadingCover && (
         <LoadingCover>
-          <Spinner size={'64px'} thickness={'2px'} color={'#fff'} />
+          <Spinner size="64px" thickness="2px" color="#fff" />
           <p>loading</p>
         </LoadingCover>
       )}
@@ -171,9 +170,8 @@ const GameComponent = observer(() => {
           {(gameStatus === 'running' || gameStatus === 'finished') && (
             <HudContainer>
               <Leaderboard />
-              <Economy />
-              <Spectators />
               <GameInfo />
+              <Charts />
 
               {store.game.player && store.game.player.alive && (
                 <>
