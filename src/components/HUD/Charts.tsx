@@ -40,6 +40,8 @@ const Charts = observer(() => {
       </LabelRow>
 
       <ChartBar>
+        {store.game.mode.includes('1v1') && <IndicatorLine />}
+
         {chartItems.map((item) => (
           <ChartBarItem key={item.color} {...item} />
         ))}
@@ -95,6 +97,7 @@ const ChartBar = styled.div`
   width: 234px;
   border-radius: 6px;
   overflow: hidden;
+  position: relative;
 `
 const ChartBarItem = styled.div<{ color: string; fraction: number }>`
   width: ${(props) => props.fraction * 234}px;
@@ -105,6 +108,13 @@ const ChartBarItem = styled.div<{ color: string; fraction: number }>`
   &:last-child {
     border: none;
   }
+`
+const IndicatorLine = styled.div`
+  width: 2px;
+  height: 12px;
+  border-left: 2px solid #00000044;
+  position: absolute;
+  left: calc(50% - 1px);
 `
 
 export default Charts
