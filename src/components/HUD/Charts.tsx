@@ -14,9 +14,11 @@ const Charts = observer(() => {
     (p) => p.alive && !p.surrendered
   )
 
-  let totalEconomy = 0
+  let highestEconomy = 0
   for (let i = 0; i < players.length; i++) {
-    totalEconomy += players[i].economy
+    if (players[i].economy > highestEconomy) {
+      highestEconomy = players[i].economy
+    }
   }
 
   let chartItems: Array<{ color: string; fraction: number; text: string }> = []
@@ -24,7 +26,7 @@ const Charts = observer(() => {
     const player = players[i]
     chartItems.push({
       color: player.pattern,
-      fraction: player.economy / totalEconomy,
+      fraction: player.economy / highestEconomy,
       text: player.name,
     })
   }
@@ -97,7 +99,7 @@ const ChartBarItem = styled.div<{ color: string; fraction: number }>`
   border-radius: 2px;
   margin-bottom: 4px;
   padding: 2px 4px;
-  color: ${COLOR.GREY_600};
+  color: ${(props) => (props.fraction > 0.15 ? COLOR.GREY_600 : 'transparent')};
   font-size: 12px;
   font-weight: bold;
   overflow: hidden;
