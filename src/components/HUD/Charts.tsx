@@ -19,12 +19,13 @@ const Charts = observer(() => {
     totalEconomy += players[i].economy
   }
 
-  let chartItems: Array<{ color: string; fraction: number }> = []
+  let chartItems: Array<{ color: string; fraction: number; text: string }> = []
   for (let i = 0; i < players.length; i++) {
     const player = players[i]
     chartItems.push({
       color: player.pattern,
       fraction: player.economy / totalEconomy,
+      text: player.name,
     })
   }
 
@@ -40,17 +41,12 @@ const Charts = observer(() => {
       </LabelRow>
 
       <ChartBar>
-        {store.game.mode.includes('1v1') && <IndicatorLine />}
-
         {chartItems.map((item) => (
-          <ChartBarItem key={item.color} {...item} />
+          <ChartBarItem key={item.color} {...item}>
+            {item.text}
+          </ChartBarItem>
         ))}
       </ChartBar>
-
-      {/*<LabelRow>*/}
-      {/*  <Icon src={armyIcon} />*/}
-      {/*  <Label>Military Comparison</Label>*/}
-      {/*</LabelRow>*/}
     </Container>
   )
 })
@@ -71,7 +67,7 @@ const Container = styled.div`
 const LabelRow = styled.div`
   display: flex;
   margin-top: 16px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   align-items: center;
 
   &:first-child {
@@ -93,28 +89,23 @@ const Label = styled.p`
   opacity: 0.5;
 `
 const ChartBar = styled.div`
-  display: flex;
-  width: 234px;
-  border-radius: 6px;
-  overflow: hidden;
   position: relative;
 `
 const ChartBarItem = styled.div<{ color: string; fraction: number }>`
   width: ${(props) => props.fraction * 234}px;
   background: ${(props) => props.color};
-  height: 12px;
-  border-right: 2px solid ${COLOR.GREY_600}ee;
+  border-radius: 2px;
+  margin-bottom: 4px;
+  padding: 2px 4px;
+  color: ${COLOR.GREY_600};
+  font-size: 12px;
+  font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   &:last-child {
-    border: none;
+    margin-bottom: 0;
   }
-`
-const IndicatorLine = styled.div`
-  width: 2px;
-  height: 12px;
-  border-left: 2px solid #00000044;
-  position: absolute;
-  left: calc(50% - 1px);
 `
 
 export default Charts
