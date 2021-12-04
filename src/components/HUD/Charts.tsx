@@ -98,9 +98,9 @@ const ChartBarItem = styled.div<{ color: string; fraction: number }>`
   background: ${(props) => props.color};
   border-radius: 2px;
   margin-bottom: 4px;
-  padding: 2px 4px;
+  padding: 1px 4px;
   color: ${(props) => (props.fraction > 0.15 ? COLOR.GREY_600 : 'transparent')};
-  font-size: 12px;
+  font-size: 10px;
   font-weight: bold;
   overflow: hidden;
   text-overflow: ellipsis;
