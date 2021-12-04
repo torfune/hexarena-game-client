@@ -25,6 +25,7 @@ import GameServerApi from '../services/GameServerApi'
 import ReconnectingOverlay from './ReconnectingOverlay'
 import Gold from './HUD/Gold'
 import Charts from './HUD/Charts'
+import Automation from './HUD/Automation'
 
 const GameComponent = observer(() => {
   const [_, refresh] = useState(Date.now())
@@ -178,6 +179,7 @@ const GameComponent = observer(() => {
                   <Gold />
                   <Flasher />
                   <NotificationManager />
+                  <Automation />
                 </>
               )}
 

@@ -368,6 +368,10 @@ class Game {
       printSceneGraph(this.pixi.stage.children)
     }
 
+    if (key === 'x') {
+      store.socket.send('cancelAllAutomation')
+    }
+
     this.keyDown[key] = true
     this.updateCameraMove()
 

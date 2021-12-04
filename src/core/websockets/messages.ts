@@ -56,3 +56,4 @@ export type MessageToSend =
   | 'play'
   | 'actionStartAutomation'
   | 'actionCancelAutomation'
+  | 'cancelAllAutomation'

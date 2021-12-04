@@ -33,8 +33,6 @@ const Charts = observer(() => {
 
   chartItems = sortByKey(chartItems, 'fraction')
 
-  console.log(chartItems)
-
   return (
     <Container>
       <LabelRow>
