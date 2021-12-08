@@ -653,7 +653,7 @@ class Tile {
       this.building &&
       this.building.type === 'TOWER' &&
       (ignoreGold ||
-        store.game.player.gold >= this.getActionCost('BUILD_TOWER'))
+        store.game.player.gold >= this.getActionCost('BUILD_CASTLE'))
     ) {
       return 'BUILD_CASTLE'
     }
