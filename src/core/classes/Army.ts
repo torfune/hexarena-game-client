@@ -99,10 +99,12 @@ class Army {
   }
 
   setTile(newTile: Tile | null) {
-    // console.log(
-    //   `ARMY [${this.getAxialString()}] set TILE: `,
-    //   newTile?.axial || null
-    // )
+    // if (this.owner.isThisPlayer()) {
+    //   console.log(
+    //     `ARMY [${this.getAxialString()}] set TILE: `,
+    //     newTile?.axial || null
+    //   )
+    // }
 
     if (ArmyDragManager.active && ArmyDragManager.army === this) {
       ArmyDragManager.deactivate()
@@ -110,6 +112,7 @@ class Army {
 
     if (this.building && this.building.army === this) {
       this.building.setArmy(null)
+      this.building = null
     }
 
     if (!newTile) {
@@ -137,10 +140,12 @@ class Army {
   }
 
   setBuilding(newBuilding: Building | null) {
-    // console.log(
-    //   `ARMY [${this.getAxialString()}] set BUILDING: `,
-    //   newBuilding?.type || null
-    // )
+    // if (this.owner.isThisPlayer()) {
+    //   console.log(
+    //     `ARMY [${this.getAxialString()}] set BUILDING: `,
+    //     newBuilding?.type || null
+    //   )
+    // }
 
     if (ArmyDragManager.active && ArmyDragManager.army === this) {
       ArmyDragManager.deactivate()
@@ -194,6 +199,10 @@ class Army {
   }
 
   destroy() {
+    if (this.owner.isThisPlayer()) {
+      console.log('destroy army')
+    }
+
     this.isDestroying = true
     this.icon.destroy()
 

@@ -752,9 +752,8 @@ class Tile {
   }
 
   isOwnedByThisPlayer(): boolean {
-    if (!store.game || !store.game.player || !this.owner) return false
-
-    return this.owner.id === store.game.player.id
+    if (!this.owner) return false
+    return this.owner.isThisPlayer()
   }
 
   updateNeighborsBorders() {

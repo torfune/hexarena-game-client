@@ -198,6 +198,10 @@ const messageHandlers = {
         return
       }
 
+      if (army.owner.isThisPlayer()) {
+        console.log(`Update army. Building: ${buildingId}. Tile: ${tileId}`)
+      }
+
       // Update
       if (tileId !== (army.tile?.id || null)) {
         army.setTile(tile)

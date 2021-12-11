@@ -177,6 +177,12 @@ class Player {
     return count
   }
 
+  isThisPlayer() {
+    if (!store.game) return false
+
+    return this.id === store.game.playerId
+  }
+
   // Prop getters
   get pattern() {
     return this.props.pattern.current
