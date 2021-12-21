@@ -20,7 +20,9 @@ const createImage = (textureName: string, options: Options = {}) => {
   if (!store.game || !store.game.pixi) return new Sprite()
 
   const image = new Sprite(getTexture(textureName))
-  image.anchor.set(0.5, 1)
+  if (textureName !== 'white-pixel') {
+    image.anchor.set(0.5, 1)
+  }
 
   if (options.group) {
     let group

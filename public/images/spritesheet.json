@@ -42,7 +42,7 @@
 },
 "action-icon-camp.png":
 {
-	"frame": {"x":504,"y":2,"w":50,"h":42},
+	"frame": {"x":507,"y":2,"w":50,"h":42},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":50,"h":42},
@@ -50,7 +50,7 @@
 },
 "action-icon-castle.png":
 {
-	"frame": {"x":641,"y":2,"w":70,"h":44},
+	"frame": {"x":644,"y":2,"w":70,"h":44},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":70,"h":44},
@@ -58,7 +58,7 @@
 },
 "action-icon-pause.png":
 {
-	"frame": {"x":472,"y":2,"w":30,"h":34},
+	"frame": {"x":475,"y":2,"w":30,"h":34},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":30,"h":34},
@@ -66,7 +66,7 @@
 },
 "action-icon-recruit.png":
 {
-	"frame": {"x":1240,"y":2,"w":29,"h":54},
+	"frame": {"x":1243,"y":2,"w":29,"h":54},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":29,"h":54},
@@ -74,7 +74,7 @@
 },
 "action-icon-repair.png":
 {
-	"frame": {"x":556,"y":2,"w":43,"h":42},
+	"frame": {"x":559,"y":2,"w":43,"h":42},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":43,"h":42},
@@ -82,7 +82,7 @@
 },
 "action-icon-tower.png":
 {
-	"frame": {"x":601,"y":2,"w":38,"h":43},
+	"frame": {"x":604,"y":2,"w":38,"h":43},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":38,"h":43},
@@ -90,7 +90,7 @@
 },
 "army-drag-arrow-body.png":
 {
-	"frame": {"x":122,"y":2,"w":24,"h":24},
+	"frame": {"x":125,"y":2,"w":24,"h":24},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":24,"h":24},
@@ -98,7 +98,7 @@
 },
 "army-drag-arrow-head.png":
 {
-	"frame": {"x":1011,"y":2,"w":47,"h":49},
+	"frame": {"x":1014,"y":2,"w":47,"h":49},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":47,"h":49},
@@ -114,7 +114,7 @@
 },
 "army.png":
 {
-	"frame": {"x":961,"y":2,"w":48,"h":48},
+	"frame": {"x":964,"y":2,"w":48,"h":48},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":48,"h":48},
@@ -210,7 +210,7 @@
 },
 "house-ruins.png":
 {
-	"frame": {"x":893,"y":2,"w":66,"h":45},
+	"frame": {"x":896,"y":2,"w":66,"h":45},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":66,"h":45},
@@ -226,7 +226,7 @@
 },
 "hp-bar-0-2.png":
 {
-	"frame": {"x":1271,"y":2,"w":178,"h":64},
+	"frame": {"x":1274,"y":2,"w":178,"h":64},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":178,"h":64},
@@ -234,7 +234,7 @@
 },
 "hp-bar-0-3.png":
 {
-	"frame": {"x":1451,"y":2,"w":178,"h":64},
+	"frame": {"x":1454,"y":2,"w":178,"h":64},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":178,"h":64},
@@ -242,7 +242,7 @@
 },
 "hp-bar-0-4.png":
 {
-	"frame": {"x":1631,"y":2,"w":178,"h":64},
+	"frame": {"x":1634,"y":2,"w":178,"h":64},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":178,"h":64},
@@ -250,7 +250,7 @@
 },
 "hp-bar-1-2.png":
 {
-	"frame": {"x":1811,"y":2,"w":178,"h":64},
+	"frame": {"x":1814,"y":2,"w":178,"h":64},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":178,"h":64},
@@ -322,7 +322,7 @@
 },
 "hp-bar-repair-fill.png":
 {
-	"frame": {"x":2,"y":2,"w":118,"h":7},
+	"frame": {"x":5,"y":2,"w":118,"h":7},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":118,"h":7},
@@ -394,7 +394,7 @@
 },
 "progress-bar-fill.png":
 {
-	"frame": {"x":148,"y":2,"w":160,"h":32},
+	"frame": {"x":151,"y":2,"w":160,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":160,"h":32},
@@ -402,7 +402,7 @@
 },
 "progress-bar.png":
 {
-	"frame": {"x":713,"y":2,"w":178,"h":44},
+	"frame": {"x":716,"y":2,"w":178,"h":44},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":178,"h":44},
@@ -442,7 +442,7 @@
 },
 "village-bar-fill.png":
 {
-	"frame": {"x":310,"y":2,"w":160,"h":32},
+	"frame": {"x":313,"y":2,"w":160,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":160,"h":32},
@@ -450,11 +450,19 @@
 },
 "village-bar.png":
 {
-	"frame": {"x":1060,"y":2,"w":178,"h":51},
+	"frame": {"x":1063,"y":2,"w":178,"h":51},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":178,"h":51},
 	"sourceSize": {"w":178,"h":51}
+},
+"white-pixel.png":
+{
+	"frame": {"x":2,"y":2,"w":1,"h":1},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":1,"h":1},
+	"sourceSize": {"w":1,"h":1}
 }},
 "animations": {
 	"hp-bar-0": ["hp-bar-0-2.png","hp-bar-0-3.png","hp-bar-0-4.png"],
@@ -468,8 +476,8 @@
 	"version": "1.0",
 	"image": "spritesheet.png",
 	"format": "RGBA8888",
-	"size": {"w":1991,"h":1004},
+	"size": {"w":1994,"h":1004},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:b94b6daf96d902fdd02855d4d89bf8f4:c32a9d969a3fdf489bc6d71f7a38fdb6:729adc6043343cfda41c447ce8f464d6$"
+	"smartupdate": "$TexturePacker:SmartUpdate:4075f7fd4ce4e6cb303f97826b5f2dce:75e0dee51cb2ba1985cbdb5d9720c544:729adc6043343cfda41c447ce8f464d6$"
 }
 }

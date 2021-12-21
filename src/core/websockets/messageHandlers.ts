@@ -158,16 +158,30 @@ const messageHandlers = {
       ownerId: 'string',
       tileId: 'string',
       buildingId: 'string',
+      moveDirection: 'number',
+      moveStartTileId: 'string',
+      moveStartedAt: 'number',
     }) as {
       id: string | null
       ownerId: string | null
       tileId: string | null
       buildingId: string | null
+      moveDirection: number | null
+      moveStartTileId: string | null
+      moveStartedAt: number
     }[]
 
     for (let i = 0; i < parsed.length; i++) {
       const fields = parsed[i]
-      const { id, ownerId, tileId, buildingId } = fields
+      const {
+        id,
+        ownerId,
+        tileId,
+        buildingId,
+        moveDirection,
+        moveStartTileId,
+        moveStartedAt,
+      } = fields
 
       if (!id || !ownerId) continue
 
@@ -199,7 +213,11 @@ const messageHandlers = {
       }
 
       if (army.owner.isThisPlayer()) {
-        console.log(`Update army. Building: ${buildingId}. Tile: ${tileId}`)
+        console.log(`Update army:`, {
+          moveDirection,
+          moveStartTileId,
+          moveStartedAt,
+        })
       }
 
       // Update
@@ -208,6 +226,11 @@ const messageHandlers = {
       }
       if (buildingId !== (army.building?.id || null)) {
         army.setBuilding(building)
+      }
+      if (moveDirection !== army.moveDirection) {
+        const moveStartTile =
+          store.game.tiles.get(moveStartTileId || '') || null
+        army.setMove(moveDirection, moveStartTile, moveStartedAt)
       }
     }
   },

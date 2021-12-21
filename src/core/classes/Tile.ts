@@ -779,6 +779,14 @@ class Tile {
       new Action(uuid(), actionType, 'PREVIEW', this, store.game.player)
     }
   }
+
+  logPixelPosition() {
+    const pixel = getPixelPosition(this.axial)
+    return {
+      x: Math.round(pixel.x),
+      y: Math.round(pixel.y),
+    }
+  }
 }
 
 export default Tile

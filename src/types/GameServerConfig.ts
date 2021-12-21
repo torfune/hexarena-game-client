@@ -1,6 +1,7 @@
 interface GameServerConfig {
   DEBUG_MODE: boolean
   ARMY_HP: number
+  ARMY_SPEED: number
   RECRUIT_ARMY_COST: number
   BUILD_CAMP_COST: number
   BUILD_TOWER_COST: number
