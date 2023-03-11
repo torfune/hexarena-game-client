@@ -10,6 +10,8 @@ interface Props {
   player: Player
 }
 const PlayerPreview: React.FC<Props> = ({ player }) => {
+  if (!store.game) return null
+
   const isAlly = store.game?.player?.team === player.team
 
   return (
@@ -19,7 +21,7 @@ const PlayerPreview: React.FC<Props> = ({ player }) => {
       ) : (
         <Pattern color={player.pattern} />
       )}
-      <Name>{player.name}</Name>
+      <Name>{store.game.mode.includes('FFA') ? '???' : player.name}</Name>
       {!isSpectating() && (
         <AllyOrEnemy background={isAlly ? COLOR.BLUE : COLOR.RED}>
           {isAlly ? 'ALLY' : 'ENEMY'}
