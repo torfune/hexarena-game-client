@@ -3,7 +3,6 @@ import React from 'react'
 import { COLOR } from '../../constants/constants-react'
 import store from '../../core/store'
 import { observer } from 'mobx-react-lite'
-import armyIcon from '../../icons/army.svg'
 import villageIcon from '../../icons/village.svg'
 import sortByKey from '../../utils/sortByKey'
 
@@ -27,7 +26,7 @@ const Charts = observer(() => {
     chartItems.push({
       color: player.pattern,
       fraction: player.economy / highestEconomy,
-      text: player.name,
+      text: (store.game.mode.includes('FFA') && player.alive) ? '???' : player.name,
     })
   }
 

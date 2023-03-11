@@ -64,6 +64,13 @@ const Leaderboard = observer(() => {
 })
 
 function renderPlayer(player: Player, place: number, divide: boolean) {
+  if (!store.game) return null
+
+  let name = player.name
+  if (store.game.mode.includes('FFA') && player.alive) {
+    name = '???'
+  }
+
   return (
     <PlayerRow key={player.id} divide={divide}>
       <Row>
@@ -77,7 +84,7 @@ function renderPlayer(player: Player, place: number, divide: boolean) {
           <Pattern color={player.getPattern()} />
         )}
 
-        <p>{player.name}</p>
+        <p>{name}</p>
         <TileCount>({player.tilesCount})</TileCount>
       </Row>
     </PlayerRow>
