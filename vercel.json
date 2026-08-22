@@ -1,5 +1,6 @@
 {
   "name": "hexarena-game-client",
+  "installCommand": "npm ci --legacy-peer-deps",
   "routes": [
     { "src": "/spectate", "dest": "/index.html" },
     { "src": "/play", "dest": "/index.html" }

@@ -1,7 +1,7 @@
 function getWebClientUrl() {
   switch (window.location.origin) {
     case 'https://game.hexarena.io':
-      return 'https://hexarena.io'
+      return 'https://classic.hexarena.io'
 
     case 'https://game.test.hexarena.io':
       return 'https://test.hexarena.io'
